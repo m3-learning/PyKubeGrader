@@ -1,0 +1,95 @@
+pykubegrader.widgets namespace
+==============================
+
+.. py:module:: pykubegrader.widgets
+
+Submodules
+----------
+
+pykubegrader.widgets.info\_widget module
+----------------------------------------
+
+.. automodule:: pykubegrader.widgets.info_widget
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.mc\_widget module
+--------------------------------------
+
+.. automodule:: pykubegrader.widgets.mc_widget
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.misc module
+--------------------------------
+
+.. automodule:: pykubegrader.widgets.misc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.multi\_select\_base module
+-----------------------------------------------
+
+.. automodule:: pykubegrader.widgets.multi_select_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.reading\_base module
+-----------------------------------------
+
+.. automodule:: pykubegrader.widgets.reading_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.reading\_widget module
+-------------------------------------------
+
+.. automodule:: pykubegrader.widgets.reading_widget
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.select\_base module
+----------------------------------------
+
+.. automodule:: pykubegrader.widgets.select_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.select\_many\_widget module
+------------------------------------------------
+
+.. automodule:: pykubegrader.widgets.select_many_widget
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.telemetry module
+-------------------------------------
+
+.. automodule:: pykubegrader.widgets.telemetry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.types\_widget module
+-----------------------------------------
+
+.. automodule:: pykubegrader.widgets.types_widget
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.validate module
+------------------------------------
+
+.. automodule:: pykubegrader.widgets.validate
+   :members:
+   :undoc-members:
+   :show-inheritance:

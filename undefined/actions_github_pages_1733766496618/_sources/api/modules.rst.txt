@@ -1,0 +1,7 @@
+pykubegrader
+============
+
+.. toctree::
+   :maxdepth: 4
+
+   pykubegrader
