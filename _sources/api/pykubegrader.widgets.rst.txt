@@ -1,0 +1,53 @@
+pykubegrader.widgets package
+============================
+
+Submodules
+----------
+
+pykubegrader.widgets.multiple\_choice module
+--------------------------------------------
+
+.. automodule:: pykubegrader.widgets.multiple_choice
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.reading\_question module
+---------------------------------------------
+
+.. automodule:: pykubegrader.widgets.reading_question
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.select\_many module
+----------------------------------------
+
+.. automodule:: pykubegrader.widgets.select_many
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.student\_info module
+-----------------------------------------
+
+.. automodule:: pykubegrader.widgets.student_info
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.types\_question module
+-------------------------------------------
+
+.. automodule:: pykubegrader.widgets.types_question
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pykubegrader.widgets
+   :members:
+   :undoc-members:
+   :show-inheritance:

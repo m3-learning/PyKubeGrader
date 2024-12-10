@@ -1,29 +1,22 @@
 pykubegrader package
 ====================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pykubegrader.widgets
+   pykubegrader.widgets_base
+
 Submodules
 ----------
-
-pykubegrader.info\_widget module
---------------------------------
-
-.. automodule:: pykubegrader.info_widget
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 pykubegrader.initialize module
 ------------------------------
 
 .. automodule:: pykubegrader.initialize
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pykubegrader.mc\_widget module
-------------------------------
-
-.. automodule:: pykubegrader.mc_widget
    :members:
    :undoc-members:
    :show-inheritance:
@@ -36,58 +29,10 @@ pykubegrader.misc module
    :undoc-members:
    :show-inheritance:
 
-pykubegrader.multi\_select\_base module
----------------------------------------
-
-.. automodule:: pykubegrader.multi_select_base
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pykubegrader.reading\_base module
----------------------------------
-
-.. automodule:: pykubegrader.reading_base
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pykubegrader.reading\_widget module
------------------------------------
-
-.. automodule:: pykubegrader.reading_widget
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pykubegrader.select\_base module
---------------------------------
-
-.. automodule:: pykubegrader.select_base
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pykubegrader.select\_many\_widget module
-----------------------------------------
-
-.. automodule:: pykubegrader.select_many_widget
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pykubegrader.telemetry module
 -----------------------------
 
 .. automodule:: pykubegrader.telemetry
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pykubegrader.types\_widget module
----------------------------------
-
-.. automodule:: pykubegrader.types_widget
    :members:
    :undoc-members:
    :show-inheritance:
