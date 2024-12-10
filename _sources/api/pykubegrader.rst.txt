@@ -21,18 +21,18 @@ pykubegrader.initialize module
    :undoc-members:
    :show-inheritance:
 
-pykubegrader.misc module
-------------------------
-
-.. automodule:: pykubegrader.misc
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pykubegrader.telemetry module
 -----------------------------
 
 .. automodule:: pykubegrader.telemetry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.utils module
+-------------------------
+
+.. automodule:: pykubegrader.utils
    :members:
    :undoc-members:
    :show-inheritance:
