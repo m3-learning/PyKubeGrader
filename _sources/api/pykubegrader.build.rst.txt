@@ -1,0 +1,15 @@
+pykubegrader.build namespace
+============================
+
+.. py:module:: pykubegrader.build
+
+Submodules
+----------
+
+pykubegrader.build.build\_folder module
+---------------------------------------
+
+.. automodule:: pykubegrader.build.build_folder
+   :members:
+   :undoc-members:
+   :show-inheritance:

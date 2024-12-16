@@ -36,6 +36,22 @@ pykubegrader.widgets.student\_info module
    :undoc-members:
    :show-inheritance:
 
+pykubegrader.widgets.style module
+---------------------------------
+
+.. automodule:: pykubegrader.widgets.style
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pykubegrader.widgets.true\_false module
+---------------------------------------
+
+.. automodule:: pykubegrader.widgets.true_false
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pykubegrader.widgets.types\_question module
 -------------------------------------------
 
