@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.initialize &#8212; PyKubeGrader 0.1.7 documentation</title>
+    <title>pykubegrader.initialize &#8212; PyKubeGrader 0.1.8 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+    <script src="../../_static/documentation_options.js?v=22607128"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,8 +48,8 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.7" />
-    <meta name="docbuild:last-update" content="Dec 18, 2024"/>
+  <meta name="docsearch:version" content="0.1.8" />
+    <meta name="docbuild:last-update" content="Dec 19, 2024"/>
   </head>
   
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.1.7 documentation - Home"/>
-    <img src="../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.1.7 documentation - Home"/>
+    <img src="../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.1.8 documentation - Home"/>
+    <img src="../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.1.8 documentation - Home"/>
   
   
 </a></div>
@@ -405,6 +405,7 @@
                   
   <h1>Source code for pykubegrader.initialize</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">panel</span> <span class="k">as</span> <span class="nn">pn</span>
 <span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">get_ipython</span>
@@ -424,16 +425,29 @@
         <span class="n">ipython</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;pre_run_cell&quot;</span><span class="p">,</span> <span class="n">telemetry</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to register telemetry: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
 
-    <span class="n">pn</span><span class="o">.</span><span class="n">extension</span><span class="p">()</span>
+    <span class="n">jhub_user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;JUPYTERHUB_USER&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">jhub_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setup unsuccessful. Are you on JupyterHub?&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">pn</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">update_responses</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;assignment&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">responses</span> <span class="o">=</span> <span class="n">update_responses</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;assignment&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">responses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_seed</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="n">jhub_user</span><span class="p">)</span> <span class="o">%</span> <span class="mi">1000</span>
+            <span class="n">responses</span> <span class="o">=</span> <span class="n">update_responses</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">new_seed</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to initialize assignment: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assignment successfully initialized&quot;</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assignment successfully initialized&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assignment: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Username: </span><span class="si">{</span><span class="n">jhub_user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 
