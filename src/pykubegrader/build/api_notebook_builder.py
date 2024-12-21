@@ -55,6 +55,18 @@ class FastAPINotebookBuilder:
         return update_responses
 
     @staticmethod
+    def construct_graders(cell_dict):
+
+        # Generate Python code
+        added_code = (
+            "if "
+            + " and ".join(f"({test})" for test in cell_dict["assertions"])
+            + f":\n    score = {cell_dict['points']}\n"
+        )
+
+        return added_code
+
+    @staticmethod
     def construct_question_info(cell_dict):
         question_info = []
 
@@ -325,12 +337,16 @@ class FastAPINotebookBuilder:
                     )
 
                     # Extract all assert statements using regex (multiline enabled)
-                    matches = re.findall(r"assert\s+(.+?)(?:,|$)", source, re.DOTALL)
+                    matches = re.findall(
+                        r"assert\s+((?:[^#\n]+(?:\\\n)?)+)", source, re.DOTALL
+                    )
 
-                    # Clean and join multiline conditions
-                    cleaned_matches = [
-                        " ".join(condition.split()) for condition in matches
-                    ]
+                    # Process multiline conditions into single logical assertions
+                    cleaned_matches = []
+                    for match in matches:
+                        # Preserve brackets and format correctly
+                        cleaned_condition = "".join(match.splitlines()).strip()
+                        cleaned_matches.append(cleaned_condition)
 
                     # Extract the first line containing `points:`
                     points_line = next(
