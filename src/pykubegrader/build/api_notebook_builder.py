@@ -34,11 +34,32 @@ class FastAPINotebookBuilder:
                 cell_source
             )
 
-            question_info = FastAPINotebookBuilder.construct_question_info(cell_dict)
+            top_cell_source = []
+
+            if cell_dict["is_first"]:
+                top_cell_source.append(
+                    self.construct_first_cell_question_header(cell_dict)
+                )
+
+            top_cell_source.append(
+                FastAPINotebookBuilder.construct_question_info(cell_dict)
+            )
 
             cell_source = FastAPINotebookBuilder.insert_list_at_index(
-                cell_source, question_info, last_import_line_ind + 1
+                cell_source, top_cell_source, last_import_line_ind + 1
             )
+
+    def construct_first_cell_question_header(self, cell_dict):
+        max_question_points = sum(
+            cell["points"]
+            for cell in self.assertion_tests_dict.values()
+            if cell["question"] == cell_dict["question"]
+        )
+
+        first_cell_header = ["max_question_points = " + str(max_question_points)]
+        first_cell_header.append("earned_points = 0")
+
+        return first_cell_header
 
     @staticmethod
     def construct_update_responses(cell_dict):
@@ -58,11 +79,10 @@ class FastAPINotebookBuilder:
     def construct_graders(cell_dict):
 
         # Generate Python code
-        added_code = (
-            "if "
-            + " and ".join(f"({test})" for test in cell_dict["assertions"])
-            + f":\n    score = {cell_dict['points']}\n"
-        )
+        added_code = [
+            "if " + " and ".join(f"({test})" for test in cell_dict["assertions"]) + ":"
+        ]
+        added_code.append(f"    score = {cell_dict['points']}")
 
         return added_code
 
@@ -336,16 +356,17 @@ class FastAPINotebookBuilder:
                         cell
                     )
 
-                    # Extract all assert statements using regex (multiline enabled)
-                    matches = re.findall(
-                        r"assert\s+((?:[^#\n]+(?:\\\n)?)+)", source, re.DOTALL
-                    )
+                    # Extract all assert statements (multiline enabled)
+                    matches = re.findall(r"assert\s+(.+?)(?:\n|$)", source, re.DOTALL)
 
-                    # Process multiline conditions into single logical assertions
+                    # Log matches for debugging
+                    print("Matches:", matches)  # Debugging step, remove in production
+
+                    # Process assertions
                     cleaned_matches = []
                     for match in matches:
-                        # Preserve brackets and format correctly
-                        cleaned_condition = "".join(match.splitlines()).strip()
+                        # Clean and preserve formatting
+                        cleaned_condition = " ".join(match.splitlines()).strip()
                         cleaned_matches.append(cleaned_condition)
 
                     # Extract the first line containing `points:`
