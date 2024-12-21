@@ -30,22 +30,41 @@ class FastAPINotebookBuilder:
                 cell["source"]
             )
 
+            last_import_line_ind = FastAPINotebookBuilder.find_last_import_line(
+                cell_source
+            )
+
+            question_info = FastAPINotebookBuilder.construct_question_info(cell_dict)
+
+            cell_source = FastAPINotebookBuilder.insert_list_at_index(
+                cell_source, question_info, last_import_line_ind + 1
+            )
+
     @staticmethod
-    def add_question_info(cell_source, cell_dict):
+    def construct_update_responses(cell_dict):
+        update_responses = []
+        question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"])
+
+        logging_variables = cell_dict["logging_variables"]
+
+        for logging_variable in logging_variables:
+            update_responses.append(
+                f"responses = update_responses({question_id}, {logging_variable})"
+            )
+
+        return update_responses
+
+    @staticmethod
+    def construct_question_info(cell_dict):
         question_info = []
 
-        last_import_line_ind = FastAPINotebookBuilder.find_last_import_line(cell_source)
         question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"])
 
         question_info.append(f'question_id = "{question_id}"')
         question_info.append(f'max_score = {cell_dict["points"]}')
         question_info.append(f"score = 0")
 
-        cell_source = FastAPINotebookBuilder.insert_list_at_index(
-            cell_source, question_info, last_import_line_ind + 1
-        )
-
-        return cell_source
+        return question_info
 
     @staticmethod
     def insert_list_at_index(
