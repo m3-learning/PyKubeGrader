@@ -37,15 +37,24 @@ class FastAPINotebookBuilder:
             top_cell_source = []
 
             if cell_dict["is_first"]:
-                top_cell_source.append(
+                top_cell_source.extend(
                     self.construct_first_cell_question_header(cell_dict)
                 )
-
-            top_cell_source.append(
+            top_cell_source.extend(["\n"])
+            top_cell_source.extend(
                 FastAPINotebookBuilder.construct_question_info(cell_dict)
             )
+            top_cell_source.extend(
+                FastAPINotebookBuilder.construct_update_responses(cell_dict)
+            )
+            top_cell_source.extend(FastAPINotebookBuilder.construct_graders(cell_dict))
+            top_cell_source.extend(["\n"])
+            top_cell_source.extend(["earned_total += score\n"])
+            top_cell_source.extend(
+                [f'log_variable(f"{{score}}, {{max_score}}", question_id)']
+            )
 
-            cell_source = FastAPINotebookBuilder.insert_list_at_index(
+            self.cell_source = FastAPINotebookBuilder.insert_list_at_index(
                 cell_source, top_cell_source, last_import_line_ind + 1
             )
 
@@ -94,7 +103,7 @@ class FastAPINotebookBuilder:
 
         question_info.append(f'question_id = "{question_id}"')
         question_info.append(f'max_score = {cell_dict["points"]}')
-        question_info.append(f"score = 0")
+        question_info.append("score = 0")
 
         return question_info
 
@@ -238,7 +247,8 @@ class FastAPINotebookBuilder:
     @staticmethod
     def find_last_import_line(cell_source):
         """
-        Finds the index of the last line with an import statement in a list of code lines.
+        Finds the index of the last line with an import statement in a list of code lines,
+        including multiline import statements.
 
         Args:
             cell_source (list): List of strings representing the code lines.
@@ -247,11 +257,28 @@ class FastAPINotebookBuilder:
             int: The index of the last line with an import statement, or -1 if no import is found.
         """
         last_import_index = -1
+        is_multiline_import = False  # Flag to track if we're inside a multiline import
 
         for i, line in enumerate(cell_source):
-            # Check if the line starts with "import" or "from ... import"
-            if line.strip().startswith("import") or line.strip().startswith("from"):
+            stripped_line = line.strip()
+
+            if is_multiline_import:
+                # Continue tracking multiline import
+                if stripped_line.endswith("\\") or (
+                    stripped_line and not stripped_line.endswith(")")
+                ):
+                    last_import_index = i  # Update to current line
+                    continue
+                else:
+                    is_multiline_import = False  # End of multiline import
+                    last_import_index = i  # Update to current line
+
+            # Check for single-line or start of multiline imports
+            if stripped_line.startswith("import") or stripped_line.startswith("from"):
                 last_import_index = i
+                # Check if it's a multiline import
+                if stripped_line.endswith("\\") or "(" in stripped_line:
+                    is_multiline_import = True
 
         return last_import_index
 
@@ -356,17 +383,16 @@ class FastAPINotebookBuilder:
                         cell
                     )
 
-                    # Extract all assert statements (multiline enabled)
-                    matches = re.findall(r"assert\s+(.+?)(?:\n|$)", source, re.DOTALL)
-
-                    # Log matches for debugging
-                    print("Matches:", matches)  # Debugging step, remove in production
+                    # Extract all assert statements using regex (handles single-line and multiline assertions)
+                    matches = re.findall(r"assert\s+(.*?)(?:,|$)", source, re.DOTALL)
 
                     # Process assertions
                     cleaned_matches = []
                     for match in matches:
-                        # Clean and preserve formatting
-                        cleaned_condition = " ".join(match.splitlines()).strip()
+                        # Handle multiline assertions
+                        cleaned_condition = " ".join(
+                            line.strip() for line in match.splitlines()
+                        )
                         cleaned_matches.append(cleaned_condition)
 
                     # Extract the first line containing `points:`
