@@ -74,9 +74,15 @@ class FastAPINotebookBuilder:
                 FastAPINotebookBuilder.construct_graders(cell_dict)
             )
             updated_cell_source.extend(["\n"])
+            updated_cell_source.extend(
+                ["earned_points = float(os.environ.get('EARNED_POINTS', 0))\n"]
+            )
             updated_cell_source.extend(["earned_points += score\n"])
             updated_cell_source.extend(
-                [f'log_variable(f"{{score}}, {{max_score}}", question_id)']
+                [f'log_variable(f"{{score}}, {{max_score}}", question_id)\n']
+            )
+            updated_cell_source.extend(
+                ["os.environ['EARNED_POINTS'] = str(earned_points)\n"]
             )
 
             # cell_source = FastAPINotebookBuilder.insert_list_at_index(
@@ -94,6 +100,7 @@ class FastAPINotebookBuilder:
 
         first_cell_header = ["max_question_points = " + str(max_question_points) + "\n"]
         first_cell_header.append("earned_points = 0 \n")
+        first_cell_header.append("os.environ['EARNED_POINTS'] = str(earned_points)\n")
 
         return first_cell_header
 
@@ -204,6 +211,7 @@ class FastAPINotebookBuilder:
             "    telemetry,\n",
             "    update_responses,\n",
             ")\n",
+            "import os\n",
         ]
 
         for i, line in enumerate(cell_source):
