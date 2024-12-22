@@ -144,9 +144,15 @@ def submit_question_new(
     return res
 
 
-# TODO: implement function
-def verify_server(jhub_user: Optional[str] = None):
-    pass
+# TODO: refine function
+def verify_server(
+    jhub_user: Optional[str] = None,
+    url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
+) -> str:
+    params = {"jhub_user": jhub_user} if jhub_user else {}
+    res = requests.get(url, params=params)
+    message = f"status code: {res.status_code}"
+    return message
 
 
 # TODO: implement function; or maybe not?
