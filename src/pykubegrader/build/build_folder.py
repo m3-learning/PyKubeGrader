@@ -8,8 +8,8 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field
-
 import nbformat
+from .api_notebook_builder import FastAPINotebookBuilder
 
 
 @dataclass
@@ -279,6 +279,15 @@ class NotebookProcessor:
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
         if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
+            
+            client_private_key = os.path.join(self.solutions_folder, "client_private_key.bin")
+            server_public_key = os.path.join(self.solutions_folder, "server_public_key.bin")
+            
+            shutil.copy("./keys/client_private_key.bin", client_private_key)
+            shutil.copy("./keys/server_public_key.bin", server_public_key)
+            
+            FastAPINotebookBuilder(notebook_path=temp_notebook_path)
+            
             self.run_otter_assign(
                 temp_notebook_path, os.path.join(notebook_subfolder, "dist")
             )
@@ -299,6 +308,9 @@ class NotebookProcessor:
             self._print_and_log(
                 f"Copied and cleaned student notebook: {student_notebook} -> {self.root_folder}"
             )
+            
+            os.remove(client_private_key)
+            os.remove(server_public_key)
 
             return student_notebook
         else:
