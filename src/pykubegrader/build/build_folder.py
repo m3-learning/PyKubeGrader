@@ -196,7 +196,6 @@ class NotebookProcessor:
         else:
             self._print_and_log(f"Notebook already in destination: {new_notebook_path}")
 
-        
         solution_path_1, question_path = self.multiple_choice_parser(
             temp_notebook_path, new_notebook_path
         )
@@ -206,15 +205,13 @@ class NotebookProcessor:
         solution_path_3, question_path = self.select_many_parser(
             temp_notebook_path, new_notebook_path
         )
-        
+
         if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
             solution_path = solution_path_1 or solution_path_2 or solution_path_3
-        
+
         student_notebook = self.free_response_parser(
             temp_notebook_path, notebook_subfolder, notebook_name
         )
-        
-        
 
         # If Otter does not run, move the student file to the main directory
         if student_notebook is None:
@@ -279,15 +276,22 @@ class NotebookProcessor:
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
         if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
-            
-            client_private_key = os.path.join(self.solutions_folder, "client_private_key.bin")
-            server_public_key = os.path.join(self.solutions_folder, "server_public_key.bin")
-            
+
+            # TODO: This is hardcoded for now, but should be in a configuration file.
+            client_private_key = os.path.join(
+                self.solutions_folder,
+                "./keys/client_private_key.bin",
+            )
+            server_public_key = os.path.join(
+                self.solutions_folder,
+                "./keys/server_public_key.bin",
+            )
+
             shutil.copy("./keys/client_private_key.bin", client_private_key)
             shutil.copy("./keys/server_public_key.bin", server_public_key)
-            
+
             FastAPINotebookBuilder(notebook_path=temp_notebook_path)
-            
+
             self.run_otter_assign(
                 temp_notebook_path, os.path.join(notebook_subfolder, "dist")
             )
@@ -308,7 +312,8 @@ class NotebookProcessor:
             self._print_and_log(
                 f"Copied and cleaned student notebook: {student_notebook} -> {self.root_folder}"
             )
-            
+
+            # Remove the keys
             os.remove(client_private_key)
             os.remove(server_public_key)
 
