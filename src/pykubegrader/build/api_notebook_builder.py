@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 import json
 import nbformat
 import json
 import re
+import shutil
 
 
 @dataclass
@@ -14,6 +16,10 @@ class FastAPINotebookBuilder:
         self.root_path, self.filename = FastAPINotebookBuilder.get_filename_and_root(
             self.notebook_path
         )
+        shutil.copy(
+            self.notebook_path, self.notebook_path.replace(".ipynb", "_temp.ipynb")
+        )
+        self.temp_notebook = self.notebook_path.replace(".ipynb", "_temp.ipynb")
 
         self.import_cell = self.extract_first_cell()
         self.import_cell = self.add_imports()
@@ -25,6 +31,10 @@ class FastAPINotebookBuilder:
     def add_api_code(self):
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
+            print(
+                f"Processing cell {cell_index + 1} of {len(self.assertion_tests_dict)}"
+            )
+
             cell = self.get_cell(cell_index)
             cell_source = FastAPINotebookBuilder.add_import_statements_to_tests(
                 cell["source"]
@@ -34,29 +44,39 @@ class FastAPINotebookBuilder:
                 cell_source
             )
 
-            top_cell_source = []
+            # header, body = FastAPINotebookBuilder.split_list_at_marker(cell_source)
 
+            updated_cell_source = []
+            updated_cell_source.extend(cell_source[: last_import_line_ind + 1])
             if cell_dict["is_first"]:
-                top_cell_source.extend(
+                updated_cell_source.extend(
                     self.construct_first_cell_question_header(cell_dict)
                 )
-            top_cell_source.extend(["\n"])
-            top_cell_source.extend(
+            updated_cell_source.extend(["\n"])
+            updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_question_info(cell_dict)
             )
-            top_cell_source.extend(
+            updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_update_responses(cell_dict)
             )
-            top_cell_source.extend(FastAPINotebookBuilder.construct_graders(cell_dict))
-            top_cell_source.extend(["\n"])
-            top_cell_source.extend(["earned_total += score\n"])
-            top_cell_source.extend(
+
+            updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
+            updated_cell_source.extend(["\n"])
+
+            updated_cell_source.extend(
+                FastAPINotebookBuilder.construct_graders(cell_dict)
+            )
+            updated_cell_source.extend(["\n"])
+            updated_cell_source.extend(["earned_points += score\n"])
+            updated_cell_source.extend(
                 [f'log_variable(f"{{score}}, {{max_score}}", question_id)']
             )
 
-            self.cell_source = FastAPINotebookBuilder.insert_list_at_index(
-                cell_source, top_cell_source, last_import_line_ind + 1
-            )
+            # cell_source = FastAPINotebookBuilder.insert_list_at_index(
+            #     cell_source, updated_cell_source, last_import_line_ind + 1
+            # )
+
+            self.replace_cell_source(cell_index, updated_cell_source)
 
     def construct_first_cell_question_header(self, cell_dict):
         max_question_points = sum(
@@ -65,33 +85,58 @@ class FastAPINotebookBuilder:
             if cell["question"] == cell_dict["question"]
         )
 
-        first_cell_header = ["max_question_points = " + str(max_question_points)]
-        first_cell_header.append("earned_points = 0")
+        first_cell_header = ["max_question_points = " + str(max_question_points) + "\n"]
+        first_cell_header.append("earned_points = 0 \n")
 
         return first_cell_header
 
     @staticmethod
     def construct_update_responses(cell_dict):
         update_responses = []
-        question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"])
+        question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"]) + "\n"
 
         logging_variables = cell_dict["logging_variables"]
 
         for logging_variable in logging_variables:
             update_responses.append(
-                f"responses = update_responses({question_id}, {logging_variable})"
+                f"responses = update_responses(question_id, {logging_variable})\n"
             )
 
         return update_responses
+
+    @staticmethod
+    def split_list_at_marker(input_list, marker="""# END TEST CONFIG"""):
+        """
+        Splits a list into two parts at the specified marker string.
+
+        Args:
+            input_list (list): The list to split.
+            marker (str): The string at which to split the list.
+
+        Returns:
+            tuple: A tuple containing two lists. The first list contains the elements
+                before the marker, and the second list contains the elements after
+                the marker (excluding the marker itself).
+        """
+        if marker in input_list:
+            index = input_list.index(marker)
+            return input_list[: index + 1], input_list[index + 2 :]
+        else:
+            return (
+                input_list,
+                [],
+            )  # If the marker is not in the list, return the original list and an empty list
 
     @staticmethod
     def construct_graders(cell_dict):
 
         # Generate Python code
         added_code = [
-            "if " + " and ".join(f"({test})" for test in cell_dict["assertions"]) + ":"
+            "if "
+            + " and ".join(f"({test})" for test in cell_dict["assertions"])
+            + ":\n"
         ]
-        added_code.append(f"    score = {cell_dict['points']}")
+        added_code.append(f"    score = {cell_dict['points']}\n")
 
         return added_code
 
@@ -101,9 +146,9 @@ class FastAPINotebookBuilder:
 
         question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"])
 
-        question_info.append(f'question_id = "{question_id}"')
-        question_info.append(f'max_score = {cell_dict["points"]}')
-        question_info.append("score = 0")
+        question_info.append(f'question_id = "{question_id}"' + "\n")
+        question_info.append(f'max_score = {cell_dict["points"]}\n')
+        question_info.append("score = 0\n")
 
         return question_info
 
@@ -144,14 +189,14 @@ class FastAPINotebookBuilder:
 
         # Imports to add
         imports = [
-            "from pygrader_utils.telemetry import (\n",
+            "from pykubegrader.telemetry import (\n",
             "    ensure_responses,\n",
             "    log_variable,\n",
             "    score_question,\n",
             "    submit_question_new,\n",
             "    telemetry,\n",
             "    update_responses,\n",
-            ")",
+            ")\n",
         ]
 
         for i, line in enumerate(cell_source):
@@ -192,7 +237,7 @@ class FastAPINotebookBuilder:
         return "\n".join(lines)
 
     def extract_first_cell(self):
-        with open(self.notebook_path, "r", encoding="utf-8") as f:
+        with open(self.temp_notebook, "r", encoding="utf-8") as f:
             notebook = json.load(f)
         if "cells" in notebook and len(notebook["cells"]) > 0:
             return notebook["cells"][0]
@@ -207,24 +252,23 @@ class FastAPINotebookBuilder:
         return root_path, filename
 
     def get_cell(self, cell_index):
-        with open(self.notebook_path, "r", encoding="utf-8") as f:
+        with open(self.temp_notebook, "r", encoding="utf-8") as f:
             notebook = json.load(f)
         if "cells" in notebook and len(notebook["cells"]) > cell_index:
             return notebook["cells"][cell_index]
         else:
             return None
 
-    def replace_cell_source(self, cell_index, new_source, output_path=None):
+    def replace_cell_source(self, cell_index, new_source):
         """
         Replace the source code of a specific Jupyter notebook cell.
 
         Args:
             cell_index (int): Index of the cell to be modified (0-based).
             new_source (str): New source code to replace the cell's content.
-            output_path (str): Path to save the modified notebook (default is to overwrite the original).
         """
         # Load the notebook
-        with open(self.notebook_path, "r", encoding="utf-8") as f:
+        with open(self.temp_notebook, "r", encoding="utf-8") as f:
             notebook = nbformat.read(f, as_version=4)
 
         # Check if the cell index is valid
@@ -237,12 +281,9 @@ class FastAPINotebookBuilder:
         notebook.cells[cell_index]["source"] = new_source
 
         # Save the notebook
-        output_path = (
-            output_path or self.notebook_path
-        )  # Overwrite original if no output path is provided
-        with open(output_path, "w", encoding="utf-8") as f:
+        with open(self.temp_notebook, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
-        print(f"Updated notebook saved to {output_path}")
+        print(f"Updated notebook saved to {self.temp_notebook}")
 
     @staticmethod
     def find_last_import_line(cell_source):
@@ -339,18 +380,19 @@ class FastAPINotebookBuilder:
 
     def question_dict(self):
         """
-        Extracts all logical conditions from `assert` statements in Jupyter notebook cells
+        Extracts all logical conditions and optional comments from `assert` statements in Jupyter notebook cells
         that start with ''''# BEGIN TEST CONFIG'. Also extracts the first line containing `points:`
         and adds the points value to the dictionary.
 
         Returns:
             dict: A dictionary where keys are cell indices and values are dictionaries containing:
-                - "assertions": A list of logical conditions extracted from assert statements.
-                - "points": The points value extracted from the first `points:` line.
+                    - "assertions": A list of logical conditions extracted from assert statements.
+                    - "comments": A list of optional comments/messages after the assertions.
+                    - "points": The points value extracted from the first `points:` line.
         """
 
         # Read the notebook file
-        notebook_path = Path(self.notebook_path)
+        notebook_path = Path(self.temp_notebook)
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
 
@@ -383,17 +425,24 @@ class FastAPINotebookBuilder:
                         cell
                     )
 
-                    # Extract all assert statements using regex (handles single-line and multiline assertions)
-                    matches = re.findall(r"assert\s+(.*?)(?:,|$)", source, re.DOTALL)
+                    # Extract all assert statements (logical condition and optional comment)
+                    matches = re.findall(
+                        r"assert\s+(.*?)(?:,\s*\"(.*?)\")?(?:\n|$)", source, re.DOTALL
+                    )
 
-                    # Process assertions
+                    # Separate assertions and comments
                     cleaned_matches = []
+                    comments = []
                     for match in matches:
-                        # Handle multiline assertions
-                        cleaned_condition = " ".join(
-                            line.strip() for line in match.splitlines()
+                        # Logical condition
+                        logical_condition = " ".join(
+                            line.strip() for line in match[0].splitlines()
                         )
-                        cleaned_matches.append(cleaned_condition)
+                        cleaned_matches.append(logical_condition)
+
+                        # Optional comment/message
+                        comment = match[1].strip() if match[1] else None
+                        comments.append(comment)
 
                     # Extract the first line containing `points:`
                     points_line = next(
@@ -406,9 +455,10 @@ class FastAPINotebookBuilder:
                         except ValueError:
                             points_value = None  # Handle cases where the points value is not a valid number
 
-                    # Add assertions and points to the dictionary
+                    # Add assertions, comments, and points to the dictionary
                     results_dict[cell_index] = {
                         "assertions": cleaned_matches,
+                        "comments": comments,
                         "question": question_name,
                         "points": points_value,
                         "logging_variables": logging_variables,
