@@ -379,19 +379,7 @@ class FastAPINotebookBuilder:
         return cells_dict
 
     def question_dict(self):
-        """
-        Extracts all logical conditions and optional comments from `assert` statements in Jupyter notebook cells
-        that start with ''''# BEGIN TEST CONFIG'. Also extracts the first line containing `points:`
-        and adds the points value to the dictionary.
 
-        Returns:
-            dict: A dictionary where keys are cell indices and values are dictionaries containing:
-                    - "assertions": A list of logical conditions extracted from assert statements.
-                    - "comments": A list of optional comments/messages after the assertions.
-                    - "points": The points value extracted from the first `points:` line.
-        """
-
-        # Read the notebook file
         notebook_path = Path(self.temp_notebook)
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
@@ -399,52 +387,103 @@ class FastAPINotebookBuilder:
         with open(notebook_path, "r", encoding="utf-8") as f:
             notebook = json.load(f)
 
-        # Initialize the dictionary to store conditions and points
         results_dict = {}
 
-        # Iterate through the cells in the notebook
         for cell_index, cell in enumerate(notebook.get("cells", [])):
             if cell.get("cell_type") == "raw":
-                source = "".join(
-                    cell.get("source", "")
-                )  # Join the cell source as a string
+                source = "".join(cell.get("source", ""))
                 if source.strip().startswith("# BEGIN QUESTION"):
                     question_name = re.search(r"name:\s*(.*)", source)
                     question_name = (
                         question_name.group(1).strip() if question_name else None
                     )
+
             elif cell.get("cell_type") == "code":
-                source = "".join(
-                    cell.get("source", "")
-                )  # Join the cell source as a string
+                source = "".join(cell.get("source", ""))
 
-                # Check if the cell starts with """ # BEGIN TEST CONFIG
                 if source.strip().startswith('""" # BEGIN TEST CONFIG'):
-
                     logging_variables = FastAPINotebookBuilder.extract_log_variables(
                         cell
                     )
 
-                    # Extract all assert statements (logical condition and optional comment)
-                    matches = re.findall(
-                        r"assert\s+(.*?)(?:,\s*\"(.*?)\")?(?:\n|$)", source, re.DOTALL
-                    )
-
-                    # Separate assertions and comments
-                    cleaned_matches = []
+                    # Extract assert statements using a more robust approach
+                    assertions = []
                     comments = []
-                    for match in matches:
-                        # Logical condition
-                        logical_condition = " ".join(
-                            line.strip() for line in match[0].splitlines()
-                        )
-                        cleaned_matches.append(logical_condition)
 
-                        # Optional comment/message
-                        comment = match[1].strip() if match[1] else None
-                        comments.append(comment)
+                    # Split the source into lines for processing
+                    lines = source.split("\n")
+                    i = 0
+                    while i < len(lines):
+                        line = lines[i].strip()
+                        if line.startswith("assert"):
+                            # Initialize assertion collection
+                            assertion_lines = []
+                            comment = None
 
-                    # Extract the first line containing `points:`
+                            # Handle the first line
+                            first_line = line[6:].strip()  # Remove 'assert' keyword
+                            assertion_lines.append(first_line)
+
+                            # Stack to track parentheses
+                            paren_stack = []
+                            for char in first_line:
+                                if char == "(":
+                                    paren_stack.append(char)
+                                elif char == ")":
+                                    if paren_stack:
+                                        paren_stack.pop()
+
+                            # Continue collecting lines while we have unclosed parentheses
+                            current_line = i + 1
+                            while paren_stack and current_line < len(lines):
+                                next_line = lines[current_line].strip()
+                                assertion_lines.append(next_line)
+
+                                for char in next_line:
+                                    if char == "(":
+                                        paren_stack.append(char)
+                                    elif char == ")":
+                                        if paren_stack:
+                                            paren_stack.pop()
+
+                                current_line += 1
+
+                            # Join the assertion lines and clean up
+                            full_assertion = " ".join(assertion_lines)
+
+                            # Extract the comment if it exists (handling both f-strings and regular strings)
+                            comment_match = re.search(
+                                r',\s*(?:f?["\'])(.*?)(?:["\'])\s*(?:\)|$)',
+                                full_assertion,
+                            )
+                            if comment_match:
+                                comment = comment_match.group(1).strip()
+                                # Remove the comment from the assertion
+                                full_assertion = full_assertion[
+                                    : comment_match.start()
+                                ].strip()
+
+                            # Ensure proper parentheses closure
+                            open_count = full_assertion.count("(")
+                            close_count = full_assertion.count(")")
+                            if open_count > close_count:
+                                full_assertion += ")" * (open_count - close_count)
+
+                            # Clean up the assertion
+                            if full_assertion.startswith(
+                                "("
+                            ) and not full_assertion.endswith(")"):
+                                full_assertion += ")"
+
+                            assertions.append(full_assertion)
+                            comments.append(comment)
+
+                            # Update the line counter
+                            i = current_line
+                        else:
+                            i += 1
+
+                    # Extract points value
                     points_line = next(
                         (line for line in source.split("\n") if "points:" in line), None
                     )
@@ -453,11 +492,11 @@ class FastAPINotebookBuilder:
                         try:
                             points_value = float(points_line.split(":")[-1].strip())
                         except ValueError:
-                            points_value = None  # Handle cases where the points value is not a valid number
+                            points_value = None
 
-                    # Add assertions, comments, and points to the dictionary
+                    # Add to results dictionary
                     results_dict[cell_index] = {
-                        "assertions": cleaned_matches,
+                        "assertions": assertions,
                         "comments": comments,
                         "question": question_name,
                         "points": points_value,
