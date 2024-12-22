@@ -30,8 +30,6 @@ class FastAPINotebookBuilder:
         else:
             self.temp_notebook = self.notebook_path
 
-        self.import_cell = self.extract_first_cell()
-        self.import_cell = self.add_imports()
         self.assertion_tests_dict = self.question_dict()
         self.add_api_code()
 
@@ -221,35 +219,6 @@ class FastAPINotebookBuilder:
                     "\n"
                 ] + imports  # Add a blank line for readability
                 return cell_source  # Exit the loop once the imports are inserted
-
-    def add_imports(
-        self, import_text="from pykubegrader.initialize import initialize_assignment"
-    ):
-        """
-        Adds the necessary imports to the first cell of the notebook.
-        """
-
-        lines = self.import_cell["source"]
-        last_import_index = -1
-
-        # Find the index of the last 'import' line
-        for i, line in enumerate(lines):
-            stripped_line = line.strip()
-            if stripped_line.startswith("import") or stripped_line.startswith("from"):
-                last_import_index = i
-
-        # Insert the new import line after the last import
-        if last_import_index != -1:
-            lines.insert(last_import_index + 1, import_text)
-        else:
-            # If no import is found, add the new import line at the top
-            lines.insert(0, import_text)
-
-        # adds the initialize assignment line
-        lines.append(f'responses = initialize_assignment("{self.filename}")')
-        lines = [line.replace("\n", "") for line in lines]
-
-        return "\n".join(lines)
 
     def extract_first_cell(self):
         with open(self.temp_notebook, "r", encoding="utf-8") as f:

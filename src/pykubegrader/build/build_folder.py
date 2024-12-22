@@ -295,10 +295,15 @@ class NotebookProcessor:
             self.run_otter_assign(
                 temp_notebook_path, os.path.join(notebook_subfolder, "dist")
             )
+
             student_notebook = os.path.join(
                 notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
             )
+
+            NotebookProcessor.add_initialization_code(student_notebook)
+
             self.clean_notebook(student_notebook)
+
             NotebookProcessor.replace_temp_in_notebook(
                 student_notebook, student_notebook
             )
@@ -319,7 +324,18 @@ class NotebookProcessor:
 
             return student_notebook
         else:
+            NotebookProcessor.add_initialization_code(temp_notebook_path)
             return None
+
+    @staticmethod
+    def add_initialization_code(notebook_path):
+        # finds the first code cell
+        index, cell = find_first_code_cell(notebook_path)
+        cell = cell['source']
+        import_text = "from pykubegrader.initialize import initialize_assignment\n"
+        cell = f"{import_text}\n" + cell
+        cell += f'\nresponses = initialize_assignment("{os.path.basename(notebook_path)}")\n'
+        replace_cell_source(notebook_path, index, cell)
 
     def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
 
@@ -1534,6 +1550,54 @@ def sanitize_string(input_string):
     sanitized = re.sub(r"\W|^(?=\d)", "_", input_string)
     return sanitized
 
+
+def find_first_code_cell(notebook_path):
+    """
+    Finds the first Python code cell in a Jupyter notebook and its index.
+
+    Args:
+        notebook_path (str): Path to the Jupyter notebook file.
+
+    Returns:
+        tuple: A tuple containing the index of the first code cell and the cell dictionary,
+            or (None, None) if no code cell is found.
+    """
+    # Load the notebook
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        notebook = nbformat.read(f, as_version=4)
+
+    # Iterate through the cells to find the first code cell
+    for index, cell in enumerate(notebook.get("cells", [])):
+        if cell.get("cell_type") == "code":
+            return index, cell  # Return the index and the first code cell
+
+    return None, None  # No code cell found
+
+
+def replace_cell_source(notebook_path, cell_index, new_source):
+        """
+        Replace the source code of a specific Jupyter notebook cell.
+
+        Args:
+            cell_index (int): Index of the cell to be modified (0-based).
+            new_source (str): New source code to replace the cell's content.
+        """
+        # Load the notebook
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            notebook = nbformat.read(f, as_version=4)
+
+        # Check if the cell index is valid
+        if cell_index >= len(notebook.cells) or cell_index < 0:
+            raise IndexError(
+                f"Cell index {cell_index} is out of range for this notebook."
+            )
+
+        # Replace the source code of the specified cell
+        notebook.cells[cell_index]["source"] = new_source
+
+        # Save the notebook
+        with open(notebook_path, "w", encoding="utf-8") as f:
+            nbformat.write(notebook, f)
 
 def main():
     parser = argparse.ArgumentParser(
