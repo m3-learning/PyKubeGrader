@@ -20,7 +20,7 @@ class FastAPINotebookBuilder:
         self.run()
 
     def run(self):
-        
+
         # here for easy debugging
         if self.temp_notebook is not None:
             shutil.copy(
@@ -29,16 +29,18 @@ class FastAPINotebookBuilder:
             self.temp_notebook = self.notebook_path.replace(".ipynb", "_temp.ipynb")
         else:
             self.temp_notebook = self.notebook_path
-            
+
         self.import_cell = self.extract_first_cell()
         self.import_cell = self.add_imports()
         self.assertion_tests_dict = self.question_dict()
         self.add_api_code()
-        
+
     def add_api_code(self):
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
-            print(f"Processing cell {cell_index + 1} of {len(self.assertion_tests_dict)}")
+            print(
+                f"Processing cell {cell_index + 1} of {len(self.assertion_tests_dict)}"
+            )
 
             cell = self.get_cell(cell_index)
             cell_source = FastAPINotebookBuilder.add_import_statements_to_tests(
@@ -52,14 +54,20 @@ class FastAPINotebookBuilder:
             # header, body = FastAPINotebookBuilder.split_list_at_marker(cell_source)
 
             updated_cell_source = []
-            updated_cell_source.extend(cell_source[:last_import_line_ind + 1])
+            updated_cell_source.extend(cell_source[: last_import_line_ind + 1])
             if cell_dict["is_first"]:
-                updated_cell_source.extend(self.construct_first_cell_question_header(cell_dict))
+                updated_cell_source.extend(
+                    self.construct_first_cell_question_header(cell_dict)
+                )
             updated_cell_source.extend(["\n"])
-            updated_cell_source.extend(FastAPINotebookBuilder.construct_question_info(cell_dict))
-            updated_cell_source.extend(FastAPINotebookBuilder.construct_update_responses(cell_dict))
+            updated_cell_source.extend(
+                FastAPINotebookBuilder.construct_question_info(cell_dict)
+            )
+            updated_cell_source.extend(
+                FastAPINotebookBuilder.construct_update_responses(cell_dict)
+            )
 
-            updated_cell_source.extend(cell_source[last_import_line_ind + 1:])
+            updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
             updated_cell_source.extend(["\n"])
 
             updated_cell_source.extend(
@@ -84,7 +92,7 @@ class FastAPINotebookBuilder:
             if cell["question"] == cell_dict["question"]
         )
 
-        first_cell_header = ["max_question_points = " + str(max_question_points)+ "\n"]
+        first_cell_header = ["max_question_points = " + str(max_question_points) + "\n"]
         first_cell_header.append("earned_points = 0 \n")
 
         return first_cell_header
@@ -119,15 +127,22 @@ class FastAPINotebookBuilder:
         """
         if marker in input_list:
             index = input_list.index(marker)
-            return input_list[:index+1], input_list[index + 2 :]
+            return input_list[: index + 1], input_list[index + 2 :]
         else:
-            return input_list, []  # If the marker is not in the list, return the original list and an empty list
+            return (
+                input_list,
+                [],
+            )  # If the marker is not in the list, return the original list and an empty list
 
     @staticmethod
     def construct_graders(cell_dict):
 
         # Generate Python code
-        added_code = ["if " + " and ".join(f"({test})" for test in cell_dict["assertions"]) + ":\n"]
+        added_code = [
+            "if "
+            + " and ".join(f"({test})" for test in cell_dict["assertions"])
+            + ":\n"
+        ]
         added_code.append(f"    score = {cell_dict['points']}\n")
 
         return added_code
@@ -297,7 +312,9 @@ class FastAPINotebookBuilder:
 
             if is_multiline_import:
                 # Continue tracking multiline import
-                if stripped_line.endswith("\\") or (stripped_line and not stripped_line.endswith(")")):
+                if stripped_line.endswith("\\") or (
+                    stripped_line and not stripped_line.endswith(")")
+                ):
                     last_import_index = i  # Update to current line
                     continue
                 else:
@@ -384,24 +401,28 @@ class FastAPINotebookBuilder:
                 source = "".join(cell.get("source", ""))
                 if source.strip().startswith("# BEGIN QUESTION"):
                     question_name = re.search(r"name:\s*(.*)", source)
-                    question_name = question_name.group(1).strip() if question_name else None
+                    question_name = (
+                        question_name.group(1).strip() if question_name else None
+                    )
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
 
                 if source.strip().startswith('""" # BEGIN TEST CONFIG'):
-                    logging_variables = FastAPINotebookBuilder.extract_log_variables(cell)
+                    logging_variables = FastAPINotebookBuilder.extract_log_variables(
+                        cell
+                    )
 
                     # Extract assert statements using a more robust approach
                     assertions = []
                     comments = []
 
                     # Split the source into lines for processing
-                    lines = source.split('\n')
+                    lines = source.split("\n")
                     i = 0
                     while i < len(lines):
                         line = lines[i].strip()
-                        if line.startswith('assert'):
+                        if line.startswith("assert"):
                             # Initialize assertion collection
                             assertion_lines = []
                             comment = None
@@ -413,9 +434,9 @@ class FastAPINotebookBuilder:
                             # Stack to track parentheses
                             paren_stack = []
                             for char in first_line:
-                                if char == '(':
+                                if char == "(":
                                     paren_stack.append(char)
-                                elif char == ')':
+                                elif char == ")":
                                     if paren_stack:
                                         paren_stack.pop()
 
@@ -426,33 +447,40 @@ class FastAPINotebookBuilder:
                                 assertion_lines.append(next_line)
 
                                 for char in next_line:
-                                    if char == '(':
+                                    if char == "(":
                                         paren_stack.append(char)
-                                    elif char == ')':
+                                    elif char == ")":
                                         if paren_stack:
                                             paren_stack.pop()
 
                                 current_line += 1
 
                             # Join the assertion lines and clean up
-                            full_assertion = ' '.join(assertion_lines)
+                            full_assertion = " ".join(assertion_lines)
 
                             # Extract the comment if it exists (handling both f-strings and regular strings)
-                            comment_match = re.search(r',\s*(?:f?["\'])(.*?)(?:["\'])\s*(?:\)|$)', full_assertion)
+                            comment_match = re.search(
+                                r',\s*(?:f?["\'])(.*?)(?:["\'])\s*(?:\)|$)',
+                                full_assertion,
+                            )
                             if comment_match:
                                 comment = comment_match.group(1).strip()
                                 # Remove the comment from the assertion
-                                full_assertion = full_assertion[:comment_match.start()].strip()
+                                full_assertion = full_assertion[
+                                    : comment_match.start()
+                                ].strip()
 
                             # Ensure proper parentheses closure
-                            open_count = full_assertion.count('(')
-                            close_count = full_assertion.count(')')
+                            open_count = full_assertion.count("(")
+                            close_count = full_assertion.count(")")
                             if open_count > close_count:
-                                full_assertion += ')' * (open_count - close_count)
+                                full_assertion += ")" * (open_count - close_count)
 
                             # Clean up the assertion
-                            if full_assertion.startswith('(') and not full_assertion.endswith(')'):
-                                full_assertion += ')'
+                            if full_assertion.startswith(
+                                "("
+                            ) and not full_assertion.endswith(")"):
+                                full_assertion += ")"
 
                             assertions.append(full_assertion)
                             comments.append(comment)
@@ -464,8 +492,7 @@ class FastAPINotebookBuilder:
 
                     # Extract points value
                     points_line = next(
-                        (line for line in source.split("\n") if "points:" in line),
-                        None
+                        (line for line in source.split("\n") if "points:" in line), None
                     )
                     points_value = None
                     if points_line:
