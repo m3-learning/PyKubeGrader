@@ -8,9 +8,11 @@ import requests
 from .telemetry import telemetry, update_responses, ensure_responses
 
 
+
 def initialize_assignment(name: str, 
                           verbose: Optional[bool] = False,
                           url: Optional[str] = "https://engr-131-api.eastus.cloudapp.azure.com/") -> None:
+
     ipython = get_ipython()
     if ipython is None:
         print("Setup unsuccessful. Are you in a Jupyter environment?")
