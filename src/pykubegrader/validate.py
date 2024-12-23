@@ -22,8 +22,7 @@ def validate_logfile(
     free_response_questions=0,
     username="student",
     password="capture",
-    post_url="https://engr-131-api.eastus.cloudapp.azure.com/upload-score",
-    login_url="https://engr-131-api.eastus.cloudapp.azure.com/login",
+    base_url="https://engr-131-api.eastus.cloudapp.azure.com",
 ) -> None:
     login_data = {
         "username": username,
@@ -219,6 +218,7 @@ def validate_logfile(
         print("Writing to results.json")
         json.dump(result_structure, file, indent=4)
 
+    login_url = f"{base_url}/login"
     verify_login(login_data, login_url)
 
     # The file to be uploaded. Ensure the path is correct.
@@ -241,6 +241,8 @@ def validate_logfile(
     _files = {
         "file": (file_path, open(file_path, "rb")),
     }
+
+    post_url = f"{base_url}/upload-score"
 
     # Make the POST request with data and files
     response = requests.post(
