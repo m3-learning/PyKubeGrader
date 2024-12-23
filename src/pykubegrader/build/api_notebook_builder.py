@@ -37,7 +37,7 @@ class FastAPINotebookBuilder:
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
             print(
-                f"Processing cell {cell_index + 1} of {len(self.assertion_tests_dict)}"
+                f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}"
             )
 
             cell = self.get_cell(cell_index)
@@ -283,7 +283,7 @@ class FastAPINotebookBuilder:
         """
         last_import_index = -1
         is_multiline_import = False  # Flag to track if we're inside a multiline import
-
+        
         for i, line in enumerate(cell_source):
             stripped_line = line.strip()
 

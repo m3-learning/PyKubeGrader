@@ -166,6 +166,8 @@ class NotebookProcessor:
         Returns:
             None
         """
+        
+        print(f"Processing notebook: {notebook_path}")
 
         logging.info(f"Processing notebook: {notebook_path}")
         notebook_name = os.path.splitext(os.path.basename(notebook_path))[0]
