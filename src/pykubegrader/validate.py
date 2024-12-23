@@ -29,15 +29,8 @@ def validate_logfile(
         "password": password,
     }
 
-    with open("server_private_key.bin", "rb") as priv_file:
-        server_private_key_bytes = priv_file.read()
-    server_priv_key = nacl.public.PrivateKey(server_private_key_bytes)
-
-    with open("client_public_key.bin", "rb") as pub_file:
-        client_public_key_bytes = pub_file.read()
-    client_pub_key = nacl.public.PublicKey(client_public_key_bytes)
-
-    box = nacl.public.Box(server_priv_key, client_pub_key)
+    # Generate box from private and public keys
+    key_box = generate_keys()
 
     with open(filepath, "r") as logfile:
         encrypted_lines = logfile.readlines()
@@ -47,7 +40,7 @@ def validate_logfile(
         if "Encrypted Output: " in line:
             trimmed = line.split("Encrypted Output: ")[1].strip()
             decoded = base64.b64decode(trimmed)
-            decrypted = box.decrypt(decoded).decode()
+            decrypted = key_box.decrypt(decoded).decode()
             data_.append(decrypted)
 
     # Decoding the log file
@@ -259,6 +252,20 @@ def validate_logfile(
 #
 # Helper functions
 #
+
+
+def generate_keys() -> nacl.public.Box:
+    with open("server_private_key.bin", "rb") as priv_file:
+        server_private_key_bytes = priv_file.read()
+    server_priv_key = nacl.public.PrivateKey(server_private_key_bytes)
+
+    with open("client_public_key.bin", "rb") as pub_file:
+        client_public_key_bytes = pub_file.read()
+    client_pub_key = nacl.public.PublicKey(client_public_key_bytes)
+
+    box = nacl.public.Box(server_priv_key, client_pub_key)
+
+    return box
 
 
 def get_entries_len(data: list[str], question_number: int) -> int:
