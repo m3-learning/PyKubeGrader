@@ -36,19 +36,20 @@ def encrypt_to_b64(message: str) -> str:
 
 
 def ensure_responses() -> dict:
+
     with open(".responses.json", "a") as _:
         pass
 
-    data = {}
+    responses = {}
 
     try:
         with open(".responses.json", "r") as f:
-            data = json.load(f)
+            responses = json.load(f)
     except json.JSONDecodeError:
         with open(".responses.json", "w") as f:
-            json.dump(data, f)
-
-    return data
+            json.dump(responses, f)
+    
+    return responses
 
 
 def log_encrypted(message: str) -> None:

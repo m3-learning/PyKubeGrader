@@ -8,8 +8,8 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field
-
 import nbformat
+from .api_notebook_builder import FastAPINotebookBuilder
 
 
 @dataclass
@@ -166,6 +166,8 @@ class NotebookProcessor:
         Returns:
             None
         """
+        
+        print(f"Processing notebook: {notebook_path}")
 
         logging.info(f"Processing notebook: {notebook_path}")
         notebook_name = os.path.splitext(os.path.basename(notebook_path))[0]
@@ -195,6 +197,149 @@ class NotebookProcessor:
             self._print_and_log(f"Moved: {notebook_path} -> {new_notebook_path}")
         else:
             self._print_and_log(f"Notebook already in destination: {new_notebook_path}")
+
+        solution_path_1, question_path = self.multiple_choice_parser(
+            temp_notebook_path, new_notebook_path
+        )
+        solution_path_2, question_path = self.true_false_parser(
+            temp_notebook_path, new_notebook_path
+        )
+        solution_path_3, question_path = self.select_many_parser(
+            temp_notebook_path, new_notebook_path
+        )
+
+        if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
+            solution_path = solution_path_1 or solution_path_2 or solution_path_3
+
+        student_notebook = self.free_response_parser(
+            temp_notebook_path, notebook_subfolder, notebook_name
+        )
+
+        # If Otter does not run, move the student file to the main directory
+        if student_notebook is None:
+            path_ = shutil.copy(temp_notebook_path, self.root_folder)
+            self._print_and_log(
+                f"Copied and cleaned student notebook: {path_} -> {self.root_folder}"
+            )
+
+        # Move the solution file to the autograder folder
+        if solution_path is not None:
+            # gets importable file name
+            importable_file_name = sanitize_string(
+                os.path.splitext(os.path.basename(solution_path))[0]
+            )
+
+            # Move the solution file to the autograder folder
+            os.rename(
+                solution_path,
+                os.path.join(autograder_path, f"{importable_file_name}.py"),
+            )
+
+        if question_path is not None:
+            shutil.move(question_path, student_path)
+
+        # Remove the temp copy of the notebook
+        os.remove(temp_notebook_path)
+
+        # Remove all postfix from filenames in dist
+        NotebookProcessor.remove_postfix(autograder_path, "_solutions")
+        NotebookProcessor.remove_postfix(student_path, "_questions")
+        NotebookProcessor.remove_postfix(self.root_folder, "_temp")
+
+        ### CODE TO ENSURE THAT STUDENT NOTEBOOK IS IMPORTABLE
+        if question_path is not None:
+            # question_root_path = os.path.dirname(question_path)
+            question_file_name = os.path.basename(question_path)
+            question_file_name_sanitized = sanitize_string(
+                question_file_name.replace("_questions", "")
+            )
+            if question_file_name_sanitized.endswith("_py"):
+                question_file_name_sanitized = question_file_name_sanitized[:-3] + ".py"
+
+            # Rename the file
+            os.rename(
+                os.path.join(
+                    student_path, question_file_name.replace("_questions", "")
+                ),
+                os.path.join(student_path, question_file_name_sanitized),
+            )
+
+            # Ensure the "questions" folder exists
+            questions_folder_jbook = os.path.join(self.root_folder, "questions")
+            os.makedirs(questions_folder_jbook, exist_ok=True)
+
+            # Copy the renamed file to the "questions" folder
+            shutil.copy(
+                os.path.join(student_path, question_file_name_sanitized),
+                os.path.join(questions_folder_jbook, question_file_name_sanitized),
+            )
+
+    def free_response_parser(
+        self, temp_notebook_path, notebook_subfolder, notebook_name
+    ):
+        if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
+
+            # TODO: This is hardcoded for now, but should be in a configuration file.
+            client_private_key = os.path.join(
+                notebook_subfolder,
+                "client_private_key.bin",
+            )
+            server_public_key = os.path.join(
+                notebook_subfolder,
+                "server_public_key.bin",
+            )
+
+            shutil.copy("./keys/client_private_key.bin", client_private_key)
+            shutil.copy("./keys/server_public_key.bin", server_public_key)
+
+            FastAPINotebookBuilder(notebook_path=temp_notebook_path)
+
+            self.run_otter_assign(
+                temp_notebook_path, os.path.join(notebook_subfolder, "dist")
+            )
+
+            student_notebook = os.path.join(
+                notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
+            )
+
+            NotebookProcessor.add_initialization_code(student_notebook)
+
+            self.clean_notebook(student_notebook)
+
+            NotebookProcessor.replace_temp_in_notebook(
+                student_notebook, student_notebook
+            )
+            autograder_notebook = os.path.join(
+                notebook_subfolder, "dist", "autograder", f"{notebook_name}.ipynb"
+            )
+            NotebookProcessor.replace_temp_in_notebook(
+                autograder_notebook, autograder_notebook
+            )
+            shutil.copy(student_notebook, self.root_folder)
+            self._print_and_log(
+                f"Copied and cleaned student notebook: {student_notebook} -> {self.root_folder}"
+            )
+
+            # Remove the keys
+            os.remove(client_private_key)
+            os.remove(server_public_key)
+
+            return student_notebook
+        else:
+            NotebookProcessor.add_initialization_code(temp_notebook_path)
+            return None
+
+    @staticmethod
+    def add_initialization_code(notebook_path):
+        # finds the first code cell
+        index, cell = find_first_code_cell(notebook_path)
+        cell = cell['source']
+        import_text = "from pykubegrader.initialize import initialize_assignment\n"
+        cell = f"{import_text}\n" + cell
+        cell += f'\nresponses = initialize_assignment("{os.path.basename(notebook_path)}")\n'
+        replace_cell_source(notebook_path, index, cell)
+
+    def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
 
         ### Parse the notebook for multiple choice questions
         if self.has_assignment(temp_notebook_path, "# BEGIN MULTIPLE CHOICE"):
@@ -229,6 +374,11 @@ class NotebookProcessor:
                 data, markers, temp_notebook_path, temp_notebook_path
             )
 
+            return solution_path, question_path
+        else:
+            return None, None
+
+    def true_false_parser(self, temp_notebook_path, new_notebook_path):
         ### Parse the notebook for TF questions
         if self.has_assignment(temp_notebook_path, "# BEGIN TF"):
             markers = ("# BEGIN TF", "# END TF")
@@ -260,6 +410,11 @@ class NotebookProcessor:
                 data, markers, temp_notebook_path, temp_notebook_path
             )
 
+            return solution_path, question_path
+        else:
+            return None, None
+
+    def select_many_parser(self, temp_notebook_path, new_notebook_path):
         ### Parse the notebook for select_many questions
         if self.has_assignment(temp_notebook_path, "# BEGIN SELECT MANY"):
             markers = ("# BEGIN SELECT MANY", "# END SELECT MANY")
@@ -291,86 +446,9 @@ class NotebookProcessor:
                 data, markers, temp_notebook_path, temp_notebook_path
             )
 
-        if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
-            self.run_otter_assign(
-                temp_notebook_path, os.path.join(notebook_subfolder, "dist")
-            )
-            student_notebook = os.path.join(
-                notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
-            )
-            self.clean_notebook(student_notebook)
-            NotebookProcessor.replace_temp_in_notebook(
-                student_notebook, student_notebook
-            )
-            autograder_notebook = os.path.join(
-                notebook_subfolder, "dist", "autograder", f"{notebook_name}.ipynb"
-            )
-            NotebookProcessor.replace_temp_in_notebook(
-                autograder_notebook, autograder_notebook
-            )
-            shutil.copy(student_notebook, self.root_folder)
-            self._print_and_log(
-                f"Copied and cleaned student notebook: {student_notebook} -> {self.root_folder}"
-            )
-
-        # If Otter does not run, move the student file to the main directory
-        if "student_notebook" not in locals():
-            path_ = shutil.copy(temp_notebook_path, self.root_folder)
-            self._print_and_log(
-                f"Copied and cleaned student notebook: {path_} -> {self.root_folder}"
-            )
-
-        # Move the solution file to the autograder folder
-        if "solution_path" in locals():
-            # gets importable file name
-            importable_file_name = sanitize_string(
-                os.path.splitext(os.path.basename(solution_path))[0]
-            )
-
-            # Move the solution file to the autograder folder
-            os.rename(
-                solution_path,
-                os.path.join(autograder_path, f"{importable_file_name}.py"),
-            )
-
-        if "question_path" in locals():
-            shutil.move(question_path, student_path)
-
-        # Remove the temp copy of the notebook
-        os.remove(temp_notebook_path)
-
-        # Remove all postfix from filenames in dist
-        NotebookProcessor.remove_postfix(autograder_path, "_solutions")
-        NotebookProcessor.remove_postfix(student_path, "_questions")
-        NotebookProcessor.remove_postfix(self.root_folder, "_temp")
-
-        ### CODE TO ENSURE THAT STUDENT NOTEBOOK IS IMPORTABLE
-        if "question_path" in locals():
-            # question_root_path = os.path.dirname(question_path)
-            question_file_name = os.path.basename(question_path)
-            question_file_name_sanitized = sanitize_string(
-                question_file_name.replace("_questions", "")
-            )
-            if question_file_name_sanitized.endswith("_py"):
-                question_file_name_sanitized = question_file_name_sanitized[:-3] + ".py"
-
-            # Rename the file
-            os.rename(
-                os.path.join(
-                    student_path, question_file_name.replace("_questions", "")
-                ),
-                os.path.join(student_path, question_file_name_sanitized),
-            )
-
-            # Ensure the "questions" folder exists
-            questions_folder_jbook = os.path.join(self.root_folder, "questions")
-            os.makedirs(questions_folder_jbook, exist_ok=True)
-
-            # Copy the renamed file to the "questions" folder
-            shutil.copy(
-                os.path.join(student_path, question_file_name_sanitized),
-                os.path.join(questions_folder_jbook, question_file_name_sanitized),
-            )
+            return solution_path, question_path
+        else:
+            return None, None
 
     @staticmethod
     def replace_temp_in_notebook(input_file, output_file):
@@ -1474,6 +1552,54 @@ def sanitize_string(input_string):
     sanitized = re.sub(r"\W|^(?=\d)", "_", input_string)
     return sanitized
 
+
+def find_first_code_cell(notebook_path):
+    """
+    Finds the first Python code cell in a Jupyter notebook and its index.
+
+    Args:
+        notebook_path (str): Path to the Jupyter notebook file.
+
+    Returns:
+        tuple: A tuple containing the index of the first code cell and the cell dictionary,
+            or (None, None) if no code cell is found.
+    """
+    # Load the notebook
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        notebook = nbformat.read(f, as_version=4)
+
+    # Iterate through the cells to find the first code cell
+    for index, cell in enumerate(notebook.get("cells", [])):
+        if cell.get("cell_type") == "code":
+            return index, cell  # Return the index and the first code cell
+
+    return None, None  # No code cell found
+
+
+def replace_cell_source(notebook_path, cell_index, new_source):
+        """
+        Replace the source code of a specific Jupyter notebook cell.
+
+        Args:
+            cell_index (int): Index of the cell to be modified (0-based).
+            new_source (str): New source code to replace the cell's content.
+        """
+        # Load the notebook
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            notebook = nbformat.read(f, as_version=4)
+
+        # Check if the cell index is valid
+        if cell_index >= len(notebook.cells) or cell_index < 0:
+            raise IndexError(
+                f"Cell index {cell_index} is out of range for this notebook."
+            )
+
+        # Replace the source code of the specified cell
+        notebook.cells[cell_index]["source"] = new_source
+
+        # Save the notebook
+        with open(notebook_path, "w", encoding="utf-8") as f:
+            nbformat.write(notebook, f)
 
 def main():
     parser = argparse.ArgumentParser(
