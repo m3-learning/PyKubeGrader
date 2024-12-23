@@ -10,6 +10,10 @@ import numpy as np
 import requests
 from requests.auth import HTTPBasicAuth
 
+#
+# Primary function
+#
+
 
 def validate_logfile(
     filepath: str,
@@ -132,37 +136,6 @@ def validate_logfile(
         print("Writing to info.json")
         json.dump(student_information, file)
 
-    def get_last_entry(data: list[str], field_name: str) -> str:
-        for entry in data[::-1]:
-            parts = [part.strip() for part in entry.split(",")]
-            if parts[0] == field_name:
-                return entry
-        return ""
-
-    def get_entries_len(data: list[str], question_number: int) -> int:
-        """function to get the unique entries by length
-
-        Args:
-            data (list): list of all the data records
-            question_number (int): question number to evaluate
-
-        Returns:
-            int: length of the unique entries
-        """
-
-        # Set for unique qN_* values
-        unique_qN_values = set()
-
-        for entry in data:
-            if entry.startswith(f"q{question_number}_"):
-                # Split the string by commas and get the value part
-                parts = [part.strip() for part in entry.split(",")]
-                # The value is the third element after splitting (?)
-                value = parts[0].split("_")[1]
-                unique_qN_values.add(value)
-
-        return len(unique_qN_values) + 1
-
     # Modified list comprehension to filter as per the criteria
     free_response = [
         entry
@@ -284,6 +257,39 @@ def validate_logfile(
 #
 # Helper functions
 #
+
+
+def get_entries_len(data: list[str], question_number: int) -> int:
+    """function to get the unique entries by length
+
+    Args:
+        data (list): list of all the data records
+        question_number (int): question number to evaluate
+
+    Returns:
+        int: length of the unique entries
+    """
+
+    # Set for unique qN_* values
+    unique_qN_values = set()
+
+    for entry in data:
+        if entry.startswith(f"q{question_number}_"):
+            # Split the string by commas and get the value part
+            parts = [part.strip() for part in entry.split(",")]
+            # The value is the third element after splitting (?)
+            value = parts[0].split("_")[1]
+            unique_qN_values.add(value)
+
+    return len(unique_qN_values) + 1
+
+
+def get_last_entry(data: list[str], field_name: str) -> str:
+    for entry in data[::-1]:
+        parts = [part.strip() for part in entry.split(",")]
+        if parts[0] == field_name:
+            return entry
+    return ""
 
 
 def submission_message(response) -> None:
