@@ -166,7 +166,7 @@ class NotebookProcessor:
         Returns:
             None
         """
-        
+
         print(f"Processing notebook: {notebook_path}")
 
         logging.info(f"Processing notebook: {notebook_path}")
@@ -333,7 +333,7 @@ class NotebookProcessor:
     def add_initialization_code(notebook_path):
         # finds the first code cell
         index, cell = find_first_code_cell(notebook_path)
-        cell = cell['source']
+        cell = cell["source"]
         import_text = "from pykubegrader.initialize import initialize_assignment\n"
         cell = f"{import_text}\n" + cell
         cell += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}")\n'
@@ -627,7 +627,7 @@ class NotebookProcessor:
         """
 
         solutions = {}
-        total_points = 0.0
+        total_points = []
 
         # If the output file exists, load the existing solutions and total_points
         if os.path.exists(output_file):
@@ -641,14 +641,14 @@ class NotebookProcessor:
             if hasattr(existing_module, "solutions"):
                 solutions.update(existing_module.solutions)
             if hasattr(existing_module, "total_points"):
-                total_points += existing_module.total_points
+                total_points.extend(existing_module.total_points)
 
         # Process new question data and update solutions and total_points
         for question_set in data_list:
             for key, question_data in question_set.items():
                 solution_key = f"q{question_data['question number']}-{question_data['subquestion_number']}-{key}"
                 solutions[solution_key] = question_data["solution"]
-                total_points += question_data["points"]
+                total_points.extend([question_data["points"]])
 
         # Write updated total_points and solutions back to the file
         with open(output_file, "w", encoding="utf-8") as f:
@@ -1577,29 +1577,28 @@ def find_first_code_cell(notebook_path):
 
 
 def replace_cell_source(notebook_path, cell_index, new_source):
-        """
-        Replace the source code of a specific Jupyter notebook cell.
+    """
+    Replace the source code of a specific Jupyter notebook cell.
 
-        Args:
-            cell_index (int): Index of the cell to be modified (0-based).
-            new_source (str): New source code to replace the cell's content.
-        """
-        # Load the notebook
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
+    Args:
+        cell_index (int): Index of the cell to be modified (0-based).
+        new_source (str): New source code to replace the cell's content.
+    """
+    # Load the notebook
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        notebook = nbformat.read(f, as_version=4)
 
-        # Check if the cell index is valid
-        if cell_index >= len(notebook.cells) or cell_index < 0:
-            raise IndexError(
-                f"Cell index {cell_index} is out of range for this notebook."
-            )
+    # Check if the cell index is valid
+    if cell_index >= len(notebook.cells) or cell_index < 0:
+        raise IndexError(f"Cell index {cell_index} is out of range for this notebook.")
 
-        # Replace the source code of the specified cell
-        notebook.cells[cell_index]["source"] = new_source
+    # Replace the source code of the specified cell
+    notebook.cells[cell_index]["source"] = new_source
 
-        # Save the notebook
-        with open(notebook_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
+    # Save the notebook
+    with open(notebook_path, "w", encoding="utf-8") as f:
+        nbformat.write(notebook, f)
+
 
 def main():
     parser = argparse.ArgumentParser(
