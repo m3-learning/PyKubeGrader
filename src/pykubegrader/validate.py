@@ -35,38 +35,41 @@ def validate_logfile(
     with open(filepath, "r") as logfile:
         encrypted_lines = logfile.readlines()
 
-    data_: list[str] = []
+    decrypted_log: list[str] = []
     for line in encrypted_lines:
         if "Encrypted Output: " in line:
             trimmed = line.split("Encrypted Output: ")[1].strip()
             decoded = base64.b64decode(trimmed)
             decrypted = key_box.decrypt(decoded).decode()
-            data_.append(decrypted)
+            decrypted_log.append(decrypted)
 
     # Decoding the log file
     # data_: list[str] = drexel_jupyter_logger.decode_log_file(self.filepath, key=key)
-    _loginfo = str(data_)
+    # _loginfo = str(decrypted_log)
 
     # Where possible, we should work with this reduced list of relevant entries
-    data_reduced = [
+    # Here we take only lines with student info or question scores
+    log_reduced = [
         entry
-        for entry in data_
+        for entry in decrypted_log
         if re.match(r"info,", entry) or re.match(r"q\d+_\d+,", entry)
     ]
 
     # For debugging; to be commented out
-    with open(".output_reduced.log", "w") as f:
-        f.writelines(f"{item}\n" for item in data_reduced)
+    # with open(".output_reduced.log", "w") as f:
+    #     f.writelines(f"{item}\n" for item in log_reduced)
 
-    # Initialize the question scores and max scores
-    question_max_scores = question_max_scores
+    # Initialize question scores based on max scores
     question_scores = {key: 0 for key in question_max_scores}
 
-    # Parsing the data to find the last entries for required fields
+    # Iterate over log to find the last entries for student info fields
     # This gets the student name etc.
     last_entries: dict[str, str | float] = {}
-    for entry in data_reduced:
+    for entry in log_reduced:
+        # Split on commas and strip whitespace
         parts = [part.strip() for part in entry.split(",")]
+
+        # This just overwrites, so the last iteration sticks
         if parts[0] == "info" and len(parts) == 4:
             field_name = parts[1]
             field_value = parts[2]
@@ -81,35 +84,29 @@ def validate_logfile(
             "Your log file is not for the correct assignment. Please submit the correct log file."
         )
 
+    # TODO: Revisit this; we may no longer require as much info
     required_student_info = ["drexel_id", "first_name", "last_name", "drexel_email"]
-
     for field in required_student_info:
         if last_entries.get(field) is None:
-            sys.exit(
-                "You must submit your student information before you start the exam. Please submit your information and try again."
-            )
+            sys.exit("Missing required student information")
 
     # Initialize code and data lists
-    code: list[str] = []
-    data: list[str] = []
+    log_execution: list[str] = []
+    log_data: list[str] = []
 
     # Splitting the data into code and responses
-    for entry in data_:
+    for entry in decrypted_log:
         # Splitting the data into code and responses
         if "code run:" in entry:
-            code.append(entry)
+            log_execution.append(entry)
         else:
-            data.append(entry)
-
-    # Checks to see if the drexel_jupyter_logger is in the code
-    # If it is, the student might have tried to look at the solutions
-    # Commenting this out, since we're switching to asymmetric encryption
-    # flag = any("drexel_jupyter_logger" in item for item in code)
+            log_data.append(entry)
 
     # Extracting timestamps and converting them to datetime objects
+    # TODO: Check why we're using log_reduced instead of decrypted_log
     timestamps = [
         datetime.strptime(row.split(",")[-1].strip(), "%Y-%m-%d %H:%M:%S")
-        for row in data_reduced
+        for row in log_reduced
     ]
 
     # Getting the earliest and latest times
@@ -118,20 +115,20 @@ def validate_logfile(
     delta = max(timestamps) - min(timestamps)
     minutes_rounded = round(delta.total_seconds() / 60, 2)
     last_entries["elapsed_minutes"] = minutes_rounded
-    # last_entries["flag"] = flag
 
     # Collect student info dict
-    student_information = {key.upper(): value for key, value in last_entries.items()}
+    student_info = {key.upper(): value for key, value in last_entries.items()}
 
     # Write info dict to info.json
+    # TODO: Try/except block here?
     with open("info.json", "w") as file:
-        print("Writing to info.json")
-        json.dump(student_information, file)
+        # print("Writing to info.json")
+        json.dump(student_info, file)
 
     # Modified list comprehension to filter as per the criteria
     free_response = [
         entry
-        for entry in data_
+        for entry in log_reduced
         if entry.startswith("q")
         and entry.split("_")[0][1:].isdigit()
         and int(entry.split("_")[0][1:]) > free_response_questions
@@ -145,8 +142,8 @@ def validate_logfile(
         # Collect entries for each question in a list.
         entries = [
             entry
-            for j in range(1, get_entries_len(data, i))
-            if (entry := get_last_entry(data, f"q{i}_{j}")) != ""
+            for j in range(1, get_entries_len(log_data, i))
+            if (entry := get_last_entry(log_data, f"q{i}_{j}")) != ""
         ]
 
         # Store the list of entries in the dictionary, keyed by question number.
