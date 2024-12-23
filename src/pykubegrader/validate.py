@@ -10,6 +10,10 @@ import numpy as np
 import requests
 from requests.auth import HTTPBasicAuth
 
+#
+# Primary function
+#
+
 
 def validate_logfile(
     filepath: str,
@@ -18,59 +22,54 @@ def validate_logfile(
     free_response_questions=0,
     username="student",
     password="capture",
-    post_url="https://engr-131-api.eastus.cloudapp.azure.com/upload-score",
-    login_url="https://engr-131-api.eastus.cloudapp.azure.com/login",
+    base_url="https://engr-131-api.eastus.cloudapp.azure.com",
 ) -> None:
     login_data = {
         "username": username,
         "password": password,
     }
 
-    with open("server_private_key.bin", "rb") as priv_file:
-        server_private_key_bytes = priv_file.read()
-    server_priv_key = nacl.public.PrivateKey(server_private_key_bytes)
-
-    with open("client_public_key.bin", "rb") as pub_file:
-        client_public_key_bytes = pub_file.read()
-    client_pub_key = nacl.public.PublicKey(client_public_key_bytes)
-
-    box = nacl.public.Box(server_priv_key, client_pub_key)
+    # Generate box from private and public keys
+    key_box = generate_keys()
 
     with open(filepath, "r") as logfile:
         encrypted_lines = logfile.readlines()
 
-    data_: list[str] = []
+    decrypted_log: list[str] = []
     for line in encrypted_lines:
         if "Encrypted Output: " in line:
             trimmed = line.split("Encrypted Output: ")[1].strip()
             decoded = base64.b64decode(trimmed)
-            decrypted = box.decrypt(decoded).decode()
-            data_.append(decrypted)
+            decrypted = key_box.decrypt(decoded).decode()
+            decrypted_log.append(decrypted)
 
     # Decoding the log file
     # data_: list[str] = drexel_jupyter_logger.decode_log_file(self.filepath, key=key)
-    _loginfo = str(data_)
+    # _loginfo = str(decrypted_log)
 
     # Where possible, we should work with this reduced list of relevant entries
-    data_reduced = [
+    # Here we take only lines with student info or question scores
+    log_reduced = [
         entry
-        for entry in data_
+        for entry in decrypted_log
         if re.match(r"info,", entry) or re.match(r"q\d+_\d+,", entry)
     ]
 
     # For debugging; to be commented out
-    with open(".output_reduced.log", "w") as f:
-        f.writelines(f"{item}\n" for item in data_reduced)
+    # with open(".output_reduced.log", "w") as f:
+    #     f.writelines(f"{item}\n" for item in log_reduced)
 
-    # Initialize the question scores and max scores
-    question_max_scores = question_max_scores
+    # Initialize question scores based on max scores
     question_scores = {key: 0 for key in question_max_scores}
 
-    # Parsing the data to find the last entries for required fields
+    # Iterate over log to find the last entries for student info fields
     # This gets the student name etc.
     last_entries: dict[str, str | float] = {}
-    for entry in data_reduced:
+    for entry in log_reduced:
+        # Split on commas and strip whitespace
         parts = [part.strip() for part in entry.split(",")]
+
+        # This just overwrites, so the last iteration sticks
         if parts[0] == "info" and len(parts) == 4:
             field_name = parts[1]
             field_value = parts[2]
@@ -85,35 +84,29 @@ def validate_logfile(
             "Your log file is not for the correct assignment. Please submit the correct log file."
         )
 
+    # TODO: Revisit this; we may no longer require as much info
     required_student_info = ["drexel_id", "first_name", "last_name", "drexel_email"]
-
     for field in required_student_info:
         if last_entries.get(field) is None:
-            sys.exit(
-                "You must submit your student information before you start the exam. Please submit your information and try again."
-            )
+            sys.exit("Missing required student information")
 
     # Initialize code and data lists
-    code: list[str] = []
-    data: list[str] = []
+    log_execution: list[str] = []
+    log_data: list[str] = []
 
     # Splitting the data into code and responses
-    for entry in data_:
+    for entry in decrypted_log:
         # Splitting the data into code and responses
         if "code run:" in entry:
-            code.append(entry)
+            log_execution.append(entry)
         else:
-            data.append(entry)
-
-    # Checks to see if the drexel_jupyter_logger is in the code
-    # If it is, the student might have tried to look at the solutions
-    # Commenting this out, since we're switching to asymmetric encryption
-    # flag = any("drexel_jupyter_logger" in item for item in code)
+            log_data.append(entry)
 
     # Extracting timestamps and converting them to datetime objects
+    # TODO: Check why we're using log_reduced instead of decrypted_log
     timestamps = [
         datetime.strptime(row.split(",")[-1].strip(), "%Y-%m-%d %H:%M:%S")
-        for row in data_reduced
+        for row in log_reduced
     ]
 
     # Getting the earliest and latest times
@@ -122,51 +115,20 @@ def validate_logfile(
     delta = max(timestamps) - min(timestamps)
     minutes_rounded = round(delta.total_seconds() / 60, 2)
     last_entries["elapsed_minutes"] = minutes_rounded
-    # last_entries["flag"] = flag
 
     # Collect student info dict
-    student_information = {key.upper(): value for key, value in last_entries.items()}
+    student_info = {key.upper(): value for key, value in last_entries.items()}
 
     # Write info dict to info.json
+    # TODO: Try/except block here?
     with open("info.json", "w") as file:
-        print("Writing to info.json")
-        json.dump(student_information, file)
-
-    def get_last_entry(data: list[str], field_name: str) -> str:
-        for entry in data[::-1]:
-            parts = [part.strip() for part in entry.split(",")]
-            if parts[0] == field_name:
-                return entry
-        return ""
-
-    def get_entries_len(data: list[str], question_number: int) -> int:
-        """function to get the unique entries by length
-
-        Args:
-            data (list): list of all the data records
-            question_number (int): question number to evaluate
-
-        Returns:
-            int: length of the unique entries
-        """
-
-        # Set for unique qN_* values
-        unique_qN_values = set()
-
-        for entry in data:
-            if entry.startswith(f"q{question_number}_"):
-                # Split the string by commas and get the value part
-                parts = [part.strip() for part in entry.split(",")]
-                # The value is the third element after splitting (?)
-                value = parts[0].split("_")[1]
-                unique_qN_values.add(value)
-
-        return len(unique_qN_values) + 1
+        # print("Writing to info.json")
+        json.dump(student_info, file)
 
     # Modified list comprehension to filter as per the criteria
     free_response = [
         entry
-        for entry in data_
+        for entry in log_reduced
         if entry.startswith("q")
         and entry.split("_")[0][1:].isdigit()
         and int(entry.split("_")[0][1:]) > free_response_questions
@@ -180,8 +142,8 @@ def validate_logfile(
         # Collect entries for each question in a list.
         entries = [
             entry
-            for j in range(1, get_entries_len(data, i))
-            if (entry := get_last_entry(data, f"q{i}_{j}")) != ""
+            for j in range(1, get_entries_len(log_data, i))
+            if (entry := get_last_entry(log_data, f"q{i}_{j}")) != ""
         ]
 
         # Store the list of entries in the dictionary, keyed by question number.
@@ -246,6 +208,7 @@ def validate_logfile(
         print("Writing to results.json")
         json.dump(result_structure, file, indent=4)
 
+    login_url = f"{base_url}/login"
     verify_login(login_data, login_url)
 
     # The file to be uploaded. Ensure the path is correct.
@@ -269,6 +232,8 @@ def validate_logfile(
         "file": (file_path, open(file_path, "rb")),
     }
 
+    post_url = f"{base_url}/upload-score"
+
     # Make the POST request with data and files
     response = requests.post(
         url=post_url,
@@ -284,6 +249,53 @@ def validate_logfile(
 #
 # Helper functions
 #
+
+
+def generate_keys() -> nacl.public.Box:
+    with open("server_private_key.bin", "rb") as priv_file:
+        server_private_key_bytes = priv_file.read()
+    server_priv_key = nacl.public.PrivateKey(server_private_key_bytes)
+
+    with open("client_public_key.bin", "rb") as pub_file:
+        client_public_key_bytes = pub_file.read()
+    client_pub_key = nacl.public.PublicKey(client_public_key_bytes)
+
+    box = nacl.public.Box(server_priv_key, client_pub_key)
+
+    return box
+
+
+def get_entries_len(data: list[str], question_number: int) -> int:
+    """function to get the unique entries by length
+
+    Args:
+        data (list): list of all the data records
+        question_number (int): question number to evaluate
+
+    Returns:
+        int: length of the unique entries
+    """
+
+    # Set for unique qN_* values
+    unique_qN_values = set()
+
+    for entry in data:
+        if entry.startswith(f"q{question_number}_"):
+            # Split the string by commas and get the value part
+            parts = [part.strip() for part in entry.split(",")]
+            # The value is the third element after splitting (?)
+            value = parts[0].split("_")[1]
+            unique_qN_values.add(value)
+
+    return len(unique_qN_values) + 1
+
+
+def get_last_entry(data: list[str], field_name: str) -> str:
+    for entry in data[::-1]:
+        parts = [part.strip() for part in entry.split(",")]
+        if parts[0] == field_name:
+            return entry
+    return ""
 
 
 def submission_message(response) -> None:
