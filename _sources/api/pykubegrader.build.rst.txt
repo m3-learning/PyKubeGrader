@@ -6,6 +6,14 @@ pykubegrader.build namespace
 Submodules
 ----------
 
+pykubegrader.build.api\_notebook\_builder module
+------------------------------------------------
+
+.. automodule:: pykubegrader.build.api_notebook_builder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pykubegrader.build.build\_folder module
 ---------------------------------------
 
