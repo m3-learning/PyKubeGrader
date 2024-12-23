@@ -336,7 +336,7 @@ class NotebookProcessor:
         cell = cell['source']
         import_text = "from pykubegrader.initialize import initialize_assignment\n"
         cell = f"{import_text}\n" + cell
-        cell += f'\nresponses = initialize_assignment("{os.path.basename(notebook_path)}")\n'
+        cell += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}")\n'
         replace_cell_source(notebook_path, index, cell)
 
     def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
