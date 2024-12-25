@@ -6,6 +6,7 @@ import nbformat
 import json
 import re
 import shutil
+import ast
 
 
 @dataclass
@@ -283,7 +284,7 @@ class FastAPINotebookBuilder:
         """
         last_import_index = -1
         is_multiline_import = False  # Flag to track if we're inside a multiline import
-        
+
         for i, line in enumerate(cell_source):
             stripped_line = line.strip()
 
@@ -313,11 +314,15 @@ class FastAPINotebookBuilder:
         if "source" in cell:
             for line in cell["source"]:
                 # Look for the log_variables pattern
-                match = re.search(r"log_variables:\s*\[(.*?)\]", line)
+                match = re.search(r"log_variables:\s*(\[.*\])", line)
                 if match:
-                    # Split the variables by comma and strip whitespace
-                    log_variables = [var.strip() for var in match.group(1).split(",")]
-                    return log_variables
+                    # Parse the list using ast.literal_eval for safety
+                    try:
+                        log_variables = ast.literal_eval(match.group(1))
+                        if isinstance(log_variables, list):
+                            return [var.strip() for var in log_variables]
+                    except (SyntaxError, ValueError):
+                        pass
         return []
 
     def tag_questions(cells_dict):
