@@ -106,7 +106,6 @@ class FastAPINotebookBuilder:
     @staticmethod
     def construct_update_responses(cell_dict):
         update_responses = []
-        question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"]) + "\n"
 
         logging_variables = cell_dict["logging_variables"]
 

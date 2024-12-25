@@ -293,10 +293,21 @@ class NotebookProcessor:
             shutil.copy("./keys/server_public_key.bin", server_public_key)
 
             FastAPINotebookBuilder(notebook_path=temp_notebook_path)
-
+            
+            debug_notebook = os.path.join(
+                notebook_subfolder, "dist", "autograder", os.path.basename(temp_notebook_path).replace("_temp", "_debugger")
+            )
+            
             self.run_otter_assign(
                 temp_notebook_path, os.path.join(notebook_subfolder, "dist")
             )
+            
+            print(f"Copying {temp_notebook_path} to {debug_notebook}")
+            
+            shutil.copy(temp_notebook_path, debug_notebook)
+            
+            NotebookProcessor.remove_assignment_config_cells(debug_notebook)
+
 
             student_notebook = os.path.join(
                 notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
@@ -328,6 +339,22 @@ class NotebookProcessor:
         else:
             NotebookProcessor.add_initialization_code(temp_notebook_path)
             return None
+        
+    @staticmethod
+    def remove_assignment_config_cells(notebook_path):
+        # Read the notebook
+        with open(notebook_path, 'r', encoding='utf-8') as f:
+            notebook = nbformat.read(f, as_version=nbformat.NO_CONVERT)
+
+        # Filter out cells containing "# ASSIGNMENT CONFIG"
+        notebook.cells = [
+            cell for cell in notebook.cells
+            if "# ASSIGNMENT CONFIG" not in cell.get("source", "")
+        ]
+
+        # Save the updated notebook
+        with open(notebook_path, 'w', encoding='utf-8') as f:
+            nbformat.write(notebook, f)
 
     @staticmethod
     def add_initialization_code(notebook_path):
