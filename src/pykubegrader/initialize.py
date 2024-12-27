@@ -14,6 +14,21 @@ def initialize_assignment(
     url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
     verbose: bool = False,
 ) -> dict:
+    """
+    Initialize an assignment in a Jupyter environment.
+
+    Args:
+        name (str): The name of the assignment.
+        url (str): The URL of the API server.
+        verbose (bool): Whether to print detailed initialization information.
+
+    Returns:
+        dict: The responses dictionary after initialization.
+
+    Raises:
+        Exception: If the environment is unsupported or initialization fails.
+    """
+
     ipython = get_ipython()
     if ipython is None:
         raise Exception("Setup unsuccessful. Are you in a Jupyter environment?")
@@ -66,6 +81,13 @@ def initialize_assignment(
 
 
 def move_dotfiles():
+    """
+    Move essential dotfiles from a fixed source directory to the current working directory.
+
+    Raises:
+        FileNotFoundError: If a source file is missing.
+        Exception: If copying fails for any other reason.
+    """
     source_dir = Path("/opt/dotfiles")
     target_dir = Path.cwd()
 
@@ -75,4 +97,10 @@ def move_dotfiles():
         source_file = source_dir / file_name
         target_file = target_dir / file_name
 
-        shutil.copy2(source_file, target_file)  # Can raise
+        if not source_file.exists():
+            raise FileNotFoundError(f"Key file not found: {source_file}")
+
+        try:
+            shutil.copy2(source_file, target_file)
+        except Exception as e:
+            raise Exception(f"Failed to copy {source_file} to {target_file}: {e}")
