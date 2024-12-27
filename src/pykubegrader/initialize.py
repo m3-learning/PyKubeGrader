@@ -1,12 +1,11 @@
 import os
 import shutil
 from pathlib import Path
-
+from IPython import get_ipython
 import panel as pn
 import requests
-from IPython import get_ipython
+from .telemetry import telemetry, update_responses, ensure_responses, log_variables
 
-from .telemetry import ensure_responses, telemetry, update_responses
 
 
 def initialize_assignment(
@@ -49,6 +48,9 @@ def initialize_assignment(
 
         update_responses(key="assignment", value=name)
         update_responses(key="jhub_user", value=jhub_user)
+
+
+        log_variables("Student Info", jhub_user, seed)
 
         responses = ensure_responses()
         # TODO: Add more checks here?

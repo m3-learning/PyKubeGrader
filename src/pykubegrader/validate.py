@@ -32,28 +32,7 @@ def validate_logfile(
     # Generate box from private and public keys
     key_box = generate_keys()
 
-    with open(filepath, "r") as logfile:
-        encrypted_lines = logfile.readlines()
-
-    decrypted_log: list[str] = []
-    for line in encrypted_lines:
-        if "Encrypted Output: " in line:
-            trimmed = line.split("Encrypted Output: ")[1].strip()
-            decoded = base64.b64decode(trimmed)
-            decrypted = key_box.decrypt(decoded).decode()
-            decrypted_log.append(decrypted)
-
-    # Decoding the log file
-    # data_: list[str] = drexel_jupyter_logger.decode_log_file(self.filepath, key=key)
-    # _loginfo = str(decrypted_log)
-
-    # Where possible, we should work with this reduced list of relevant entries
-    # Here we take only lines with student info or question scores
-    log_reduced = [
-        entry
-        for entry in decrypted_log
-        if re.match(r"info,", entry) or re.match(r"q\d+_\d+,", entry)
-    ]
+    decrypted_log, log_reduced = read_logfile(filepath, key_box)
 
     # For debugging; to be commented out
     # with open(".output_reduced.log", "w") as f:
@@ -244,6 +223,37 @@ def validate_logfile(
 
     # Print messages for the user
     submission_message(response)
+
+
+def read_logfile(filepath, key_box=None):
+
+    if key_box is None:
+        key_box = generate_keys()
+
+    with open(filepath, "r") as logfile:
+        encrypted_lines = logfile.readlines()
+
+    decrypted_log: list[str] = []
+    for line in encrypted_lines:
+        if "Encrypted Output: " in line:
+            trimmed = line.split("Encrypted Output: ")[1].strip()
+            decoded = base64.b64decode(trimmed)
+            decrypted = key_box.decrypt(decoded).decode()
+            decrypted_log.append(decrypted)
+
+    # Decoding the log file
+    # data_: list[str] = drexel_jupyter_logger.decode_log_file(self.filepath, key=key)
+    # _loginfo = str(decrypted_log)
+
+    # Where possible, we should work with this reduced list of relevant entries
+    # Here we take only lines with student info or question scores
+    log_reduced = [
+        entry
+        for entry in decrypted_log
+        if re.match(r"info,", entry) or re.match(r"q\d+_\d+,", entry)
+    ]
+
+    return decrypted_log, log_reduced
 
 
 #
