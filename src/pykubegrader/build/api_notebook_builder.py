@@ -18,6 +18,7 @@ class FastAPINotebookBuilder:
         self.root_path, self.filename = FastAPINotebookBuilder.get_filename_and_root(
             self.notebook_path
         )
+        self.total_points = 0
         self.run()
 
     def run(self):
@@ -34,6 +35,9 @@ class FastAPINotebookBuilder:
         self.add_api_code()
 
     def add_api_code(self):
+
+        self.compute_max_points_free_response()
+
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
             print(
                 f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}"
@@ -86,11 +90,22 @@ class FastAPINotebookBuilder:
                 ["os.environ['EARNED_POINTS'] = str(earned_points)\n"]
             )
 
-            # cell_source = FastAPINotebookBuilder.insert_list_at_index(
-            #     cell_source, updated_cell_source, last_import_line_ind + 1
-            # )
-
             self.replace_cell_source(cell_index, updated_cell_source)
+
+    def compute_max_points_free_response(self):
+        for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
+
+            # gets the question name from the first cell to not double count
+            if cell_dict["is_first"]:
+
+                # get the max points for the question
+                max_question_points = sum(
+                    cell["points"]
+                    for cell in self.assertion_tests_dict.values()
+                    if cell["question"] == cell_dict["question"]
+                )
+
+                self.total_points += max_question_points
 
     def construct_first_cell_question_header(self, cell_dict):
         max_question_points = sum(
@@ -99,9 +114,12 @@ class FastAPINotebookBuilder:
             if cell["question"] == cell_dict["question"]
         )
 
-        first_cell_header = ["max_question_points = " + str(max_question_points) + "\n"]
+        first_cell_header = [f"max_question_points = str({max_question_points})\n"]
         first_cell_header.append("earned_points = 0 \n")
         first_cell_header.append("os.environ['EARNED_POINTS'] = str(earned_points)\n")
+        first_cell_header.append(
+            f"os.environ['TOTAL_POINTS_FREE_RESPONSE'] = str({self.total_points})\n"
+        )
 
         return first_cell_header
 
