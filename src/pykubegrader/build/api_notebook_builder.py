@@ -121,6 +121,8 @@ class FastAPINotebookBuilder:
             f"os.environ['TOTAL_POINTS_FREE_RESPONSE'] = str({self.total_points})\n"
         )
 
+
+
         return first_cell_header
 
     @staticmethod
