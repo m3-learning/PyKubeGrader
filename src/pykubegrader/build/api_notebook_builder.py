@@ -121,7 +121,12 @@ class FastAPINotebookBuilder:
             f"os.environ['TOTAL_POINTS_FREE_RESPONSE'] = str({self.total_points})\n"
         )
 
-
+        short_filename = self.filename.split(".")[0].replace("_temp", "")
+        first_cell_header.extend(
+            [
+                f'log_variable("total-points-{short_filename}", {self.total_points}, " ")\n'
+            ]
+        )
 
         return first_cell_header
 
