@@ -11,8 +11,28 @@ from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
 
-# Set logging config (`force` is important)
-logging.basicConfig(filename=".output.log", level=logging.INFO, force=True)
+# Logger for .output_code.log
+logger_code = logging.getLogger("code_logger")
+logger_code.setLevel(logging.INFO)
+
+file_handler_code = logging.FileHandler(".output_code.log")
+file_handler_code.setLevel(logging.INFO)
+
+# formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+# file_handler_code.setFormatter(formatter)
+
+logger_code.addHandler(file_handler_code)
+
+# Logger for .output_reduced.log
+logger_reduced = logging.getLogger("reduced_logger")
+logger_reduced.setLevel(logging.INFO)
+
+file_handler_reduced = logging.FileHandler(".output_reduced.log")
+file_handler_reduced.setLevel(logging.INFO)
+
+# file_handler_reduced.setFormatter(formatter)
+
+logger_reduced.addHandler(file_handler_reduced)
 
 #
 # Local functions
@@ -51,20 +71,30 @@ def ensure_responses() -> dict:
     return responses
 
 
-def log_encrypted(message: str) -> None:
+def log_encrypted(logger: object, message: str) -> None:
+    """
+    Logs an encrypted version of the given message using the provided logger.
+
+    Args:
+        logger (object): The logger object used to log the encrypted message.
+        message (str): The message to be encrypted and logged.
+
+    Returns:
+        None
+    """
     encrypted_b64 = encrypt_to_b64(message)
-    logging.info(f"Encrypted Output: {encrypted_b64}")
+    logger.info(f"Encrypted Output: {encrypted_b64}")
 
 
 def log_variable(assignment_name, value, info_type) -> None:
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     message = f"{assignment_name}, {info_type}, {value}, {timestamp}"
-    log_encrypted(message)
+    log_encrypted(logger_reduced, message)
 
 
 def telemetry(info: ExecutionInfo) -> None:
     cell_content = info.raw_cell
-    log_encrypted(f"code run: {cell_content}")
+    log_encrypted(logger_code, f"code run: {cell_content}")
 
 
 def update_responses(key: str, value) -> dict:
