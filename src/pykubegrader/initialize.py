@@ -5,7 +5,7 @@ from typing import Optional
 import panel as pn
 from IPython import get_ipython
 import requests
-from .telemetry import telemetry, update_responses, ensure_responses
+from .telemetry import telemetry, update_responses, ensure_responses, log_variables
 
 
 def initialize_assignment(
@@ -39,7 +39,7 @@ def initialize_assignment(
         print(f"Failed to initialize assignment: {e}")
         return
 
-    og_variable(assignment_name, value, info_type)
+    log_variables("Student Info", jhub_user, seed)
 
     # extract responses
     responses = ensure_responses()
