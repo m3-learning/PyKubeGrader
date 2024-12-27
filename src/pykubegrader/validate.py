@@ -252,11 +252,11 @@ def validate_logfile(
 
 
 def generate_keys() -> nacl.public.Box:
-    with open("server_private_key.bin", "rb") as priv_file:
+    with open(".server_private_key.bin", "rb") as priv_file:
         server_private_key_bytes = priv_file.read()
     server_priv_key = nacl.public.PrivateKey(server_private_key_bytes)
 
-    with open("client_public_key.bin", "rb") as pub_file:
+    with open(".client_public_key.bin", "rb") as pub_file:
         client_public_key_bytes = pub_file.read()
     client_pub_key = nacl.public.PublicKey(client_public_key_bytes)
 

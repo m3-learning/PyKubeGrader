@@ -21,7 +21,6 @@ class FastAPINotebookBuilder:
         self.run()
 
     def run(self):
-
         # here for easy debugging
         if self.temp_notebook is not None:
             shutil.copy(
@@ -35,7 +34,6 @@ class FastAPINotebookBuilder:
         self.add_api_code()
 
     def add_api_code(self):
-
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
             print(
                 f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}"
@@ -141,7 +139,6 @@ class FastAPINotebookBuilder:
 
     @staticmethod
     def construct_graders(cell_dict):
-
         # Generate Python code
         added_code = [
             "if "
@@ -367,7 +364,6 @@ class FastAPINotebookBuilder:
         return cells_dict
 
     def question_dict(self):
-
         notebook_path = Path(self.temp_notebook)
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
