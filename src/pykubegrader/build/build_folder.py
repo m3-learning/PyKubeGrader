@@ -62,6 +62,8 @@ class NotebookProcessor:
             __name__
         )  # Create a logger instance specific to this module
         self.logger = logger  # Assign the logger instance to the class for use in instance methods
+        
+        self.total_point_log = {}
 
     def process_notebooks(self):
         """
@@ -116,6 +118,10 @@ class NotebookProcessor:
 
                 # Process the notebook if it meets the criteria
                 self._process_single_notebook(notebook_path)
+                
+        # Write the dictionary to a JSON file
+        with open(f"{self.solutions_folder}/total_points.json", "w") as json_file:
+            json.dump(self.total_point_log, json_file, indent=4)  # `indent=4` for pretty formatting
 
     def _print_and_log(self, message):
         """
@@ -168,6 +174,11 @@ class NotebookProcessor:
         Returns:
             None
         """
+        
+        self.select_many_total_points = 0
+        self.mcq_total_points = 0
+        self.tf_total_points = 0
+        self.otter_total_points = 0
 
         print(f"Processing notebook: {notebook_path}")
 
@@ -213,7 +224,7 @@ class NotebookProcessor:
         if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
             solution_path = solution_path_1 or solution_path_2 or solution_path_3
 
-        student_notebook = self.free_response_parser(
+        student_notebook, self.otter_total_points = self.free_response_parser(
             temp_notebook_path, notebook_subfolder, notebook_name
         )
 
@@ -275,7 +286,11 @@ class NotebookProcessor:
                 os.path.join(student_path, question_file_name_sanitized),
                 os.path.join(questions_folder_jbook, question_file_name_sanitized),
             )
-
+            
+        total_points = self.select_many_total_points + self.mcq_total_points + self.tf_total_points + self.otter_total_points
+            
+        self.total_point_log.update({notebook_name: total_points})    
+            
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
@@ -293,7 +308,7 @@ class NotebookProcessor:
             shutil.copy("./keys/.client_private_key.bin", client_private_key)
             shutil.copy("./keys/.server_public_key.bin", server_public_key)
 
-            FastAPINotebookBuilder(notebook_path=temp_notebook_path)
+            out = FastAPINotebookBuilder(notebook_path=temp_notebook_path)
 
             debug_notebook = os.path.join(
                 notebook_subfolder,
@@ -338,10 +353,10 @@ class NotebookProcessor:
             os.remove(client_private_key)
             os.remove(server_public_key)
 
-            return student_notebook
+            return student_notebook, out.total_points
         else:
             NotebookProcessor.add_initialization_code(temp_notebook_path)
-            return None
+            return None, 0
 
     @staticmethod
     def remove_assignment_config_cells(notebook_path):
@@ -371,6 +386,7 @@ class NotebookProcessor:
         replace_cell_source(notebook_path, index, cell)
 
     def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
+        
         ### Parse the notebook for multiple choice questions
         if self.has_assignment(temp_notebook_path, "# BEGIN MULTIPLE CHOICE"):
             self._print_and_log(
@@ -390,7 +406,7 @@ class NotebookProcessor:
 
             for data_ in data:
                 # Generate the solution file
-                self.generate_solution_MCQ(data, output_file=solution_path)
+                self.mcq_total_points = self.generate_solution_MCQ(data, output_file=solution_path)
 
                 question_path = (
                     f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
@@ -430,7 +446,7 @@ class NotebookProcessor:
 
             # for data_ in data:
             # Generate the solution file
-            self.generate_solution_MCQ(data, output_file=solution_path)
+            self.tf_total_points = self.generate_solution_MCQ(data, output_file=solution_path)
 
             question_path = f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
 
@@ -466,7 +482,7 @@ class NotebookProcessor:
 
             # for data_ in data:
             # Generate the solution file
-            self.generate_solution_MCQ(data, output_file=solution_path)
+            self.select_many_total_points = self.generate_solution_MCQ(data, output_file=solution_path)
 
             question_path = f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
 
@@ -690,6 +706,8 @@ class NotebookProcessor:
                 # For safety, we assume solutions are strings, but if not, repr would be safer
                 f.write(f'    "{key}": {repr(solution)},\n')
             f.write("}\n")
+            
+        return sum(total_points)
 
     def extract_MCQ(ipynb_file):
         """
