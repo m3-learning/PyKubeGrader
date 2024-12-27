@@ -119,7 +119,7 @@ def score_question(
     return res
 
 
-def submit_question_new(
+def submit_question(
     student_email: str,
     term: str,
     assignment: str,

@@ -289,8 +289,8 @@ class NotebookProcessor:
                 "server_public_key.bin",
             )
 
-            shutil.copy("./keys/client_private_key.bin", client_private_key)
-            shutil.copy("./keys/server_public_key.bin", server_public_key)
+            shutil.copy("./keys/.client_private_key.bin", client_private_key)
+            shutil.copy("./keys/.server_public_key.bin", server_public_key)
 
             FastAPINotebookBuilder(notebook_path=temp_notebook_path)
             
