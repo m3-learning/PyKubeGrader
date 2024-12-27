@@ -20,11 +20,11 @@ logging.basicConfig(filename=".output.log", level=logging.INFO, force=True)
 
 
 def encrypt_to_b64(message: str) -> str:
-    with open("server_public_key.bin", "rb") as f:
+    with open(".server_public_key.bin", "rb") as f:
         server_pub_key_bytes = f.read()
     server_pub_key = nacl.public.PublicKey(server_pub_key_bytes)
 
-    with open("client_private_key.bin", "rb") as f:
+    with open(".client_private_key.bin", "rb") as f:
         client_private_key_bytes = f.read()
     client_priv_key = nacl.public.PrivateKey(client_private_key_bytes)
 
@@ -48,7 +48,7 @@ def ensure_responses() -> dict:
     except json.JSONDecodeError:
         with open(".responses.json", "w") as f:
             json.dump(responses, f)
-    
+
     return responses
 
 
@@ -61,6 +61,7 @@ def log_variable(assignment_name, value, info_type) -> None:
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     message = f"{info_type}, {value}, {timestamp}, {assignment_name}"
     log_encrypted(message)
+
 
 def telemetry(info: ExecutionInfo) -> None:
     cell_content = info.raw_cell

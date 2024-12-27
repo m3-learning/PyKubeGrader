@@ -282,11 +282,11 @@ class NotebookProcessor:
             # TODO: This is hardcoded for now, but should be in a configuration file.
             client_private_key = os.path.join(
                 notebook_subfolder,
-                "client_private_key.bin",
+                ".client_private_key.bin",
             )
             server_public_key = os.path.join(
                 notebook_subfolder,
-                "server_public_key.bin",
+                ".server_public_key.bin",
             )
 
             shutil.copy("./keys/.client_private_key.bin", client_private_key)
