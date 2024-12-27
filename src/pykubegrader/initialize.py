@@ -39,6 +39,8 @@ def initialize_assignment(
         print(f"Failed to initialize assignment: {e}")
         return
 
+    og_variable(assignment_name, value, info_type)
+
     # extract responses
     responses = ensure_responses()
 
