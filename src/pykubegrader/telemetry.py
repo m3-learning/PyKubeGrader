@@ -57,11 +57,10 @@ def log_encrypted(message: str) -> None:
     logging.info(f"Encrypted Output: {encrypted_b64}")
 
 
-def log_variable(value, info_type) -> None:
+def log_variable(assignment_name, value, info_type) -> None:
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    message = f"{info_type}, {value}, {timestamp}"
+    message = f"{info_type}, {value}, {timestamp}, {assignment_name}"
     log_encrypted(message)
-
 
 def telemetry(info: ExecutionInfo) -> None:
     cell_content = info.raw_cell
