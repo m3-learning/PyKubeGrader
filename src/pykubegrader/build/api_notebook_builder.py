@@ -77,7 +77,7 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(["earned_points += score\n"])
             updated_cell_source.extend(
                 [
-                    f'log_variable(f"{{score}}, {{max_score}}", question_id, "{self.filename.split(".")[0]}")\n'
+                    f'log_variable(f"{{score}}, {{max_score}}", question_id, "{self.filename.split(".")[0].replace("_temp","")}")\n'
                 ]
             )
             updated_cell_source.extend(
