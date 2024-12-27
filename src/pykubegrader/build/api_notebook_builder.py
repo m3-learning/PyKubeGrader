@@ -79,7 +79,7 @@ class FastAPINotebookBuilder:
             short_filename = self.filename.split(".")[0].replace("_temp", "")
             updated_cell_source.extend(
                 [
-                    f'log_variable(f"{short_filename}, "{{score}}, {{max_score}}", question_id")\n'
+                    f'log_variable("{short_filename}",f"{{score}}, {{max_score}}", question_id)\n'
                 ]
             )
             updated_cell_source.extend(
