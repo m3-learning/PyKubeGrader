@@ -27,7 +27,12 @@ class LogParser:
         ):  # Process in reverse to get the most recent entries first
             if self._is_student_info(line):
                 self._process_student_info(line, unique_students)
-            elif (
+            elif "total-points" in line:
+                self._process_assignment_header(line)
+
+        # process assignment entries after all headers have been processed
+        for line in reversed(self.log_lines):
+            if (
                 any(item in line for item in self.all_questions)
                 and "total-points" not in line
             ):
@@ -40,8 +45,8 @@ class LogParser:
         questions = []
         for line in self.log_lines:
             if self.week_tag in line:
-                parts = line.split(", ")
-                question_tag = parts[3]
+                parts = line.split(",")
+                question_tag = parts[3].strip()
                 if question_tag not in questions:
                     questions.append(question_tag)
         self.all_questions = questions
@@ -75,19 +80,14 @@ class LogParser:
                 "timestamp": parts[3].strip(),
             }
 
-    def _process_assignment_entry(self, line: str):
-        """
-        Processes a line containing an assignment entry.
-        Adds it to the assignments dictionary.
-        """
-        parts = line.split(", ")
-        assignment_tag = parts[0]
-
+    def _process_assignment_header(self, line: str):
+        parts = line.split(",")
+        assignment_tag = parts[0].strip()
         if assignment_tag.startswith("total-points"):
             # Handle total-points lines as assignment info
             total_points_value = self._extract_total_points(parts)
             timestamp = parts[-1].strip()
-            notebook_name = assignment_tag.split(",")[3].strip()
+            notebook_name = parts[3].strip()
 
             if notebook_name not in self.assignments:
                 self.assignments[notebook_name] = {
@@ -96,45 +96,47 @@ class LogParser:
                     "assignment": self.week_tag,
                     "total_score": 0.0,
                     "latest_timestamp": timestamp,
+                    "questions": {},  # Ensure 'questions' key is initialized
                 }
-            else:
-                self.assignments[notebook_name]["latest_timestamp"] = max(
-                    self.assignments[notebook_name]["latest_timestamp"], timestamp
-                )
+            elif self.assignments[notebook_name]["latest_timestamp"] < timestamp:
                 self.assignments[notebook_name]["max_points"] = total_points_value
+                self.assignments[notebook_name]["latest_timestamp"] = timestamp
 
-        else:
-            # Normal question line
-            question_tag = parts[1].strip()
-            score_earned = float(parts[2].strip()) if len(parts) > 2 else 0.0
-            score_possible = float(parts[3].strip()) if len(parts) > 3 else 0.0
-            timestamp = parts[-1].strip()
+    def _process_assignment_entry(self, line: str):
+        """
+        Processes a line containing an assignment entry.
+        Adds it to the assignments dictionary.
+        """
+        parts = line.split(",")
+        assignment_tag = parts[0].strip()
+        question_tag = parts[1].strip()
+        score_earned = float(parts[2].strip()) if len(parts) > 2 else 0.0
+        score_possible = float(parts[3].strip()) if len(parts) > 3 else 0.0
+        timestamp = parts[-1].strip()
 
-            if assignment_tag not in self.assignments:
-                self.assignments[assignment_tag] = {
-                    "max_points": None,  # Will be computed if missing
-                    "questions": {},
-                    "total_score": 0.0,
-                    "latest_timestamp": timestamp,
-                }
+        # Ensure assignment entry exists
+        if assignment_tag not in self.assignments:
+            self.assignments[assignment_tag] = {
+                "questions": {},
+                "total_score": 0.0,
+                "latest_timestamp": timestamp,
+            }
 
-            # Add or update the question with the most recent timestamp
-            if (
-                question_tag not in self.assignments[assignment_tag]["questions"]
-                or timestamp
-                > self.assignments[assignment_tag]["questions"][question_tag][
-                    "timestamp"
-                ]
-            ):
-                self.assignments[assignment_tag]["questions"][question_tag] = {
-                    "score_earned": score_earned,
-                    "score_possible": score_possible,
-                    "timestamp": timestamp,
-                }
+        # Add or update the question with the most recent timestamp
+        questions = self.assignments[assignment_tag]["questions"]
+        if (
+            question_tag not in questions
+            or timestamp > questions[question_tag]["timestamp"]
+        ):
+            questions[question_tag] = {
+                "score_earned": score_earned,
+                "score_possible": score_possible,
+                "timestamp": timestamp,
+            }
 
-            # Update the latest timestamp if this one is more recent
-            if timestamp > self.assignments[assignment_tag]["latest_timestamp"]:
-                self.assignments[assignment_tag]["latest_timestamp"] = timestamp
+        # Update the latest timestamp if this one is more recent
+        if timestamp > self.assignments[assignment_tag]["latest_timestamp"]:
+            self.assignments[assignment_tag]["latest_timestamp"] = timestamp
 
     def _extract_total_points(self, parts: List[str]) -> Optional[float]:
         """
@@ -155,13 +157,6 @@ class LogParser:
             total_score = sum(q["score_earned"] for q in data["questions"].values())
             data["total_score"] = total_score
 
-            # If total_points wasn't provided by a total-points line,
-            # we set it as the sum of the 'score_possible' values of the questions.
-            if data["max_points"] is None:
-                data["max_points"] = sum(
-                    q["score_possible"] for q in data["questions"].values()
-                )
-
     def get_results(self) -> Dict[str, Dict]:
         """
         Returns the parsed results as a hierarchical dictionary with three sections:
@@ -171,7 +166,8 @@ class LogParser:
             "assignment_information": {
                 assignment: {
                     "latest_timestamp": data["latest_timestamp"],
-                    "max_points": data["max_points"],
+                    "total_score": data["total_score"],
+                    "max_points": data.get("max_points", 0.0),
                 }
                 for assignment, data in self.assignments.items()
             },
