@@ -700,13 +700,15 @@ class NotebookProcessor:
                 solutions.update(existing_module.solutions)
             if hasattr(existing_module, "total_points"):
                 total_points.extend(existing_module.total_points)
-
+        
+        question_points = 0
         # Process new question data and update solutions and total_points
         for question_set in data_list:
             for key, question_data in question_set.items():
                 solution_key = f"q{question_data['question number']}-{question_data['subquestion_number']}-{key}"
                 solutions[solution_key] = question_data["solution"]
                 total_points.extend([question_data["points"]])
+                question_points += question_data["points"]
 
         # Write updated total_points and solutions back to the file
         with open(output_file, "w", encoding="utf-8") as f:
@@ -719,7 +721,7 @@ class NotebookProcessor:
                 f.write(f'    "{key}": {repr(solution)},\n')
             f.write("}\n")
             
-        return sum(total_points)
+        return question_points
 
     def extract_MCQ(ipynb_file):
         """
