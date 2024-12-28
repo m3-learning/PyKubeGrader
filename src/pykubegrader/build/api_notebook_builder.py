@@ -125,7 +125,7 @@ class FastAPINotebookBuilder:
         short_filename = self.filename.split(".")[0].replace("_temp", "")
         first_cell_header.extend(
             [
-                f'log_variable("total-points",f"{self.assignment_tag},{short_filename}", {self.total_points})\n'
+                f'log_variable("total-points",f"{self.assignment_tag}, {short_filename}", {self.total_points})\n'
             ]
         )
 
