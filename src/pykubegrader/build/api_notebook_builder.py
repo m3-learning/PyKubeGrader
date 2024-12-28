@@ -13,6 +13,7 @@ import nbformat
 class FastAPINotebookBuilder:
     notebook_path: str
     temp_notebook: Optional[str] = None
+    assignment_tag: Optional[str] = ""
 
     def __post_init__(self):
         self.root_path, self.filename = FastAPINotebookBuilder.get_filename_and_root(
@@ -124,7 +125,7 @@ class FastAPINotebookBuilder:
         short_filename = self.filename.split(".")[0].replace("_temp", "")
         first_cell_header.extend(
             [
-                f'log_variable("total-points-{short_filename}", {self.total_points}, " ")\n'
+                f'log_variable("total-points",f"{self.assignment_tag},{short_filename}", {self.total_points})\n'
             ]
         )
 

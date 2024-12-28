@@ -21,12 +21,14 @@ class NotebookProcessor:
 
     Attributes:
         root_folder (str): The root directory containing notebooks to process.
+        assignment_tag (str): Tag for the assignment being processed.
         solutions_folder (str): The directory where processed notebooks and solutions are stored.
         verbose (bool): Flag for verbose output to the console.
         log (bool): Flag to enable or disable logging.
     """
 
     root_folder: str
+    assignment_tag: str = field(default="")
     solutions_folder: str = field(init=False)
     verbose: bool = False
     log: bool = True
@@ -320,7 +322,7 @@ class NotebookProcessor:
             shutil.copy("./keys/.client_private_key.bin", client_private_key)
             shutil.copy("./keys/.server_public_key.bin", server_public_key)
 
-            out = FastAPINotebookBuilder(notebook_path=temp_notebook_path)
+            out = FastAPINotebookBuilder(notebook_path=temp_notebook_path, assignment_tag=self.assignment_tag)
 
             debug_notebook = os.path.join(
                 notebook_subfolder,
@@ -1669,9 +1671,16 @@ def main():
     parser.add_argument(
         "root_folder", type=str, help="Path to the root folder to process"
     )
+    
+    parser.add_argument(
+        "--assignment-tag",
+        type=str,
+        help="assignment-tag used for calculating grades",
+        default="Reading-Week-X",
+    )
+    
     args = parser.parse_args()
-
-    processor = NotebookProcessor(args.root_folder)
+    processor = NotebookProcessor(root_folder=args.root_folder, assignment_tag=args.assignment_tag)
     processor.process_notebooks()
 
 
