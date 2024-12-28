@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    pykubegrader.build
+   pykubegrader.log_parser
    pykubegrader.widgets
    pykubegrader.widgets_base
 
