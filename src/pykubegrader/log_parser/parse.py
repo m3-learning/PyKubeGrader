@@ -27,7 +27,10 @@ class LogParser:
         ):  # Process in reverse to get the most recent entries first
             if self._is_student_info(line):
                 self._process_student_info(line, unique_students)
-            elif "total-points" in line:
+            elif (
+                any(item in line for item in self.all_questions)
+                and "total-points" in line
+            ):
                 self._process_assignment_header(line)
 
         # process assignment entries after all headers have been processed
