@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader package &#8212; PyKubeGrader 0.0.post1.dev1+g1d052ac documentation</title>
+    <title>pykubegrader package &#8212; PyKubeGrader 0.0.post1.dev1+g42a2e4a documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=6e8d5cc9"></script>
+    <script src="../_static/documentation_options.js?v=1892020d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader" href="modules.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g1d052ac" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g42a2e4a" />
     <meta name="docbuild:last-update" content="Dec 27, 2024"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g1d052ac documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g1d052ac documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g42a2e4a documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g42a2e4a documentation - Home"/>
   
   
 </a></div>
@@ -361,6 +361,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">pykubegrader package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.build.html">pykubegrader.build namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.log_parser.html">pykubegrader.log_parser namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html">pykubegrader.widgets package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html">pykubegrader.widgets_base package</a></li>
 </ul>
@@ -437,6 +438,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder"><code class="docutils literal notranslate"><span class="pre">FastAPINotebookBuilder</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.add_api_code"><code class="docutils literal notranslate"><span class="pre">FastAPINotebookBuilder.add_api_code()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.add_import_statements_to_tests"><code class="docutils literal notranslate"><span class="pre">FastAPINotebookBuilder.add_import_statements_to_tests()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.assignment_tag"><code class="docutils literal notranslate"><span class="pre">FastAPINotebookBuilder.assignment_tag</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.compute_max_points_free_response"><code class="docutils literal notranslate"><span class="pre">FastAPINotebookBuilder.compute_max_points_free_response()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.construct_first_cell_question_header"><code class="docutils literal notranslate"><span class="pre">FastAPINotebookBuilder.construct_first_cell_question_header()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.construct_graders"><code class="docutils literal notranslate"><span class="pre">FastAPINotebookBuilder.construct_graders()</span></code></a></li>
@@ -460,6 +462,23 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.build.html#pykubegrader-build-build-folder-module">pykubegrader.build.build_folder module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pykubegrader.log_parser.html">pykubegrader.log_parser namespace</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.log_parser.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.log_parser.html#module-pykubegrader.log_parser.parse">pykubegrader.log_parser.parse module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.log_parser.html#pykubegrader.log_parser.parse.LogParser"><code class="docutils literal notranslate"><span class="pre">LogParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.log_parser.html#pykubegrader.log_parser.parse.LogParser.assignments"><code class="docutils literal notranslate"><span class="pre">LogParser.assignments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.log_parser.html#pykubegrader.log_parser.parse.LogParser.calculate_total_scores"><code class="docutils literal notranslate"><span class="pre">LogParser.calculate_total_scores()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.log_parser.html#pykubegrader.log_parser.parse.LogParser.get_results"><code class="docutils literal notranslate"><span class="pre">LogParser.get_results()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.log_parser.html#pykubegrader.log_parser.parse.LogParser.log_lines"><code class="docutils literal notranslate"><span class="pre">LogParser.log_lines</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.log_parser.html#pykubegrader.log_parser.parse.LogParser.parse_logs"><code class="docutils literal notranslate"><span class="pre">LogParser.parse_logs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.log_parser.html#pykubegrader.log_parser.parse.LogParser.student_info"><code class="docutils literal notranslate"><span class="pre">LogParser.student_info</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.log_parser.html#pykubegrader.log_parser.parse.LogParser.week_tag"><code class="docutils literal notranslate"><span class="pre">LogParser.week_tag</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pykubegrader.widgets.html">pykubegrader.widgets package</a><ul>
