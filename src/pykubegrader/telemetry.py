@@ -3,7 +3,7 @@ import datetime
 import json
 import logging
 import os
-from typing import Optional
+from typing import Any, Optional
 
 import nacl.public
 import requests
@@ -187,5 +187,31 @@ def verify_server(
 
 # TODO: implement function; or maybe not?
 # At least improve other one
-def score_question_improved(question_name: str, responses: dict) -> dict:
-    return {}
+def score_question_improved(
+    week: str,
+    assignment_category: str,
+    term: str = "winter_2025",
+    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
+) -> None:
+    url = base_url + "/live-scorer"
+
+    responses = ensure_responses()
+
+    payload: dict[str, Any] = {
+        "student_email": f'{responses["jhub_user"]}@drexel.edu',
+        "term": term,
+        "week": week,
+        "assignment": assignment_category,
+        "question": f'_{responses["assignment"]}',
+        "responses": responses,
+    }
+
+    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
+
+    res_data = res.json()
+    max_points, points_earned = res_data["max_points"], res_data["points_earned"]
+    log_variable(
+        assignment_name=responses["assignment"],
+        value=f"{points_earned}, {max_points}",
+        info_type="score",
+    )
