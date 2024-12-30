@@ -71,7 +71,7 @@ def ensure_responses() -> dict:
     return responses
 
 
-def log_encrypted(logger: object, message: str) -> None:
+def log_encrypted(logger: logging.Logger, message: str) -> None:
     """
     Logs an encrypted version of the given message using the provided logger.
 
