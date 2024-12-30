@@ -191,7 +191,7 @@ def score_question_improved(
     week: str,
     assignment_category: str,
     term: str = "winter_2025",
-    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
+    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
 ) -> None:
     url = base_url + "/live-scorer"
 
