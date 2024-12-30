@@ -94,7 +94,8 @@ class MultiSelectQuestion:
 
                 if isinstance(widget, pn.widgets.Checkbox):
                     next_selections.append(widget.value)
-                    next_names.append(widget.name)  # Debugging; update later
+                    if widget.value:
+                        next_names.append(widget.name)  # Debugging; update later
                     responses_flat.append(widget.value)  # For flat list of responses
 
             # Append all responses for this widget at once, forming a list of lists
