@@ -50,6 +50,7 @@ def initialize_assignment(
         update_responses(key="assignment", value=name)
         update_responses(key="jhub_user", value=jhub_user)
 
+        # TODO: Check whether this is called correctly
         log_variable("Student Info", jhub_user, seed)
 
         responses = ensure_responses()
