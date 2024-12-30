@@ -36,7 +36,6 @@ class FastAPINotebookBuilder:
         self.add_api_code()
 
     def add_api_code(self):
-
         self.compute_max_points_free_response()
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
@@ -95,10 +94,8 @@ class FastAPINotebookBuilder:
 
     def compute_max_points_free_response(self):
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
-
             # gets the question name from the first cell to not double count
             if cell_dict["is_first"]:
-
                 # get the max points for the question
                 max_question_points = sum(
                     cell["points"]

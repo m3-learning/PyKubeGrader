@@ -1,10 +1,12 @@
 import os
 import shutil
 from pathlib import Path
-from IPython import get_ipython
+
 import panel as pn
 import requests
-from .telemetry import telemetry, update_responses, ensure_responses, log_variable
+from IPython import get_ipython
+
+from .telemetry import ensure_responses, log_variable, telemetry, update_responses
 
 
 def initialize_assignment(
