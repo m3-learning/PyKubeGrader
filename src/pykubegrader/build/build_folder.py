@@ -729,7 +729,7 @@ class NotebookProcessor:
         # Write updated total_points and solutions back to the file
         with open(output_file, "w", encoding="utf-8") as f:
             f.write("from typing import Any\n\n")
-            f.write(f"total_points: float = {total_points}\n\n")
+            f.write(f"total_points: list[float] = {total_points}\n\n")
 
             f.write("solutions: dict[str, Any] = {\n")
             for key, solution in solutions.items():
