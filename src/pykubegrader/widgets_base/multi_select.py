@@ -34,6 +34,8 @@ class MultiSelectQuestion:
         self.question_number = question_number
         self.style = style
 
+        self.true_keys = keys  # Debugging; update later
+
         flat_index = 0
         self.keys: list[str] = []
         for i, _ in enumerate(keys):
@@ -79,9 +81,11 @@ class MultiSelectQuestion:
     def submit(self, _) -> None:
         responses_flat: list[bool] = []
         self.responses_nested: list[list[bool]] = []
+        self.names_nested: list[list[str]] = []  # Debugging; update later
 
         for row in self.widgets:
-            next_selections = []
+            next_selections: list[bool] = []
+            next_names: list[str] = []  # Debugging; update later
 
             for widget in row.objects:
                 # Skip HTML widgets
@@ -90,16 +94,23 @@ class MultiSelectQuestion:
 
                 if isinstance(widget, pn.widgets.Checkbox):
                     next_selections.append(widget.value)
+                    if widget.value:
+                        next_names.append(widget.name)  # Debugging; update later
                     responses_flat.append(widget.value)  # For flat list of responses
 
             # Append all responses for this widget at once, forming a list of lists
             self.responses_nested.append(next_selections)
+            self.names_nested.append(next_names)  # Debugging; update later
 
         self.record_responses(responses_flat)
 
     def record_responses(self, responses_flat: list[bool]) -> None:
         for key, value in zip(self.keys, responses_flat):
             update_responses(key, value)
+
+        # Debugging; update later
+        for k, v in zip(self.true_keys, self.names_nested):
+            update_responses(k, v)
 
         self.submit_button.name = "Responses Submitted"
         time.sleep(1)
