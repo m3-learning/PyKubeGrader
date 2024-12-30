@@ -225,8 +225,7 @@ def validate_logfile(
     submission_message(response)
 
 
-def read_logfile(filepath, key_box=None):
-
+def read_logfile(filepath, key_box=None) -> tuple[list[str], list[str]]:
     if key_box is None:
         key_box = generate_keys()
 
