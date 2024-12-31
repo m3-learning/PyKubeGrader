@@ -1439,7 +1439,7 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
             keys = []
             for i, (q_key, q_value) in enumerate(question_dict.items()):
                 # Write keys
-                keys.append(f"q{q_value['question number']}-q{q_value['subquestion_number']}-{q_value['name']}")
+                keys.append(f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}")
 
             f.write(f"            keys={keys},\n")
 
@@ -1508,7 +1508,7 @@ def generate_select_many_file(data_dict, output_file="select_many_questions.py")
             keys = []
             for i, (q_key, q_value) in enumerate(question_dict.items()):
                 # Write keys
-                keys.append(f"q{q_value['question number']}-q{q_value['subquestion_number']}-{q_value['name']}")
+                keys.append(f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}")
 
             f.write(f"            keys={keys},\n")
 
@@ -1583,7 +1583,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
             keys = []
             for i, (q_key, q_value) in enumerate(question_dict.items()):
                 # Write keys
-                keys.append(f"q{q_value['question number']}-q{q_value['subquestion_number']}-{q_value['name']}")
+                keys.append(f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}")
 
             f.write(f"            keys={keys},\n")
 
