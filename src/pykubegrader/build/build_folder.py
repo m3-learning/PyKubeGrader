@@ -57,6 +57,11 @@ class NotebookProcessor:
             level=logging.INFO,  # Log messages at INFO level and above will be recorded
             format="%(asctime)s - %(levelname)s - %(message)s",  # Log message format: timestamp, level, and message
         )
+        
+        self.assignmet_type = self.assignment_tag.split("-")[0].lower()
+        
+        week_num = self.assignment_tag.split("-")[-1]
+        self.week = f"week_{week_num}"
 
         # Initialize a global logger for the class
         global logger
@@ -354,7 +359,7 @@ class NotebookProcessor:
                 notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
             )
 
-            NotebookProcessor.add_initialization_code(student_notebook)
+            NotebookProcessor.add_initialization_code(student_notebook, self.week, self.assignmet_type)
 
             self.clean_notebook(student_notebook)
 
@@ -378,7 +383,7 @@ class NotebookProcessor:
 
             return student_notebook, out.total_points
         else:
-            NotebookProcessor.add_initialization_code(temp_notebook_path)
+            NotebookProcessor.add_initialization_code(temp_notebook_path, self.week, self.assignmet_type)
             return None, 0
 
     @staticmethod
@@ -399,13 +404,13 @@ class NotebookProcessor:
             nbformat.write(notebook, f)
 
     @staticmethod
-    def add_initialization_code(notebook_path):
+    def add_initialization_code(notebook_path, week, assignment_type):
         # finds the first code cell
         index, cell = find_first_code_cell(notebook_path)
         cell = cell["source"]
         import_text = "from pykubegrader.initialize import initialize_assignment\n"
         cell = f"{import_text}\n" + cell
-        cell += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}")\n'
+        cell += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
         replace_cell_source(notebook_path, index, cell)
 
     def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
