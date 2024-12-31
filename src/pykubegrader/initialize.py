@@ -11,6 +11,8 @@ from .telemetry import ensure_responses, log_variable, telemetry, update_respons
 
 def initialize_assignment(
     name: str,
+    week: int,
+    assignment_type: str,
     url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
     verbose: bool = False,
 ) -> dict:
@@ -46,6 +48,8 @@ def initialize_assignment(
     try:
         seed = hash(jhub_user) % 1000
         update_responses(key="seed", value=seed)
+        update_responses(key="week", value=week)
+        update_responses(key="assignment_type", value=assignment_type)
 
         update_responses(key="assignment", value=name)
         update_responses(key="jhub_user", value=jhub_user)
