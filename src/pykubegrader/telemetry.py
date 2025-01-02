@@ -122,30 +122,6 @@ def update_responses(key: str, value) -> dict:
 #
 
 
-# If we instead call this with **responses
-def score_question(
-    student_email: str,
-    assignment: str,
-    question: str,
-    submission: str,
-    term: str = "winter_2025",
-    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
-) -> Response:
-    url = base_url + "/live-scorer"
-
-    payload = {
-        "student_email": student_email,
-        "term": term,
-        "assignment": assignment,
-        "question": question,
-        "responses": submission,
-    }
-
-    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
-
-    return res
-
-
 def submit_question(
     student_email: str,
     term: str,
