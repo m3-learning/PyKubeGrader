@@ -93,7 +93,7 @@ class FastAPINotebookBuilder:
             self.replace_cell_source(cell_index, updated_cell_source)
 
     def compute_max_points_free_response(self):
-        for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
+        for cell_dict in self.assertion_tests_dict.values():
             # gets the question name from the first cell to not double count
             if cell_dict["is_first"]:
                 # get the max points for the question
@@ -380,7 +380,7 @@ class FastAPINotebookBuilder:
             question_groups[question].append(key)
 
         # Add 'is_first' and 'is_last' flags to all cells
-        for question, keys in question_groups.items():
+        for keys in question_groups.values():
             test_number = 1
             for i, key in enumerate(keys):
                 cells_dict[key]["is_first"] = i == 0

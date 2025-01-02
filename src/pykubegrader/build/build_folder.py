@@ -57,9 +57,9 @@ class NotebookProcessor:
             level=logging.INFO,  # Log messages at INFO level and above will be recorded
             format="%(asctime)s - %(levelname)s - %(message)s",  # Log message format: timestamp, level, and message
         )
-        
+
         self.assignmet_type = self.assignment_tag.split("-")[0].lower()
-        
+
         week_num = self.assignment_tag.split("-")[-1]
         self.week = f"week_{week_num}"
 
@@ -359,7 +359,9 @@ class NotebookProcessor:
                 notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
             )
 
-            NotebookProcessor.add_initialization_code(student_notebook, self.week, self.assignmet_type)
+            NotebookProcessor.add_initialization_code(
+                student_notebook, self.week, self.assignmet_type
+            )
 
             self.clean_notebook(student_notebook)
 
@@ -383,7 +385,9 @@ class NotebookProcessor:
 
             return student_notebook, out.total_points
         else:
-            NotebookProcessor.add_initialization_code(temp_notebook_path, self.week, self.assignmet_type)
+            NotebookProcessor.add_initialization_code(
+                temp_notebook_path, self.week, self.assignmet_type
+            )
             return None, 0
 
     @staticmethod
@@ -434,7 +438,7 @@ class NotebookProcessor:
             for data_ in data:
                 # Generate the solution file
                 self.mcq_total_points = self.generate_solution_MCQ(
-                    data, output_file=solution_path
+                    data_, output_file=solution_path
                 )
 
                 question_path = (
@@ -1440,7 +1444,7 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
 
     for question_dict in data_dict:
         with open(output_file, "a", encoding="utf-8") as f:
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for i, q_value in enumerate(question_dict.values()):
                 if i == 0:
                     # Write the MCQuestion class
                     f.write(
@@ -1456,7 +1460,7 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
                 break
 
             keys = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write keys
                 keys.append(
                     f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
@@ -1465,20 +1469,20 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
             f.write(f"            keys={keys},\n")
 
             options = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write options
                 options.append(q_value["OPTIONS"])
 
             f.write(f"            options={options},\n")
 
             descriptions = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write descriptions
                 descriptions.append(q_value["question_text"])
             f.write(f"            descriptions={descriptions},\n")
 
             points = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write points
                 points.append(q_value["points"])
 
@@ -1511,7 +1515,7 @@ def generate_select_many_file(data_dict, output_file="select_many_questions.py")
 
     for question_dict in data_dict:
         with open(output_file, "a", encoding="utf-8") as f:
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for i, q_value in enumerate(question_dict.values()):
                 if i == 0:
                     # Write the MCQuestion class
                     f.write(
@@ -1527,7 +1531,7 @@ def generate_select_many_file(data_dict, output_file="select_many_questions.py")
                 break
 
             keys = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write keys
                 keys.append(
                     f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
@@ -1536,20 +1540,20 @@ def generate_select_many_file(data_dict, output_file="select_many_questions.py")
             f.write(f"            keys={keys},\n")
 
             descriptions = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write descriptions
                 descriptions.append(q_value["question_text"])
             f.write(f"            descriptions={descriptions},\n")
 
             options = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write options
                 options.append(q_value["OPTIONS"])
 
             f.write(f"            options={options},\n")
 
             points = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write points
                 points.append(q_value["points"])
 
@@ -1577,7 +1581,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
 
     # Define header lines
     header_lines = [
-        "from pykubegrader.widgets.true_false import TFQuestion, TrueFalse_style\n",
+        "from pykubegrader.widgets.true_false import TFQuestion, TFStyle\n",
         "import pykubegrader.initialize\n",
         "import panel as pn\n\n",
         "pn.extension()\n\n",
@@ -1588,7 +1592,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
 
     for question_dict in data_dict:
         with open(output_file, "a", encoding="utf-8") as f:
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for i, q_value in enumerate(question_dict.values()):
                 if i == 0:
                     # Write the MCQuestion class
                     f.write(
@@ -1597,14 +1601,14 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
                     f.write(f"            title=f'{q_value['question_text']}',\n")
-                    f.write("            style=TrueFalse_style,\n")
+                    f.write("            style=TFStyle,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
                     )
                 break
 
             keys = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write keys
                 keys.append(
                     f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
@@ -1613,13 +1617,13 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
             f.write(f"            keys={keys},\n")
 
             descriptions = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write descriptions
                 descriptions.append(q_value["question_text"])
             f.write(f"            descriptions={descriptions},\n")
 
             points = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
+            for q_value in question_dict.values():
                 # Write points
                 points.append(q_value["points"])
 
