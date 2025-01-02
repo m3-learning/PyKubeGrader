@@ -55,14 +55,14 @@ class NotebookProcessor:
         """
         if self.check_if_file_in_folder("assignment_config.yaml"):
             # Parse the YAML content
-            with open("assignment_config.yaml", 'r') as file:
+            with open(f"{self.root_folder}/assignment_config.yaml", 'r') as file:
                 data = yaml.safe_load(file)
                 # Extract assignment details
                 assignment = data.get('assignment', {})
                 week_num = assignment.get('week')
                 self.assignment_type = assignment.get('assignment_type')                
         else:
-            self.assignmet_type = self.assignment_tag.split("-")[0].lower()
+            self.assignment_type = self.assignment_tag.split("-")[0].lower()
             week_num = self.assignment_tag.split("-")[-1]
         
         self.week = f"week_{week_num}"
@@ -461,7 +461,7 @@ class NotebookProcessor:
             )
 
             NotebookProcessor.add_initialization_code(
-                student_notebook, self.week, self.assignmet_type
+                student_notebook, self.week, self.assignment_type
             )
 
             self.clean_notebook(student_notebook)
@@ -487,7 +487,7 @@ class NotebookProcessor:
             return student_notebook, out.total_points
         else:
             NotebookProcessor.add_initialization_code(
-                temp_notebook_path, self.week, self.assignmet_type
+                temp_notebook_path, self.week, self.assignment_type
             )
             return None, 0
     
