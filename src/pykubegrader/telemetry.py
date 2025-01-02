@@ -11,27 +11,24 @@ from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
 
-# Logger for .output_code.log
+#
+# Logging setup
+#
+
+# Logger for cell execution
 logger_code = logging.getLogger("code_logger")
 logger_code.setLevel(logging.INFO)
 
 file_handler_code = logging.FileHandler(".output_code.log")
 file_handler_code.setLevel(logging.INFO)
-
-# formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-# file_handler_code.setFormatter(formatter)
-
 logger_code.addHandler(file_handler_code)
 
-# Logger for .output_reduced.log
+# Logger for question scores etc.
 logger_reduced = logging.getLogger("reduced_logger")
 logger_reduced.setLevel(logging.INFO)
 
 file_handler_reduced = logging.FileHandler(".output_reduced.log")
 file_handler_reduced.setLevel(logging.INFO)
-
-# file_handler_reduced.setFormatter(formatter)
-
 logger_reduced.addHandler(file_handler_reduced)
 
 #
@@ -55,7 +52,7 @@ def encrypt_to_b64(message: str) -> str:
     return encrypted_b64
 
 
-def ensure_responses() -> dict:
+def ensure_responses() -> dict[str, Any]:
     with open(".responses.json", "a") as _:
         pass
 
@@ -125,69 +122,8 @@ def update_responses(key: str, value) -> dict:
 #
 
 
-# If we instead call this with **responses
+# TODO: Improve error handling
 def score_question(
-    student_email: str,
-    assignment: str,
-    question: str,
-    submission: str,
-    term: str = "winter_2025",
-    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
-) -> Response:
-    url = base_url + "/live-scorer"
-
-    payload = {
-        "student_email": student_email,
-        "term": term,
-        "assignment": assignment,
-        "question": question,
-        "responses": submission,
-    }
-
-    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
-
-    return res
-
-
-def submit_question(
-    student_email: str,
-    term: str,
-    assignment: str,
-    question: str,
-    responses: dict,
-    score: dict,
-    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
-):
-    url = base_url + "/submit-question"
-
-    payload = {
-        "student_email": student_email,
-        "term": term,
-        "assignment": assignment,
-        "question": question,
-        "responses": responses,
-        "score": score,
-    }
-
-    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
-
-    return res
-
-
-# TODO: refine function
-def verify_server(
-    jhub_user: Optional[str] = None,
-    url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
-) -> str:
-    params = {"jhub_user": jhub_user} if jhub_user else {}
-    res = requests.get(url, params=params)
-    message = f"status code: {res.status_code}"
-    return message
-
-
-# TODO: implement function; or maybe not?
-# At least improve other one
-def score_question_improved(
     term: str = "winter_2025",
     base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
 ) -> None:
@@ -206,18 +142,47 @@ def score_question_improved(
 
     res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
 
-    res_data = res.json()
-    # max_points, points_earned = res_data["max_points"], res_data["points_earned"]
-    # log_variable(
-    #     assignment_name=responses["assignment"],
-    #     value=f"{points_earned}, {max_points}",
-    #     info_type="score",
-    # )
+    res_data: dict[str, tuple[float, float]] = res.json()
 
-    # res_data is now dict[str, tuple[float, float]]
     for question, (points_earned, max_points) in res_data.items():
         log_variable(
             assignment_name=responses["assignment"],
             value=f"{points_earned}, {max_points}",
             info_type=question,
         )
+
+
+def submit_question(
+    student_email: str,
+    term: str,
+    assignment: str,
+    question: str,
+    responses: dict,
+    score: dict,
+    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
+) -> Response:
+    url = base_url + "/submit-question"
+
+    payload = {
+        "student_email": student_email,
+        "term": term,
+        "assignment": assignment,
+        "question": question,
+        "responses": responses,
+        "score": score,
+    }
+
+    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
+
+    return res
+
+
+# TODO: Refine
+def verify_server(
+    jhub_user: Optional[str] = None,
+    url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
+) -> str:
+    params = {"jhub_user": jhub_user} if jhub_user else {}
+    res = requests.get(url, params=params)
+    message = f"status code: {res.status_code}"
+    return message

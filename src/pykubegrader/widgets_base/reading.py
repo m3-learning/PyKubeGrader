@@ -3,7 +3,7 @@ from typing import Optional
 
 import panel as pn
 
-from ..telemetry import ensure_responses, update_responses
+from ..telemetry import ensure_responses, score_question, update_responses
 from ..utils import shuffle_options
 
 
@@ -161,6 +161,8 @@ class ReadingPython:
         for exec_val in self.output_execution:
             i += 1
             update_responses(f"q{self.question_number}_{i}", exec_val)
+
+        score_question()  # Debugging; update later
 
         print("Responses recorded successfully")
 
