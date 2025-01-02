@@ -53,6 +53,20 @@ class NotebookProcessor:
         Raises:
             OSError: If the solutions folder cannot be created due to permissions or other filesystem issues.
         """
+        if self.check_if_file_in_folder("assignment_config.yaml"):
+            # Parse the YAML content
+            with open("assignment_config.yaml", 'r') as file:
+                data = yaml.safe_load(file)
+                # Extract assignment details
+                assignment = data.get('assignment', {})
+                week_num = assignment.get('week')
+                self.assignment_type = assignment.get('assignment_type')                
+        else:
+            self.assignmet_type = self.assignment_tag.split("-")[0].lower()
+            week_num = self.assignment_tag.split("-")[-1]
+        
+        self.week = f"week_{week_num}"
+        
         # Define the folder to store solutions and ensure it exists
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
         self.assignment_total_points = 0
@@ -68,11 +82,6 @@ class NotebookProcessor:
             level=logging.INFO,  # Log messages at INFO level and above will be recorded
             format="%(asctime)s - %(levelname)s - %(message)s",  # Log message format: timestamp, level, and message
         )
-
-        self.assignmet_type = self.assignment_tag.split("-")[0].lower()
-
-        week_num = self.assignment_tag.split("-")[-1]
-        self.week = f"week_{week_num}"
 
         # Initialize a global logger for the class
         global logger
