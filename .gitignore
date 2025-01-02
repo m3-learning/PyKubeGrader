@@ -27,7 +27,7 @@ tags
 *.egg
 *.eggs/
 .installed.cfg
-*.egg-info 
+*.egg-info
 
 # Unittest and coverage
 htmlcov/*
@@ -42,7 +42,7 @@ coverage.xml
 build/*
 sdist/*
 dist/*
-docs/api/* 
+docs/api/*
 docs/_rst/*
 docs/_build/*
 cover/*
@@ -55,4 +55,5 @@ MANIFEST
 
 .mypy_cache/
 .ruff_cache/
-/home/jca92/PyKubeGrader/src/pykubegrader/build/password.py
+password.py
+passwords.py
