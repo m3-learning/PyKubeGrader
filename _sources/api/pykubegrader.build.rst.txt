@@ -20,14 +20,6 @@ pykubegrader.build.build\_folder module
    :undoc-members:
    :show-inheritance:
 
-pykubegrader.build.passwords module
------------------------------------
-
-.. automodule:: pykubegrader.build.passwords
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
