@@ -1,5 +1,7 @@
 import datetime
+
 import numpy as np
+
 
 def calculate_late_submission(
     due_date_str, submission_date, Q0=100, Q_min=40, k=6.88e-5
@@ -20,9 +22,7 @@ def calculate_late_submission(
     """
     # Convert datetime strings to UNIX timestamps
     due_date = datetime.datetime.strptime(due_date_str, "%Y-%m-%d %H:%M:%S")
-    comparison_date = datetime.datetime.strptime(
-        submission_date, "%Y-%m-%d %H:%M:%S"
-    )
+    comparison_date = datetime.datetime.strptime(submission_date, "%Y-%m-%d %H:%M:%S")
 
     # Calculate time difference in seconds
     time_difference = (comparison_date - due_date).total_seconds()
@@ -38,4 +38,3 @@ def calculate_late_submission(
     Q = np.minimum(Q, Q0)
 
     return Q
-
