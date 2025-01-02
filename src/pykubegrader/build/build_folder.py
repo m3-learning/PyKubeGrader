@@ -8,6 +8,15 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field
+import yaml
+from datetime import datetime
+
+import requests
+
+try:
+    from pykubegrader.build.passwords import password, user
+except:  # noqa: E722
+    print("Passwords not found, cannot access database")
 
 import nbformat
 
@@ -46,6 +55,8 @@ class NotebookProcessor:
         """
         # Define the folder to store solutions and ensure it exists
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
+        self.assignment_total_points = 0
+        
         os.makedirs(
             self.solutions_folder, exist_ok=True
         )  # Create the folder if it doesn't exist
@@ -57,6 +68,11 @@ class NotebookProcessor:
             level=logging.INFO,  # Log messages at INFO level and above will be recorded
             format="%(asctime)s - %(levelname)s - %(message)s",  # Log message format: timestamp, level, and message
         )
+
+        self.assignmet_type = self.assignment_tag.split("-")[0].lower()
+
+        week_num = self.assignment_tag.split("-")[-1]
+        self.week = f"week_{week_num}"
 
         # Initialize a global logger for the class
         global logger
@@ -126,6 +142,83 @@ class NotebookProcessor:
             json.dump(
                 self.total_point_log, json_file, indent=4
             )  # `indent=4` for pretty formatting
+
+        if self.check_if_file_in_folder("assignment_config.yaml"):
+            self.add_assignment()
+    
+    def build_payload(self, yaml_content):
+        """
+        Reads YAML content for an assignment and returns Python variables.
+
+        Args:
+            yaml_content (str): The YAML string to parse.
+
+        Returns:
+            dict: A dictionary containing the parsed assignment data.
+        """
+        # Parse the YAML content
+        with open(yaml_content, 'r') as file:
+            data = yaml.safe_load(file)
+        
+        # Extract assignment details
+        assignment = data.get('assignment', {})
+        week = assignment.get('week')
+        assignment_type = assignment.get('assignment_type')
+        due_date_str = assignment.get('due_date')
+
+        # Convert due_date to a datetime object if available
+        due_date = None
+        if due_date_str:
+            try:
+                due_date = datetime.strptime(due_date_str, "%Y-%m-%d %H:%M:%S %Z")
+            except ValueError as e:
+                print(f"Error parsing due_date: {e}")
+            except ValueError as e:
+                print(f"Error parsing due_date: {e}")
+                
+        title = f"Week {week} - {assignment_type}"
+
+        # Return the extracted details as a dictionary
+        return {
+            "title": title,
+            "description":week,
+            "due_date": due_date,
+            "max_score": self.assignment_total_points
+        }     
+    
+    def add_assignment(self):
+
+        # Define the URL
+        url = "https://engr-131-api.eastus.cloudapp.azure.com/assignments"
+
+        # Define the payload (data you want to send)
+        payload = self.build_payload(open(f"{self.root_folder}/assignment_config.yaml", "r").read())
+
+        # Use HTTP Basic Authentication
+        auth = (user(), password())
+
+        # Define headers (optional, e.g., content type)
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        # Send the POST request
+        response = requests.post(url, json=payload, headers=headers, auth=auth)
+
+        # Print the response
+        print(f"Status Code: {response.status_code}")
+        try:
+            print(f"Response: {response.json()}")
+        except ValueError:
+            print(f"Response: {response.text}")
+
+    
+    def check_if_file_in_folder(self, file):
+        
+        for root, _, files in os.walk(self.root_folder):
+            if file in files:
+                return True
+        return False
 
     def _print_and_log(self, message):
         """
@@ -297,6 +390,8 @@ class NotebookProcessor:
             + self.tf_total_points
             + self.otter_total_points
         )
+        
+        self.assignment_total_points += total_points
 
         self.total_point_log.update({notebook_name: total_points})
 
@@ -354,7 +449,9 @@ class NotebookProcessor:
                 notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
             )
 
-            NotebookProcessor.add_initialization_code(student_notebook)
+            NotebookProcessor.add_initialization_code(
+                student_notebook, self.week, self.assignmet_type
+            )
 
             self.clean_notebook(student_notebook)
 
@@ -378,7 +475,9 @@ class NotebookProcessor:
 
             return student_notebook, out.total_points
         else:
-            NotebookProcessor.add_initialization_code(temp_notebook_path)
+            NotebookProcessor.add_initialization_code(
+                temp_notebook_path, self.week, self.assignmet_type
+            )
             return None, 0
 
     @staticmethod
@@ -399,13 +498,13 @@ class NotebookProcessor:
             nbformat.write(notebook, f)
 
     @staticmethod
-    def add_initialization_code(notebook_path):
+    def add_initialization_code(notebook_path, week, assignment_type):
         # finds the first code cell
         index, cell = find_first_code_cell(notebook_path)
         cell = cell["source"]
         import_text = "from pykubegrader.initialize import initialize_assignment\n"
         cell = f"{import_text}\n" + cell
-        cell += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}")\n'
+        cell += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
         replace_cell_source(notebook_path, index, cell)
 
     def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
@@ -430,6 +529,7 @@ class NotebookProcessor:
                 # Generate the solution file
                 self.mcq_total_points = self.generate_solution_MCQ(
                     data, output_file=solution_path
+                    #data_, output_file=solution_path
                 )
 
                 question_path = (
@@ -1572,7 +1672,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
 
     # Define header lines
     header_lines = [
-        "from pykubegrader.widgets.true_false import TFQuestion, TrueFalse_style\n",
+        "from pykubegrader.widgets.true_false import TFQuestion, TFStyle\n",
         "import pykubegrader.initialize\n",
         "import panel as pn\n\n",
         "pn.extension()\n\n",
@@ -1592,7 +1692,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
                     f.write(f"            title=f'{q_value['question_text']}',\n")
-                    f.write("            style=TrueFalse_style,\n")
+                    f.write("            style=TFStyle,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
                     )
