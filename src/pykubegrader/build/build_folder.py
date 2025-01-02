@@ -14,7 +14,7 @@ import requests
 import yaml
 
 try:
-    from pykubegrader.build.passwords import password, user
+    from .passwords import password, user
 except:  # noqa: E722
     print("Passwords not found, cannot access database")
 
