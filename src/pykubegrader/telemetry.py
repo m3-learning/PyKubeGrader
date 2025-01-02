@@ -123,7 +123,7 @@ def update_responses(key: str, value) -> dict:
 
 
 # TODO: Improve error handling
-def score_question_improved(
+def score_question(
     term: str = "winter_2025",
     base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
 ) -> None:
