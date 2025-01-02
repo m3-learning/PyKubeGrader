@@ -52,7 +52,7 @@ def encrypt_to_b64(message: str) -> str:
     return encrypted_b64
 
 
-def ensure_responses() -> dict:
+def ensure_responses() -> dict[str, Any]:
     with open(".responses.json", "a") as _:
         pass
 
@@ -154,7 +154,7 @@ def submit_question(
     responses: dict,
     score: dict,
     base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
-):
+) -> Response:
     url = base_url + "/submit-question"
 
     payload = {
