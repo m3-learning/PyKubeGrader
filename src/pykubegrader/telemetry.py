@@ -122,42 +122,6 @@ def update_responses(key: str, value) -> dict:
 #
 
 
-def submit_question(
-    student_email: str,
-    term: str,
-    assignment: str,
-    question: str,
-    responses: dict,
-    score: dict,
-    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
-) -> Response:
-    url = base_url + "/submit-question"
-
-    payload = {
-        "student_email": student_email,
-        "term": term,
-        "assignment": assignment,
-        "question": question,
-        "responses": responses,
-        "score": score,
-    }
-
-    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
-
-    return res
-
-
-# TODO: refine function
-def verify_server(
-    jhub_user: Optional[str] = None,
-    url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
-) -> str:
-    params = {"jhub_user": jhub_user} if jhub_user else {}
-    res = requests.get(url, params=params)
-    message = f"status code: {res.status_code}"
-    return message
-
-
 # TODO: Improve error handling
 def score_question_improved(
     term: str = "winter_2025",
@@ -186,3 +150,39 @@ def score_question_improved(
             value=f"{points_earned}, {max_points}",
             info_type=question,
         )
+
+
+def submit_question(
+    student_email: str,
+    term: str,
+    assignment: str,
+    question: str,
+    responses: dict,
+    score: dict,
+    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
+) -> Response:
+    url = base_url + "/submit-question"
+
+    payload = {
+        "student_email": student_email,
+        "term": term,
+        "assignment": assignment,
+        "question": question,
+        "responses": responses,
+        "score": score,
+    }
+
+    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
+
+    return res
+
+
+# TODO: Refine
+def verify_server(
+    jhub_user: Optional[str] = None,
+    url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
+) -> str:
+    params = {"jhub_user": jhub_user} if jhub_user else {}
+    res = requests.get(url, params=params)
+    message = f"status code: {res.status_code}"
+    return message
