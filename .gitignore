@@ -55,3 +55,4 @@ MANIFEST
 
 .mypy_cache/
 .ruff_cache/
+/home/jca92/PyKubeGrader/src/pykubegrader/build/password.py
