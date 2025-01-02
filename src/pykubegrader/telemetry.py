@@ -158,8 +158,7 @@ def verify_server(
     return message
 
 
-# TODO: implement function; or maybe not?
-# At least improve other one
+# TODO: Improve error handling
 def score_question_improved(
     term: str = "winter_2025",
     base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
@@ -179,15 +178,8 @@ def score_question_improved(
 
     res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
 
-    res_data = res.json()
-    # max_points, points_earned = res_data["max_points"], res_data["points_earned"]
-    # log_variable(
-    #     assignment_name=responses["assignment"],
-    #     value=f"{points_earned}, {max_points}",
-    #     info_type="score",
-    # )
+    res_data: dict[str, tuple[float, float]] = res.json()
 
-    # res_data is now dict[str, tuple[float, float]]
     for question, (points_earned, max_points) in res_data.items():
         log_variable(
             assignment_name=responses["assignment"],
