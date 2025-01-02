@@ -13,7 +13,7 @@ pn.extension(design="material", global_css=[drexel_colors], raw_css=[raw_css])
 #
 
 
-def TrueFalse_style(
+def TFStyle(
     descriptions: List[str],
     options: List[str] | List[List[str]],
     initial_vals: List[str],
@@ -71,7 +71,7 @@ class TFQuestion(SelectQuestion):
     def __init__(
         self,
         title="Select if the statement is True or False",
-        style=TrueFalse_style,
+        style=TFStyle,
         question_number=2,
         keys=["MC1", "MC2", "MC3", "MC4"],
         options=None,
