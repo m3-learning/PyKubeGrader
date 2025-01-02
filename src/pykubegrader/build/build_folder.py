@@ -319,18 +319,21 @@ class NotebookProcessor:
         else:
             self._print_and_log(f"Notebook already in destination: {new_notebook_path}")
 
-        solution_path_1, question_path = self.multiple_choice_parser(
+        solution_path_1, question_path_1 = self.multiple_choice_parser(
             temp_notebook_path, new_notebook_path
         )
-        solution_path_2, question_path = self.true_false_parser(
+        solution_path_2, question_path_2 = self.true_false_parser(
             temp_notebook_path, new_notebook_path
         )
-        solution_path_3, question_path = self.select_many_parser(
+        solution_path_3, question_path_3 = self.select_many_parser(
             temp_notebook_path, new_notebook_path
         )
 
         if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
             solution_path = solution_path_1 or solution_path_2 or solution_path_3
+            
+        if any([question_path_1, question_path_2, question_path_3]) is not None:
+            question_path = question_path_1 or question_path_2 or question_path_3
 
         student_notebook, self.otter_total_points = self.free_response_parser(
             temp_notebook_path, notebook_subfolder, notebook_name
@@ -339,8 +342,12 @@ class NotebookProcessor:
         # If Otter does not run, move the student file to the main directory
         if student_notebook is None:
             path_ = shutil.copy(temp_notebook_path, self.root_folder)
+            path_2 = shutil.move(question_path, os.path.join(os.path.dirname(temp_notebook_path), os.path.basename(question_path)))
             self._print_and_log(
                 f"Copied and cleaned student notebook: {path_} -> {self.root_folder}"
+            )
+            self._print_and_log(
+                f"Copied Questions to: {path_2} -> {os.path.join(os.path.dirname(temp_notebook_path), os.path.basename(question_path))}"
             )
 
         # Move the solution file to the autograder folder
@@ -543,16 +550,16 @@ class NotebookProcessor:
 
             data = NotebookProcessor.merge_metadata(value, data)
 
-            for data_ in data:
-                # Generate the solution file
-                self.mcq_total_points = self.generate_solution_MCQ(
-                    data, output_file=solution_path
-                    #data_, output_file=solution_path
-                )
+            # for data_ in data:
+            # Generate the solution file
+            self.mcq_total_points = self.generate_solution_MCQ(
+                data, output_file=solution_path
+                #data_, output_file=solution_path
+            )
 
-                question_path = (
-                    f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
-                )
+            question_path = (
+                f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
+            )
 
             generate_mcq_file(data, output_file=question_path)
 
