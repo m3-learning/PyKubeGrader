@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Optional
 
 
 @dataclass
@@ -9,16 +9,16 @@ class LogParser:
     Handles both assignment info and question-level details.
     """
 
-    log_lines: List[str]
+    log_lines: list[str]
     week_tag: Optional[str] = None
-    student_info: Dict[str, str] = field(default_factory=dict)
-    assignments: Dict[str, Dict] = field(default_factory=dict)
+    student_info: dict[str, str] = field(default_factory=dict)
+    assignments: dict[str, dict] = field(default_factory=dict)
 
-    def parse_logs(self):
+    def parse_logs(self) -> None:
         """
         Main method to parse logs and populate student_info and assignments.
         """
-        unique_students = set()
+        unique_students: set[str] = set()
 
         self._find_all_questions()
 
@@ -41,13 +41,13 @@ class LogParser:
             ):
                 self._process_assignment_entry(line)
 
-    def _find_all_questions(self):
+    def _find_all_questions(self) -> None:
         """
         Finds all questions in the log_lines and returns a list of them.
         """
         questions = []
         for line in self.log_lines:
-            if self.week_tag in line:
+            if self.week_tag and self.week_tag in line:
                 parts = line.split(",")
                 question_tag = parts[3].strip()
                 if question_tag not in questions:
@@ -60,7 +60,7 @@ class LogParser:
         """
         return line.startswith("Student Info")
 
-    def _process_student_info(self, line: str, unique_students: set):
+    def _process_student_info(self, line: str, unique_students: set) -> None:
         """
         Processes a line containing student information.
         Raises an error if multiple unique students are found.
@@ -83,7 +83,7 @@ class LogParser:
                 "timestamp": parts[3].strip(),
             }
 
-    def _process_assignment_header(self, line: str):
+    def _process_assignment_header(self, line: str) -> None:
         parts = line.split(",")
         assignment_tag = parts[0].strip()
         if assignment_tag.startswith("total-points"):
@@ -105,7 +105,7 @@ class LogParser:
                 self.assignments[notebook_name]["max_points"] = total_points_value
                 self.assignments[notebook_name]["latest_timestamp"] = timestamp
 
-    def _process_assignment_entry(self, line: str):
+    def _process_assignment_entry(self, line: str) -> None:
         """
         Processes a line containing an assignment entry.
         Adds it to the assignments dictionary.
@@ -141,7 +141,7 @@ class LogParser:
         if timestamp > self.assignments[assignment_tag]["latest_timestamp"]:
             self.assignments[assignment_tag]["latest_timestamp"] = timestamp
 
-    def _extract_total_points(self, parts: List[str]) -> Optional[float]:
+    def _extract_total_points(self, parts: list[str]) -> Optional[float]:
         """
         Extracts the total-points value from the parts array of a total-points line.
         """
@@ -150,7 +150,7 @@ class LogParser:
         except (ValueError, IndexError):
             return None
 
-    def calculate_total_scores(self):
+    def calculate_total_scores(self) -> None:
         """
         Calculates total scores for each assignment by summing the 'score_earned'
         of its questions, and sets 'total_points' if it was not specified.
@@ -160,7 +160,7 @@ class LogParser:
             total_score = sum(q["score_earned"] for q in data["questions"].values())
             data["total_score"] = total_score
 
-    def get_results(self) -> Dict[str, Dict]:
+    def get_results(self) -> dict[str, dict]:
         """
         Returns the parsed results as a hierarchical dictionary with three sections:
         """
