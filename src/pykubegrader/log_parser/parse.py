@@ -155,7 +155,7 @@ class LogParser:
         Calculates total scores for each assignment by summing the 'score_earned'
         of its questions, and sets 'total_points' if it was not specified.
         """
-        for assignment, data in self.assignments.items():
+        for data in self.assignments.values():
             # Sum of all question score_earned
             total_score = sum(q["score_earned"] for q in data["questions"].values())
             data["total_score"] = total_score
