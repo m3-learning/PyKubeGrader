@@ -1,7 +1,5 @@
-pykubegrader.log\_parser namespace
-==================================
-
-.. py:module:: pykubegrader.log_parser
+pykubegrader.log\_parser package
+================================
 
 Submodules
 ----------
@@ -10,6 +8,14 @@ pykubegrader.log\_parser.parse module
 -------------------------------------
 
 .. automodule:: pykubegrader.log_parser.parse
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pykubegrader.log_parser
    :members:
    :undoc-members:
    :show-inheritance:

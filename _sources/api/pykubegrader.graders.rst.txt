@@ -1,7 +1,5 @@
-pykubegrader.graders namespace
-==============================
-
-.. py:module:: pykubegrader.graders
+pykubegrader.graders package
+============================
 
 Submodules
 ----------
@@ -10,6 +8,14 @@ pykubegrader.graders.late\_assignments module
 ---------------------------------------------
 
 .. automodule:: pykubegrader.graders.late_assignments
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pykubegrader.graders
    :members:
    :undoc-members:
    :show-inheritance:
