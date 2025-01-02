@@ -188,8 +188,6 @@ def verify_server(
 # TODO: implement function; or maybe not?
 # At least improve other one
 def score_question_improved(
-    week: str,
-    assignment_category: str,
     term: str = "winter_2025",
     base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
 ) -> None:
@@ -200,8 +198,8 @@ def score_question_improved(
     payload: dict[str, Any] = {
         "student_email": f'{responses["jhub_user"]}@drexel.edu',
         "term": term,
-        "week": week,
-        "assignment": assignment_category,
+        "week": responses["week"],
+        "assignment": responses["assignment_type"],
         "question": f'_{responses["assignment"]}',
         "responses": responses,
     }
