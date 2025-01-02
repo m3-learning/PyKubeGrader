@@ -11,27 +11,24 @@ from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
 
-# Logger for .output_code.log
+#
+# Logging setup
+#
+
+# Logger for cell execution
 logger_code = logging.getLogger("code_logger")
 logger_code.setLevel(logging.INFO)
 
 file_handler_code = logging.FileHandler(".output_code.log")
 file_handler_code.setLevel(logging.INFO)
-
-# formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-# file_handler_code.setFormatter(formatter)
-
 logger_code.addHandler(file_handler_code)
 
-# Logger for .output_reduced.log
+# Logger for question scores etc.
 logger_reduced = logging.getLogger("reduced_logger")
 logger_reduced.setLevel(logging.INFO)
 
 file_handler_reduced = logging.FileHandler(".output_reduced.log")
 file_handler_reduced.setLevel(logging.INFO)
-
-# file_handler_reduced.setFormatter(formatter)
-
 logger_reduced.addHandler(file_handler_reduced)
 
 #
