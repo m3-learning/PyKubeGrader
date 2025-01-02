@@ -20,6 +20,14 @@ pykubegrader.build.build\_folder module
    :undoc-members:
    :show-inheritance:
 
+pykubegrader.build.clean\_folder module
+---------------------------------------
+
+.. automodule:: pykubegrader.build.clean_folder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
