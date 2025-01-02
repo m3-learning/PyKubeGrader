@@ -1581,7 +1581,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
 
     # Define header lines
     header_lines = [
-        "from pykubegrader.widgets.true_false import TFQuestion, TrueFalse_style\n",
+        "from pykubegrader.widgets.true_false import TFQuestion, TFStyle\n",
         "import pykubegrader.initialize\n",
         "import panel as pn\n\n",
         "pn.extension()\n\n",
@@ -1601,7 +1601,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
                     f.write(f"            title=f'{q_value['question_text']}',\n")
-                    f.write("            style=TrueFalse_style,\n")
+                    f.write("            style=TFStyle,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
                     )
