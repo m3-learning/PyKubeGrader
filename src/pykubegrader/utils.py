@@ -1,5 +1,5 @@
 import random
-from typing import Tuple
+from typing import Optional, Tuple
 
 import panel as pn
 
@@ -8,7 +8,7 @@ def list_of_lists(options: list) -> bool:
     return all(isinstance(elem, list) for elem in options)
 
 
-def shuffle_options(options, seed: int):
+def shuffle_options(options: list[Optional[str]], seed: int) -> list[Optional[str]]:
     random.seed(seed)
     random.shuffle(options)
 
