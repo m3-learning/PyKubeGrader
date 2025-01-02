@@ -23,14 +23,16 @@ def validate_logfile(
     username: str = "student",
     password: str = "capture",
     base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
+    key_box=None,
 ) -> None:
     login_data = {
         "username": username,
         "password": password,
     }
 
-    # Generate box from private and public keys
-    key_box = generate_keys()
+    if key_box is None:
+        # Generate box from private and public keys
+        key_box = generate_keys()
 
     decrypted_log, log_reduced = read_logfile(filepath, key_box)
 
