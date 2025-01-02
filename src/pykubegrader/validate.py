@@ -19,10 +19,10 @@ def validate_logfile(
     filepath: str,
     assignment_id: str,
     question_max_scores: dict[int, int],
-    free_response_questions=0,
-    username="student",
-    password="capture",
-    base_url="https://engr-131-api.eastus.cloudapp.azure.com",
+    free_response_questions: int = 0,
+    username: str = "student",
+    password: str = "capture",
+    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
 ) -> None:
     login_data = {
         "username": username,
@@ -225,7 +225,7 @@ def validate_logfile(
     submission_message(response)
 
 
-def read_logfile(filepath, key_box=None) -> tuple[list[str], list[str]]:
+def read_logfile(filepath: str, key_box=None) -> tuple[list[str], list[str]]:
     if key_box is None:
         key_box = generate_keys()
 
@@ -307,7 +307,7 @@ def get_last_entry(data: list[str], field_name: str) -> str:
     return ""
 
 
-def submission_message(response) -> None:
+def submission_message(response: requests.Response) -> None:
     if response.status_code == 200:
         print("Data successfully uploaded to the server")
         print(response.text)
@@ -326,7 +326,7 @@ def submission_message(response) -> None:
         print("results.json was not present")
 
 
-def verify_login(login_data, login_url):
+def verify_login(login_data: dict[str, str], login_url: str) -> None:
     login_response = requests.post(
         login_url, auth=HTTPBasicAuth(login_data["username"], login_data["password"])
     )
