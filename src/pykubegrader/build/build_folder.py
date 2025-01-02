@@ -8,10 +8,10 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field
-import yaml
 from datetime import datetime
 
 import requests
+import yaml
 
 try:
     from pykubegrader.build.passwords import password, user
@@ -56,7 +56,7 @@ class NotebookProcessor:
         # Define the folder to store solutions and ensure it exists
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
         self.assignment_total_points = 0
-        
+
         os.makedirs(
             self.solutions_folder, exist_ok=True
         )  # Create the folder if it doesn't exist
@@ -145,7 +145,7 @@ class NotebookProcessor:
 
         if self.check_if_file_in_folder("assignment_config.yaml"):
             self.add_assignment()
-    
+
     def build_payload(self, yaml_content):
         """
         Reads YAML content for an assignment and returns Python variables.
@@ -157,14 +157,14 @@ class NotebookProcessor:
             dict: A dictionary containing the parsed assignment data.
         """
         # Parse the YAML content
-        with open(yaml_content, 'r') as file:
+        with open(yaml_content, "r") as file:
             data = yaml.safe_load(file)
-        
+
         # Extract assignment details
-        assignment = data.get('assignment', {})
-        week = assignment.get('week')
-        assignment_type = assignment.get('assignment_type')
-        due_date_str = assignment.get('due_date')
+        assignment = data.get("assignment", {})
+        week = assignment.get("week")
+        assignment_type = assignment.get("assignment_type")
+        due_date_str = assignment.get("due_date")
 
         # Convert due_date to a datetime object if available
         due_date = None
@@ -175,32 +175,31 @@ class NotebookProcessor:
                 print(f"Error parsing due_date: {e}")
             except ValueError as e:
                 print(f"Error parsing due_date: {e}")
-                
+
         title = f"Week {week} - {assignment_type}"
 
         # Return the extracted details as a dictionary
         return {
             "title": title,
-            "description":week,
+            "description": week,
             "due_date": due_date,
-            "max_score": self.assignment_total_points
-        }     
-    
-    def add_assignment(self):
+            "max_score": self.assignment_total_points,
+        }
 
+    def add_assignment(self):
         # Define the URL
         url = "https://engr-131-api.eastus.cloudapp.azure.com/assignments"
 
         # Define the payload (data you want to send)
-        payload = self.build_payload(open(f"{self.root_folder}/assignment_config.yaml", "r").read())
+        payload = self.build_payload(
+            open(f"{self.root_folder}/assignment_config.yaml", "r").read()
+        )
 
         # Use HTTP Basic Authentication
         auth = (user(), password())
 
         # Define headers (optional, e.g., content type)
-        headers = {
-            "Content-Type": "application/json"
-        }
+        headers = {"Content-Type": "application/json"}
 
         # Send the POST request
         response = requests.post(url, json=payload, headers=headers, auth=auth)
@@ -212,9 +211,7 @@ class NotebookProcessor:
         except ValueError:
             print(f"Response: {response.text}")
 
-    
     def check_if_file_in_folder(self, file):
-        
         for root, _, files in os.walk(self.root_folder):
             if file in files:
                 return True
@@ -390,7 +387,7 @@ class NotebookProcessor:
             + self.tf_total_points
             + self.otter_total_points
         )
-        
+
         self.assignment_total_points += total_points
 
         self.total_point_log.update({notebook_name: total_points})
@@ -525,11 +522,11 @@ class NotebookProcessor:
 
             data = NotebookProcessor.merge_metadata(value, data)
 
-            for data_ in data:
+            for wtf in data:
                 # Generate the solution file
                 self.mcq_total_points = self.generate_solution_MCQ(
-                    data, output_file=solution_path
-                    #data_, output_file=solution_path
+                    data,
+                    output_file=solution_path,
                 )
 
                 question_path = (
