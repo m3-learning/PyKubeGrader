@@ -3,7 +3,7 @@ from typing import Callable, Tuple
 
 import panel as pn
 
-from ..telemetry import ensure_responses, update_responses
+from ..telemetry import ensure_responses, score_question, update_responses
 from ..utils import shuffle_questions
 from ..widgets.style import drexel_colors
 
@@ -70,6 +70,8 @@ class SelectQuestion:
 
         for key, value in selections.items():
             update_responses(key, value)
+
+        score_question()  # Debugging; update later
 
         # Temporarily change button text to indicate submission
         self.submit_button.name = "Responses Submitted"

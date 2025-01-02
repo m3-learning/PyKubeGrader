@@ -3,7 +3,7 @@ from typing import Callable, Tuple
 
 import panel as pn
 
-from ..telemetry import ensure_responses, update_responses
+from ..telemetry import ensure_responses, score_question, update_responses
 from ..utils import shuffle_questions
 from ..widgets.style import drexel_colors, raw_css
 
@@ -103,6 +103,8 @@ class MultiSelectQuestion:
             self.names_nested.append(next_names)  # Debugging; update later
 
         self.record_responses(responses_flat)
+
+        score_question()  # Debugging; update later
 
     def record_responses(self, responses_flat: list[bool]) -> None:
         for key, value in zip(self.keys, responses_flat):
