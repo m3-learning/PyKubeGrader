@@ -503,6 +503,9 @@ class NotebookProcessor:
             NotebookProcessor.add_initialization_code(
                 temp_notebook_path, self.week, self.assignment_type
             )
+            NotebookProcessor.replace_temp_in_notebook(
+                temp_notebook_path, temp_notebook_path
+            )
             return None, 0
 
     @staticmethod
