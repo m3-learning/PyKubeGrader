@@ -1,3 +1,4 @@
+import hashlib
 import os
 import shutil
 from pathlib import Path
@@ -46,7 +47,7 @@ def initialize_assignment(
         raise Exception("Setup unsuccessful. Are you on JupyterHub?")
 
     try:
-        seed = hash(jhub_user) % 1000
+        seed = username_to_seed(jhub_user) % 1000
         update_responses(key="seed", value=seed)
         update_responses(key="week", value=week)
         update_responses(key="assignment_type", value=assignment_type)
@@ -111,3 +112,10 @@ def move_dotfiles():
             shutil.copy2(source_file, target_file)
         except Exception as e:
             raise Exception(f"Failed to copy {source_file} to {target_file}: {e}")
+
+
+def username_to_seed(username: str, mod: int = 1000) -> int:
+    hash_object = hashlib.sha256(username.encode())
+    hash_hex = hash_object.hexdigest()
+    hash_int = int(hash_hex, 16)
+    return hash_int % mod
