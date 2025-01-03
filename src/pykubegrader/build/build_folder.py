@@ -1401,6 +1401,8 @@ def clean_notebook(notebook_path):
                     cell.metadata["editable"] = cell.metadata.get("editable", False)
                     cell.metadata["deletable"] = cell.metadata.get("deletable", False)
                 if cell.cell_type == "code":
+                    if "grader.check(" in cell.source:
+                        continue
                     cell.metadata["tags"] = cell.metadata.get("tags", [])
                     if "skip-execution" not in cell.metadata["tags"]:
                         cell.metadata["tags"].append("skip-execution")
