@@ -503,7 +503,7 @@ class NotebookProcessor:
             NotebookProcessor.add_initialization_code(
                 temp_notebook_path, self.week, self.assignment_type
             )
-            NotebookProcessor.replace_temp_in_notebook(
+            NotebookProcessor.replace_temp_no_otter(
                 temp_notebook_path, temp_notebook_path
             )
             return None, 0
@@ -653,6 +653,22 @@ class NotebookProcessor:
             return solution_path, question_path
         else:
             return None, None
+        
+    @staticmethod
+    def replace_temp_no_otter(input_file, output_file):
+        # Load the notebook
+        with open(input_file, "r", encoding="utf-8") as f:
+            notebook = nbformat.read(f, as_version=4)
+
+        # Iterate through the cells and modify `cell.source`
+        for cell in notebook.cells:
+            if cell.cell_type == "code":  # Only process code cells
+                if 'responses = initialize_assignment(' in cell.source:
+                    cell.source = cell.source.replace('_temp', '')
+
+        # Save the modified notebook
+        with open(output_file, "w", encoding="utf-8") as f:
+            nbformat.write(notebook, f)
 
     @staticmethod
     def replace_temp_in_notebook(input_file, output_file):
@@ -677,6 +693,7 @@ class NotebookProcessor:
                 cell["source"] = [
                     line.replace("_temp.ipynb", ".ipynb") for line in cell["source"]
                 ]
+            
 
         # Write the updated notebook to the output file
         with open(output_file, "w", encoding="utf-8") as f:
