@@ -166,6 +166,15 @@ class LogParser:
         """
         return {
             "student_information": self.student_info,
+            "week": self.week_tag,
+            "week_num": (
+                int(self.week_tag.split("-")[0].strip().replace("week", ""))
+                if self.week_tag
+                else None
+            ),
+            "assignment_type": (
+                self.week_tag.split("-")[1].strip() if self.week_tag else None
+            ),
             "assignment_information": {
                 assignment: {
                     "latest_timestamp": data["latest_timestamp"],
