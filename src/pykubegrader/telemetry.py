@@ -85,7 +85,7 @@ def log_encrypted(logger: logging.Logger, message: str) -> None:
 
 
 def log_variable(assignment_name, value, info_type) -> None:
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d %H:%M:%S")
     message = f"{assignment_name}, {info_type}, {value}, {timestamp}"
     log_encrypted(logger_reduced, message)
 
