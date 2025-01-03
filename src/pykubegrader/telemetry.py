@@ -10,6 +10,7 @@ import requests
 from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import RequestException
 
 #
 # Logging setup
@@ -122,7 +123,6 @@ def update_responses(key: str, value) -> dict:
 #
 
 
-# TODO: Improve error handling
 def score_question(
     term: str = "winter_2025",
     base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
@@ -140,16 +140,24 @@ def score_question(
         "responses": responses,
     }
 
-    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
+    try:
+        res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
+        res.raise_for_status()
 
-    res_data: dict[str, tuple[float, float]] = res.json()
+        res_data: dict[str, tuple[float, float]] = res.json()
 
-    for question, (points_earned, max_points) in res_data.items():
-        log_variable(
-            assignment_name=responses["assignment"],
-            value=f"{points_earned}, {max_points}",
-            info_type=question,
-        )
+        for question, (points_earned, max_points) in res_data.items():
+            log_variable(
+                assignment_name=responses["assignment"],
+                value=f"{points_earned}, {max_points}",
+                info_type=question,
+            )
+    except RequestException as e:
+        raise RuntimeError("Failed to access question-scoring endpoint") from e
+    except ValueError as e:
+        raise ValueError("Failed to parse question-scoring JSON response") from e
+    except Exception as e:
+        raise RuntimeError("Failed to score question") from e
 
 
 def submit_question(
