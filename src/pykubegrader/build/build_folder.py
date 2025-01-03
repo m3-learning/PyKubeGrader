@@ -1568,7 +1568,7 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(f"            title=f'{q_value['question_text']}',\n")
+                    f.write(f'            title=f"{q_value['question_text']}",\n')
                     f.write("            style=MCQ,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
