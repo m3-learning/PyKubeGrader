@@ -8,11 +8,10 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime
-
-import requests
 import yaml
+from datetime import datetime
 from dateutil import parser  # For robust datetime parsing
+import requests
 
 try:
     from pykubegrader.build.passwords import password, user
@@ -56,22 +55,22 @@ class NotebookProcessor:
         """
         if self.check_if_file_in_folder("assignment_config.yaml"):
             # Parse the YAML content
-            with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
+            with open(f"{self.root_folder}/assignment_config.yaml", 'r') as file:
                 data = yaml.safe_load(file)
                 # Extract assignment details
-                assignment = data.get("assignment", {})
-                week_num = assignment.get("week")
-                self.assignment_type = assignment.get("assignment_type")
+                assignment = data.get('assignment', {})
+                week_num = assignment.get('week')
+                self.assignment_type = assignment.get('assignment_type')                
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
             week_num = self.assignment_tag.split("-")[-1]
-
+        
         self.week = f"week_{week_num}"
-
+        
         # Define the folder to store solutions and ensure it exists
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
         self.assignment_total_points = 0
-
+        
         os.makedirs(
             self.solutions_folder, exist_ok=True
         )  # Create the folder if it doesn't exist
@@ -155,7 +154,7 @@ class NotebookProcessor:
 
         if self.check_if_file_in_folder("assignment_config.yaml"):
             self.add_assignment()
-
+    
     def build_payload(self, yaml_content):
         """
         Reads YAML content for an assignment and returns Python variables.
@@ -167,14 +166,14 @@ class NotebookProcessor:
             dict: A dictionary containing the parsed assignment data.
         """
         # Parse the YAML content
-        with open(yaml_content, "r") as file:
+        with open(yaml_content, 'r') as file:
             data = yaml.safe_load(file)
-
+        
         # Extract assignment details
-        assignment = data.get("assignment", {})
-        week = assignment.get("week")
-        assignment_type = assignment.get("assignment_type")
-        due_date_str = assignment.get("due_date")
+        assignment = data.get('assignment', {})
+        week = assignment.get('week')
+        assignment_type = assignment.get('assignment_type')
+        due_date_str = assignment.get('due_date')
 
         # Convert due_date to a datetime object if available
         due_date = None
@@ -191,8 +190,8 @@ class NotebookProcessor:
             "title": title,
             "description": str(week),
             "due_date": due_date,
-            "max_score": int(self.assignment_total_points),
-        }
+            "max_score": int(self.assignment_total_points)
+        }     
 
     def add_assignment(self):
         """
@@ -208,15 +207,15 @@ class NotebookProcessor:
         auth = (user(), password())
 
         # Define headers
-        headers = {"Content-Type": "application/json"}
+        headers = {
+            "Content-Type": "application/json"
+        }
 
         # Serialize the payload with the custom JSON encoder
         serialized_payload = json.dumps(payload, default=self.json_serial)
 
         # Send the POST request
-        response = requests.post(
-            url, data=serialized_payload, headers=headers, auth=auth
-        )
+        response = requests.post(url, data=serialized_payload, headers=headers, auth=auth)
 
         # Print the response
         print(f"Status Code: {response.status_code}")
@@ -224,8 +223,9 @@ class NotebookProcessor:
             print(f"Response: {response.json()}")
         except ValueError:
             print(f"Response: {response.text}")
-
+    
     def check_if_file_in_folder(self, file):
+        
         for root, _, files in os.walk(self.root_folder):
             if file in files:
                 return True
@@ -331,7 +331,7 @@ class NotebookProcessor:
 
         if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
             solution_path = solution_path_1 or solution_path_2 or solution_path_3
-
+            
         if any([question_path_1, question_path_2, question_path_3]) is not None:
             question_path = question_path_1 or question_path_2 or question_path_3
 
@@ -341,13 +341,9 @@ class NotebookProcessor:
 
         # If Otter does not run, move the student file to the main directory
         if student_notebook is None:
+            clean_notebook(temp_notebook_path)
             path_ = shutil.copy(temp_notebook_path, self.root_folder)
-            path_2 = shutil.move(
-                question_path,
-                os.path.join(
-                    os.path.dirname(temp_notebook_path), os.path.basename(question_path)
-                ),
-            )
+            path_2 = shutil.move(question_path, os.path.join(os.path.dirname(temp_notebook_path), os.path.basename(question_path)))
             self._print_and_log(
                 f"Copied and cleaned student notebook: {path_} -> {self.root_folder}"
             )
@@ -413,7 +409,7 @@ class NotebookProcessor:
             + self.tf_total_points
             + self.otter_total_points
         )
-
+        
         self.assignment_total_points += total_points
 
         self.total_point_log.update({notebook_name: total_points})
@@ -476,8 +472,6 @@ class NotebookProcessor:
                 student_notebook, self.week, self.assignment_type
             )
 
-            self.clean_notebook(student_notebook)
-
             NotebookProcessor.replace_temp_in_notebook(
                 student_notebook, student_notebook
             )
@@ -487,6 +481,9 @@ class NotebookProcessor:
             NotebookProcessor.replace_temp_in_notebook(
                 autograder_notebook, autograder_notebook
             )
+            
+            clean_notebook(student_notebook)
+            
             shutil.copy(student_notebook, self.root_folder)
             self._print_and_log(
                 f"Copied and cleaned student notebook: {student_notebook} -> {self.root_folder}"
@@ -495,6 +492,7 @@ class NotebookProcessor:
             # Remove the keys
             os.remove(client_private_key)
             os.remove(server_public_key)
+            
 
             return student_notebook, out.total_points
         else:
@@ -502,8 +500,8 @@ class NotebookProcessor:
                 temp_notebook_path, self.week, self.assignment_type
             )
             return None, 0
-
-    @staticmethod
+    
+    @staticmethod   
     def json_serial(obj):
         """JSON serializer for objects not serializable by default."""
         if isinstance(obj, datetime):
@@ -555,13 +553,13 @@ class NotebookProcessor:
 
             data = NotebookProcessor.merge_metadata(value, data)
 
-            # Generate the solution file
             self.mcq_total_points = self.generate_solution_MCQ(
-                data,
-                output_file=solution_path,
+                data, output_file=solution_path
             )
 
-            question_path = f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
+            question_path = (
+                f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
+            )
 
             generate_mcq_file(data, output_file=question_path)
 
@@ -980,13 +978,6 @@ class NotebookProcessor:
                     new_file_path = os.path.join(root, file.replace(suffix, ""))
                     os.rename(old_file_path, new_file_path)
                     logging.info(f"Renamed: {old_file_path} -> {new_file_path}")
-
-    @staticmethod
-    def clean_notebook(notebook_path):
-        """
-        Cleans a Jupyter notebook to remove unwanted cells and set cell metadata.
-        """
-        clean_notebook(notebook_path)
 
 
 def extract_raw_cells(ipynb_file, heading="# BEGIN MULTIPLE CHOICE"):
