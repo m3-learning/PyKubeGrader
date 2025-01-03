@@ -190,6 +190,8 @@ class NotebookProcessor:
         return {
             "title": title,
             "description": str(week),
+            "week_num": week,
+            "assignment_type": assignment_type,
             "due_date": due_date,
             "max_score": int(self.assignment_total_points),
         }
