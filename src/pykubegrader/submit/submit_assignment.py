@@ -1,9 +1,9 @@
 import os
 import httpx
 import asyncio
-
 import nest_asyncio
 
+# Apply nest_asyncio for environments like Jupyter
 nest_asyncio.apply()
 
 
@@ -64,7 +64,6 @@ async def call_score_assignment(
             raise RuntimeError(f"An unexpected error occurred: {e}")
 
 
-# Importable function
 def submit_assignment(
     assignment_title: str, file_path: str = ".output_reduced.log"
 ) -> None:
@@ -75,7 +74,17 @@ def submit_assignment(
         assignment_title (str): Title of the assignment.
         file_path (str): Path to the log file to upload.
     """
-    response = asyncio.run(call_score_assignment(assignment_title, file_path))
+    # Get the current event loop or create one
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+    # Run the async function in the event loop
+    response = loop.run_until_complete(
+        call_score_assignment(assignment_title, file_path)
+    )
     print("Server Response:", response.get("message", "No message in response"))
 
 
