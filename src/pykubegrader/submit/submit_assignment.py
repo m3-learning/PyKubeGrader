@@ -2,6 +2,10 @@ import os
 import httpx
 import asyncio
 
+import nest_asyncio
+
+nest_asyncio.apply()
+
 
 def get_credentials():
     """
