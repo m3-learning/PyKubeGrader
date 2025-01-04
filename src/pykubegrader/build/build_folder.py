@@ -434,7 +434,7 @@ class NotebookProcessor:
             self.select_many_total_points
             + self.mcq_total_points
             + self.tf_total_points
-            + self.otter_total_points
+            + self.otter_total_points 
         )
 
         self.assignment_total_points += total_points
