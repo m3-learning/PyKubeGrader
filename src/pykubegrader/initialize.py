@@ -6,16 +6,18 @@ from pathlib import Path
 import panel as pn
 import requests
 from IPython import get_ipython
-
+from typing import Optional
 from .telemetry import ensure_responses, log_variable, telemetry, update_responses
 
 
 def initialize_assignment(
     name: str,
-    week: int,
+    week: str,
     assignment_type: str,
     url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
     verbose: bool = False,
+    assignment_points: Optional[float] = None,
+    assignment_tag: Optional[str] = None,
 ) -> dict:
     """
     Initialize an assignment in a Jupyter environment.
@@ -74,6 +76,8 @@ def initialize_assignment(
                 print(f"{k}: {v}")
     except Exception as e:
         raise Exception(f"Failed to initialize assignment: {e}")
+
+    log_variable("total-points", f"{assignment_tag}, {name}", assignment_points)
 
     print("Assignment successfully initialized")
     if verbose:

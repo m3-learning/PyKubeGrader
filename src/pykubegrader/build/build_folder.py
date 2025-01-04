@@ -1,13 +1,6 @@
 ### Note
 
-#TODO: I need to fix this code so that I get the right score I need to do this at the end from the responses JSON, then add to all files.
-# Look in the API notebook -- add to the initialize_assignment function
-# short_filename = self.filename.split(".")[0].replace("_temp", "")
-#         first_cell_header.extend(
-#             [
-#                 f'log_variable("total-points",f"{self.assignment_tag}, {short_filename}", {self.total_points})\n'
-#             ]
-#         )
+
 
 import argparse
 import importlib.util
@@ -33,7 +26,7 @@ except:  # noqa: E722
 import nbformat
 
 from .api_notebook_builder import FastAPINotebookBuilder
-
+from typing import Optional
 
 @dataclass
 class NotebookProcessor:
@@ -77,6 +70,7 @@ class NotebookProcessor:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
             week_num = self.assignment_tag.split("-")[-1]
 
+        self.week_num = week_num
         self.week = f"week_{week_num}"
 
         # Define the folder to store solutions and ensure it exists
@@ -166,7 +160,22 @@ class NotebookProcessor:
 
         if self.check_if_file_in_folder("assignment_config.yaml"):
             self.add_assignment()
-
+            
+        self.update_initialize_function()
+                
+    def update_initialize_function(self):
+        
+        for key, value in self.total_point_log.items():
+            
+            assignment_tag = f"week{self.week_num}-{self.assignment_type}"
+                
+            update_initialize_assignment(
+                    notebook_path = os.path.join(self.root_folder, key + '.ipynb'),
+                    assignment_points= value,
+                    assignment_tag = assignment_tag,
+                )
+                
+        
     def build_payload(self, yaml_content):
         """
         Reads YAML content for an assignment and returns Python variables.
@@ -1391,7 +1400,6 @@ def extract_MCQ(ipynb_file):
         print("Invalid JSON in notebook file.")
         return []
 
-
 def check_for_heading(notebook_path, search_strings):
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
@@ -1837,6 +1845,69 @@ def replace_cell_source(notebook_path, cell_index, new_source):
     # Save the notebook
     with open(notebook_path, "w", encoding="utf-8") as f:
         nbformat.write(notebook, f)
+        
+def update_initialize_assignment(
+    notebook_path: str,
+    assignment_points: Optional[float] = None,
+    assignment_tag: Optional[str] = None,
+) -> None:
+    """
+    Search for a specific line in a Jupyter Notebook and update it with additional input variables.
+
+    Args:
+        notebook_path (str): The path to the Jupyter Notebook file (.ipynb).
+        assignment_points (Optional[float]): The assignment points variable to add (default is None).
+        assignment_tag (Optional[str]): The assignment tag variable to add (default is None).
+
+    Returns:
+        None
+    """
+    # Load the notebook content
+    with open(notebook_path, "r", encoding="utf-8") as file:
+        notebook_data = json.load(file)
+
+    # Pattern to match the specific initialize_assignment line
+    pattern = re.compile(r"responses\s*=\s*initialize_assignment\((.*?)\)")
+
+    # Collect additional variables
+    additional_variables = []
+    if assignment_points is not None:
+        additional_variables.append(f"assignment_points = {assignment_points}")
+    if assignment_tag is not None:
+        additional_variables.append(f"assignment_tag = '{assignment_tag}'")
+
+    # Join additional variables into a string
+    additional_variables_str = ", ".join(additional_variables)
+
+    # Flag to check if any replacements were made
+    updated = False
+
+    # Iterate through notebook cells
+    for cell in notebook_data.get("cells", []):
+        if cell.get("cell_type") == "code":  # Only modify code cells
+            source_code = cell.get("source", [])
+            for i, line in enumerate(source_code):
+                match = pattern.search(line)
+                if match:
+                    # Extract existing arguments
+                    existing_args = match.group(1).strip()
+                    # Replace with the updated line
+                    if additional_variables_str:
+                        updated_line = (
+                            f"responses = initialize_assignment({existing_args}, {additional_variables_str})\n"
+                        )
+                    else:
+                        updated_line = f"responses = initialize_assignment({existing_args})\n"
+                    source_code[i] = updated_line
+                    updated = True
+
+    # If updated, save the notebook
+    if updated:
+        with open(notebook_path, "w", encoding="utf-8") as file:
+            json.dump(notebook_data, file, indent=2)
+        print(f"Notebook '{notebook_path}' has been updated.")
+    else:
+        print(f"No matching lines found in '{notebook_path}'.")
 
 
 def main():
