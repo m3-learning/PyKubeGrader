@@ -440,6 +440,49 @@ class NotebookProcessor:
         self.assignment_total_points += total_points
 
         self.total_point_log.update({notebook_name: total_points})
+        
+        student_file_path = os.path.join(self.root_folder, notebook_name + '.ipynb')
+        self.add_submission_cells(student_file_path, student_file_path)
+        
+    def add_submission_cells(self, notebook_path: str, output_path: str) -> None:
+        """
+        Adds submission cells to the end of a Jupyter notebook.
+
+        Args:
+            notebook_path (str): Path to the input notebook.
+            output_path (str): Path to save the modified notebook.
+        """
+        # Load the notebook
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            notebook = nbformat.read(f, as_version=4)
+
+        # Define the Markdown cell
+        markdown_cell = nbformat.v4.new_markdown_cell(
+            "## Submitting Assignment\n\n"
+            "Please run the following block of code using `shift + enter` to submit your assignment, "
+            "you should see your score."
+        )
+
+        # Define the Code cell
+        code_cell = nbformat.v4.new_code_cell(
+            "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
+            f'submit_assignment("week{self.week_num}-{self.assignment_type}")'
+        )
+        
+        # Make the code cell non-editable and non-deletable
+        code_cell.metadata = {
+            "editable": False,
+            "deletable": False
+        }
+
+        # Add the cells to the notebook
+        notebook.cells.append(markdown_cell)
+        notebook.cells.append(code_cell)
+
+        # Save the modified notebook
+        with open(output_path, "w", encoding="utf-8") as f:
+            nbformat.write(notebook, f)
+
 
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name

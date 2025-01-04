@@ -2,6 +2,7 @@ import os
 import httpx
 import asyncio
 import nest_asyncio
+import base64
 
 # Apply nest_asyncio for environments like Jupyter
 nest_asyncio.apply()
@@ -37,10 +38,15 @@ async def call_score_assignment(
     base_url = os.getenv("DB_URL")
     if not base_url:
         raise ValueError("Environment variable 'DB_URL' is not set.")
-    url = f"{base_url}score-assignment"
+    url = f"{base_url}score-assignment?assignment_title={assignment_title}"
 
     # Get credentials
     credentials = get_credentials()
+    username = credentials["username"]
+    password = credentials["password"]
+
+    # Encode credentials for Basic Authentication
+    auth_header = f"Basic {base64.b64encode(f'{username}:{password}'.encode()).decode()}"
 
     # Send the POST request
     async with httpx.AsyncClient() as client:
@@ -48,8 +54,8 @@ async def call_score_assignment(
             with open(file_path, "rb") as file:
                 response = await client.post(
                     url,
-                    data={"cred": credentials, "assignment_title": assignment_title},
-                    files={"log_file": file},
+                    headers={"Authorization": auth_header},  # Add Authorization header
+                    files={"log_file": file},  # Upload log file
                 )
 
                 # Handle the response
@@ -90,4 +96,4 @@ def submit_assignment(
 
 # Example usage (remove this section if only the function needs to be importable):
 if __name__ == "__main__":
-    submit_assignment("Week 1 Assignment", "path/to/your/log_file.txt")
+    submit_assignment("week1-readings", "path/to/your/log_file.txt")
