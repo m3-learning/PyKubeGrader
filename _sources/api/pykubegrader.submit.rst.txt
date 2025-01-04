@@ -1,0 +1,15 @@
+pykubegrader.submit namespace
+=============================
+
+.. py:module:: pykubegrader.submit
+
+Submodules
+----------
+
+pykubegrader.submit.submit\_assignment module
+---------------------------------------------
+
+.. automodule:: pykubegrader.submit.submit_assignment
+   :members:
+   :undoc-members:
+   :show-inheritance:

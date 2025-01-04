@@ -10,6 +10,7 @@ Subpackages
    pykubegrader.build
    pykubegrader.graders
    pykubegrader.log_parser
+   pykubegrader.submit
    pykubegrader.widgets
    pykubegrader.widgets_base
 
