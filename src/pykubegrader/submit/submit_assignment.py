@@ -22,7 +22,7 @@ def get_credentials():
 
 
 async def call_score_assignment(
-    assignment_title: str, file_path: str = ".output_reduced.log"
+    assignment_title: str, notebook_title: str, file_path: str = ".output_reduced.log"
 ) -> dict:
     """
     Submit an assignment to the scoring endpoint.
@@ -38,7 +38,7 @@ async def call_score_assignment(
     base_url = os.getenv("DB_URL")
     if not base_url:
         raise ValueError("Environment variable 'DB_URL' is not set.")
-    url = f"{base_url}score-assignment?assignment_title={assignment_title}"
+    url = f"{base_url}score-assignment?assignment_title={assignment_title}&notebook_title={notebook_title}"
 
     # Get credentials
     credentials = get_credentials()
@@ -46,7 +46,9 @@ async def call_score_assignment(
     password = credentials["password"]
 
     # Encode credentials for Basic Authentication
-    auth_header = f"Basic {base64.b64encode(f'{username}:{password}'.encode()).decode()}"
+    auth_header = (
+        f"Basic {base64.b64encode(f'{username}:{password}'.encode()).decode()}"
+    )
 
     # Send the POST request
     async with httpx.AsyncClient() as client:
@@ -71,7 +73,9 @@ async def call_score_assignment(
 
 
 def submit_assignment(
-    assignment_title: str, file_path: str = ".output_reduced.log"
+    assignment_title: str,
+    notebook_title: str,
+    file_path: str = ".output_reduced.log",
 ) -> None:
     """
     Synchronous wrapper for the `call_score_assignment` function.
@@ -89,7 +93,7 @@ def submit_assignment(
 
     # Run the async function in the event loop
     response = loop.run_until_complete(
-        call_score_assignment(assignment_title, file_path)
+        call_score_assignment(assignment_title, notebook_title, file_path)
     )
     print("Server Response:", response.get("message", "No message in response"))
 

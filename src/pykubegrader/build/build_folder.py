@@ -215,6 +215,68 @@ class NotebookProcessor:
             "due_date": due_date,
             "max_score": int(self.assignment_total_points),
         }
+        
+    def build_payload_notebook(self, yaml_content,  notebook_title, total_points):
+        # Parse the YAML content
+        with open(yaml_content, "r") as file:
+            data = yaml.safe_load(file)
+        
+        # Extract assignment details
+        assignment = data.get("assignment", {})
+         
+        week_num = self.week_num
+        assignment_type = self.assignment_type
+        due_date_str = assignment.get("due_date")
+
+        # Convert due_date to a datetime object if available
+        due_date = None
+        if due_date_str:
+            try:
+                due_date = parser.parse(due_date_str)  # Automatically handles timezones
+            except ValueError as e:
+                print(f"Error parsing due_date: {e}")
+        
+        return {
+            "title": notebook_title,
+            "week_number": week_num,
+            "assignment_type": assignment_type,
+            "due_date": due_date,
+            "max_score": total_points,
+        }
+        
+        
+    def add_notebook(self, notebook_title, total_points):
+        """
+        Sends a POST request to add a notebook.
+        """
+        # Define the URL
+        url = "https://engr-131-api.eastus.cloudapp.azure.com/notebook"
+
+        # Build the payload
+        payload = self.build_payload_notebook(yaml_content=f"{self.root_folder}/assignment_config.yaml", 
+                                              notebook_title=notebook_title, 
+                                              total_points=total_points)
+
+        # Define HTTP Basic Authentication
+        auth = (user(), password())
+
+        # Define headers
+        headers = {"Content-Type": "application/json"}
+
+        # Serialize the payload with the custom JSON encoder
+        serialized_payload = json.dumps(payload, default=self.json_serial)
+
+        # Send the POST request
+        response = requests.post(
+            url, data=serialized_payload, headers=headers, auth=auth
+        )
+
+        # Print the response
+        print(f"Status Code: {response.status_code}")
+        try:
+            print(f"Response: {response.json()}")
+        except ValueError:
+            print(f"Response: {response.text}")
 
     def add_assignment(self):
         """
@@ -436,6 +498,9 @@ class NotebookProcessor:
             + self.tf_total_points
             + self.otter_total_points 
         )
+            
+        # creates the assignment record in the database
+        self.add_notebook(notebook_name, total_points)
 
         self.assignment_total_points += total_points
 
@@ -466,7 +531,7 @@ class NotebookProcessor:
         # Define the Code cell
         code_cell = nbformat.v4.new_code_cell(
             "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-            f'submit_assignment("week{self.week_num}-{self.assignment_type}")'
+            f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
         )
         
         # Make the code cell non-editable and non-deletable
