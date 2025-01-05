@@ -1,7 +1,6 @@
 ### Note
 
 
-
 import argparse
 import importlib.util
 import json
@@ -27,6 +26,7 @@ import nbformat
 
 from .api_notebook_builder import FastAPINotebookBuilder
 from typing import Optional
+
 
 @dataclass
 class NotebookProcessor:
@@ -160,22 +160,21 @@ class NotebookProcessor:
 
         if self.check_if_file_in_folder("assignment_config.yaml"):
             self.add_assignment()
-            
+
         self.update_initialize_function()
-                
+
     def update_initialize_function(self):
-        
+
         for key, value in self.total_point_log.items():
-            
+
             assignment_tag = f"week{self.week_num}-{self.assignment_type}"
-                
+
             update_initialize_assignment(
-                    notebook_path = os.path.join(self.root_folder, key + '.ipynb'),
-                    assignment_points= value,
-                    assignment_tag = assignment_tag,
-                )
-                
-        
+                notebook_path=os.path.join(self.root_folder, key + ".ipynb"),
+                assignment_points=value,
+                assignment_tag=assignment_tag,
+            )
+
     def build_payload(self, yaml_content):
         """
         Reads YAML content for an assignment and returns Python variables.
@@ -215,15 +214,15 @@ class NotebookProcessor:
             "due_date": due_date,
             "max_score": int(self.assignment_total_points),
         }
-        
-    def build_payload_notebook(self, yaml_content,  notebook_title, total_points):
+
+    def build_payload_notebook(self, yaml_content, notebook_title, total_points):
         # Parse the YAML content
         with open(yaml_content, "r") as file:
             data = yaml.safe_load(file)
-        
+
         # Extract assignment details
         assignment = data.get("assignment", {})
-         
+
         week_num = self.week_num
         assignment_type = self.assignment_type
         due_date_str = assignment.get("due_date")
@@ -235,7 +234,7 @@ class NotebookProcessor:
                 due_date = parser.parse(due_date_str)  # Automatically handles timezones
             except ValueError as e:
                 print(f"Error parsing due_date: {e}")
-        
+
         return {
             "title": notebook_title,
             "week_number": week_num,
@@ -243,8 +242,7 @@ class NotebookProcessor:
             "due_date": due_date,
             "max_score": total_points,
         }
-        
-        
+
     def add_notebook(self, notebook_title, total_points):
         """
         Sends a POST request to add a notebook.
@@ -253,9 +251,11 @@ class NotebookProcessor:
         url = "https://engr-131-api.eastus.cloudapp.azure.com/notebook"
 
         # Build the payload
-        payload = self.build_payload_notebook(yaml_content=f"{self.root_folder}/assignment_config.yaml", 
-                                              notebook_title=notebook_title, 
-                                              total_points=total_points)
+        payload = self.build_payload_notebook(
+            yaml_content=f"{self.root_folder}/assignment_config.yaml",
+            notebook_title=notebook_title,
+            total_points=total_points,
+        )
 
         # Define HTTP Basic Authentication
         auth = (user(), password())
@@ -496,19 +496,50 @@ class NotebookProcessor:
             self.select_many_total_points
             + self.mcq_total_points
             + self.tf_total_points
-            + self.otter_total_points 
+            + self.otter_total_points
         )
-            
+
         # creates the assignment record in the database
         self.add_notebook(notebook_name, total_points)
 
         self.assignment_total_points += total_points
 
         self.total_point_log.update({notebook_name: total_points})
-        
-        student_file_path = os.path.join(self.root_folder, notebook_name + '.ipynb')
+
+        student_file_path = os.path.join(self.root_folder, notebook_name + ".ipynb")
         self.add_submission_cells(student_file_path, student_file_path)
-        
+        NotebookProcessor.remove_empty_cells(student_file_path)
+
+    @staticmethod
+    def remove_empty_cells(notebook_path, output_path=None):
+        """
+        Removes empty cells from a Jupyter Notebook and saves the updated notebook.
+
+        Parameters:
+            notebook_path (str): Path to the input Jupyter Notebook.
+            output_path (str): Path to save the updated Jupyter Notebook. If None, it overwrites the original file.
+        """
+        try:
+            # Load the notebook
+            with open(notebook_path, "r") as nb_file:
+                notebook = nbformat.read(nb_file, as_version=4)
+
+            # Filter out empty cells
+            non_empty_cells = [cell for cell in notebook.cells if cell.source.strip()]
+
+            # Update the notebook cells
+            notebook.cells = non_empty_cells
+
+            # Save the updated notebook
+            save_path = output_path if output_path else notebook_path
+            with open(save_path, "w") as nb_file:
+                nbformat.write(notebook, nb_file)
+
+            print(f"Empty cells removed. Updated notebook saved at: {save_path}")
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
     def add_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
         Adds submission cells to the end of a Jupyter notebook.
@@ -533,12 +564,9 @@ class NotebookProcessor:
             "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
             f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
         )
-        
+
         # Make the code cell non-editable and non-deletable
-        code_cell.metadata = {
-            "editable": False,
-            "deletable": False
-        }
+        code_cell.metadata = {"editable": False, "deletable": False}
 
         # Add the cells to the notebook
         notebook.cells.append(markdown_cell)
@@ -547,7 +575,6 @@ class NotebookProcessor:
         # Save the modified notebook
         with open(output_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
-
 
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
@@ -783,7 +810,7 @@ class NotebookProcessor:
             return solution_path, question_path
         else:
             return None, None
-        
+
     @staticmethod
     def replace_temp_no_otter(input_file, output_file):
         # Load the notebook
@@ -793,8 +820,8 @@ class NotebookProcessor:
         # Iterate through the cells and modify `cell.source`
         for cell in notebook.cells:
             if cell.cell_type == "code":  # Only process code cells
-                if 'responses = initialize_assignment(' in cell.source:
-                    cell.source = cell.source.replace('_temp', '')
+                if "responses = initialize_assignment(" in cell.source:
+                    cell.source = cell.source.replace("_temp", "")
 
         # Save the modified notebook
         with open(output_file, "w", encoding="utf-8") as f:
@@ -823,7 +850,6 @@ class NotebookProcessor:
                 cell["source"] = [
                     line.replace("_temp.ipynb", ".ipynb") for line in cell["source"]
                 ]
-            
 
         # Write the updated notebook to the output file
         with open(output_file, "w", encoding="utf-8") as f:
@@ -1508,6 +1534,7 @@ def extract_MCQ(ipynb_file):
         print("Invalid JSON in notebook file.")
         return []
 
+
 def check_for_heading(notebook_path, search_strings):
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
@@ -1547,8 +1574,6 @@ def clean_notebook(notebook_path):
                     cell.metadata["editable"] = cell.metadata.get("editable", False)
                     cell.metadata["deletable"] = cell.metadata.get("deletable", False)
                 if cell.cell_type == "code":
-                    if "grader.check(" in cell.source:
-                        continue
                     cell.metadata["tags"] = cell.metadata.get("tags", [])
                     if "skip-execution" not in cell.metadata["tags"]:
                         cell.metadata["tags"].append("skip-execution")
@@ -1953,7 +1978,8 @@ def replace_cell_source(notebook_path, cell_index, new_source):
     # Save the notebook
     with open(notebook_path, "w", encoding="utf-8") as f:
         nbformat.write(notebook, f)
-        
+
+
 def update_initialize_assignment(
     notebook_path: str,
     assignment_points: Optional[float] = None,
@@ -2001,11 +2027,11 @@ def update_initialize_assignment(
                     existing_args = match.group(1).strip()
                     # Replace with the updated line
                     if additional_variables_str:
-                        updated_line = (
-                            f"responses = initialize_assignment({existing_args}, {additional_variables_str})\n"
-                        )
+                        updated_line = f"responses = initialize_assignment({existing_args}, {additional_variables_str})\n"
                     else:
-                        updated_line = f"responses = initialize_assignment({existing_args})\n"
+                        updated_line = (
+                            f"responses = initialize_assignment({existing_args})\n"
+                        )
                     source_code[i] = updated_line
                     updated = True
 
