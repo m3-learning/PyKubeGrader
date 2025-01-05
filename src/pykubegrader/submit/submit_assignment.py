@@ -43,7 +43,7 @@ async def call_score_assignment(
     # Get credentials
     credentials = get_credentials()
     username = credentials["username"]
-    password = credentials["password"]
+    password = credentials["password"] 
 
     # Encode credentials for Basic Authentication
     auth_header = (
