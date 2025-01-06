@@ -13,3 +13,11 @@ pykubegrader.tokens.tokens module
    :members:
    :undoc-members:
    :show-inheritance:
+
+pykubegrader.tokens.validate\_token module
+------------------------------------------
+
+.. automodule:: pykubegrader.tokens.validate_token
+   :members:
+   :undoc-members:
+   :show-inheritance:

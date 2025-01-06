@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.widgets_base.select &#8212; PyKubeGrader 0.2.17 documentation</title>
+    <title>pykubegrader.tokens.validate_token &#8212; PyKubeGrader 0.2.17 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/widgets_base/select';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/tokens/validate_token';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -386,7 +386,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.widgets_base.select</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.tokens.validate_token</span></li>
   </ul>
 </nav>
 </div>
@@ -403,98 +403,72 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pykubegrader.widgets_base.select</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">panel</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">..telemetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_responses</span><span class="p">,</span> <span class="n">score_question</span><span class="p">,</span> <span class="n">update_responses</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">shuffle_questions</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..widgets.style</span><span class="w"> </span><span class="kn">import</span> <span class="n">drexel_colors</span>
-
-<span class="c1"># Pass custom CSS to Panel</span>
-<span class="n">pn</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">design</span><span class="o">=</span><span class="s2">&quot;material&quot;</span><span class="p">,</span> <span class="n">global_css</span><span class="o">=</span><span class="p">[</span><span class="n">drexel_colors</span><span class="p">])</span>
+  <h1>Source code for pykubegrader.tokens.validate_token</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 
-<div class="viewcode-block" id="SelectQuestion">
-<a class="viewcode-back" href="../../../api/pykubegrader.widgets_base.html#pykubegrader.widgets_base.select.SelectQuestion">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SelectQuestion</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">style</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
-            <span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-            <span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">pn</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">HTML</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">Select</span><span class="p">]],</span>
-        <span class="p">],</span>
-        <span class="n">question_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">options</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-        <span class="n">descriptions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">points</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="n">responses</span> <span class="o">=</span> <span class="n">ensure_responses</span><span class="p">()</span>
+<div class="viewcode-block" id="TokenValidationError">
+<a class="viewcode-back" href="../../../api/pykubegrader.tokens.html#pykubegrader.tokens.validate_token.TokenValidationError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TokenValidationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom exception raised when the token validation fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">points</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">question_number</span> <span class="o">=</span> <span class="n">question_number</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">style</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the exception with an optional message.</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">responses</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;You must submit your student info before starting the exam&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            message (str, optional): The error message to display. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_token">
+<a class="viewcode-back" href="../../../api/pykubegrader.tokens.html#pykubegrader.tokens.validate_token.validate_token">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_token</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate a token by making a GET request to the validation endpoint.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        token (str): The token to validate.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TokenValidationError: If the token is invalid or if there is an error in the validation process.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None: If the token is valid, the function will pass silently.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">endpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://engr-131-api.eastus.cloudapp.azure.com/validate-token/</span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="c1"># If the response is 200, the token is valid</span>
+            <span class="k">return</span>  <span class="c1"># Pass silently</span>
+        <span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+            <span class="c1"># If the response is 404, the token is invalid</span>
+            <span class="k">raise</span> <span class="n">TokenValidationError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;detail&quot;</span><span class="p">,</span> <span class="s2">&quot;Token not found&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Handle unexpected status codes</span>
+            <span class="k">raise</span> <span class="n">TokenValidationError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unexpected response code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-
-        <span class="c1"># Dynamically assign attributes based on keys, with default values from responses</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">responses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial_vals</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">]</span>
-
-        <span class="n">desc_widgets</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span> <span class="o">=</span> <span class="n">style</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_vals</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">submit_button</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Submit&quot;</span><span class="p">,</span> <span class="n">button_type</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">submit_button</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">)</span>
-
-        <span class="n">widget_pairs</span> <span class="o">=</span> <span class="n">shuffle_questions</span><span class="p">(</span><span class="n">desc_widgets</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;# Question </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">question_number</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="o">*</span><span class="p">(</span>
-                <span class="n">pn</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">desc_widget</span><span class="p">,</span> <span class="n">pn</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="n">dropdown</span><span class="p">))</span>
-                <span class="k">for</span> <span class="n">desc_widget</span><span class="p">,</span> <span class="n">dropdown</span> <span class="ow">in</span> <span class="n">widget_pairs</span>
-            <span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">submit_button</span><span class="p">,</span>
-        <span class="p">)</span>
-
-<div class="viewcode-block" id="SelectQuestion.submit">
-<a class="viewcode-back" href="../../../api/pykubegrader.widgets_base.html#pykubegrader.widgets_base.select.SelectQuestion.submit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">selections</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">widget</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">widget</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">widgets</span><span class="p">)}</span>
-
-        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">selections</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please answer all questions before submitting&quot;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">selections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">update_responses</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-        <span class="n">score_question</span><span class="p">()</span>  <span class="c1"># Debugging; update later</span>
-
-        <span class="c1"># Temporarily change button text to indicate submission</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">submit_button</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Responses Submitted&quot;</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">submit_button</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Submit&quot;</span></div>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Raise an exception for connection errors or timeout</span>
+        <span class="k">raise</span> <span class="n">TokenValidationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="SelectQuestion.show">
-<a class="viewcode-back" href="../../../api/pykubegrader.widgets_base.html#pykubegrader.widgets_base.select.SelectQuestion.show">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span></div>
-</div>
 
+<span class="c1"># Example usage</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">validate_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Token is valid.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">TokenValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Token validation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
                 </article>
