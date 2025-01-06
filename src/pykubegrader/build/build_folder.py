@@ -567,6 +567,7 @@ class NotebookProcessor:
 
         # Make the code cell non-editable and non-deletable
         code_cell.metadata = {"editable": False, "deletable": False}
+        code_cell.metadata["tags"] = ["skip-execution"]
 
         # Add the cells to the notebook
         notebook.cells.append(markdown_cell)
@@ -1810,7 +1811,7 @@ def generate_select_many_file(data_dict, output_file="select_many_questions.py")
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(f"            title=f'{q_value['question_text']}',\n")
+                    f.write(f'            title=f"{q_value['question_text']}",\n')
                     f.write("            style=MultiSelect,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
@@ -1887,7 +1888,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(f"            title=f'{q_value['question_text']}',\n")
+                    f.write(f'            title=f"{q_value['question_text']}",\n')
                     f.write("            style=TFStyle,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
