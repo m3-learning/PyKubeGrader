@@ -60,6 +60,7 @@ class NotebookProcessor:
     verbose: bool = False
     log: bool = True
     require_key: bool = False
+    bonus_points: float = 0
 
     def __post_init__(self):
         """
@@ -80,6 +81,7 @@ class NotebookProcessor:
                 assignment = data.get("assignment", {})
                 week_num = assignment.get("week")
                 self.assignment_type = assignment.get("assignment_type")
+                self.bonus_points = assignment.get("bonus_points", 0)
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
             week_num = self.assignment_tag.split("-")[-1]
@@ -218,7 +220,6 @@ class NotebookProcessor:
                 print(f"Error parsing due_date: {e}")
 
         title = f"Week {week} - {assignment_type}"
-
         # Return the extracted details as a dictionary
         return {
             "title": title,
@@ -226,7 +227,7 @@ class NotebookProcessor:
             "week_number": week,
             "assignment_type": assignment_type,
             "due_date": due_date,
-            "max_score": int(self.assignment_total_points),
+            "max_score": self.assignment_total_points - self.bonus_points,
         }
 
     def build_payload_notebook(self, yaml_content, notebook_title, total_points):
@@ -722,7 +723,7 @@ class NotebookProcessor:
         # Save the updated notebook
         with open(notebook_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
-            
+
     def add_validate_token_cell(notebook_path: str, require_key: bool) -> None:
         """
         Adds a new code cell at the top of a Jupyter notebook if require_key is True.
@@ -767,7 +768,7 @@ class NotebookProcessor:
         import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
         cell = f"{import_text}\n" + cell
         replace_cell_source(notebook_path, index, cell)
-        
+
         if require_key:
             NotebookProcessor.add_validate_token_cell(notebook_path, require_key)
 
