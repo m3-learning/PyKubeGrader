@@ -46,6 +46,7 @@ class NotebookProcessor:
     solutions_folder: str = field(init=False)
     verbose: bool = False
     log: bool = True
+    require_key: bool = False
 
     def __post_init__(self):
         """
@@ -558,12 +559,23 @@ class NotebookProcessor:
             "Please run the following block of code using `shift + enter` to submit your assignment, "
             "you should see your score."
         )
+        
+        if self.require_key:
+            # Add an additional line for validate_token()
+            validate_token_line = "from pykubegrader.submit.submit_assignment import validate_token\nvalidate_token()"
 
-        # Define the Code cell
-        code_cell = nbformat.v4.new_code_cell(
-            "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-            f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
-        )
+            # Define the Code cell
+            code_cell = nbformat.v4.new_code_cell(
+                f"{validate_token_line}\n\n"  # Add the validate_token() line
+                "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
+                f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
+            )
+        else:
+            # Define the Code cell without validate_token()
+            code_cell = nbformat.v4.new_code_cell(
+                "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
+                f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
+            )
 
         # Make the code cell non-editable and non-deletable
         code_cell.metadata = {"editable": False, "deletable": False}
@@ -632,7 +644,7 @@ class NotebookProcessor:
             )
 
             NotebookProcessor.add_initialization_code(
-                student_notebook, self.week, self.assignment_type
+                student_notebook, self.week, self.assignment_type, require_key=self.require_key,
             )
 
             NotebookProcessor.replace_temp_in_notebook(
@@ -659,7 +671,7 @@ class NotebookProcessor:
             return student_notebook, out.total_points
         else:
             NotebookProcessor.add_initialization_code(
-                temp_notebook_path, self.week, self.assignment_type
+                temp_notebook_path, self.week, self.assignment_type, require_key=self.require_key,
             )
             NotebookProcessor.replace_temp_no_otter(
                 temp_notebook_path, temp_notebook_path
@@ -691,11 +703,15 @@ class NotebookProcessor:
             nbformat.write(notebook, f)
 
     @staticmethod
-    def add_initialization_code(notebook_path, week, assignment_type):
+    def add_initialization_code(notebook_path, week, assignment_type, require_key=False):
         # finds the first code cell
         index, cell = find_first_code_cell(notebook_path)
         cell = cell["source"]
-        import_text = "from pykubegrader.initialize import initialize_assignment\n"
+        import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
+        import_text += "from pykubegrader.initialize import initialize_assignment\n"
+        if require_key:
+            import_text += "from pykubegrader.token.validate_token import validate_token\n"
+            import_text += "validate_token('type the key provided by your TA here')\n"
         import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
         cell = f"{import_text}\n" + cell
         replace_cell_source(notebook_path, index, cell)
@@ -1740,7 +1756,9 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(f'            title=f"{q_value['question_text']}",\n')
+                    f.write(
+                        f'            title=f"Question{q_value['question number']}: {q_value['title']}",\n'
+                    )
                     f.write("            style=MCQ,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
@@ -1811,7 +1829,9 @@ def generate_select_many_file(data_dict, output_file="select_many_questions.py")
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(f'            title=f"{q_value['question_text']}",\n')
+                    f.write(
+                        f'            title=f"Question{q_value['question number']}: {q_value['title']}",\n'
+                    )
                     f.write("            style=MultiSelect,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
@@ -1888,7 +1908,9 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(f'            title=f"{q_value['question_text']}",\n')
+                    f.write(
+                        f'            title=f"Question{q_value['question number']}: {q_value['title']}",\n'
+                    )
                     f.write("            style=TFStyle,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
@@ -2059,10 +2081,17 @@ def main():
         help="assignment-tag used for calculating grades",
         default="Reading-Week-X",
     )
+    
+    parser.add_argument(
+        "--require-key",
+        type=bool,
+        help="Require a key to be generated for the assignment",
+        default=False,
+    )
 
     args = parser.parse_args()
     processor = NotebookProcessor(
-        root_folder=args.root_folder, assignment_tag=args.assignment_tag
+        root_folder=args.root_folder, assignment_tag=args.assignment_tag, require_key=args.require_key
     )
     processor.process_notebooks()
 
