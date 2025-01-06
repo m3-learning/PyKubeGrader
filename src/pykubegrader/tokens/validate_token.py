@@ -1,5 +1,5 @@
 import requests
-
+import os
 
 class TokenValidationError(Exception):
     """
@@ -16,7 +16,7 @@ class TokenValidationError(Exception):
         super().__init__(message)
 
 
-def validate_token(token):
+def validate_token(token = None):
     """
     Validate a token by making a GET request to the validation endpoint.
 
@@ -30,6 +30,16 @@ def validate_token(token):
         None: If the token is valid, the function will pass silently.
     """
     endpoint = f"https://engr-131-api.eastus.cloudapp.azure.com/validate-token/{token}"
+
+    if token is not None:
+        os.environ["TOKEN"] = token
+
+    if token is None:
+        token = os.getenv("TOKEN", None)
+        
+    if token is None:
+        raise TokenValidationError("No token provided")
+
     try:
         response = requests.get(endpoint, timeout=10)
 
