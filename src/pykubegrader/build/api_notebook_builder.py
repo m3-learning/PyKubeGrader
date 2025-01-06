@@ -122,7 +122,7 @@ class FastAPINotebookBuilder:
 
         if self.require_key:
             first_cell_header.append(
-                "from pykubegrader.submit.submit_assignment import validate_token\nvalidate_token()\n"
+                "from pykubegrader.tokens.validate_token import validate_token\nvalidate_token()\n"
             )
 
         short_filename = self.filename.split(".")[0].replace("_temp", "")

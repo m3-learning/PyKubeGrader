@@ -28,6 +28,19 @@ from .api_notebook_builder import FastAPINotebookBuilder
 from typing import Optional
 
 
+import os
+
+os.environ["JUPYTERHUB_USER"] = "jca92"
+os.environ["TOKEN"] = "token"
+os.environ["DB_URL"] = "https://engr-131-api.eastus.cloudapp.azure.com/"
+os.environ["keys_student"] = "capture"
+os.environ["user_name_student"] = "student"
+
+from pykubegrader.tokens.tokens import add_token
+
+add_token("token", duration=20)
+
+
 @dataclass
 class NotebookProcessor:
     """
