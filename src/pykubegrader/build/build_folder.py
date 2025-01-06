@@ -575,7 +575,7 @@ class NotebookProcessor:
 
         if self.require_key:
             # Add an additional line for validate_token()
-            validate_token_line = "from pykubegrader.submit.submit_assignment import validate_token\nvalidate_token()\n"
+            validate_token_line = "from pykubegrader.tokens.tokens import validate_token\nvalidate_token()\n"
 
             # Define the Code cell
             code_cell = nbformat.v4.new_code_cell(
