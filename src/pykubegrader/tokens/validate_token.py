@@ -39,7 +39,7 @@ def get_credentials():
     return {"username": username, "password": password}
 
 
-async def async_validate_token(token: str) -> None:
+async def async_validate_token(token: str = None) -> None:
     """
     Asynchronously validate a token by making a GET request to the validation endpoint.
 
@@ -103,7 +103,7 @@ async def async_validate_token(token: str) -> None:
             raise TokenValidationError(f"An unexpected error occurred: {e}")
 
 
-def validate_token(token: str) -> None:
+def validate_token(token: str = None) -> None:
     """
     Synchronous wrapper for the `async_validate_token` function.
 
