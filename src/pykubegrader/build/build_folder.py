@@ -559,10 +559,10 @@ class NotebookProcessor:
             "Please run the following block of code using `shift + enter` to submit your assignment, "
             "you should see your score."
         )
-        
+
         if self.require_key:
             # Add an additional line for validate_token()
-            validate_token_line = "from pykubegrader.submit.submit_assignment import validate_token\nvalidate_token()"
+            validate_token_line = "from pykubegrader.submit.submit_assignment import validate_token\nvalidate_token()\n"
 
             # Define the Code cell
             code_cell = nbformat.v4.new_code_cell(
@@ -619,7 +619,9 @@ class NotebookProcessor:
             shutil.copy("./keys/.server_public_key.bin", server_public_key)
 
             out = FastAPINotebookBuilder(
-                notebook_path=temp_notebook_path, assignment_tag=self.assignment_tag
+                notebook_path=temp_notebook_path,
+                assignment_tag=self.assignment_tag,
+                require_key=self.require_key,
             )
 
             debug_notebook = os.path.join(
@@ -644,7 +646,10 @@ class NotebookProcessor:
             )
 
             NotebookProcessor.add_initialization_code(
-                student_notebook, self.week, self.assignment_type, require_key=self.require_key,
+                student_notebook,
+                self.week,
+                self.assignment_type,
+                require_key=self.require_key,
             )
 
             NotebookProcessor.replace_temp_in_notebook(
@@ -671,7 +676,10 @@ class NotebookProcessor:
             return student_notebook, out.total_points
         else:
             NotebookProcessor.add_initialization_code(
-                temp_notebook_path, self.week, self.assignment_type, require_key=self.require_key,
+                temp_notebook_path,
+                self.week,
+                self.assignment_type,
+                require_key=self.require_key,
             )
             NotebookProcessor.replace_temp_no_otter(
                 temp_notebook_path, temp_notebook_path
@@ -703,14 +711,18 @@ class NotebookProcessor:
             nbformat.write(notebook, f)
 
     @staticmethod
-    def add_initialization_code(notebook_path, week, assignment_type, require_key=False):
+    def add_initialization_code(
+        notebook_path, week, assignment_type, require_key=False
+    ):
         # finds the first code cell
         index, cell = find_first_code_cell(notebook_path)
         cell = cell["source"]
         import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
         import_text += "from pykubegrader.initialize import initialize_assignment\n"
         if require_key:
-            import_text += "from pykubegrader.token.validate_token import validate_token\n"
+            import_text += (
+                "from pykubegrader.token.validate_token import validate_token\n"
+            )
             import_text += "validate_token('type the key provided by your TA here')\n"
         import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
         cell = f"{import_text}\n" + cell
@@ -2081,7 +2093,7 @@ def main():
         help="assignment-tag used for calculating grades",
         default="Reading-Week-X",
     )
-    
+
     parser.add_argument(
         "--require-key",
         type=bool,
@@ -2091,7 +2103,9 @@ def main():
 
     args = parser.parse_args()
     processor = NotebookProcessor(
-        root_folder=args.root_folder, assignment_tag=args.assignment_tag, require_key=args.require_key
+        root_folder=args.root_folder,
+        assignment_tag=args.assignment_tag,
+        require_key=args.require_key,
     )
     processor.process_notebooks()
 

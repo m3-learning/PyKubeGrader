@@ -14,6 +14,7 @@ class FastAPINotebookBuilder:
     notebook_path: str
     temp_notebook: Optional[str] = None
     assignment_tag: Optional[str] = ""
+    require_key: Optional[bool] = False
 
     def __post_init__(self):
         self.root_path, self.filename = FastAPINotebookBuilder.get_filename_and_root(
@@ -118,6 +119,11 @@ class FastAPINotebookBuilder:
         first_cell_header.append(
             f"os.environ['TOTAL_POINTS_FREE_RESPONSE'] = str({self.total_points})\n"
         )
+
+        if self.require_key:
+            first_cell_header.append(
+                "from pykubegrader.submit.submit_assignment import validate_token\nvalidate_token()\n"
+            )
 
         short_filename = self.filename.split(".")[0].replace("_temp", "")
         first_cell_header.extend(

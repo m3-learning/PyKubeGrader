@@ -52,6 +52,16 @@ async def async_validate_token(token: str) -> None:
     Returns:
         None: If the token is valid, the function will pass silently.
     """
+
+    if token is not None:
+        os.environ["TOKEN"] = token
+
+    if token is None:
+        token = os.getenv("TOKEN", None)
+
+    if token is None:
+        raise TokenValidationError("No token provided")
+
     # Fetch the endpoint URL
     base_url = os.getenv("DB_URL")
     if not base_url:
@@ -106,6 +116,7 @@ def validate_token(token: str) -> None:
     Returns:
         None: If the token is valid, the function will pass silently.
     """
+
     # Get the current event loop or create one
     try:
         loop = asyncio.get_event_loop()
