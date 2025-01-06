@@ -3,10 +3,10 @@ import os
 import json
 
 
-try:
-    from pykubegrader.build.passwords import password, user
-except:  # noqa: E722
-    print("Passwords not found, cannot access database")
+# try:
+#     from pykubegrader.build.passwords import password, user
+# except:  # noqa: E722
+#     print("Passwords not found, cannot access database")
 
 
 def build_token_payload(token: str, duration: int) -> dict:
