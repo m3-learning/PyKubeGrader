@@ -11,6 +11,7 @@ Subpackages
    pykubegrader.graders
    pykubegrader.log_parser
    pykubegrader.submit
+   pykubegrader.tokens
    pykubegrader.widgets
    pykubegrader.widgets_base
 
