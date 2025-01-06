@@ -29,16 +29,18 @@ def validate_token(token = None):
     Returns:
         None: If the token is valid, the function will pass silently.
     """
-    endpoint = f"https://engr-131-api.eastus.cloudapp.azure.com/validate-token/{token}"
-
+    # sets the token in the environment variable
     if token is not None:
         os.environ["TOKEN"] = token
 
     if token is None:
         token = os.getenv("TOKEN", None)
-        
+
     if token is None:
         raise TokenValidationError("No token provided")
+
+    # Define the validation endpoint
+    endpoint = f"https://engr-131-api.eastus.cloudapp.azure.com/validate-token/{token}"
 
     try:
         response = requests.get(endpoint, timeout=10)
