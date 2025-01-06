@@ -578,15 +578,17 @@ class NotebookProcessor:
             validate_token_line = "from pykubegrader.tokens.validate_token import validate_token\nvalidate_token()\n"
 
             # Define the Code cell
-            code_cell_preface = nbformat.v4.new_code_cell(
+            code_cell = nbformat.v4.new_code_cell(
                 f"{validate_token_line}\n\n"  # Add the validate_token() line
+                "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
+                f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
             )
-        
-        # Define the Code cell without validate_token()
-        code_cell = nbformat.v4.new_code_cell(
-            "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-            f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
-        )
+        else:
+            # Define the Code cell without validate_token()
+            code_cell = nbformat.v4.new_code_cell(
+                "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
+                f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
+            )
 
         # Make the code cell non-editable and non-deletable
         code_cell.metadata = {"editable": False, "deletable": False}
@@ -594,8 +596,6 @@ class NotebookProcessor:
 
         # Add the cells to the notebook
         notebook.cells.append(markdown_cell)
-        if self.require_key:
-            notebook.cells.append(code_cell_preface)
         notebook.cells.append(code_cell)
 
         # Save the modified notebook
@@ -722,6 +722,38 @@ class NotebookProcessor:
         # Save the updated notebook
         with open(notebook_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
+            
+    def add_validate_token_cell(notebook_path: str, require_key: bool) -> None:
+        """
+        Adds a new code cell at the top of a Jupyter notebook if require_key is True.
+
+        Args:
+            notebook_path (str): The path to the notebook file to modify.
+            require_key (bool): Whether to add the validate_token cell.
+
+        Returns:
+            None
+        """
+        if not require_key:
+            print("require_key is False. No changes made to the notebook.")
+            return
+
+        # Load the notebook
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            notebook = nbformat.read(f, as_version=4)
+
+        # Create the new code cell
+        new_cell = nbformat.v4.new_code_cell(
+            "from pykubegrader.tokens.validate_token import validate_token\n"
+            "validate_token('type the key provided by your instructor here')\n"
+        )
+
+        # Add the new cell to the top of the notebook
+        notebook.cells.insert(0, new_cell)
+
+        # Save the modified notebook
+        with open(notebook_path, "w", encoding="utf-8") as f:
+            nbformat.write(notebook, f)
 
     @staticmethod
     def add_initialization_code(
@@ -732,14 +764,12 @@ class NotebookProcessor:
         cell = cell["source"]
         import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
         import_text += "from pykubegrader.initialize import initialize_assignment\n"
-        if require_key:
-            import_text += (
-                "from pykubegrader.tokens.validate_token import validate_token\n"
-            )
-            import_text += "validate_token('type the key provided by your TA here')\n"
         import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
         cell = f"{import_text}\n" + cell
         replace_cell_source(notebook_path, index, cell)
+        
+        if require_key:
+            NotebookProcessor.add_validate_token_cell(notebook_path, require_key)
 
     def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
         ### Parse the notebook for multiple choice questions
