@@ -578,17 +578,15 @@ class NotebookProcessor:
             validate_token_line = "from pykubegrader.tokens.validate_token import validate_token\nvalidate_token()\n"
 
             # Define the Code cell
-            code_cell = nbformat.v4.new_code_cell(
+            code_cell_preface = nbformat.v4.new_code_cell(
                 f"{validate_token_line}\n\n"  # Add the validate_token() line
-                "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-                f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
             )
-        else:
-            # Define the Code cell without validate_token()
-            code_cell = nbformat.v4.new_code_cell(
-                "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-                f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
-            )
+        
+        # Define the Code cell without validate_token()
+        code_cell = nbformat.v4.new_code_cell(
+            "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
+            f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
+        )
 
         # Make the code cell non-editable and non-deletable
         code_cell.metadata = {"editable": False, "deletable": False}
@@ -596,6 +594,8 @@ class NotebookProcessor:
 
         # Add the cells to the notebook
         notebook.cells.append(markdown_cell)
+        if self.require_key:
+            notebook.cells.append(code_cell_preface)
         notebook.cells.append(code_cell)
 
         # Save the modified notebook
