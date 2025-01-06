@@ -34,7 +34,7 @@ def add_token(token, duration=20):
     payload = build_token_payload(token=token, duration=duration)
 
     # Define HTTP Basic Authentication
-    auth = (user(), password())
+    auth = ("user", "password")
 
     # Define headers
     headers = {"Content-Type": "application/json"}
