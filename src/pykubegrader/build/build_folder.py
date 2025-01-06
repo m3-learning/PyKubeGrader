@@ -734,7 +734,7 @@ class NotebookProcessor:
         import_text += "from pykubegrader.initialize import initialize_assignment\n"
         if require_key:
             import_text += (
-                "from pykubegrader.token.validate_token import validate_token\n"
+                "from pykubegrader.tokens.validate_token import validate_token\n"
             )
             import_text += "validate_token('type the key provided by your TA here')\n"
         import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
