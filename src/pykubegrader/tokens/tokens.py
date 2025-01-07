@@ -1,6 +1,7 @@
-import requests
-import os
 import json
+import os
+
+import requests
 
 
 def build_token_payload(token: str, duration: int) -> dict:

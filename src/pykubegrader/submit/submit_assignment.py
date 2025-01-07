@@ -1,8 +1,9 @@
-import os
-import httpx
 import asyncio
-import nest_asyncio
 import base64
+import os
+
+import httpx
+import nest_asyncio
 
 # Apply nest_asyncio for environments like Jupyter
 nest_asyncio.apply()

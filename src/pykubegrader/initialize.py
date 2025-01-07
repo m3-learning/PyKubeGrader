@@ -2,11 +2,12 @@ import hashlib
 import os
 import shutil
 from pathlib import Path
+from typing import Optional
 
 import panel as pn
 import requests
 from IPython import get_ipython
-from typing import Optional
+
 from .telemetry import ensure_responses, log_variable, telemetry, update_responses
 
 

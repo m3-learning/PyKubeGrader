@@ -22,11 +22,11 @@ try:
 except:  # noqa: E722
     print("Passwords not found, cannot access database")
 
+from typing import Optional
+
 import nbformat
 
 from .api_notebook_builder import FastAPINotebookBuilder
-from typing import Optional
-
 
 os.environ["JUPYTERHUB_USER"] = "jca92"
 os.environ["TOKEN"] = "token"
