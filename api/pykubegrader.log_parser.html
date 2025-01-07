@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.log_parser package &#8212; PyKubeGrader 0.2.25 documentation</title>
+    <title>pykubegrader.log_parser package &#8212; PyKubeGrader 0.2.26 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=78e9746c"></script>
+    <script src="../_static/documentation_options.js?v=4f11fe06"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader.graders package" href="pykubegrader.graders.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.25" />
+  <meta name="docsearch:version" content="0.2.26" />
     <meta name="docbuild:last-update" content="Jan 07, 2025"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.2.25 documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.2.25 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.2.26 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.2.26 documentation - Home"/>
   
   
 </a></div>
@@ -459,7 +459,7 @@ of its questions, and sets ‘total_points’ if it was not specified.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParser.get_results">
-<span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pykubegrader/log_parser/parse.html#LogParser.get_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParser.get_results" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pykubegrader.log_parser.parse.LogParserResults" title="pykubegrader.log_parser.parse.LogParserResults"><span class="pre">LogParserResults</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/log_parser/parse.html#LogParser.get_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParser.get_results" title="Link to this definition">#</a></dt>
 <dd><p>Returns the parsed results as a hierarchical dictionary with three sections:</p>
 </dd></dl>
 
@@ -482,6 +482,42 @@ of its questions, and sets ‘total_points’ if it was not specified.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParser.week_tag">
 <span class="sig-name descname"><span class="pre">week_tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParser.week_tag" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParserResults">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pykubegrader.log_parser.parse.</span></span><span class="sig-name descname"><span class="pre">LogParserResults</span></span><a class="reference internal" href="../_modules/pykubegrader/log_parser/parse.html#LogParserResults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParserResults" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.TypedDict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParserResults.assignment_information">
+<span class="sig-name descname"><span class="pre">assignment_information</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParserResults.assignment_information" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParserResults.assignment_scores">
+<span class="sig-name descname"><span class="pre">assignment_scores</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParserResults.assignment_scores" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParserResults.assignment_type">
+<span class="sig-name descname"><span class="pre">assignment_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParserResults.assignment_type" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParserResults.student_information">
+<span class="sig-name descname"><span class="pre">student_information</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParserResults.student_information" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParserResults.week">
+<span class="sig-name descname"><span class="pre">week</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParserResults.week" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.log_parser.parse.LogParserResults.week_num">
+<span class="sig-name descname"><span class="pre">week_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#pykubegrader.log_parser.parse.LogParserResults.week_num" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -549,6 +585,15 @@ of its questions, and sets ‘total_points’ if it was not specified.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParser.parse_logs"><code class="docutils literal notranslate"><span class="pre">LogParser.parse_logs()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParser.student_info"><code class="docutils literal notranslate"><span class="pre">LogParser.student_info</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParser.week_tag"><code class="docutils literal notranslate"><span class="pre">LogParser.week_tag</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParserResults"><code class="docutils literal notranslate"><span class="pre">LogParserResults</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParserResults.assignment_information"><code class="docutils literal notranslate"><span class="pre">LogParserResults.assignment_information</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParserResults.assignment_scores"><code class="docutils literal notranslate"><span class="pre">LogParserResults.assignment_scores</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParserResults.assignment_type"><code class="docutils literal notranslate"><span class="pre">LogParserResults.assignment_type</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParserResults.student_information"><code class="docutils literal notranslate"><span class="pre">LogParserResults.student_information</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParserResults.week"><code class="docutils literal notranslate"><span class="pre">LogParserResults.week</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.log_parser.parse.LogParserResults.week_num"><code class="docutils literal notranslate"><span class="pre">LogParserResults.week_num</span></code></a></li>
 </ul>
 </li>
 </ul>
