@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Optional
 
 
 @dataclass
@@ -160,7 +160,7 @@ class LogParser:
             total_score = sum(q["score_earned"] for q in data["questions"].values())
             data["total_score"] = total_score
 
-    def get_results(self) -> dict[str, dict]:
+    def get_results(self) -> dict[str, dict[str, Any] | Optional[str] | Optional[int]]:
         """
         Returns the parsed results as a hierarchical dictionary with three sections:
         """
