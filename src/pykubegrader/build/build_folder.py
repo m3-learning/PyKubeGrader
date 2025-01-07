@@ -28,8 +28,6 @@ from .api_notebook_builder import FastAPINotebookBuilder
 from typing import Optional
 
 
-import os
-
 os.environ["JUPYTERHUB_USER"] = "jca92"
 os.environ["TOKEN"] = "token"
 os.environ["DB_URL"] = "https://engr-131-api.eastus.cloudapp.azure.com/"
@@ -180,9 +178,7 @@ class NotebookProcessor:
         self.update_initialize_function()
 
     def update_initialize_function(self):
-
         for key, value in self.total_point_log.items():
-
             assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 
             update_initialize_assignment(

@@ -4,7 +4,6 @@ import json
 
 
 def build_token_payload(token: str, duration: int) -> dict:
-
     if os.getenv("JUPYTERHUB_USER", None) is None:
         raise ValueError("JupyterHub user not found")
 
