@@ -1,8 +1,10 @@
-import os
-import base64
-import httpx
 import asyncio
-import nest_asyncio
+import base64
+import os
+from typing import Optional
+
+import httpx
+import nest_asyncio  # type: ignore
 
 # Apply nest_asyncio for environments like Jupyter
 nest_asyncio.apply()
@@ -39,7 +41,7 @@ def get_credentials():
     return {"username": username, "password": password}
 
 
-async def async_validate_token(token: str = None) -> None:
+async def async_validate_token(token: Optional[str] = None) -> None:
     """
     Asynchronously validate a token by making a GET request to the validation endpoint.
 
@@ -103,7 +105,7 @@ async def async_validate_token(token: str = None) -> None:
             raise TokenValidationError(f"An unexpected error occurred: {e}")
 
 
-def validate_token(token: str = None) -> None:
+def validate_token(token: Optional[str] = None) -> None:
     """
     Synchronous wrapper for the `async_validate_token` function.
 

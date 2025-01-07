@@ -1,5 +1,14 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Optional, TypedDict
+
+
+class LogParserResults(TypedDict):
+    student_information: dict[str, str]
+    week: Optional[str]
+    week_num: Optional[int]
+    assignment_type: Optional[str]
+    assignment_information: dict[str, Any]
+    assignment_scores: dict[str, Any]
 
 
 @dataclass
@@ -160,7 +169,7 @@ class LogParser:
             total_score = sum(q["score_earned"] for q in data["questions"].values())
             data["total_score"] = total_score
 
-    def get_results(self) -> dict[str, dict]:
+    def get_results(self) -> LogParserResults:
         """
         Returns the parsed results as a hierarchical dictionary with three sections:
         """

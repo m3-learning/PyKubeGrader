@@ -2,14 +2,16 @@ import hashlib
 import os
 import shutil
 from pathlib import Path
+from typing import Optional
 
 import panel as pn
 import requests
 from IPython import get_ipython
-from typing import Optional
+
 from .telemetry import ensure_responses, log_variable, telemetry, update_responses
 
-#TODO: could cleanup to remove redundant imports
+
+# TODO: could cleanup to remove redundant imports
 def initialize_assignment(
     name: str,
     week: str,
@@ -33,7 +35,7 @@ def initialize_assignment(
     Raises:
         Exception: If the environment is unsupported or initialization fails.
     """
-    
+
     if assignment_tag is None:
         assignment_tag = f"{week}-{assignment_type}"
 

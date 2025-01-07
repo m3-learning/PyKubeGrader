@@ -1,8 +1,9 @@
-import os
-import httpx
 import asyncio
-import nest_asyncio
 import base64
+import os
+
+import httpx
+import nest_asyncio  # type: ignore
 
 # Apply nest_asyncio for environments like Jupyter
 nest_asyncio.apply()
@@ -43,7 +44,7 @@ async def call_score_assignment(
     # Get credentials
     credentials = get_credentials()
     username = credentials["username"]
-    password = credentials["password"] 
+    password = credentials["password"]
 
     # Encode credentials for Basic Authentication
     auth_header = (

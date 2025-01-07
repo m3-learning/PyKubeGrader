@@ -22,13 +22,11 @@ try:
 except:  # noqa: E722
     print("Passwords not found, cannot access database")
 
+from typing import Optional
+
 import nbformat
 
 from .api_notebook_builder import FastAPINotebookBuilder
-from typing import Optional
-
-
-import os
 
 os.environ["JUPYTERHUB_USER"] = "jca92"
 os.environ["TOKEN"] = "token"
@@ -180,9 +178,7 @@ class NotebookProcessor:
         self.update_initialize_function()
 
     def update_initialize_function(self):
-
         for key, value in self.total_point_log.items():
-
             assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 
             update_initialize_assignment(
@@ -724,6 +720,7 @@ class NotebookProcessor:
         with open(notebook_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
 
+    @staticmethod
     def add_validate_token_cell(notebook_path: str, require_key: bool) -> None:
         """
         Adds a new code cell at the top of a Jupyter notebook if require_key is True.
