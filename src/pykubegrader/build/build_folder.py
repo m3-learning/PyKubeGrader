@@ -720,6 +720,7 @@ class NotebookProcessor:
         with open(notebook_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
 
+    @staticmethod
     def add_validate_token_cell(notebook_path: str, require_key: bool) -> None:
         """
         Adds a new code cell at the top of a Jupyter notebook if require_key is True.
