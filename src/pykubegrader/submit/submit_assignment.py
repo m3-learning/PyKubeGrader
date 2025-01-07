@@ -3,7 +3,7 @@ import base64
 import os
 
 import httpx
-import nest_asyncio
+import nest_asyncio  # type: ignore
 
 # Apply nest_asyncio for environments like Jupyter
 nest_asyncio.apply()
