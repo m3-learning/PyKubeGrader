@@ -1810,7 +1810,7 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
                     f.write(
-                        f'            title=f"Question{q_value['question number']}: {q_value['title']}",\n'
+                        f'            title=f"{q_value['title']}",\n'
                     )
                     f.write("            style=MCQ,\n")
                     f.write(
@@ -1883,7 +1883,7 @@ def generate_select_many_file(data_dict, output_file="select_many_questions.py")
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
                     f.write(
-                        f'            title=f"Question{q_value['question number']}: {q_value['title']}",\n'
+                        f'            title=f"{q_value['title']}",\n'
                     )
                     f.write("            style=MultiSelect,\n")
                     f.write(
@@ -1962,7 +1962,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
                     f.write(
-                        f'            title=f"Question{q_value['question number']}: {q_value['title']}",\n'
+                        f'            title=f"{q_value['title']}",\n'
                     )
                     f.write("            style=TFStyle,\n")
                     f.write(
