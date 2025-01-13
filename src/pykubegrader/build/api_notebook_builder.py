@@ -65,9 +65,6 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_question_info(cell_dict)
             )
-            updated_cell_source.extend(
-                FastAPINotebookBuilder.construct_update_responses(cell_dict)
-            )
 
             updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
             updated_cell_source.extend(["\n"])
@@ -89,6 +86,10 @@ class FastAPINotebookBuilder:
             )
             updated_cell_source.extend(
                 ["os.environ['EARNED_POINTS'] = str(earned_points)\n"]
+            )
+
+            updated_cell_source.extend(
+                FastAPINotebookBuilder.construct_update_responses(cell_dict)
             )
 
             self.replace_cell_source(cell_index, updated_cell_source)
