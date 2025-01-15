@@ -28,7 +28,10 @@ def add_token(token: str, duration: int = 20) -> None:
     # Dummy credentials for HTTP Basic Auth
     auth = HTTPBasicAuth("user", "password")
 
-    response = requests.post(url, json=payload, auth=auth)
+    # Add a custom header, for potential use in authorization
+    headers = {"x-jhub-user": payload["requester"]}
+
+    response = requests.post(url=url, json=payload, headers=headers, auth=auth)
 
     # Print response
     print(f"Status code: {response.status_code}")
