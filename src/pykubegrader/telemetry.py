@@ -134,11 +134,11 @@ def score_question(
     responses = ensure_responses()
 
     payload: dict[str, Any] = {
-        "student_email": f'{responses["jhub_user"]}@drexel.edu',
+        "student_email": f"{responses['jhub_user']}@drexel.edu",
         "term": term,
         "week": responses["week"],
         "assignment": responses["assignment_type"],
-        "question": f'_{responses["assignment"]}',
+        "question": f"_{responses['assignment']}",
         "responses": responses,
     }
 

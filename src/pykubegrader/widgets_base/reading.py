@@ -23,7 +23,7 @@ class ReadingPython:
 
         # Dynamically assign attributes based on keys, with default values from responses
         for num in range(len(options["lines_to_comment"]) + options["n_rows"]):
-            key = f"q{question_number}_{num+1}"
+            key = f"q{question_number}_{num + 1}"
 
             # Dynamically assign the value from the responses file for persistence
             if num < len(options["lines_to_comment"]):
@@ -57,7 +57,7 @@ class ReadingPython:
             line: pn.widgets.Select(
                 options=shuffle_options(options["comments_options"], seed),
                 name=f"Line {line}:",
-                value=getattr(self, f"q{question_number}_{i_comments+1}"),
+                value=getattr(self, f"q{question_number}_{i_comments + 1}"),
                 width=600,
             )
             for i_comments, line in enumerate(options["lines_to_comment"])
@@ -97,13 +97,13 @@ class ReadingPython:
         # Function to create a row with dropdowns
         def create_row(step: int) -> pn.Row:
             widgets_list = [
-                pn.pane.HTML(f"Step {step+1}", width=150)
+                pn.pane.HTML(f"Step {step + 1}", width=150)
                 if i == 0
                 else pn.widgets.Select(
                     options=dropdown_options[i - 1],
                     value=getattr(
                         self,
-                        f'q{question_number}_{len(options["lines_to_comment"])+step+1}',
+                        f"q{question_number}_{len(options['lines_to_comment']) + step + 1}",
                     )[i - 1],
                     width=150,
                 )

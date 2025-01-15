@@ -190,7 +190,7 @@ class FastAPINotebookBuilder:
         question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"])
 
         question_info.append(f'question_id = "{question_id}"' + "\n")
-        question_info.append(f'max_score = {cell_dict["points"]}\n')
+        question_info.append(f"max_score = {cell_dict['points']}\n")
         question_info.append("score = 0\n")
 
         return question_info
