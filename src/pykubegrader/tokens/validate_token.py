@@ -101,7 +101,7 @@ async def async_validate_token(token: Optional[str] = None) -> None:
             raise TokenValidationError(f"An unexpected error occurred: {e}")
 
 
-def validate_token(token: Optional[str] = None) -> None:
+def validate_token_wrapper(token: Optional[str] = None) -> None:
     """
     Synchronous wrapper for the `async_validate_token` function.
 
@@ -126,7 +126,7 @@ def validate_token(token: Optional[str] = None) -> None:
     loop.run_until_complete(async_validate_token(token))
 
 
-def validate_token_sync(token: Optional[str] = None) -> None:
+def validate_token(token: Optional[str] = None) -> None:
     if token:
         os.environ["TOKEN"] = token  # If token passed, set env var
     else:
