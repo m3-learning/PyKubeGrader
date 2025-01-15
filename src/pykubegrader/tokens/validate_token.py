@@ -87,19 +87,11 @@ async def async_validate_token(token: Optional[str] = None) -> None:
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(url=endpoint, auth=basic_auth, timeout=10)
-
-            if response.status_code == 200:
-                # If the response is 200, the token is valid
-                return  # Pass silently
-            elif response.status_code == 404:
-                # If the response is 404, the token is invalid
-                detail = response.json().get("detail", "Token not found")
-                raise TokenValidationError(detail)
-            else:
-                # Handle unexpected status codes
-                raise TokenValidationError(
-                    f"Unexpected response code: {response.status_code}"
-                )
+            response.raise_for_status()
+            return
+        except httpx.HTTPStatusError as e:
+            detail = e.response.json().get("detail", e.response.text)
+            raise TokenValidationError(detail)
         except httpx.RequestError as e:
             raise TokenValidationError(f"Request failed: {e}")
         except Exception as e:
