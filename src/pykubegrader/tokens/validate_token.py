@@ -1,9 +1,12 @@
 import asyncio
 import os
+import sys
 from typing import Optional
 
 import httpx
 import nest_asyncio  # type: ignore
+import requests
+from requests.auth import HTTPBasicAuth
 
 # Apply nest_asyncio for environments like Jupyter
 nest_asyncio.apply()
@@ -98,7 +101,7 @@ async def async_validate_token(token: Optional[str] = None) -> None:
             raise TokenValidationError(f"An unexpected error occurred: {e}")
 
 
-def validate_token(token: Optional[str] = None) -> None:
+def validate_token_wrapper(token: Optional[str] = None) -> None:
     """
     Synchronous wrapper for the `async_validate_token` function.
 
@@ -121,6 +124,48 @@ def validate_token(token: Optional[str] = None) -> None:
 
     # Run the async function in the event loop
     loop.run_until_complete(async_validate_token(token))
+
+
+def validate_token(token: Optional[str] = None) -> None:
+    if token:
+        os.environ["TOKEN"] = token  # If token passed, set env var
+    else:
+        token = os.getenv("TOKEN")  # Otherwise try to get from env
+        if not token:
+            print("Error: No token provided", file=sys.stderr)
+            return
+
+    # Get endpoint URL
+    base_url = os.getenv("DB_URL")
+    if not base_url:
+        print("Error: Environment variable 'DB_URL' not set", file=sys.stderr)
+        return
+    endpoint = f"{base_url.rstrip('/')}/validate-token/{token}"
+
+    # Get credentials
+    try:
+        credentials = get_credentials()
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return
+
+    username = credentials["username"]
+    password = credentials["password"]
+    basic_auth = HTTPBasicAuth(username, password)
+
+    try:
+        response = requests.get(url=endpoint, auth=basic_auth, timeout=10)
+        response.raise_for_status()
+
+        detail = response.json().get("detail", response.text)
+        print(detail)
+    except requests.exceptions.HTTPError as e:
+        detail = e.response.json().get("detail", e.response.text)
+        print(f"Error: {detail}", file=sys.stderr)
+    except requests.exceptions.RequestException as e:
+        print(f"Error: Request failed: {e}", file=sys.stderr)
+    except Exception as e:
+        print(f"Unexpected error: {e}", file=sys.stderr)
 
 
 # Example usage
