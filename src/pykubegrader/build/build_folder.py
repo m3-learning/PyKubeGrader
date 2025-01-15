@@ -791,7 +791,7 @@ class NotebookProcessor:
                 data, output_file=solution_path
             )
 
-            question_path = f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
+            question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
 
             generate_mcq_file(data, output_file=question_path)
 
@@ -831,7 +831,7 @@ class NotebookProcessor:
                 data, output_file=solution_path
             )
 
-            question_path = f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
+            question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
 
             generate_tf_file(data, output_file=question_path)
 
@@ -869,7 +869,7 @@ class NotebookProcessor:
                 data, output_file=solution_path
             )
 
-            question_path = f"{new_notebook_path.replace(".ipynb", "")}_questions.py"
+            question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
 
             generate_select_many_file(data, output_file=question_path)
 
@@ -1809,9 +1809,7 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(
-                        f'            title=f"{q_value['title']}",\n'
-                    )
+                    f.write(f'            title=f"{q_value["title"]}",\n')
                     f.write("            style=MCQ,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
@@ -1882,9 +1880,7 @@ def generate_select_many_file(data_dict, output_file="select_many_questions.py")
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(
-                        f'            title=f"{q_value['title']}",\n'
-                    )
+                    f.write(f'            title=f"{q_value["title"]}",\n')
                     f.write("            style=MultiSelect,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"
@@ -1961,9 +1957,7 @@ def generate_tf_file(data_dict, output_file="tf_questions.py"):
                     )
                     f.write("    def __init__(self):\n")
                     f.write("        super().__init__(\n")
-                    f.write(
-                        f'            title=f"{q_value['title']}",\n'
-                    )
+                    f.write(f'            title=f"{q_value["title"]}",\n')
                     f.write("            style=TFStyle,\n")
                     f.write(
                         f"            question_number={q_value['question number']},\n"

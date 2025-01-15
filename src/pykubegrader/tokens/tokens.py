@@ -1,46 +1,41 @@
-import json
 import os
 
 import requests
+from requests.auth import HTTPBasicAuth
 
 
 def build_token_payload(token: str, duration: int) -> dict:
-    if os.getenv("JUPYTERHUB_USER", None) is None:
+    jhub_user = os.getenv("JUPYTERHUB_USER")
+    if jhub_user is None:
         raise ValueError("JupyterHub user not found")
 
-    # Return the extracted details as a dictionary
     return {
         "value": token,
-        "requester": os.getenv("JUPYTERHUB_USER", None),
         "duration": duration,
+        "requester": jhub_user,
     }
 
 
-# Need to do for add token as well
-def add_token(token, duration=20):
+def add_token(token: str, duration: int = 20) -> None:
     """
-    Sends a POST request to add a notebook.
+    Sends a POST request to mint a token
     """
-    # Define the URL
+
     url = "https://engr-131-api.eastus.cloudapp.azure.com/tokens"
 
-    # Build the payload
     payload = build_token_payload(token=token, duration=duration)
 
-    # Define HTTP Basic Authentication
-    auth = ("user", "password")
+    # Dummy credentials for HTTP Basic Auth
+    auth = HTTPBasicAuth("user", "password")
 
-    # Define headers
-    headers = {"Content-Type": "application/json"}
+    # Add a custom header, for potential use in authorization
+    headers = {"x-jhub-user": payload["requester"]}
 
-    # Serialize the payload with the custom JSON encoder
-    serialized_payload = json.dumps(payload)
+    response = requests.post(url=url, json=payload, headers=headers, auth=auth)
 
-    # Send the POST request
-    response = requests.post(url, data=serialized_payload, headers=headers, auth=auth)
+    # Print response
+    print(f"Status code: {response.status_code}")
 
-    # Print the response
-    print(f"Status Code: {response.status_code}")
     try:
         print(f"Response: {response.json()}")
     except ValueError:

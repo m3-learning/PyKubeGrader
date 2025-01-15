@@ -1,5 +1,4 @@
 import asyncio
-import base64
 import os
 from typing import Optional
 
@@ -15,29 +14,33 @@ class TokenValidationError(Exception):
     Custom exception raised when the token validation fails.
     """
 
-    def __init__(self, message=None):
+    def __init__(self, message: Optional[str] = None):
         """
         Initialize the exception with an optional message.
 
         Args:
             message (str, optional): The error message to display. Defaults to None.
         """
+
         super().__init__(message)
 
 
-def get_credentials():
+def get_credentials() -> dict[str, str]:
     """
     Fetch the username and password from environment variables.
 
     Returns:
         dict: A dictionary containing 'username' and 'password'.
     """
+
     username = os.getenv("user_name_student")
     password = os.getenv("keys_student")
+
     if not username or not password:
         raise ValueError(
-            "Environment variables 'user_name_student' or 'keys_student' are not set."
+            "Environment variable 'user_name_student' or 'keys_student' not set"
         )
+
     return {"username": username, "password": password}
 
 
@@ -55,19 +58,22 @@ async def async_validate_token(token: Optional[str] = None) -> None:
         None: If the token is valid, the function will pass silently.
     """
 
+    # First, check if token is provided as an argument
     if token is not None:
         os.environ["TOKEN"] = token
 
+    # Next, check if token is available in environment variables
     if token is None:
         token = os.getenv("TOKEN", None)
 
+    # Otherwise, raise an error
     if token is None:
         raise TokenValidationError("No token provided")
 
     # Fetch the endpoint URL
     base_url = os.getenv("DB_URL")
     if not base_url:
-        raise ValueError("Environment variable 'DB_URL' is not set.")
+        raise ValueError("Environment variable 'DB_URL' not set")
     endpoint = f"{base_url}validate-token/{token}"
 
     # Get credentials
@@ -75,17 +81,12 @@ async def async_validate_token(token: Optional[str] = None) -> None:
     username = credentials["username"]
     password = credentials["password"]
 
-    # Encode credentials for Basic Authentication
-    auth_header = (
-        f"Basic {base64.b64encode(f'{username}:{password}'.encode()).decode()}"
-    )
+    basic_auth = httpx.BasicAuth(username=username, password=password)
 
-    # Make the GET request
+    # Make GET request
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(
-                endpoint, headers={"Authorization": auth_header}, timeout=10
-            )
+            response = await client.get(url=endpoint, auth=basic_auth, timeout=10)
 
             if response.status_code == 200:
                 # If the response is 200, the token is valid
@@ -133,8 +134,9 @@ def validate_token(token: Optional[str] = None) -> None:
 # Example usage
 if __name__ == "__main__":
     token = "test"
+
     try:
         validate_token(token)
-        print("Token is valid.")
+        print("Token is valid")
     except TokenValidationError as e:
         print(f"Token validation failed: {e}")
