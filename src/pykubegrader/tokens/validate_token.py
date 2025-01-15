@@ -126,32 +126,31 @@ def validate_token(token: Optional[str] = None) -> None:
 
 
 def validate_token_sync(token: Optional[str] = None) -> None:
-    # First, check if token is provided as an argument
-    if token is not None:
-        os.environ["TOKEN"] = token
+    if token:
+        os.environ["TOKEN"] = token  # If token passed, set env var
+    else:
+        token = os.getenv("TOKEN")  # Otherwise try to get from env
+        if not token:
+            raise TokenValidationError("No token provided")
 
-    # Next, check if token is available in environment variables
-    if token is None:
-        token = os.getenv("TOKEN", None)
-
-    # Otherwise, raise an error
-    if token is None:
-        raise TokenValidationError("No token provided")
-
-    # Fetch the endpoint URL
+    # Get endpoint URL
     base_url = os.getenv("DB_URL")
     if not base_url:
         raise ValueError("Environment variable 'DB_URL' not set")
-    endpoint = f"{base_url}validate-token/{token}"
+    endpoint = f"{base_url.rstrip('/')}/validate-token/{token}"
 
     # Get credentials
-    credentials = get_credentials()
+    try:
+        credentials = get_credentials()
+    except ValueError as e:
+        raise TokenValidationError(str(e))
+
     username = credentials["username"]
     password = credentials["password"]
     basic_auth = HTTPBasicAuth(username, password)
 
     try:
-        response = requests.get(url=endpoint, auth=basic_auth)
+        response = requests.get(url=endpoint, auth=basic_auth, timeout=10)
         response.raise_for_status()
         return
     except requests.exceptions.HTTPError as e:
