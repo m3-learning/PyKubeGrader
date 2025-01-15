@@ -1,5 +1,6 @@
 import asyncio
 import os
+import sys
 from typing import Optional
 
 import httpx
@@ -131,19 +132,22 @@ def validate_token_sync(token: Optional[str] = None) -> None:
     else:
         token = os.getenv("TOKEN")  # Otherwise try to get from env
         if not token:
-            raise TokenValidationError("No token provided")
+            print("Error: No token provided", file=sys.stderr)
+            return
 
     # Get endpoint URL
     base_url = os.getenv("DB_URL")
     if not base_url:
-        raise ValueError("Environment variable 'DB_URL' not set")
+        print("Error: Environment variable 'DB_URL' not set", file=sys.stderr)
+        return
     endpoint = f"{base_url.rstrip('/')}/validate-token/{token}"
 
     # Get credentials
     try:
         credentials = get_credentials()
     except ValueError as e:
-        raise TokenValidationError(str(e))
+        print(f"Error: {e}", file=sys.stderr)
+        return
 
     username = credentials["username"]
     password = credentials["password"]
@@ -152,14 +156,16 @@ def validate_token_sync(token: Optional[str] = None) -> None:
     try:
         response = requests.get(url=endpoint, auth=basic_auth, timeout=10)
         response.raise_for_status()
-        return
+
+        detail = response.json().get("detail", response.text)
+        print(detail)
     except requests.exceptions.HTTPError as e:
         detail = e.response.json().get("detail", e.response.text)
-        raise TokenValidationError(detail)
+        print(f"Error: {detail}", file=sys.stderr)
     except requests.exceptions.RequestException as e:
-        raise TokenValidationError(f"Request failed: {e}")
+        print(f"Error: Request failed: {e}", file=sys.stderr)
     except Exception as e:
-        raise TokenValidationError(f"An unexpected error occurred: {e}")
+        print(f"Unexpected error: {e}", file=sys.stderr)
 
 
 # Example usage
