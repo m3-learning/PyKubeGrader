@@ -1,6 +1,7 @@
 import os
 
 import requests
+from requests.auth import HTTPBasicAuth
 
 
 def build_token_payload(token: str, duration: int) -> dict:
@@ -25,7 +26,7 @@ def add_token(token: str, duration: int = 20) -> None:
     payload = build_token_payload(token=token, duration=duration)
 
     # Dummy credentials for HTTP Basic Auth
-    auth = ("user", "password")
+    auth = HTTPBasicAuth("user", "password")
 
     response = requests.post(url, json=payload, auth=auth)
 
