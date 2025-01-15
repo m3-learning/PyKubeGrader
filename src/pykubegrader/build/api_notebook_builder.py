@@ -143,7 +143,7 @@ class FastAPINotebookBuilder:
 
         for logging_variable in logging_variables:
             update_responses.append(
-                f"responses = update_responses(question_id, {logging_variable})\n"
+                f"responses = update_responses(question_id, str({logging_variable}))\n"
             )
 
         return update_responses
