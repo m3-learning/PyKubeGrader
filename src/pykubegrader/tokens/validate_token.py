@@ -4,6 +4,8 @@ from typing import Optional
 
 import httpx
 import nest_asyncio  # type: ignore
+import requests
+from requests.auth import HTTPBasicAuth
 
 # Apply nest_asyncio for environments like Jupyter
 nest_asyncio.apply()
@@ -121,6 +123,44 @@ def validate_token(token: Optional[str] = None) -> None:
 
     # Run the async function in the event loop
     loop.run_until_complete(async_validate_token(token))
+
+
+def validate_token_sync(token: Optional[str] = None) -> None:
+    # First, check if token is provided as an argument
+    if token is not None:
+        os.environ["TOKEN"] = token
+
+    # Next, check if token is available in environment variables
+    if token is None:
+        token = os.getenv("TOKEN", None)
+
+    # Otherwise, raise an error
+    if token is None:
+        raise TokenValidationError("No token provided")
+
+    # Fetch the endpoint URL
+    base_url = os.getenv("DB_URL")
+    if not base_url:
+        raise ValueError("Environment variable 'DB_URL' not set")
+    endpoint = f"{base_url}validate-token/{token}"
+
+    # Get credentials
+    credentials = get_credentials()
+    username = credentials["username"]
+    password = credentials["password"]
+    basic_auth = HTTPBasicAuth(username, password)
+
+    try:
+        response = requests.get(url=endpoint, auth=basic_auth)
+        response.raise_for_status()
+        return
+    except requests.exceptions.HTTPError as e:
+        detail = e.response.json().get("detail", e.response.text)
+        raise TokenValidationError(detail)
+    except requests.exceptions.RequestException as e:
+        raise TokenValidationError(f"Request failed: {e}")
+    except Exception as e:
+        raise TokenValidationError(f"An unexpected error occurred: {e}")
 
 
 # Example usage
