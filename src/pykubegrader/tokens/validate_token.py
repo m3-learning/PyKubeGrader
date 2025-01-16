@@ -48,13 +48,13 @@ def validate_token(token: Optional[str] = None) -> None:
         token = os.getenv("TOKEN")  # Otherwise try to get from env
         if not token:
             print("Error: No token provided", file=sys.stderr)
-            return
+            sys.exit(1)
 
     # Get endpoint URL
     base_url = os.getenv("DB_URL")
     if not base_url:
         print("Error: Environment variable 'DB_URL' not set", file=sys.stderr)
-        return
+        sys.exit(1)
     endpoint = f"{base_url.rstrip('/')}/validate-token/{token}"
 
     # Get credentials
@@ -62,7 +62,7 @@ def validate_token(token: Optional[str] = None) -> None:
         credentials = get_credentials()
     except ValueError as e:
         print(f"Error: {e}", file=sys.stderr)
-        return
+        sys.exit(1)
 
     username = credentials["username"]
     password = credentials["password"]
@@ -74,6 +74,7 @@ def validate_token(token: Optional[str] = None) -> None:
 
         detail = response.json().get("detail", response.text)
         print(detail)
+        return
     except requests.exceptions.HTTPError as e:
         detail = e.response.json().get("detail", e.response.text)
         print(f"Error: {detail}", file=sys.stderr)
@@ -81,6 +82,8 @@ def validate_token(token: Optional[str] = None) -> None:
         print(f"Error: Request failed: {e}", file=sys.stderr)
     except Exception as e:
         print(f"Unexpected error: {e}", file=sys.stderr)
+
+    sys.exit(1)  # If we reached here, something went wrong
 
 
 # Example usage
