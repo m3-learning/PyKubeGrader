@@ -73,7 +73,6 @@ def validate_token(token: Optional[str] = None) -> None:
         response.raise_for_status()
 
         detail = response.json().get("detail", response.text)
-        print(detail)
         return
     except requests.exceptions.HTTPError as e:
         detail = e.response.json().get("detail", e.response.text)
