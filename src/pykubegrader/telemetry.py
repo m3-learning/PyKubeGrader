@@ -203,7 +203,7 @@ def get_my_grades() -> dict[str, float]:
     from_hostname = socket.gethostname().removeprefix("jupyter-")
     from_env = os.getenv("JUPYTERHUB_USER")
     if from_hostname != from_env:
-        raise ValueError("Problem with JupiterHub username")
+        raise ValueError("Problem with JupyterHub username")
 
     params = {"username": from_env}
     res = requests.get(
