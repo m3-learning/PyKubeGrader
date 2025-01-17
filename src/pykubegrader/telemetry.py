@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 import os
+import socket
 from typing import Any, Optional
 
 import nacl.public
@@ -196,3 +197,21 @@ def verify_server(
     res = requests.get(url, params=params)
     message = f"status code: {res.status_code}"
     return message
+
+
+def get_my_grades() -> dict[str, float]:
+    from_hostname = socket.gethostname().removeprefix("jupyter-")
+    from_env = os.getenv("JUPYTERHUB_USER")
+    if from_hostname != from_env:
+        raise ValueError("Problem with JupiterHub username")
+
+    params = {"username": from_env}
+    res = requests.get(
+        "https://engr-131-api.eastus.cloudapp.azure.com/my-grades",
+        params=params,
+        auth=HTTPBasicAuth("student", "capture"),
+    )
+    res.raise_for_status()
+
+    grades = res.json()
+    return grades
