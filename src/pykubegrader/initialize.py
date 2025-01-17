@@ -6,9 +6,11 @@ from typing import Optional
 
 import panel as pn
 import requests
-from IPython import get_ipython
+from IPython.core.getipython import get_ipython
 
 from .telemetry import ensure_responses, log_variable, telemetry, update_responses
+
+api_base_url = os.getenv("DB_URL")
 
 
 # TODO: could cleanup to remove redundant imports
@@ -16,7 +18,6 @@ def initialize_assignment(
     name: str,
     week: str,
     assignment_type: str,
-    url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
     verbose: bool = False,
     assignment_points: Optional[float] = None,
     assignment_tag: Optional[str] = None,
@@ -72,8 +73,10 @@ def initialize_assignment(
         pn.extension(silent=True)
 
         # Check connection to API server
+        if not api_base_url:
+            raise Exception("Environment variable for API URL not set")
         params = {"jhub_user": responses["jhub_user"]}
-        response = requests.get(url, params=params)
+        response = requests.get(api_base_url, params=params)
         if verbose:
             print(f"status code: {response.status_code}")
             data = response.json()

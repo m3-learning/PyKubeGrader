@@ -3,6 +3,8 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 
+api_base_url = os.getenv("DB_URL")
+
 
 def build_token_payload(token: str, duration: int) -> dict:
     jhub_user = os.getenv("JUPYTERHUB_USER")
@@ -21,7 +23,9 @@ def add_token(token: str, duration: int = 20) -> None:
     Sends a POST request to mint a token
     """
 
-    url = "https://engr-131-api.eastus.cloudapp.azure.com/tokens"
+    if not api_base_url:
+        raise ValueError("Environment variable for API URL not set")
+    url = api_base_url.rstrip("/") + "/tokens"
 
     payload = build_token_payload(token=token, duration=duration)
 

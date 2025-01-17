@@ -13,6 +13,10 @@ from requests import Response
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import RequestException
 
+student_user = os.getenv("user_name_student")
+student_pw = os.getenv("keys_student")
+api_base_url = os.getenv("DB_URL")
+
 #
 # Logging setup
 #
@@ -126,11 +130,11 @@ def update_responses(key: str, value) -> dict:
 #
 
 
-def score_question(
-    term: str = "winter_2025",
-    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
-) -> None:
-    url = base_url + "/live-scorer"
+def score_question(term: str = "winter_2025") -> None:
+    if not student_user or not student_pw or not api_base_url:
+        raise ValueError("Necessary environment variables not set")
+
+    url = api_base_url.rstrip("/") + "/live-scorer"
 
     responses = ensure_responses()
 
@@ -144,7 +148,9 @@ def score_question(
     }
 
     try:
-        res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
+        res = requests.post(
+            url, json=payload, auth=HTTPBasicAuth(student_user, student_pw)
+        )
         res.raise_for_status()
 
         res_data: dict[str, tuple[float, float]] = res.json()
@@ -170,9 +176,11 @@ def submit_question(
     question: str,
     responses: dict,
     score: dict,
-    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
 ) -> Response:
-    url = base_url + "/submit-question"
+    if not student_user or not student_pw or not api_base_url:
+        raise ValueError("Necessary environment variables not set")
+
+    url = api_base_url.rstrip("/") + "/submit-question"
 
     payload = {
         "student_email": student_email,
@@ -183,23 +191,25 @@ def submit_question(
         "score": score,
     }
 
-    res = requests.post(url, json=payload, auth=HTTPBasicAuth("student", "capture"))
+    res = requests.post(url, json=payload, auth=HTTPBasicAuth(student_user, student_pw))
 
     return res
 
 
 # TODO: Refine
-def verify_server(
-    jhub_user: Optional[str] = None,
-    url: str = "https://engr-131-api.eastus.cloudapp.azure.com/",
-) -> str:
+def verify_server(jhub_user: Optional[str] = None) -> str:
+    if not api_base_url:
+        raise ValueError("Environment variable for API URL not set")
     params = {"jhub_user": jhub_user} if jhub_user else {}
-    res = requests.get(url, params=params)
+    res = requests.get(api_base_url, params=params)
     message = f"status code: {res.status_code}"
     return message
 
 
 def get_my_grades() -> dict[str, float]:
+    if not student_user or not student_pw or not api_base_url:
+        raise ValueError("Necessary environment variables not set")
+
     from_hostname = socket.gethostname().removeprefix("jupyter-")
     from_env = os.getenv("JUPYTERHUB_USER")
     if from_hostname != from_env:
@@ -207,9 +217,9 @@ def get_my_grades() -> dict[str, float]:
 
     params = {"username": from_env}
     res = requests.get(
-        "https://engr-131-api.eastus.cloudapp.azure.com/my-grades",
+        url=api_base_url.rstrip("/") + "/my-grades",
         params=params,
-        auth=HTTPBasicAuth("student", "capture"),
+        auth=HTTPBasicAuth(student_user, student_pw),
     )
     res.raise_for_status()
 

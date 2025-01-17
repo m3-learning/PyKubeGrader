@@ -20,11 +20,14 @@ def validate_logfile(
     assignment_id: str,
     question_max_scores: dict[int, int],
     free_response_questions: int = 0,
-    username: str = "student",
-    password: str = "capture",
-    base_url: str = "https://engr-131-api.eastus.cloudapp.azure.com",
     key_box=None,
 ) -> None:
+    username = os.getenv("user_name_student")
+    password = os.getenv("keys_student")
+    base_url = os.getenv("DB_URL")
+    if not username or not password or not base_url:
+        sys.exit("Necessary environment variables are not set")
+
     login_data = {
         "username": username,
         "password": password,
