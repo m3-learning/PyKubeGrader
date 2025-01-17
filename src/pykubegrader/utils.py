@@ -1,7 +1,12 @@
+import os
 import random
 from typing import Optional, Tuple
 
 import panel as pn
+
+api_base_url = os.getenv("DB_URL")
+student_user = os.getenv("user_name_student")
+student_pw = os.getenv("keys_student")
 
 
 def list_of_lists(options: list) -> bool:

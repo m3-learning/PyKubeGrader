@@ -9,8 +9,7 @@ import requests
 from IPython.core.getipython import get_ipython
 
 from .telemetry import ensure_responses, log_variable, telemetry, update_responses
-
-api_base_url = os.getenv("DB_URL")
+from .utils import api_base_url
 
 
 # TODO: could cleanup to remove redundant imports

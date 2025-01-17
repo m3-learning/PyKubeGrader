@@ -13,9 +13,7 @@ from requests import Response
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import RequestException
 
-student_user = os.getenv("user_name_student")
-student_pw = os.getenv("keys_student")
-api_base_url = os.getenv("DB_URL")
+from .utils import api_base_url, student_pw, student_user
 
 #
 # Logging setup

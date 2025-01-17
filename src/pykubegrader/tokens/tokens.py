@@ -3,7 +3,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 
-api_base_url = os.getenv("DB_URL")
+from ..utils import api_base_url
 
 
 def build_token_payload(token: str, duration: int) -> dict:
