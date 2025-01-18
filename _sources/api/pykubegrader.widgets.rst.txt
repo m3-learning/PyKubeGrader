@@ -12,6 +12,14 @@ pykubegrader.widgets.multiple\_choice module
    :undoc-members:
    :show-inheritance:
 
+pykubegrader.widgets.question\_processor module
+-----------------------------------------------
+
+.. automodule:: pykubegrader.widgets.question_processor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pykubegrader.widgets.reading\_question module
 ---------------------------------------------
 
