@@ -4,6 +4,7 @@ import panel as pn
 
 from ..utils import list_of_lists
 from ..widgets_base.select import SelectQuestion
+from .question_processor import process_questions_and_codes
 
 #
 # Style function
@@ -15,14 +16,22 @@ def MCQ(
     options: list[str] | list[list[str]],
     initial_vals: list[str],
 ) -> Tuple[list[pn.pane.HTML], list[pn.widgets.RadioButtonGroup]]:
-    desc_width = "350px"
 
-    desc_widgets = [
-        pn.pane.HTML(
-            f"<div style='text-align: left; width: {desc_width};'><b>{desc}</b></div>"
+    # Process descriptions through `process_questions_and_codes`
+    processed_titles, code_blocks = process_questions_and_codes(descriptions)
+
+    # Create rows for each description and its code block
+    desc_widgets = []
+    for title, code_block in zip(processed_titles, code_blocks):
+        # Create an HTML pane for the title
+        title_pane = pn.pane.HTML(
+            f"<div style='text-align: left; width: 100%;'><b>{title}</b></div>"
         )
-        for desc in descriptions
-    ]
+        # Add the title and code block in a row
+        if code_block:
+            desc_widgets.append(pn.Column(title_pane, code_block, sizing_mode="stretch_width"))
+        else:
+            desc_widgets.append(pn.Column(title_pane, sizing_mode="stretch_width"))
 
     radio_buttons = [
         pn.widgets.RadioBoxGroup(
