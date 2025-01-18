@@ -1498,6 +1498,15 @@ def extract_TF(ipynb_file):
         return []
 
 
+def extract_question(text):
+    # Regular expression to capture the multiline title
+    match = re.search(r"###\s+(.*?)\s+####", text, re.DOTALL)
+    if match:
+        # Stripping unnecessary whitespace and asterisks
+        return match.group(1).strip().strip("**")
+    return None
+
+
 def extract_MCQ(ipynb_file):
     """
     Extracts multiple-choice questions from markdown cells within sections marked by
@@ -1552,15 +1561,18 @@ def extract_MCQ(ipynb_file):
                         1  # Increment subquestion number for each question
                     )
 
-                    # Extract question text (### heading)
-                    question_text_match = re.search(
-                        r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
-                    )
-                    question_text = (
-                        question_text_match.group(1).strip()
-                        if question_text_match
-                        else None
-                    )
+                    # # Extract question text (### heading)
+                    # question_text_match = re.search(
+                    #     r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
+                    # )
+                    # question_text = (
+                    #     question_text_match.group(1).strip()
+                    #     if question_text_match
+                    #     else None
+                    # )
+
+                    # Extract question text enable multiple lines
+                    question_text = extract_question(markdown_content)
 
                     # Extract OPTIONS (lines after #### options)
                     options_match = re.search(
