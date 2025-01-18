@@ -5,6 +5,7 @@ import logging
 import os
 import socket
 from typing import Any, Optional
+import pandas as pd
 
 import nacl.public
 import requests
@@ -222,4 +223,13 @@ def get_my_grades() -> dict[str, float]:
     res.raise_for_status()
 
     grades = res.json()
-    return grades
+
+    # Convert JSON to DataFrame
+    df = pd.json_normalize(grades)
+    # Transpose the DataFrame to make it vertical
+    vertical_df = df.transpose()
+
+    # Sort by row titles (index)
+    sorted_vertical_df = vertical_df.sort_index()
+
+    return sorted_vertical_df
