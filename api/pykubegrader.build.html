@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.build package &#8212; PyKubeGrader 0.0.post1.dev1+gd4e26f3 documentation</title>
+    <title>pykubegrader.build package &#8212; PyKubeGrader 0.2.38 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=3f1093cf"></script>
+    <script src="../_static/documentation_options.js?v=67bc0999"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader package" href="pykubegrader.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+gd4e26f3" />
+  <meta name="docsearch:version" content="0.2.38" />
     <meta name="docbuild:last-update" content="Jan 18, 2025"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gd4e26f3 documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gd4e26f3 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.2.38 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.2.38 documentation - Home"/>
   
   
 </a></div>
@@ -1166,6 +1166,11 @@ including all lines under the SOLUTION header until the first blank line or whit
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_question">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_question"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_question" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_raw_cells">
 <span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_raw_cells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipynb_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#</span> <span class="pre">BEGIN</span> <span class="pre">MULTIPLE</span> <span class="pre">CHOICE'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_raw_cells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_raw_cells" title="Link to this definition">#</a></dt>
 <dd><p>Extracts all metadata from value cells in a Jupyter Notebook file for a specified heading.</p>
@@ -1494,6 +1499,7 @@ None: Writes the modified notebook to the output file.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_MCQ"><code class="docutils literal notranslate"><span class="pre">extract_MCQ()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_SELECT_MANY"><code class="docutils literal notranslate"><span class="pre">extract_SELECT_MANY()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_TF"><code class="docutils literal notranslate"><span class="pre">extract_TF()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_question"><code class="docutils literal notranslate"><span class="pre">extract_question()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_raw_cells"><code class="docutils literal notranslate"><span class="pre">extract_raw_cells()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.find_first_code_cell"><code class="docutils literal notranslate"><span class="pre">find_first_code_cell()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.generate_mcq_file"><code class="docutils literal notranslate"><span class="pre">generate_mcq_file()</span></code></a></li>
