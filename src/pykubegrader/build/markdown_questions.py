@@ -47,7 +47,7 @@ class MarkdownToNotebook:
                 current_cell = ""
                 if "[markdown]" in line:
                     current_type = "markdown"
-                elif "# BEGIN" in line or "# END" in line:
+                elif "# BEGIN" in line or "# END" in line or "# ASSIGNMENT CONFIG" in line:
                     current_type = "raw"
                 else:
                     current_type = "code"
@@ -65,7 +65,9 @@ class MarkdownToNotebook:
             elif current_type == "code":
                 cells.append(nbf.v4.new_code_cell(current_cell.strip()))
             elif current_type == "raw":
-                cells.append(nbf.v4.new_raw_cell(current_cell.strip()))
+                cell = nbf.v4.new_raw_cell(current_cell.strip())
+                cell["metadata"]["languageId"] = "raw"
+                cells.append(cell)
 
         nb["cells"] = cells
 
