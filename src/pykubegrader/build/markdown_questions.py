@@ -47,7 +47,11 @@ class MarkdownToNotebook:
                 current_cell = ""
                 if "[markdown]" in line:
                     current_type = "markdown"
-                elif "# BEGIN" in line or "# END" in line or "# ASSIGNMENT CONFIG" in line:
+                elif (
+                    "# BEGIN" in line
+                    or "# END" in line
+                    or "# ASSIGNMENT CONFIG" in line
+                ):
                     current_type = "raw"
                 else:
                     current_type = "code"
@@ -67,6 +71,7 @@ class MarkdownToNotebook:
             elif current_type == "raw":
                 cell = nbf.v4.new_raw_cell(current_cell.strip())
                 cell["metadata"]["languageId"] = "raw"
+                cell["metadata"]["cell_type"] = "raw"
                 cells.append(cell)
 
         nb["cells"] = cells
@@ -75,7 +80,43 @@ class MarkdownToNotebook:
         with open(notebook_name, "w") as f:
             nbf.write(nb, f)
 
+        self.modify_notebook(notebook_name)
+
         print(f"Notebook saved as: {notebook_name}")
+
+    @staticmethod
+    def modify_notebook(notebook_path: str):
+        """
+        Modifies an existing Jupyter Notebook by converting cells containing specific markers
+        ("# BEGIN T", "# END", "# ASSIGNMENT CONFIG") into raw cells.
+
+        Args:
+            notebook_path (str): Path to the existing Jupyter Notebook to modify.
+        """
+        if not os.path.exists(notebook_path):
+            print(f"Error: Notebook '{notebook_path}' does not exist.")
+            return
+
+        with open(notebook_path, "r") as f:
+            nb = nbf.read(f, as_version=4)
+
+        for cell in nb["cells"]:
+            if cell["cell_type"] == "code" and cell["source"].startswith(
+                (
+                    "# BEGIN TESTS",
+                    "# END TESTS",
+                    "# END SOLUTION",
+                    "# BEGIN QUESTION",
+                    "# ASSIGNMENT CONFIG",
+                )
+            ):
+                cell["cell_type"] = "raw"
+                if "metadata" not in cell:
+                    cell["metadata"] = {}
+                cell["metadata"] = {"vscode": {"languageId": "raw"}}
+
+        with open(notebook_path, "w") as f:
+            nbf.write(nb, f)
 
 
 def main():
