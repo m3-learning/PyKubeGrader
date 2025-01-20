@@ -46,8 +46,8 @@ class SelectQuestion:
 
         self.initial_vals: list = [getattr(self, key) for key in self.keys]
 
-        if shuffle_answers:
-            options = shuffle_options(options, seed)
+        # if shuffle_answers:
+        #     options = shuffle_options(options, seed)
 
         desc_widgets, self.widgets = style(descriptions, options, self.initial_vals)
 

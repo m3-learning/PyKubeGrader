@@ -56,8 +56,8 @@ class MultiSelectQuestion:
 
         self.initial_vals = [getattr(self, key) for key in self.keys]
 
-        # add shuffle options to multi_select.py
-        options = shuffle_options(options, seed)
+        # # add shuffle options to multi_select.py
+        # options = shuffle_options(options, seed)
         
         description_widgets, self.widgets = style(
             descriptions, options, self.initial_vals
