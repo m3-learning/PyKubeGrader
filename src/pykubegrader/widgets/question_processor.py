@@ -17,8 +17,11 @@ def process_questions_and_codes(titles):
         # First part is the title, stripped of leading/trailing whitespace
         title_without_code = parts[0].strip()
 
-        # remove aberrant ** from title
-        title_without_code = title_without_code.replace("**", "")
+        # Remove aberrant ** from the beginning or end of the title
+        if title_without_code.startswith("**"):
+            title_without_code = title_without_code[2:]
+        if title_without_code.endswith("**"):
+            title_without_code = title_without_code[:-2]
 
         # Second part (if exists) contains the code block; split at closing ```
         code = parts[1].split("```", maxsplit=1)[0].strip() if len(parts) > 1 else ""
