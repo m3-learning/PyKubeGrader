@@ -91,4 +91,5 @@ class TFQuestion(SelectQuestion):
             options=[["True", "False"] for _ in range(len(keys))],
             descriptions=descriptions,
             points=points,
+            shuffle_answers=False,
         )

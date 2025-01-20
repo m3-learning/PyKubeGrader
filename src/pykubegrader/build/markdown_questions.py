@@ -108,6 +108,8 @@ class MarkdownToNotebook:
                     "# END SOLUTION",
                     "# BEGIN QUESTION",
                     "# ASSIGNMENT CONFIG",
+                    "# END TF",
+                    "# BEGIN TF",
                 )
             ):
                 cell["cell_type"] = "raw"

@@ -4,7 +4,7 @@ from typing import Callable, Tuple
 import panel as pn
 
 from ..telemetry import ensure_responses, score_question, update_responses
-from ..utils import shuffle_questions
+from ..utils import shuffle_questions, shuffle_options
 from ..widgets.style import drexel_colors
 
 # Pass custom CSS to Panel
@@ -24,6 +24,7 @@ class SelectQuestion:
         options: list,
         descriptions: list[str],
         points: int,
+        shuffle_answers: bool = True,
     ):
         responses = ensure_responses()
 
@@ -44,6 +45,9 @@ class SelectQuestion:
             setattr(self, key, responses.get(key, None))
 
         self.initial_vals: list = [getattr(self, key) for key in self.keys]
+
+        if shuffle_answers:
+            options = shuffle_options(options, seed)
 
         desc_widgets, self.widgets = style(descriptions, options, self.initial_vals)
 
