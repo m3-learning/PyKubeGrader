@@ -16,7 +16,6 @@ def MCQ(
     options: list[str] | list[list[str]],
     initial_vals: list[str],
 ) -> Tuple[list[pn.pane.HTML], list[pn.widgets.RadioButtonGroup]]:
-
     # Process descriptions through `process_questions_and_codes`
     processed_titles, code_blocks = process_questions_and_codes(descriptions)
 
@@ -29,7 +28,9 @@ def MCQ(
         )
         # Add the title and code block in a row
         if code_block:
-            desc_widgets.append(pn.Column(title_pane, code_block, sizing_mode="stretch_width"))
+            desc_widgets.append(
+                pn.Column(title_pane, code_block, sizing_mode="stretch_width")
+            )
         else:
             desc_widgets.append(pn.Column(title_pane, sizing_mode="stretch_width"))
 

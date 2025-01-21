@@ -5,9 +5,9 @@ import logging
 import os
 import socket
 from typing import Any, Optional
-import pandas as pd
 
 import nacl.public
+import pandas as pd
 import requests
 from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
@@ -205,7 +205,7 @@ def verify_server(jhub_user: Optional[str] = None) -> str:
     return message
 
 
-def get_my_grades() -> dict[str, float]:
+def get_my_grades() -> pd.DataFrame:
     if not student_user or not student_pw or not api_base_url:
         raise ValueError("Necessary environment variables not set")
 

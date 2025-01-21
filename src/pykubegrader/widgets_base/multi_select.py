@@ -4,7 +4,7 @@ from typing import Callable, Tuple
 import panel as pn
 
 from ..telemetry import ensure_responses, score_question, update_responses
-from ..utils import shuffle_questions, shuffle_options
+from ..utils import shuffle_questions
 from ..widgets.style import drexel_colors, raw_css
 
 # Pass the custom CSS to Panel
@@ -58,7 +58,7 @@ class MultiSelectQuestion:
 
         # # add shuffle options to multi_select.py
         # options = shuffle_options(options, seed)
-        
+
         description_widgets, self.widgets = style(
             descriptions, options, self.initial_vals
         )
@@ -72,14 +72,13 @@ class MultiSelectQuestion:
         question_header = pn.pane.HTML(
             f"<h2>Question {self.question_number}: {title}</h2>"
         )
-        
+
         question_body = pn.Column(
             *[
                 pn.Row(desc_widget, checkbox_set)
                 for desc_widget, checkbox_set in widget_pairs
             ]
         )
-    
 
         self.layout = pn.Column(question_header, question_body, self.submit_button)
 

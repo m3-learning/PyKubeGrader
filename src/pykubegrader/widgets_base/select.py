@@ -4,7 +4,7 @@ from typing import Callable, Tuple
 import panel as pn
 
 from ..telemetry import ensure_responses, score_question, update_responses
-from ..utils import shuffle_questions, shuffle_options
+from ..utils import shuffle_questions
 from ..widgets.style import drexel_colors
 
 # Pass custom CSS to Panel
