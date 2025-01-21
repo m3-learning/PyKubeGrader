@@ -1,4 +1,3 @@
-import re
 import panel as pn
 
 

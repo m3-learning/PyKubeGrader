@@ -5,7 +5,6 @@ import sys
 
 
 class FolderCleaner:
-    
     def __init__(self, root_folder: str):
         """
         Initializes the FolderCleaner with the root folder to clean.
