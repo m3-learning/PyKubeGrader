@@ -2,6 +2,7 @@ import panel as pn
 
 from ..widgets.style import drexel_colors, raw_css
 from ..widgets_base.multi_select import MultiSelectQuestion
+from .question_processor import process_questions_and_codes
 
 # Pass the custom CSS to Panel
 pn.extension(design="material", global_css=[drexel_colors], raw_css=[raw_css])
@@ -24,15 +25,25 @@ def MultiSelect(
     separator = pn.pane.HTML("<hr style='border:1px solid lightgray; width:100%;'>")
 
     i = 0
+    desc_width = "500px"
 
     for question, option_set in zip(descriptions, options):
-        desc_width = "500px"
-
-        # Create description widget with separator
-        desc_widget = pn.pane.HTML(
+        # Process descriptions through `process_questions_and_codes`
+        processed_titles, code_blocks = process_questions_and_codes(question)
+        
+        # Create an HTML pane for the title
+        title_pane  = pn.pane.HTML(
             f"<hr style='border:1px solid lightgray; width:100%;'>"
-            f"<div style='text-align: left; width: {desc_width};'><b>{question}</b></div>"
+            f"<div style='text-align: left; width: {desc_width};'><b>{processed_titles[0]}</b></div>"
         )
+        # Add the title and code block in a row
+        if code_blocks[0]:
+            desc_widget = pn.Column(title_pane, code_blocks[0], sizing_mode="stretch_width")
+        else:
+            desc_widget = title_pane
+        
+        # # Create description widget with separator
+        
 
         # Create checkboxes for current question
         checkbox_set = [
