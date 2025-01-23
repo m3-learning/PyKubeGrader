@@ -625,9 +625,7 @@ class NotebookProcessor:
 
             if files:
                 for file in files:
-                    print(
-                        f"Copying {file} to {os.path.join(notebook_subfolder, file)}"
-                    )
+                    print(f"Copying {file} to {os.path.join(notebook_subfolder, file)}")
                     shutil.copy(
                         os.path.join(self.root_folder, file),
                         os.path.join(notebook_subfolder, file),
