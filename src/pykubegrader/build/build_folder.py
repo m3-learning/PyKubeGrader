@@ -1367,15 +1367,18 @@ def extract_SELECT_MANY(ipynb_file):
                         1  # Increment subquestion number for each question
                     )
 
-                    # Extract question text (### heading)
-                    question_text_match = re.search(
-                        r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
-                    )
-                    question_text = (
-                        question_text_match.group(1).strip()
-                        if question_text_match
-                        else None
-                    )
+                    # # Extract question text (### heading)
+                    # question_text_match = re.search(
+                    #     r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
+                    # )
+                    # question_text = (
+                    #     question_text_match.group(1).strip()
+                    #     if question_text_match
+                    #     else None
+                    # )
+                    
+                    # Extract question text enable multiple lines
+                    question_text = extract_question(markdown_content)
 
                     # Extract OPTIONS (lines after #### options)
                     options_match = re.search(
