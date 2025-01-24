@@ -30,20 +30,21 @@ def MultiSelect(
     for question, option_set in zip(descriptions, options):
         # Process descriptions through `process_questions_and_codes`
         processed_titles, code_blocks = process_questions_and_codes(question)
-        
+
         # Create an HTML pane for the title
-        title_pane  = pn.pane.HTML(
+        title_pane = pn.pane.HTML(
             f"<hr style='border:1px solid lightgray; width:100%;'>"
             f"<div style='text-align: left; width: {desc_width};'><b>{processed_titles[0]}</b></div>"
         )
         # Add the title and code block in a row
         if code_blocks[0]:
-            desc_widget = pn.Column(title_pane, code_blocks[0], sizing_mode="stretch_width")
+            desc_widget = pn.Column(
+                title_pane, code_blocks[0], sizing_mode="stretch_width"
+            )
         else:
             desc_widget = title_pane
-        
+
         # # Create description widget with separator
-        
 
         # Create checkboxes for current question
         checkbox_set = [

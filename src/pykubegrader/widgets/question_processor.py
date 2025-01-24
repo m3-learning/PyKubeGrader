@@ -1,13 +1,17 @@
+from typing import Optional
+
 import panel as pn
 
 
-def process_questions_and_codes(titles):
+def process_questions_and_codes(
+    titles: str | list[str],
+) -> tuple[list[str], list[Optional[pn.pane.Markdown]]]:
     # Ensure titles is a list
     if isinstance(titles, str):
         titles = [titles]
 
-    processed_titles = []
-    code_blocks = []
+    processed_titles: list[str] = []
+    code_blocks: list[Optional[pn.pane.Markdown]] = []
 
     for title in titles:
         # Split the title at the "```python" delimiter

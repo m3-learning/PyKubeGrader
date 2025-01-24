@@ -13,9 +13,16 @@ def list_of_lists(options: list) -> bool:
     return all(isinstance(elem, list) for elem in options)
 
 
-def shuffle_options(options: list[Optional[str]], seed: int) -> list[Optional[str]]:
+def shuffle_options(
+    options: list[Optional[str]] | list[list[Optional[str]]], seed: int
+) -> list[Optional[str]] | list[list[Optional[str]]]:
     random.seed(seed)
     random.shuffle(options)
+
+    if list_of_lists(options):
+        for i in range(len(options)):
+            inner_list: list[Optional[str]] = options[i]  # type: ignore
+            random.shuffle(inner_list)
 
     return options
 
