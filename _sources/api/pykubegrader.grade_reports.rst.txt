@@ -1,0 +1,15 @@
+pykubegrader.grade\_reports namespace
+=====================================
+
+.. py:module:: pykubegrader.grade_reports
+
+Submodules
+----------
+
+pykubegrader.grade\_reports.grade\_reports module
+-------------------------------------------------
+
+.. automodule:: pykubegrader.grade_reports.grade_reports
+   :members:
+   :undoc-members:
+   :show-inheritance:

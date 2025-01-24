@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    pykubegrader.build
+   pykubegrader.grade_reports
    pykubegrader.graders
    pykubegrader.log_parser
    pykubegrader.submit

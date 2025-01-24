@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.widgets.types_question &#8212; PyKubeGrader 0.0.post1.dev1+g1a8b9df documentation</title>
+    <title>pykubegrader.grade_reports.grade_reports &#8212; PyKubeGrader 0.0.post1.dev1+g1a8b9df documentation</title>
   
   
   
@@ -43,7 +43,7 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/widgets/types_question';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/grade_reports/grade_reports';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -386,7 +386,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.widgets.types_question</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.grade_reports.grade_reports</span></li>
   </ul>
 </nav>
 </div>
@@ -403,99 +403,161 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pykubegrader.widgets.types_question</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+  <h1>Source code for pykubegrader.grade_reports.grade_reports</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">panel</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+<div class="viewcode-block" id="filter_assignments">
+<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_reports.filter_assignments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_assignments</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">max_week</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_types</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove assignments with week_number greater than max_week</span>
+<span class="sd">    or with specific assignment types.</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_of_lists</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..widgets_base.select</span><span class="w"> </span><span class="kn">import</span> <span class="n">SelectQuestion</span>
+<span class="sd">    :param df: DataFrame containing assignments.</span>
+<span class="sd">    :param max_week: Maximum allowed week_number (int).</span>
+<span class="sd">    :param exclude_types: A single assignment type or a list of assignment types to exclude.</span>
+<span class="sd">    :return: Filtered DataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">max_week</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;week_number&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">max_week</span><span class="p">]</span>
 
-<span class="c1">#</span>
-<span class="c1"># Style function</span>
-<span class="c1">#</span>
+    <span class="k">if</span> <span class="n">exclude_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Ensure exclude_types is a list</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_types</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+            <span class="n">exclude_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_types</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">exclude_types</span><span class="p">)]</span>
 
-
-<div class="viewcode-block" id="MultipleChoice">
-<a class="viewcode-back" href="../../../api/pykubegrader.widgets.html#pykubegrader.widgets.types_question.MultipleChoice">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">MultipleChoice</span><span class="p">(</span>
-    <span class="n">descriptions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">options</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-    <span class="n">initial_vals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">pn</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">HTML</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">Select</span><span class="p">]]:</span>
-    <span class="n">desc_width</span> <span class="o">=</span> <span class="s2">&quot;350px&quot;</span>
-
-    <span class="n">desc_widgets</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&lt;div style=&#39;text-align: left; width: </span><span class="si">{</span><span class="n">desc_width</span><span class="si">}</span><span class="s2">;&#39;&gt;&lt;b&gt;</span><span class="si">{</span><span class="n">desc</span><span class="si">}</span><span class="s2">&lt;/b&gt;&lt;/div&gt;&quot;</span>
-        <span class="p">)</span>
-        <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">descriptions</span>
-    <span class="p">]</span>
-
-    <span class="n">dropdowns</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">option</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">option</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-            <span class="n">initial_vals</span><span class="p">,</span>
-            <span class="n">options</span> <span class="k">if</span> <span class="n">list_of_lists</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">initial_vals</span><span class="p">),</span>
-        <span class="p">)</span>
-    <span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">desc_widgets</span><span class="p">,</span> <span class="n">dropdowns</span></div>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 
+<div class="viewcode-block" id="format_assignment_table">
+<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_reports.format_assignment_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_assignment_table</span><span class="p">(</span><span class="n">assignments</span><span class="p">):</span>
+    <span class="c1"># Create DataFrame</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">assignments</span><span class="p">)</span>
 
-<span class="c1">#</span>
-<span class="c1"># Question class</span>
-<span class="c1">#</span>
+    <span class="c1"># Replacements for normalization</span>
+    <span class="n">replacements</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;practicequiz&quot;</span><span class="p">:</span> <span class="s2">&quot;practice quiz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;practice-quiz&quot;</span><span class="p">:</span> <span class="s2">&quot;practice quiz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attend&quot;</span><span class="p">:</span> <span class="s2">&quot;attendance&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attendance&quot;</span><span class="p">:</span> <span class="s2">&quot;attendance&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Remove assignments of type &#39;test&#39;</span>
+    <span class="n">remove_assignments</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Apply replacements</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;assignment_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">replacements</span><span class="p">)</span>
+
+    <span class="c1"># Filter out specific assignment types</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">remove_assignments</span><span class="p">)]</span>
+
+    <span class="c1"># Sort by week number and assignment name</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;assignment_name&quot;</span><span class="p">,</span> <span class="s2">&quot;week_number&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">df</span></div>
 
 
-<div class="viewcode-block" id="TypesQuestion">
-<a class="viewcode-back" href="../../../api/pykubegrader.widgets.html#pykubegrader.widgets.types_question.TypesQuestion">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TypesQuestion</span><span class="p">(</span><span class="n">SelectQuestion</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Select the option that matches the definition:&quot;</span><span class="p">,</span>
-        <span class="n">style</span><span class="o">=</span><span class="n">MultipleChoice</span><span class="p">,</span>
-        <span class="n">question_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;types1&quot;</span><span class="p">,</span> <span class="s2">&quot;types2&quot;</span><span class="p">,</span> <span class="s2">&quot;types3&quot;</span><span class="p">,</span> <span class="s2">&quot;types4&quot;</span><span class="p">,</span> <span class="s2">&quot;types5&quot;</span><span class="p">,</span> <span class="s2">&quot;types6&quot;</span><span class="p">],</span>
-        <span class="n">options</span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">&quot;None&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;list&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;function&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;dictionary&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;array&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;variable&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;string&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tuple&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;iterator&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;float&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;class&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;module&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;package&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;instance&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
-        <span class="n">descriptions</span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">&quot;An ordered, mutable collection of items, defined with [ ]&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;A file containing Python definitions and statements&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;A collection of elements of the same type, allowing for efficient storage and manipulation of sequences of data&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;An immutable and ordered collection of elements in Python, which can contain mixed data types&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;A sequence of Unicode characters&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;A data type that represents real numbers with a decimal point&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
-        <span class="n">points</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
-            <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span>
-            <span class="n">question_number</span><span class="o">=</span><span class="n">question_number</span><span class="p">,</span>
-            <span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span>
-            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
-            <span class="n">descriptions</span><span class="o">=</span><span class="n">descriptions</span><span class="p">,</span>
-            <span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span>
-        <span class="p">)</span></div>
 
+<span class="c1"># import os</span>
+<span class="c1"># import numpy as np</span>
+<span class="c1"># import pandas as pd</span>
+<span class="c1"># import socket</span>
+<span class="c1"># import requests</span>
+<span class="c1"># from IPython.core.interactiveshell import ExecutionInfo</span>
+<span class="c1"># from requests import Response</span>
+<span class="c1"># from requests.auth import HTTPBasicAuth</span>
+<span class="c1"># from requests.exceptions import RequestException</span>
+<span class="c1"># from pykubegrader.graders.late_assignments import calculate_late_submission</span>
+
+
+<span class="c1"># api_base_url = os.getenv(&quot;DB_URL&quot;)</span>
+<span class="c1"># student_user = &quot;admin&quot; # os.getenv(&quot;user_name_student&quot;)</span>
+<span class="c1"># student_pw = &quot;TrgpUuadm2PWtdgtC7Yt&quot; # os.getenv(&quot;keys_student&quot;)</span>
+
+<span class="c1"># from_hostname = socket.gethostname().removeprefix(&quot;jupyter-&quot;)</span>
+<span class="c1"># from_env = os.getenv(&quot;JUPYTERHUB_USER&quot;)</span>
+<span class="c1"># params = {&quot;username&quot;: from_env}</span>
+
+<span class="c1"># letteronly = lambda s: re.sub(r&#39;[^a-zA-Z]&#39;, &#39;&#39;, s)</span>
+<span class="c1"># start_date=&#39;2025-01-06&#39;</span>
+
+<span class="c1"># # get assignment information</span>
+<span class="c1"># res = requests.get(</span>
+<span class="c1">#     url=api_base_url.rstrip(&quot;/&quot;) + &quot;/assignments&quot;,</span>
+<span class="c1">#     auth=HTTPBasicAuth(student_user, student_pw),)</span>
+<span class="c1"># res.raise_for_status()</span>
+<span class="c1"># assignments = res.json()</span>
+
+<span class="c1"># # get submission information</span>
+<span class="c1"># res = requests.get(</span>
+<span class="c1">#     url=api_base_url.rstrip(&quot;/&quot;) + &quot;/testing/get-all-assignment-subs&quot;,</span>
+<span class="c1">#     auth=HTTPBasicAuth(&#39;testing&#39;, &#39;Vok8WzmuCMVYULw3tqzJ&#39;),</span>
+<span class="c1"># )</span>
+<span class="c1"># subs = res.json()</span>
+<span class="c1"># student_subs = [sub for sub in subs if sub[&#39;student_email&#39;]==from_env]</span>
+
+<span class="c1"># # set up new df format</span>
+<span class="c1"># weights = {&#39;homework&#39;:0.15, &#39;lab&#39;:0.15, &#39;lecture&#39;:0.15, &#39;quiz&#39;:0.15, &#39;readings&#39;:0.15,</span>
+<span class="c1">#         # &#39;midterm&#39;:0.15, &#39;final&#39;:0.2</span>
+<span class="c1">#         &#39;labattendance&#39;:0.05,  &#39;practicequiz&#39;:0.05, }</span>
+<span class="c1"># assignment_types = list(set([a[&#39;assignment_type&#39;] for a in assignments]))+[&#39;Running Avg&#39;]</span>
+<span class="c1"># inds = [f&#39;week{i+1}&#39; for i in range(11)]+[&#39;Running Avg&#39;]</span>
+<span class="c1"># restruct_grades = {k: np.zeros(len(inds)) for k in assignment_types}</span>
+<span class="c1"># restruct_grades[&#39;inds&#39;]=inds</span>
+<span class="c1"># new_weekly_grades = pd.DataFrame(restruct_grades)</span>
+
+<span class="c1"># for assignment in assignments:</span>
+<span class="c1">#     # get the assignment from all submissions</span>
+<span class="c1">#     subs = [ sub for sub in student_subs if \</span>
+<span class="c1">#             letteronly(sub[&#39;assignment_type&#39;])==letteronly(assignment[&#39;assignment_type&#39;]) and \</span>
+<span class="c1">#             sub[&#39;week_number&#39;]==assignment[&#39;week_number&#39;] ]</span>
+<span class="c1">#     if len(subs)==0: continue</span>
+<span class="c1">#     if len(subs)&gt;1:</span>
+
+<span class="c1">#     # get due date from assignment</span>
+<span class="c1">#     due_date = datetime.datetime.strptime(assignment[&#39;due_date&#39;], &quot;%Y-%m-%d %H:%M:%S&quot;)</span>
+<span class="c1">#     for sub in subs:</span>
+<span class="c1">#         entry_date = datetime.strptime(sub[&#39;timestamp&#39;], &#39;%Y-%m-%dT%H:%M:%SZ&#39;)</span>
+<span class="c1">#         if entry_date &lt;= due_date:</span>
+<span class="c1">#         else after_due).append(entry)</span>
+<span class="c1">#         calculate_late_submission(due = due_date, # &#39;2025-01-21T18:59:59Z&#39;.</span>
+<span class="c1">#                             submitted = subs&quot;%Y-%m-%d %H:%M:%S&quot;.</span>
+<span class="c1">#     - Q0 (float): Initial value (default is 100).</span>
+<span class="c1">#     - Q_min (float): Minimum value (default is 40).</span>
+<span class="c1">#     - k (float): Decay constant per minute (default is 6.88e-5).</span>
+
+<span class="c1">#     # get max from before due date</span>
+
+<span class="c1">#     # get max score from after due date and calculate</span>
+<span class="c1">#     print(sub[&#39;assignment&#39;])</span>
+<span class="c1">#     print(subs)</span>
+<span class="c1"># return</span>
+<span class="c1"># # fill out grades</span>
+<span class="c1"># new_weekly_grades.set_index(&#39;inds&#39;,inplace=True)</span>
+<span class="c1"># splitted = [col_name.split(&#39;-&#39;)+[grades[col_name][0]] for col_name in grades.columns]</span>
+<span class="c1"># for week,assignment,grade in splitted: new_weekly_grades.loc[week,assignment] = grade</span>
+
+<span class="c1"># # Calculate the current week (1-based indexing)</span>
+<span class="c1"># start_date = datetime.strptime(start_date, &quot;%Y-%m-%d&quot;)</span>
+<span class="c1"># today = datetime.now()</span>
+<span class="c1"># days_since_start = (today - start_date).days</span>
+<span class="c1"># current_week = days_since_start // 7 + 1</span>
+
+<span class="c1"># # Get average until current week</span>
+<span class="c1"># new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[:current_week-1].mean()</span>
+
+<span class="c1"># # make new dataframe with the midterm, final, and running average</span>
+<span class="c1"># max_key_length = max(len(k) for k in weights.keys())</span>
+<span class="c1"># total = 0</span>
+<span class="c1"># for k, v in weights.items():</span>
+<span class="c1">#     grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]</span>
+<span class="c1">#     total+=grade*v</span>
+<span class="c1">#     print(f&#39;{k:&lt;{max_key_length}}:\t {grade:.2f}&#39;)</span>
+<span class="c1"># print(f&#39;\nTotal: {total}&#39;) # exclude midterm and final</span>
+
+<span class="c1"># return new_out</span>
 </pre></div>
 
                 </article>
