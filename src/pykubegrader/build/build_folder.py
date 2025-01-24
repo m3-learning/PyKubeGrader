@@ -1376,7 +1376,7 @@ def extract_SELECT_MANY(ipynb_file):
                     #     if question_text_match
                     #     else None
                     # )
-                    
+
                     # Extract question text enable multiple lines
                     question_text = extract_question(markdown_content)
 
