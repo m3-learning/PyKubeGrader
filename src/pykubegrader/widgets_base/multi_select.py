@@ -1,10 +1,10 @@
 import time
-from typing import Callable, Tuple
+from typing import Callable, Optional, Tuple
 
 import panel as pn
 
 from ..telemetry import ensure_responses, score_question, update_responses
-from ..utils import shuffle_questions
+from ..utils import shuffle_options, shuffle_questions
 from ..widgets.style import drexel_colors, raw_css
 
 # Pass the custom CSS to Panel
@@ -19,12 +19,12 @@ class MultiSelectQuestion:
         self,
         title: str,
         style: Callable[
-            [list[str], list[list[str]], list[bool]],
+            [list[str], list[list[Optional[str]]], list[bool]],
             Tuple[list[pn.pane.HTML], list[pn.Column]],
         ],
         question_number: int,
         keys: list[str],
-        options: list[list[str]],
+        options: list[list[Optional[str]]],
         descriptions: list[str],
         points: int,
     ):
@@ -56,8 +56,8 @@ class MultiSelectQuestion:
 
         self.initial_vals = [getattr(self, key) for key in self.keys]
 
-        # # add shuffle options to multi_select.py
-        # options = shuffle_options(options, seed)
+        # add shuffle options to multi_select.py
+        options = shuffle_options(options, seed)
 
         description_widgets, self.widgets = style(
             descriptions, options, self.initial_vals
