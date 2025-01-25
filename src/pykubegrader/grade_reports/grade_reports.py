@@ -1,25 +1,8 @@
 import pandas as pd
+from build.passwords import password, jupyterhub_user, user
+import requests
+from requests.auth import HTTPBasicAuth
 
-def filter_assignments(df, max_week=None, exclude_types=None):
-    """
-    Remove assignments with week_number greater than max_week
-    or with specific assignment types.
-
-    :param df: DataFrame containing assignments.
-    :param max_week: Maximum allowed week_number (int).
-    :param exclude_types: A single assignment type or a list of assignment types to exclude.
-    :return: Filtered DataFrame.
-    """
-    if max_week is not None:
-        df = df[df["week_number"] <= max_week]
-
-    if exclude_types is not None:
-        # Ensure exclude_types is a list
-        if not isinstance(exclude_types, (list, tuple, set)):
-            exclude_types = [exclude_types]
-        df = df[~df["assignment_type"].isin(exclude_types)]
-
-    return df
 
 def format_assignment_table(assignments):
     # Create DataFrame
@@ -44,7 +27,42 @@ def format_assignment_table(assignments):
 
     # Sort by week number and assignment name
     df = df.sort_values(by=["assignment_name", "week_number"]).reset_index(drop=True)
+
+    return df
+
+def get_student_grades(
+    student_username, api_base_url="https://engr-131-api.eastus.cloudapp.azure.com/"
+):
+    params = {"username": student_username}
+    res = requests.get(
+        url=api_base_url.rstrip("/") + "/student-grades-testing",
+        params=params,
+        auth=HTTPBasicAuth(user(), password()),
+    )
+
+    [assignments, sub] = res.json()
     
+    return pd.DataFrame(assignments), pd.DataFrame(sub)
+
+def filter_assignments(df, max_week=None, exclude_types=None):
+    """
+    Remove assignments with week_number greater than max_week
+    or with specific assignment types.
+
+    :param df: DataFrame containing assignments.
+    :param max_week: Maximum allowed week_number (int).
+    :param exclude_types: A single assignment type or a list of assignment types to exclude.
+    :return: Filtered DataFrame.
+    """
+    if max_week is not None:
+        df = df[df["week_number"] <= max_week]
+
+    if exclude_types is not None:
+        # Ensure exclude_types is a list
+        if not isinstance(exclude_types, (list, tuple, set)):
+            exclude_types = [exclude_types]
+        df = df[~df["assignment_type"].isin(exclude_types)]
+
     return df
 
 
