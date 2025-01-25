@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.build package &#8212; PyKubeGrader 0.0.post1.dev1+g83e4e0b documentation</title>
+    <title>pykubegrader.build package &#8212; PyKubeGrader 0.0.post1.dev1+g17cb2c0 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=16ed0722"></script>
+    <script src="../_static/documentation_options.js?v=f9e8309b"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,8 +51,8 @@
     <link rel="prev" title="pykubegrader package" href="pykubegrader.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g83e4e0b" />
-    <meta name="docbuild:last-update" content="Jan 24, 2025"/>
+  <meta name="docsearch:version" content="0.0.post1.dev1+g17cb2c0" />
+    <meta name="docbuild:last-update" content="Jan 25, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g83e4e0b documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g83e4e0b documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g17cb2c0 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g17cb2c0 documentation - Home"/>
   
   
 </a></div>
@@ -630,8 +630,741 @@ within the group of the same question. All cells will have both flags.</p>
 </dd></dl>
 
 </section>
-<section id="pykubegrader-build-build-folder-module">
-<h2>pykubegrader.build.build_folder module<a class="headerlink" href="#pykubegrader-build-build-folder-module" title="Link to this heading">#</a></h2>
+<section id="module-pykubegrader.build.build_folder">
+<span id="pykubegrader-build-build-folder-module"></span><h2>pykubegrader.build.build_folder module<a class="headerlink" href="#module-pykubegrader.build.build_folder" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">NotebookProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bonus_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class for processing Jupyter notebooks in a directory and its subdirectories.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.root_folder">
+<span class="sig-name descname"><span class="pre">root_folder</span></span><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.root_folder" title="Link to this definition">#</a></dt>
+<dd><p>The root directory containing notebooks to process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.assignment_tag">
+<span class="sig-name descname"><span class="pre">assignment_tag</span></span><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.assignment_tag" title="Link to this definition">#</a></dt>
+<dd><p>Tag for the assignment being processed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.solutions_folder">
+<span class="sig-name descname"><span class="pre">solutions_folder</span></span><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.solutions_folder" title="Link to this definition">#</a></dt>
+<dd><p>The directory where processed notebooks and solutions are stored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.verbose">
+<span class="sig-name descname"><span class="pre">verbose</span></span><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.verbose" title="Link to this definition">#</a></dt>
+<dd><p>Flag for verbose output to the console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.log">
+<span class="sig-name descname"><span class="pre">log</span></span><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.log" title="Link to this definition">#</a></dt>
+<dd><p>Flag to enable or disable logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.add_assignment">
+<span class="sig-name descname"><span class="pre">add_assignment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.add_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.add_assignment" title="Link to this definition">#</a></dt>
+<dd><p>Sends a POST request to add an assignment.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.add_initialization_code">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_initialization_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">week</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.add_initialization_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.add_initialization_code" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.add_notebook">
+<span class="sig-name descname"><span class="pre">add_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.add_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.add_notebook" title="Link to this definition">#</a></dt>
+<dd><p>Sends a POST request to add a notebook.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.add_submission_cells">
+<span class="sig-name descname"><span class="pre">add_submission_cells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.add_submission_cells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.add_submission_cells" title="Link to this definition">#</a></dt>
+<dd><p>Adds submission cells to the end of a Jupyter notebook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>notebook_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the input notebook.</p></li>
+<li><p><strong>output_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to save the modified notebook.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.add_validate_token_cell">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_validate_token_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.add_validate_token_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.add_validate_token_cell" title="Link to this definition">#</a></dt>
+<dd><p>Adds a new code cell at the top of a Jupyter notebook if require_key is True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>notebook_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The path to the notebook file to modify.</p></li>
+<li><p><strong>require_key</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Whether to add the validate_token cell.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">assignment_tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.bonus_points">
+<span class="sig-name descname"><span class="pre">bonus_points</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.bonus_points" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.build_payload">
+<span class="sig-name descname"><span class="pre">build_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.build_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.build_payload" title="Link to this definition">#</a></dt>
+<dd><p>Reads YAML content for an assignment and returns Python variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yaml_content</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The YAML file path to parse.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the parsed assignment data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.build_payload_notebook">
+<span class="sig-name descname"><span class="pre">build_payload_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook_title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.build_payload_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.build_payload_notebook" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.check_if_file_in_folder">
+<span class="sig-name descname"><span class="pre">check_if_file_in_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.check_if_file_in_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.check_if_file_in_folder" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.extract_MCQ">
+<span class="sig-name descname"><span class="pre">extract_MCQ</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.extract_MCQ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.extract_MCQ" title="Link to this definition">#</a></dt>
+<dd><p>Extracts questions from markdown cells and organizes them as a nested dictionary,
+including subquestion numbers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ipynb_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the .ipynb file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A nested dictionary where the first-level key is the question name (text after ##),</dt><dd><p>and the value is a dictionary with keys: ‘name’, ‘subquestion_number’,
+‘question_text’, ‘OPTIONS’, and ‘solution’.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.free_response_parser">
+<span class="sig-name descname"><span class="pre">free_response_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook_subfolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notebook_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.free_response_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.free_response_parser" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.generate_solution_MCQ">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_solution_MCQ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output.py'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.generate_solution_MCQ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.generate_solution_MCQ" title="Link to this definition">#</a></dt>
+<dd><p>Generates a Python file with solutions and total points based on the input data.
+If the file already exists, it appends new solutions to the existing solution dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_list</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – A list of dictionaries containing question metadata.</p></li>
+<li><p><strong>output_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the output Python file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.has_assignment">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_assignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tags</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.has_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.has_assignment" title="Link to this definition">#</a></dt>
+<dd><p>Determines if a Jupyter notebook contains any of the specified configuration tags.</p>
+<p>This method checks for the presence of specific content in a Jupyter notebook
+to identify whether it includes any of the required headings or tags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>notebook_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The file path to the Jupyter notebook to be checked.</p></li>
+<li><p><strong>*tags</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Variable-length argument list of tags to search for.
+Defaults to (”# ASSIGNMENT CONFIG”,).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the notebook contains any of the specified tags, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+</dd>
+</dl>
+<dl>
+<dt>Dependencies:</dt><dd><ul class="simple">
+<li><p>The <cite>check_for_heading</cite> function must be implemented. It should search</p></li>
+</ul>
+<p>for specific headings or content in a notebook file and return a boolean
+value indicating if any of the tags exist.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<dl>
+<dt>def check_for_heading(notebook_path, keywords):</dt><dd><p># Mock implementation of content check
+with open(notebook_path, ‘r’) as file:</p>
+<blockquote>
+<div><p>content = file.read()</p>
+</div></blockquote>
+<p>return any(keyword in content for keyword in keywords)</p>
+</dd>
+</dl>
+<p>notebook_path = “path/to/notebook.ipynb”
+# Check for default tags
+contains_config = has_assignment(notebook_path)
+self._print_and_log(f”Contains assignment config: {contains_config}”)</p>
+<p># Check for custom tags
+contains_custom = has_assignment(notebook_path, “# CUSTOM CONFIG”, “# ANOTHER CONFIG”)
+self._print_and_log(f”Contains custom config: {contains_custom}”)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.json_serial">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">json_serial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.json_serial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.json_serial" title="Link to this definition">#</a></dt>
+<dd><p>JSON serializer for objects not serializable by default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">log</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.merge_metadata">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.merge_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.merge_metadata" title="Link to this definition">#</a></dt>
+<dd><p>Merges raw metadata with extracted question data.</p>
+<p>This method combines metadata from two sources: raw metadata and question data.
+It ensures that the points associated with each question are appropriately distributed
+and added to the final merged metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – A list of dictionaries containing raw metadata.
+Each dictionary must have a ‘points’ key with a value
+that can be either a list of points or a string representing a single point value.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – A list of dictionaries containing extracted question data.
+Each dictionary represents a set of questions and their details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of dictionaries where each dictionary represents a question</dt><dd><p>with merged metadata and associated points.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#KeyError" title="(in Python v3.11)"><strong>KeyError</strong></a> – If ‘points’ is missing from any raw metadata entry.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#IndexError" title="(in Python v3.11)"><strong>IndexError</strong></a> – If the number of items in <cite>raw</cite> and <cite>data</cite> do not match.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<dl class="simple">
+<dt>raw = [</dt><dd><p>{“points”: [1.0, 2.0]},
+{“points”: “3.0”}</p>
+</dd>
+</dl>
+<p>]
+data = [</p>
+<blockquote>
+<div><p>{“Q1”: {“question_text”: “What is 2+2?”}},
+{“Q2”: {“question_text”: “What is 3+3?”}}</p>
+</div></blockquote>
+<p>]
+merged = merge_metadata(raw, data)
+print(merged)
+# Output:
+# [
+#     {“Q1”: {“question_text”: “What is 2+2?”, “points”: 1.0}},
+#     {“Q2”: {“question_text”: “What is 3+3?”, “points”: 3.0}}
+# ]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.multiple_choice_parser">
+<span class="sig-name descname"><span class="pre">multiple_choice_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.multiple_choice_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.multiple_choice_parser" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.process_notebooks">
+<span class="sig-name descname"><span class="pre">process_notebooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.process_notebooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.process_notebooks" title="Link to this definition">#</a></dt>
+<dd><p>Recursively processes Jupyter notebooks in a given folder and its subfolders.</p>
+<p>The function performs the following steps:
+1. Iterates through all files within the root folder and subfolders.
+2. Identifies Jupyter notebooks by checking file extensions (.ipynb).
+3. Checks if each notebook contains assignment configuration metadata.
+4. Processes notebooks that meet the criteria using <cite>otter assign</cite> or other defined steps.</p>
+<dl>
+<dt>Prerequisites:</dt><dd><ul class="simple">
+<li><p>The <cite>has_assignment</cite> method should be implemented to check if a notebook</p></li>
+</ul>
+<p>contains the required configuration for assignment processing.
+- The <cite>_process_single_notebook</cite> method should handle the specific processing
+of a single notebook, including moving it to a new folder or running
+additional tools like <cite>otter assign</cite>.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>- OSError</strong> – If an issue occurs while accessing files or directories.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<dl class="simple">
+<dt>class NotebookProcessor:</dt><dd><dl class="simple">
+<dt>def __init__(self, root_folder):</dt><dd><p>self.root_folder = root_folder</p>
+</dd>
+<dt>def has_assignment(self, notebook_path):</dt><dd><p># Implementation to check for assignment configuration
+return True  # Replace with actual check logic</p>
+</dd>
+<dt>def _process_single_notebook(self, notebook_path):</dt><dd><p># Implementation to process a single notebook
+self._print_and_log(f”Processing notebook: {notebook_path}”)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>processor = NotebookProcessor(“/path/to/root/folder”)
+processor.process_notebooks()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.remove_assignment_config_cells">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_assignment_config_cells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.remove_assignment_config_cells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.remove_assignment_config_cells" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.remove_empty_cells">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_empty_cells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.remove_empty_cells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.remove_empty_cells" title="Link to this definition">#</a></dt>
+<dd><p>Removes empty cells from a Jupyter Notebook and saves the updated notebook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>notebook_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the input Jupyter Notebook.</p></li>
+<li><p><strong>output_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to save the updated Jupyter Notebook. If None, it overwrites the original file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.remove_postfix">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_postfix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_temp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.remove_postfix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.remove_postfix" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.replace_temp_in_notebook">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">replace_temp_in_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.replace_temp_in_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.replace_temp_in_notebook" title="Link to this definition">#</a></dt>
+<dd><p>Replaces occurrences of ‘_temp.ipynb’ with ‘.ipynb’ in a Jupyter Notebook.</p>
+<p>Parameters:
+input_file (str): Path to the input Jupyter Notebook file.
+output_file (str): Path to the output Jupyter Notebook file.</p>
+<p>Returns:
+None: Writes the modified notebook to the output file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.replace_temp_no_otter">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">replace_temp_no_otter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.replace_temp_no_otter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.replace_temp_no_otter" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.require_key">
+<span class="sig-name descname"><span class="pre">require_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.require_key" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">root_folder</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.run_otter_assign">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run_otter_assign</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_folder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.run_otter_assign"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.run_otter_assign" title="Link to this definition">#</a></dt>
+<dd><p>Runs <cite>otter assign</cite> on the given notebook and outputs to the specified distribution folder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.select_many_parser">
+<span class="sig-name descname"><span class="pre">select_many_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.select_many_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.select_many_parser" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">solutions_folder</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.true_false_parser">
+<span class="sig-name descname"><span class="pre">true_false_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.true_false_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.true_false_parser" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.NotebookProcessor.update_initialize_function">
+<span class="sig-name descname"><span class="pre">update_initialize_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#NotebookProcessor.update_initialize_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.NotebookProcessor.update_initialize_function" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">verbose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id4" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.check_for_heading">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">check_for_heading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_strings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#check_for_heading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.check_for_heading" title="Link to this definition">#</a></dt>
+<dd><p>Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.clean_notebook">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">clean_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#clean_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.clean_notebook" title="Link to this definition">#</a></dt>
+<dd><p>Removes specific cells and makes Markdown cells non-editable and non-deletable by updating their metadata.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.ensure_imports">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">ensure_imports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#ensure_imports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.ensure_imports" title="Link to this definition">#</a></dt>
+<dd><p>Ensures specified header lines are present at the top of the file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The path of the file to check and modify.</p></li>
+<li><p><strong>header_lines</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Lines to ensure are present at the top.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The existing content of the file (without the header).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_MCQ">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_MCQ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipynb_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_MCQ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_MCQ" title="Link to this definition">#</a></dt>
+<dd><p>Extracts multiple-choice questions from markdown cells within sections marked by
+<cite># BEGIN MULTIPLE CHOICE</cite> and <cite># END MULTIPLE CHOICE</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ipynb_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the .ipynb file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of dictionaries, where each dictionary corresponds to questions within</dt><dd><p>a section. Each dictionary contains parsed questions with details like
+‘name’, ‘subquestion_number’, ‘question_text’, ‘OPTIONS’, and ‘solution’.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_SELECT_MANY">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_SELECT_MANY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipynb_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_SELECT_MANY"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_SELECT_MANY" title="Link to this definition">#</a></dt>
+<dd><p>Extracts questions marked by <cite># BEGIN SELECT MANY</cite> and <cite># END SELECT MANY</cite> in markdown cells,
+including all lines under the SOLUTION header until the first blank line or whitespace-only line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ipynb_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the .ipynb file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of dictionaries, where each dictionary corresponds to questions within</dt><dd><p>a section. Each dictionary contains parsed questions with details like
+‘name’, ‘subquestion_number’, ‘question_text’, and ‘solution’.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_TF">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_TF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipynb_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_TF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_TF" title="Link to this definition">#</a></dt>
+<dd><p>Extracts True False questions from markdown cells within sections marked by
+<cite># BEGIN TF</cite> and <cite># END TF</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ipynb_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the .ipynb file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of dictionaries, where each dictionary corresponds to questions within</dt><dd><p>a section. Each dictionary contains parsed questions with details like
+‘name’, ‘subquestion_number’, ‘question_text’, and ‘solution’.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_config_from_notebook">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_config_from_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_config_from_notebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_config_from_notebook" title="Link to this definition">#</a></dt>
+<dd><p>Extract configuration text from a Jupyter Notebook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>notebook_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the Jupyter Notebook file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The configuration text if found, otherwise an empty string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_files">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_files" title="Link to this definition">#</a></dt>
+<dd><p>Extract the list of files from the given configuration text, excluding .bin files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_text</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The configuration text to process.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of file names excluding .bin files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_question">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_question"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_question" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.extract_raw_cells">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">extract_raw_cells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipynb_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heading</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#</span> <span class="pre">BEGIN</span> <span class="pre">MULTIPLE</span> <span class="pre">CHOICE'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#extract_raw_cells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.extract_raw_cells" title="Link to this definition">#</a></dt>
+<dd><p>Extracts all metadata from value cells in a Jupyter Notebook file for a specified heading.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ipynb_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the .ipynb file.</p></li>
+<li><p><strong>heading</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The heading to search for in value cells.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of dictionaries containing extracted metadata for each heading occurrence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a> of <a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.find_first_code_cell">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">find_first_code_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#find_first_code_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.find_first_code_cell" title="Link to this definition">#</a></dt>
+<dd><p>Finds the first Python code cell in a Jupyter notebook and its index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>notebook_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the Jupyter notebook file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing the index of the first code cell and the cell dictionary,</dt><dd><p>or (None, None) if no code cell is found.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.generate_mcq_file">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">generate_mcq_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mc_questions.py'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#generate_mcq_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.generate_mcq_file" title="Link to this definition">#</a></dt>
+<dd><p>Generates a Python file defining an MCQuestion class from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dict</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – A nested dictionary containing question metadata.</p></li>
+<li><p><strong>output_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The path for the output Python file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.generate_select_many_file">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">generate_select_many_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'select_many_questions.py'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#generate_select_many_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.generate_select_many_file" title="Link to this definition">#</a></dt>
+<dd><p>Generates a Python file defining an MCQuestion class from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dict</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – A nested dictionary containing question metadata.</p></li>
+<li><p><strong>output_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The path for the output Python file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.generate_tf_file">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">generate_tf_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tf_questions.py'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#generate_tf_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.generate_tf_file" title="Link to this definition">#</a></dt>
+<dd><p>Generates a Python file defining an MCQuestion class from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dict</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – A nested dictionary containing question metadata.</p></li>
+<li><p><strong>output_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The path for the output Python file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.main">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.main" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.replace_cell_source">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">replace_cell_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#replace_cell_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.replace_cell_source" title="Link to this definition">#</a></dt>
+<dd><p>Replace the source code of a specific Jupyter notebook cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_index</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Index of the cell to be modified (0-based).</p></li>
+<li><p><strong>new_source</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – New source code to replace the cell’s content.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.replace_cells_between_markers">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">replace_cells_between_markers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">markers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ipynb_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#replace_cells_between_markers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.replace_cells_between_markers" title="Link to this definition">#</a></dt>
+<dd><p>Replaces the cells between specified markers in a Jupyter Notebook (.ipynb file)
+with provided replacement cells and writes the result to the output file.</p>
+<p>Parameters:
+data (list): A list of dictionaries with data for creating replacement cells.
+markers (tuple): A tuple containing two strings: the BEGIN and END markers.
+ipynb_file (str): Path to the input Jupyter Notebook file.
+output_file (str): Path to the output Jupyter Notebook file.</p>
+<p>Returns:
+None: Writes the modified notebook to the output file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.sanitize_string">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">sanitize_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#sanitize_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.sanitize_string" title="Link to this definition">#</a></dt>
+<dd><p>Converts a string into a valid Python variable name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_string</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The string to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A valid Python variable name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.build.build_folder.update_initialize_assignment">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.build.build_folder.</span></span><span class="sig-name descname"><span class="pre">update_initialize_assignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/build/build_folder.html#update_initialize_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.build_folder.update_initialize_assignment" title="Link to this definition">#</a></dt>
+<dd><p>Search for a specific line in a Jupyter Notebook and update it with additional input variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>notebook_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The path to the Jupyter Notebook file (.ipynb).</p></li>
+<li><p><strong>assignment_points</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>]</em>) – The assignment points variable to add (default is None).</p></li>
+<li><p><strong>assignment_tag</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>]</em>) – The assignment tag variable to add (default is None).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-pykubegrader.build.clean_folder">
 <span id="pykubegrader-build-clean-folder-module"></span><h2>pykubegrader.build.clean_folder module<a class="headerlink" href="#module-pykubegrader.build.clean_folder" title="Link to this heading">#</a></h2>
@@ -766,7 +1499,68 @@ within the group of the same question. All cells will have both flags.</p>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader-build-build-folder-module">pykubegrader.build.build_folder module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.build.build_folder">pykubegrader.build.build_folder module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.root_folder"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.root_folder</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.assignment_tag"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.assignment_tag</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.solutions_folder"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.solutions_folder</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.verbose"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.verbose</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.log"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.log</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.add_assignment"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.add_assignment()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.add_initialization_code"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.add_initialization_code()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.add_notebook"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.add_notebook()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.add_submission_cells"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.add_submission_cells()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.add_validate_token_cell"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.add_validate_token_cell()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.assignment_tag</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.bonus_points"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.bonus_points</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.build_payload"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.build_payload()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.build_payload_notebook"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.build_payload_notebook()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.check_if_file_in_folder"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.check_if_file_in_folder()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.extract_MCQ"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.extract_MCQ()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.free_response_parser"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.free_response_parser()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.generate_solution_MCQ"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.generate_solution_MCQ()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.has_assignment"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.has_assignment()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.json_serial"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.json_serial()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.log</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.merge_metadata"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.merge_metadata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.multiple_choice_parser"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.multiple_choice_parser()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.process_notebooks"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.process_notebooks()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.remove_assignment_config_cells"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.remove_assignment_config_cells()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.remove_empty_cells"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.remove_empty_cells()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.remove_postfix"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.remove_postfix()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.replace_temp_in_notebook"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.replace_temp_in_notebook()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.replace_temp_no_otter"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.replace_temp_no_otter()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.require_key"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.require_key</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.root_folder</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.run_otter_assign"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.run_otter_assign()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.select_many_parser"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.select_many_parser()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.solutions_folder</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.true_false_parser"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.true_false_parser()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.NotebookProcessor.update_initialize_function"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.update_initialize_function()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">NotebookProcessor.verbose</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.check_for_heading"><code class="docutils literal notranslate"><span class="pre">check_for_heading()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.clean_notebook"><code class="docutils literal notranslate"><span class="pre">clean_notebook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.ensure_imports"><code class="docutils literal notranslate"><span class="pre">ensure_imports()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_MCQ"><code class="docutils literal notranslate"><span class="pre">extract_MCQ()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_SELECT_MANY"><code class="docutils literal notranslate"><span class="pre">extract_SELECT_MANY()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_TF"><code class="docutils literal notranslate"><span class="pre">extract_TF()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_config_from_notebook"><code class="docutils literal notranslate"><span class="pre">extract_config_from_notebook()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_files"><code class="docutils literal notranslate"><span class="pre">extract_files()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_question"><code class="docutils literal notranslate"><span class="pre">extract_question()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.extract_raw_cells"><code class="docutils literal notranslate"><span class="pre">extract_raw_cells()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.find_first_code_cell"><code class="docutils literal notranslate"><span class="pre">find_first_code_cell()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.generate_mcq_file"><code class="docutils literal notranslate"><span class="pre">generate_mcq_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.generate_select_many_file"><code class="docutils literal notranslate"><span class="pre">generate_select_many_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.generate_tf_file"><code class="docutils literal notranslate"><span class="pre">generate_tf_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.replace_cell_source"><code class="docutils literal notranslate"><span class="pre">replace_cell_source()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.replace_cells_between_markers"><code class="docutils literal notranslate"><span class="pre">replace_cells_between_markers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.sanitize_string"><code class="docutils literal notranslate"><span class="pre">sanitize_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.build_folder.update_initialize_assignment"><code class="docutils literal notranslate"><span class="pre">update_initialize_assignment()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.build.clean_folder">pykubegrader.build.clean_folder module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.clean_folder.FolderCleaner"><code class="docutils literal notranslate"><span class="pre">FolderCleaner</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.clean_folder.FolderCleaner.delete_dist_folders"><code class="docutils literal notranslate"><span class="pre">FolderCleaner.delete_dist_folders()</span></code></a></li>
