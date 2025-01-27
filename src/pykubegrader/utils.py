@@ -1,6 +1,6 @@
 import os
 import random
-from typing import Any
+from typing import Any, Optional
 
 import panel as pn
 
@@ -14,12 +14,24 @@ def list_of_lists(options: list[Any]) -> bool:
 
 
 def shuffle_options(options: list[Any], seed: int) -> None:
+    """
+    Shuffle options in list[Optional[str]] or list[list[Optional[str]]].
+    Shuffling is done in place.
+    We annotate options as list[Any] just to keep Mypy happy.
+
+    Args:
+        options (list[Any]): List of options to shuffle
+        seed (int): Seed for RNG
+
+    Returns:
+        None
+    """
     random.seed(seed)
 
-    if isinstance(options[0], list):
-        for inner_list in options:
-            if isinstance(inner_list, list):
-                random.shuffle(inner_list)
+    if list_of_lists(options):
+        for i in range(len(options)):
+            inner_list: list[Optional[str]] = options[i]
+            random.shuffle(inner_list)
     else:
         random.shuffle(options)
 
