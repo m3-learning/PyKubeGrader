@@ -53,9 +53,11 @@ class ReadingPython:
         # Comment dropdowns
         #
 
+        shuffle_options(options["comments_options"], seed)
+
         self.dropdowns_for_comments: dict[str, pn.widgets.Select] = {
             line: pn.widgets.Select(
-                options=shuffle_options(options["comments_options"], seed),
+                options=options["comments_options"],
                 name=f"Line {line}:",
                 value=getattr(self, f"q{question_number}_{i_comments + 1}"),
                 width=600,

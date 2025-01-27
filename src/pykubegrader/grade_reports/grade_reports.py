@@ -1,7 +1,9 @@
 import pandas as pd
-from build.passwords import password, jupyterhub_user, user
 import requests
 from requests.auth import HTTPBasicAuth
+
+from ..build.passwords import password, user
+
 
 def format_assignment_table(assignments):
     # Create DataFrame
@@ -29,6 +31,7 @@ def format_assignment_table(assignments):
 
     return df
 
+
 def get_student_grades(
     student_username, api_base_url="https://engr-131-api.eastus.cloudapp.azure.com/"
 ):
@@ -40,10 +43,11 @@ def get_student_grades(
     )
 
     [assignments, sub] = res.json()
-    
+
     assignments_df = format_assignment_table(assignments)
-    
+
     return assignments_df, pd.DataFrame(sub)
+
 
 def filter_assignments(df, max_week=None, exclude_types=None):
     """
