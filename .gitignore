@@ -58,3 +58,4 @@ MANIFEST
 password.py
 passwords.py
 src/pykubegrader/tokens/token_test.ipynb
+src/pykubegrader/grades
