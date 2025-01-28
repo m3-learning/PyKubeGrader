@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.tokens.tokens &#8212; PyKubeGrader 0.0.post1.dev1+g4975f77 documentation</title>
+    <title>pykubegrader.grade_reports.grade_reports &#8212; PyKubeGrader 0.0.post1.dev1+g4975f77 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/tokens/tokens';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/grade_reports/grade_reports';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -386,7 +386,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.tokens.tokens</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.grade_reports.grade_reports</span></li>
   </ul>
 </nav>
 </div>
@@ -403,58 +403,113 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pykubegrader.tokens.tokens</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-
+  <h1>Source code for pykubegrader.grade_reports.grade_reports</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">requests.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">api_base_url</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DB_URL&quot;</span><span class="p">)</span>
+<span class="n">student_user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;user_name_student&quot;</span><span class="p">)</span>
+<span class="n">student_pw</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;keys_student&quot;</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="build_token_payload">
-<a class="viewcode-back" href="../../../api/pykubegrader.tokens.html#pykubegrader.tokens.tokens.build_token_payload">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">build_token_payload</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">jhub_user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;JUPYTERHUB_USER&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">jhub_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JupyterHub user not found&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span>
-        <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
-        <span class="s2">&quot;requester&quot;</span><span class="p">:</span> <span class="n">jhub_user</span><span class="p">,</span>
-    <span class="p">}</span></div>
+<span class="n">from_env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;JUPYTERHUB_USER&quot;</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">from_env</span><span class="p">}</span>
 
 
+<span class="c1"># get submission information</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="c1"># url=api_base_url.rstrip(&quot;/&quot;) + &quot;/student-grades-testing&quot;,</span>
+    <span class="n">url</span><span class="o">=</span><span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/my-grades-testing&quot;</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+    <span class="c1"># auth=HTTPBasicAuth(&quot;admin&quot;, &quot;TrgpUuadm2PWtdgtC7Yt&quot;),</span>
+    <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;user_name_student&quot;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;keys_student&quot;</span><span class="p">)),</span>
+<span class="p">)</span>
+<span class="n">api_base_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DB_URL&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="add_token">
-<a class="viewcode-back" href="../../../api/pykubegrader.tokens.html#pykubegrader.tokens.tokens.add_token">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_token</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="get_all_students">
+<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_reports.get_all_students">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_students</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;admin only&#39;&#39;&#39;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..build.passwords</span><span class="w"> </span><span class="kn">import</span> <span class="n">password</span><span class="p">,</span> <span class="n">user</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/get-all-submission-emails&quot;</span><span class="p">,</span>
+        <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">user</span><span class="p">(),</span> <span class="n">password</span><span class="p">()),</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="format_assignment_table">
+<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_reports.format_assignment_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_assignment_table</span><span class="p">(</span><span class="n">assignments</span><span class="p">):</span>
+    <span class="c1"># Create DataFrame</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">assignments</span><span class="p">)</span>
+
+    <span class="c1"># Replacements for normalization</span>
+    <span class="n">replacements</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;practicequiz&quot;</span><span class="p">:</span> <span class="s2">&quot;practice quiz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;practice-quiz&quot;</span><span class="p">:</span> <span class="s2">&quot;practice quiz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attend&quot;</span><span class="p">:</span> <span class="s2">&quot;attendance&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;attendance&quot;</span><span class="p">:</span> <span class="s2">&quot;attendance&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Remove assignments of type &#39;test&#39;</span>
+    <span class="n">remove_assignments</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Apply replacements</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;assignment_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">replacements</span><span class="p">)</span>
+
+    <span class="c1"># Filter out specific assignment types</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">remove_assignments</span><span class="p">)]</span>
+
+    <span class="c1"># Sort by week number and assignment name</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;assignment_name&quot;</span><span class="p">,</span> <span class="s2">&quot;week_number&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="get_student_grades">
+<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_reports.get_student_grades">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_student_grades</span><span class="p">(</span><span class="n">student_username</span><span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">student_username</span><span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/student-grades-testing&quot;</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+        <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;user_name_student&quot;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;keys_student&quot;</span><span class="p">)),</span>
+    <span class="p">)</span>
+    <span class="p">[</span><span class="n">assignments</span><span class="p">,</span> <span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="n">assignments_df</span> <span class="o">=</span> <span class="n">format_assignment_table</span><span class="p">(</span><span class="n">assignments</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">assignments_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="filter_assignments">
+<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_reports.filter_assignments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_assignments</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">max_week</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_types</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Sends a POST request to mint a token</span>
+<span class="sd">    Remove assignments with week_number greater than max_week</span>
+<span class="sd">    or with specific assignment types.</span>
+
+<span class="sd">    :param df: DataFrame containing assignments.</span>
+<span class="sd">    :param max_week: Maximum allowed week_number (int).</span>
+<span class="sd">    :param exclude_types: A single assignment type or a list of assignment types to exclude.</span>
+<span class="sd">    :return: Filtered DataFrame.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">max_week</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;week_number&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">max_week</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">api_base_url</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Environment variable for API URL not set&quot;</span><span class="p">)</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/tokens&quot;</span>
+    <span class="k">if</span> <span class="n">exclude_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Ensure exclude_types is a list</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_types</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+            <span class="n">exclude_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_types</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">exclude_types</span><span class="p">)]</span>
 
-    <span class="n">payload</span> <span class="o">=</span> <span class="n">build_token_payload</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
-
-    <span class="c1"># Dummy credentials for HTTP Basic Auth</span>
-    <span class="n">auth</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Add a custom header, for potential use in authorization</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x-jhub-user&quot;</span><span class="p">:</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;requester&quot;</span><span class="p">]}</span>
-
-    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
-
-    <span class="c1"># Print response</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">df</span></div>
 
 </pre></div>
 
