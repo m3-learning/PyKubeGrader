@@ -21,15 +21,15 @@ res = requests.get(
 )
 api_base_url = os.getenv("DB_URL")
 
-def get_all_students():
-    '''admin only'''
-    from ..build.passwords import password, user
-    res = requests.get(
-        url=api_base_url.rstrip("/") + "/get-all-submission-emails",
-        auth=HTTPBasicAuth(user(), password()),
-    )
+# def get_all_students():
+#     '''admin only'''
+#     from ..build.passwords import password, user
+#     res = requests.get(
+#         url=api_base_url.rstrip("/") + "/get-all-submission-emails",
+#         auth=HTTPBasicAuth(user(), password()),
+#     )
 
-    return res.json()
+#     return res.json()
 
 
 def format_assignment_table(assignments):
