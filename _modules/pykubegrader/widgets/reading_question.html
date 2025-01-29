@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.graders.late_assignments &#8212; PyKubeGrader 0.0.post1.dev1+gf6cb04c documentation</title>
+    <title>pykubegrader.widgets.reading_question &#8212; PyKubeGrader 0.0.post1.dev1+gf6cb04c documentation</title>
   
   
   
@@ -43,7 +43,7 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/graders/late_assignments';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/widgets/reading_question';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -386,7 +386,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.graders.late_assignments</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.widgets.reading_question</span></li>
   </ul>
 </nav>
 </div>
@@ -403,54 +403,93 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pykubegrader.graders.late_assignments</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+  <h1>Source code for pykubegrader.widgets.reading_question</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">..widgets_base.reading</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReadingPython</span>
 
 
-<div class="viewcode-block" id="calculate_late_submission">
-<a class="viewcode-back" href="../../../api/pykubegrader.graders.html#pykubegrader.graders.late_assignments.calculate_late_submission">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">calculate_late_submission</span><span class="p">(</span>
-    <span class="n">due</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">submitted</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">Q0</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="n">Q_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
-    <span class="n">k</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.88e-5</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the percentage value based on an exponential decay model</span>
-<span class="sd">    with respect to a due date, using datetime string inputs.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">    - due_date_str (str): The due date as a string in the format &quot;%Y-%m-%d %H:%M:%S&quot;.</span>
-<span class="sd">    - submission_date (str): The comparison date as a string in the format &quot;%Y-%m-%d %H:%M:%S&quot;.</span>
-<span class="sd">    - Q0 (float): Initial value (default is 100).</span>
-<span class="sd">    - Q_min (float): Minimum value (default is 40).</span>
-<span class="sd">    - k (float): Decay constant per minute (default is 6.88e-5).</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    - float: The percentage value after decay, bounded between Q_min and Q0.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Convert datetime strings to UNIX timestamps</span>
-    <span class="n">due_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">due</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
-    <span class="n">submitted_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">submitted</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Calculate time difference in seconds</span>
-    <span class="n">time_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">submitted_date</span> <span class="o">-</span> <span class="n">due_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
-
-    <span class="c1"># Convert time difference from seconds to minutes</span>
-    <span class="n">time_in_minutes</span> <span class="o">=</span> <span class="n">time_difference</span> <span class="o">/</span> <span class="mf">60.0</span>
-
-    <span class="c1"># Calculate the exponential decay</span>
-    <span class="n">Q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Q0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span> <span class="o">*</span> <span class="n">time_in_minutes</span><span class="p">)</span>
-
-    <span class="c1"># Apply floor and ceiling conditions</span>
-    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q_min</span><span class="p">)</span>
-    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q0</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">Q</span></div>
+<div class="viewcode-block" id="ReadingPythonQuestion">
+<a class="viewcode-back" href="../../../api/pykubegrader.widgets.html#pykubegrader.widgets.reading_question.ReadingPythonQuestion">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadingPythonQuestion</span><span class="p">(</span><span class="n">ReadingPython</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Reading, Commenting, and Interpreting Python Code&quot;</span><span class="p">,</span>
+        <span class="n">question_number</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;READING1&quot;</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">{</span>
+            <span class="c1"># General list of 15 potential comments with only one correct per line</span>
+            <span class="s2">&quot;comments_options&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;Initializes a list `numbers` with integers and floats&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Initializes the variable `total` with a value of 0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;A `for` loop that iterates through an iterator `numbers`&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;`while` loop that continues to iterate until `total` is less than 9&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Adds and assigns the variable `total` with the value of `num` plus 1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Statement that ends the `for` loop&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Initializes a dictionary `numbers` with integers and floats&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Initializes the class `total` with a value of 0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;A `for` loop that iterates through an iterator `num`&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;`while` loop that continues to iterate until `total` is less than or equal to 9&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Adds the variable `total` with the value of `num` plus 1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Statement that ends the `while` loop&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;`while` loop that continues to iterate while `total` is less than 9&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Initializes a list `numbers` with integers and floats&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;n_rows&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>  <span class="c1"># Number of lines to show</span>
+            <span class="s2">&quot;n_required&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="c1"># Number of rows required to respond</span>
+            <span class="c1"># Lines of code that require commenting</span>
+            <span class="s2">&quot;lines_to_comment&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+            <span class="c1"># Table headers</span>
+            <span class="s2">&quot;table_headers&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;Step&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Line Number&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Variable Changed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Current Value&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;DataType&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="c1"># Variables Changed</span>
+            <span class="s2">&quot;variables_changed&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;numbers&quot;</span><span class="p">,</span> <span class="s2">&quot;num&quot;</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">,</span> <span class="s2">&quot;if&quot;</span><span class="p">,</span> <span class="s2">&quot;else&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;current_values&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;None&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;[5, 4.0]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;[5.0, 4.0]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;5.0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;6.0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;5&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;6&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;4.0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;4&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;11.0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;11&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;12&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;12.0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;0.0&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;True&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;False&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;datatypes&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;NoneType&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;dictionary&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tuple&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;boolean&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;N/A&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+        <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">],</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">question_number</span><span class="o">=</span><span class="n">question_number</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 

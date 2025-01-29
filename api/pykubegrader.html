@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader package &#8212; PyKubeGrader 0.0.post1.dev1+gfe4cce1 documentation</title>
+    <title>pykubegrader package &#8212; PyKubeGrader 0.0.post1.dev1+gf6cb04c documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=6625d066"></script>
+    <script src="../_static/documentation_options.js?v=1633083d"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,8 +51,8 @@
     <link rel="prev" title="pykubegrader" href="modules.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+gfe4cce1" />
-    <meta name="docbuild:last-update" content="Jan 28, 2025"/>
+  <meta name="docsearch:version" content="0.0.post1.dev1+gf6cb04c" />
+    <meta name="docbuild:last-update" content="Jan 29, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gfe4cce1 documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gfe4cce1 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gf6cb04c documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gf6cb04c documentation - Home"/>
   
   
 </a></div>
@@ -475,6 +475,18 @@
 <li class="toctree-l3"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.clean_folder.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.build.html#module-pykubegrader.build.collate">pykubegrader.build.collate module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.collate.QuestionCollator"><code class="docutils literal notranslate"><span class="pre">QuestionCollator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.collate.QuestionCollator.collate_questions"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.collate_questions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.collate.QuestionCollator.create_collated_notebook"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.create_collated_notebook()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.collate.QuestionCollator.extract_questions"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.extract_questions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.collate.QuestionCollator.find_solution_files"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.find_solution_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.collate.QuestionCollator.save_notebook"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.save_notebook()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.collate.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.build.html#module-pykubegrader.build.markdown_questions">pykubegrader.build.markdown_questions module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.markdown_questions.MarkdownToNotebook"><code class="docutils literal notranslate"><span class="pre">MarkdownToNotebook</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pykubegrader.build.html#pykubegrader.build.markdown_questions.MarkdownToNotebook.convert_and_save"><code class="docutils literal notranslate"><span class="pre">MarkdownToNotebook.convert_and_save()</span></code></a></li>
@@ -560,25 +572,73 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pykubegrader.widgets.html">pykubegrader.widgets package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader-widgets-multiple-choice-module">pykubegrader.widgets.multiple_choice module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets.multiple_choice">pykubegrader.widgets.multiple_choice module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.multiple_choice.MCQ"><code class="docutils literal notranslate"><span class="pre">MCQ()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.multiple_choice.MCQuestion"><code class="docutils literal notranslate"><span class="pre">MCQuestion</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets.question_processor">pykubegrader.widgets.question_processor module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.question_processor.process_questions_and_codes"><code class="docutils literal notranslate"><span class="pre">process_questions_and_codes()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader-widgets-reading-question-module">pykubegrader.widgets.reading_question module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader-widgets-select-many-module">pykubegrader.widgets.select_many module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader-widgets-student-info-module">pykubegrader.widgets.student_info module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets.reading_question">pykubegrader.widgets.reading_question module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.reading_question.ReadingPythonQuestion"><code class="docutils literal notranslate"><span class="pre">ReadingPythonQuestion</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets.select_many">pykubegrader.widgets.select_many module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.select_many.MultiSelect"><code class="docutils literal notranslate"><span class="pre">MultiSelect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.select_many.SelectMany"><code class="docutils literal notranslate"><span class="pre">SelectMany</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets.student_info">pykubegrader.widgets.student_info module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.student_info.StudentInfoForm"><code class="docutils literal notranslate"><span class="pre">StudentInfoForm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.student_info.StudentInfoForm.show"><code class="docutils literal notranslate"><span class="pre">StudentInfoForm.show()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.student_info.StudentInfoForm.submit"><code class="docutils literal notranslate"><span class="pre">StudentInfoForm.submit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets.style">pykubegrader.widgets.style module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader-widgets-true-false-module">pykubegrader.widgets.true_false module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader-widgets-types-question-module">pykubegrader.widgets.types_question module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets.true_false">pykubegrader.widgets.true_false module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.true_false.TFQuestion"><code class="docutils literal notranslate"><span class="pre">TFQuestion</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.true_false.TFStyle"><code class="docutils literal notranslate"><span class="pre">TFStyle()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets.types_question">pykubegrader.widgets.types_question module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.types_question.MultipleChoice"><code class="docutils literal notranslate"><span class="pre">MultipleChoice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets.html#pykubegrader.widgets.types_question.TypesQuestion"><code class="docutils literal notranslate"><span class="pre">TypesQuestion</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets.html#module-pykubegrader.widgets">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pykubegrader.widgets_base.html">pykubegrader.widgets_base package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader-widgets-base-multi-select-module">pykubegrader.widgets_base.multi_select module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader-widgets-base-reading-module">pykubegrader.widgets_base.reading module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader-widgets-base-select-module">pykubegrader.widgets_base.select module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html#module-pykubegrader.widgets_base.multi_select">pykubegrader.widgets_base.multi_select module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.multi_select.MultiSelectQuestion"><code class="docutils literal notranslate"><span class="pre">MultiSelectQuestion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.multi_select.MultiSelectQuestion.record_responses"><code class="docutils literal notranslate"><span class="pre">MultiSelectQuestion.record_responses()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.multi_select.MultiSelectQuestion.show"><code class="docutils literal notranslate"><span class="pre">MultiSelectQuestion.show()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.multi_select.MultiSelectQuestion.submit"><code class="docutils literal notranslate"><span class="pre">MultiSelectQuestion.submit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html#module-pykubegrader.widgets_base.reading">pykubegrader.widgets_base.reading module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.reading.ReadingPython"><code class="docutils literal notranslate"><span class="pre">ReadingPython</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.reading.ReadingPython.show"><code class="docutils literal notranslate"><span class="pre">ReadingPython.show()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.reading.ReadingPython.submit"><code class="docutils literal notranslate"><span class="pre">ReadingPython.submit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html#module-pykubegrader.widgets_base.select">pykubegrader.widgets_base.select module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.select.SelectQuestion"><code class="docutils literal notranslate"><span class="pre">SelectQuestion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.select.SelectQuestion.show"><code class="docutils literal notranslate"><span class="pre">SelectQuestion.show()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pykubegrader.widgets_base.html#pykubegrader.widgets_base.select.SelectQuestion.submit"><code class="docutils literal notranslate"><span class="pre">SelectQuestion.submit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.widgets_base.html#module-pykubegrader.widgets_base">Module contents</a></li>
 </ul>
 </li>
@@ -588,11 +648,121 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
 </section>
-<section id="pykubegrader-initialize-module">
-<h2>pykubegrader.initialize module<a class="headerlink" href="#pykubegrader-initialize-module" title="Link to this heading">#</a></h2>
+<section id="module-pykubegrader.initialize">
+<span id="pykubegrader-initialize-module"></span><h2>pykubegrader.initialize module<a class="headerlink" href="#module-pykubegrader.initialize" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.initialize.initialize_assignment">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.initialize.</span></span><span class="sig-name descname"><span class="pre">initialize_assignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">week</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/initialize.html#initialize_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.initialize.initialize_assignment" title="Link to this definition">#</a></dt>
+<dd><p>Initialize an assignment in a Jupyter environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the assignment.</p></li>
+<li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The URL of the API server.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Whether to print detailed initialization information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The responses dictionary after initialization.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#Exception" title="(in Python v3.11)"><strong>Exception</strong></a> – If the environment is unsupported or initialization fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.initialize.move_dotfiles">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.initialize.</span></span><span class="sig-name descname"><span class="pre">move_dotfiles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/initialize.html#move_dotfiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.initialize.move_dotfiles" title="Link to this definition">#</a></dt>
+<dd><p>Move essential dotfiles from a fixed source directory to the current working directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#FileNotFoundError" title="(in Python v3.11)"><strong>FileNotFoundError</strong></a> – If a source file is missing.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#Exception" title="(in Python v3.11)"><strong>Exception</strong></a> – If copying fails for any other reason.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.initialize.username_to_seed">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.initialize.</span></span><span class="sig-name descname"><span class="pre">username_to_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/initialize.html#username_to_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.initialize.username_to_seed" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="pykubegrader-telemetry-module">
-<h2>pykubegrader.telemetry module<a class="headerlink" href="#pykubegrader-telemetry-module" title="Link to this heading">#</a></h2>
+<section id="module-pykubegrader.telemetry">
+<span id="pykubegrader-telemetry-module"></span><h2>pykubegrader.telemetry module<a class="headerlink" href="#module-pykubegrader.telemetry" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.encrypt_to_b64">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">encrypt_to_b64</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#encrypt_to_b64"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.encrypt_to_b64" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.ensure_responses">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">ensure_responses</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#ensure_responses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.ensure_responses" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.get_my_grades">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">get_my_grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><span class="pre">DataFrame</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#get_my_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.get_my_grades" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.log_encrypted">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">log_encrypted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/logging.html#logging.Logger" title="(in Python v3.11)"><span class="pre">Logger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#log_encrypted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.log_encrypted" title="Link to this definition">#</a></dt>
+<dd><p>Logs an encrypted version of the given message using the provided logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><em>object</em></a>) – The logger object used to log the encrypted message.</p></li>
+<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The message to be encrypted and logged.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.log_variable">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">log_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assignment_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#log_variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.log_variable" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.score_question">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">score_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'winter_2025'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#score_question"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.score_question" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.submit_question">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">submit_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">student_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">term</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">question</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">responses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#submit_question"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.submit_question" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.telemetry">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">telemetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExecutionInfo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#telemetry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.telemetry" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.update_responses">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">update_responses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#update_responses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.update_responses" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.upload_execution_log">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">upload_execution_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#upload_execution_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.upload_execution_log" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pykubegrader.telemetry.verify_server">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">verify_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jhub_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#verify_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.verify_server" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-pykubegrader.utils">
 <span id="pykubegrader-utils-module"></span><h2>pykubegrader.utils module<a class="headerlink" href="#module-pykubegrader.utils" title="Link to this heading">#</a></h2>
@@ -733,8 +903,26 @@ We annotate options as list[Any] just to keep Mypy happy.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader-initialize-module">pykubegrader.initialize module</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader-telemetry-module">pykubegrader.telemetry module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.initialize">pykubegrader.initialize module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.initialize.initialize_assignment"><code class="docutils literal notranslate"><span class="pre">initialize_assignment()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.initialize.move_dotfiles"><code class="docutils literal notranslate"><span class="pre">move_dotfiles()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.initialize.username_to_seed"><code class="docutils literal notranslate"><span class="pre">username_to_seed()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.telemetry">pykubegrader.telemetry module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.encrypt_to_b64"><code class="docutils literal notranslate"><span class="pre">encrypt_to_b64()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.ensure_responses"><code class="docutils literal notranslate"><span class="pre">ensure_responses()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.get_my_grades"><code class="docutils literal notranslate"><span class="pre">get_my_grades()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.log_encrypted"><code class="docutils literal notranslate"><span class="pre">log_encrypted()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.log_variable"><code class="docutils literal notranslate"><span class="pre">log_variable()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.score_question"><code class="docutils literal notranslate"><span class="pre">score_question()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.submit_question"><code class="docutils literal notranslate"><span class="pre">submit_question()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.telemetry"><code class="docutils literal notranslate"><span class="pre">telemetry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.update_responses"><code class="docutils literal notranslate"><span class="pre">update_responses()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.upload_execution_log"><code class="docutils literal notranslate"><span class="pre">upload_execution_log()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.verify_server"><code class="docutils literal notranslate"><span class="pre">verify_server()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.utils">pykubegrader.utils module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.utils.list_of_lists"><code class="docutils literal notranslate"><span class="pre">list_of_lists()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.utils.shuffle_options"><code class="docutils literal notranslate"><span class="pre">shuffle_options()</span></code></a></li>

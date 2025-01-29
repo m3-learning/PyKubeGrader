@@ -28,6 +28,14 @@ pykubegrader.build.clean\_folder module
    :undoc-members:
    :show-inheritance:
 
+pykubegrader.build.collate module
+---------------------------------
+
+.. automodule:: pykubegrader.build.collate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pykubegrader.build.markdown\_questions module
 ---------------------------------------------
 
