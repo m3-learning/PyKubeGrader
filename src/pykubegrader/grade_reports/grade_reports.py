@@ -1,7 +1,8 @@
+import os
+
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
-import os
 
 api_base_url = os.getenv("DB_URL")
 student_user = os.getenv("user_name_student")
@@ -64,7 +65,7 @@ def get_student_grades(student_username):
     res = requests.get(
         url=api_base_url.rstrip("/") + "/student-grades-testing",
         params=params,
-        auth=HTTPBasicAuth( os.getenv("user_name_student"), os.getenv("keys_student")),
+        auth=HTTPBasicAuth(os.getenv("user_name_student"), os.getenv("keys_student")),
     )
     [assignments, sub] = res.json()
 

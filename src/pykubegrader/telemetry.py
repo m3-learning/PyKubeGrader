@@ -6,11 +6,9 @@ import logging
 import os
 import socket
 from typing import Any, Optional
-import numpy as np
-from dateutil.parser import parse
-from datetime import datetime
 
 import nacl.public
+import numpy as np
 import pandas as pd
 import requests
 from IPython.core.interactiveshell import ExecutionInfo
@@ -208,12 +206,12 @@ def verify_server(jhub_user: Optional[str] = None) -> str:
     message = f"status code: {res.status_code}"
     return message
 
-from grade_reports.grade_reports import get_student_grades, filter_assignments
+
 # TODO: reformat into a nice table
 def get_my_grades() -> pd.DataFrame:
-    # get all submissions, 
-    # recalculate late penalty in new columns, 
-    # take max, 
+    # get all submissions,
+    # recalculate late penalty in new columns,
+    # take max,
     # divide by total points
     if not student_user or not student_pw or not api_base_url:
         raise ValueError("Necessary environment variables not set")
@@ -221,8 +219,6 @@ def get_my_grades() -> pd.DataFrame:
     from_env = os.getenv("JUPYTERHUB_USER")
     if from_hostname != from_env:
         raise ValueError("Problem with JupyterHub username")
-    
-    assignments, submissions = get_student_grades(from_env)
 
     params = {"username": from_env}
     res = requests.get(
@@ -295,103 +291,85 @@ def upload_execution_log() -> None:
 
 
 #
-# Code execution log testing
+# Qiao's work on grades
 #
 
 
-def upload_execution_log() -> None:
-    if not student_user or not student_pw or not api_base_url:
-        raise ValueError("Necessary environment variables not set")
-
-    responses = ensure_responses()
-    student_email: str = responses["jhub_user"]
-    assignment: str = responses["assignment"]
-    if not student_email or not assignment:
-        raise ValueError("Missing student email and/or assignment name")
-
-    print(f"Student: {student_email}")
-    print(f"Assignment: {assignment}")
-    print("Uploading code execution log...")
-
-    try:
-        with open(".output_code.log", "rb") as f:
-            log_bytes = f.read()
-    except FileNotFoundError:
-        raise FileNotFoundError("Code execution log not found")
-
-    print(f"Uncompressed log size: {len(log_bytes)} bytes")
-
-    compressed = gzip.compress(log_bytes)
-
-    print(f"Compressed log size: {len(compressed)} bytes")
-
-    encoded = base64.b64encode(compressed).decode("utf-8")
-
-    payload = {
-        "student_email": student_email,
-        "assignment": assignment,
-        "encrypted_content": encoded,
-    }
-
-    res = requests.post(
-        url=api_base_url.rstrip("/") + "/execution-logs",
-        json=payload,
-        auth=HTTPBasicAuth(student_user, student_pw),
-    )
-    res.raise_for_status()
-
-    print("Execution log uploaded successfully")
-
-
+# This function currently has many undefined variables and other problems!
 def get_my_grades_testing():
-    '''takes in json. 
-    reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final. 
+    """takes in json.
+    reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.
     fills in 0 for missing assignments
-    calculate running average of each category'''
+    calculate running average of each category"""
 
-    
+
 #########This part in pykubegrader (needs to be put in function)
 
 # set up new df format
-weights = {'homework':0.15, 'lab':0.15, 'lecture':0.15, 'quiz':0.15, 'readings':0.15, 
-           # 'midterm':0.15, 'final':0.2
-           'labattendance':0.05,  'practicequiz':0.05, }
-assignment_types = list(set([a['assignment_type'] for a in assignments]))+['Running Avg']
+weights = {
+    "homework": 0.15,
+    "lab": 0.15,
+    "lecture": 0.15,
+    "quiz": 0.15,
+    "readings": 0.15,
+    # 'midterm':0.15, 'final':0.2
+    "labattendance": 0.05,
+    "practicequiz": 0.05,
+}
+assignment_types = list(set([a["assignment_type"] for a in assignments])) + [
+    "Running Avg"
+]
 
-inds = [f'week{i+1}' for i in range(11)]+['Running Avg']
+inds = [f"week{i + 1}" for i in range(11)] + ["Running Avg"]
 restruct_grades = {k: np.zeros(len(inds)) for k in assignment_types}
-restruct_grades['inds']=inds
+restruct_grades["inds"] = inds
 new_weekly_grades = pd.DataFrame(restruct_grades)
-new_weekly_grades.set_index('inds',inplace=True)
+new_weekly_grades.set_index("inds", inplace=True)
 
 for assignment in assignments:
-    subs = [ sub for sub in student_subs if sub['assignment_type']==assignment['assignment_type'] and sub['week_number']==assignment['week_number'] ]
-    if len(subs)==0: 
+    subs = [
+        sub
+        for sub in student_subs
+        if sub["assignment_type"] == assignment["assignment_type"]
+        and sub["week_number"] == assignment["week_number"]
+    ]
+    if len(subs) == 0:
         # print(assignment['title'], 0, assignment['max_score'])
         continue
-    elif len(subs)==1: 
-        grade = subs[0]['raw_score']/assignment['max_score']
+    elif len(subs) == 1:
+        grade = subs[0]["raw_score"] / assignment["max_score"]
         # print(assignment['title'], sub['raw_score'], assignment['max_score'])
-    else: 
+    else:
         # get due date from assignment
         due_date = parser.parse(assignment["due_date"])
         grades = []
         for sub in subs:
             entry_date = parser.parse(sub["timestamp"])
-            if entry_date <= due_date: grades.append( sub['raw_score'] )
-            else: grades.append( calculate_late_submission(due_date.strftime('%Y-%m-%d %H:%M:%S'), entry_date.strftime('%Y-%m-%d %H:%M:%S')) )
+            if entry_date <= due_date:
+                grades.append(sub["raw_score"])
+            else:
+                grades.append(
+                    calculate_late_submission(
+                        due_date.strftime("%Y-%m-%d %H:%M:%S"),
+                        entry_date.strftime("%Y-%m-%d %H:%M:%S"),
+                    )
+                )
         # print(assignment['title'], grades, assignment['max_score'])
-        grade = max(grades)/assignment['max_score']
+        grade = max(grades) / assignment["max_score"]
 
     # fill out new df with max
-    new_weekly_grades.loc[f'week{assignment["week_number"]}',assignment['assignment_type']] = grade
+    new_weekly_grades.loc[
+        f"week{assignment['week_number']}", assignment["assignment_type"]
+    ] = grade
 
 # Merge different names
-new_weekly_grades['attend'] = new_weekly_grades[['attend', 'attendance']].max(axis=1)
-new_weekly_grades['practicequiz'] = new_weekly_grades[['practicequiz', 'practice-quiz']].max(axis=1)
-new_weekly_grades.drop(['attendance', 'practice-quiz'], inplace=True, errors='ignore')
+new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(axis=1)
+new_weekly_grades["practicequiz"] = new_weekly_grades[
+    ["practicequiz", "practice-quiz"]
+].max(axis=1)
+new_weekly_grades.drop(["attendance", "practice-quiz"], inplace=True, errors="ignore")
 
-                    
+
 # Calculate the current week (1-based indexing)
 start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
 today = datetime.datetime.now()
@@ -399,14 +377,14 @@ days_since_start = (today - start_date).days
 current_week = days_since_start // 7 + 1
 
 # Get average until current week
-new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[:current_week-1].mean()
+new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[: current_week - 1].mean()
 
 # make new dataframe with the midterm, final, and running average
 max_key_length = max(len(k) for k in weights.keys())
 total = 0
 for k, v in weights.items():
     grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]
-    total+=grade*v
-    print(f'{k:<{max_key_length}}:\t {grade:.2f}')
-print(f'\nTotal: {total}') # exclude midterm and final
+    total += grade * v
+    print(f"{k:<{max_key_length}}:\t {grade:.2f}")
+print(f"\nTotal: {total}")  # exclude midterm and final
 new_weekly_grades
