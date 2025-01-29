@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.grade_reports.grade_reports &#8212; PyKubeGrader 0.0.post1.dev1+g4975f77 documentation</title>
+    <title>pykubegrader.grade_reports.grade_reports &#8212; PyKubeGrader 0.0.post1.dev1+gfe4cce1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=b314bb7e"></script>
+    <script src="../../../_static/documentation_options.js?v=6625d066"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g4975f77" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+gfe4cce1" />
     <meta name="docbuild:last-update" content="Jan 28, 2025"/>
   </head>
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g4975f77 documentation - Home"/>
-    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g4975f77 documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gfe4cce1 documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gfe4cce1 documentation - Home"/>
   
   
 </a></div>
@@ -404,10 +404,11 @@
                 <article class="bd-article">
                   
   <h1>Source code for pykubegrader.grade_reports.grade_reports</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">requests.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="n">api_base_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DB_URL&quot;</span><span class="p">)</span>
 <span class="n">student_user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;user_name_student&quot;</span><span class="p">)</span>
@@ -427,18 +428,15 @@
 <span class="p">)</span>
 <span class="n">api_base_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DB_URL&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="get_all_students">
-<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_reports.get_all_students">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_all_students</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;admin only&#39;&#39;&#39;</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">..build.passwords</span><span class="w"> </span><span class="kn">import</span> <span class="n">password</span><span class="p">,</span> <span class="n">user</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-        <span class="n">url</span><span class="o">=</span><span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/get-all-submission-emails&quot;</span><span class="p">,</span>
-        <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">user</span><span class="p">(),</span> <span class="n">password</span><span class="p">()),</span>
-    <span class="p">)</span>
+<span class="c1"># def get_all_students():</span>
+<span class="c1">#     &#39;&#39;&#39;admin only&#39;&#39;&#39;</span>
+<span class="c1">#     from ..build.passwords import password, user</span>
+<span class="c1">#     res = requests.get(</span>
+<span class="c1">#         url=api_base_url.rstrip(&quot;/&quot;) + &quot;/get-all-submission-emails&quot;,</span>
+<span class="c1">#         auth=HTTPBasicAuth(user(), password()),</span>
+<span class="c1">#     )</span>
 
-    <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
-
+<span class="c1">#     return res.json()</span>
 
 
 <div class="viewcode-block" id="format_assignment_table">
@@ -478,7 +476,7 @@
     <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="n">url</span><span class="o">=</span><span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/student-grades-testing&quot;</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-        <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;user_name_student&quot;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;keys_student&quot;</span><span class="p">)),</span>
+        <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;user_name_student&quot;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;keys_student&quot;</span><span class="p">)),</span>
     <span class="p">)</span>
     <span class="p">[</span><span class="n">assignments</span><span class="p">,</span> <span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
