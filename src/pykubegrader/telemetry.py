@@ -306,10 +306,6 @@ def get_assignments_submissions():
     return res.json()
     
 def setup_grades_df(assignments):
-    # set up new df format
-    weights = {'homework':0.15, 'lab':0.15, 'lecture':0.15, 'quiz':0.15, 'readings':0.15, 
-            # 'midterm':0.15, 'final':0.2
-            'labattendance':0.05,  'practicequiz':0.05, }
     assignment_types = list(set([a['assignment_type'] for a in assignments]))
 
     inds = [f'week{i+1}' for i in range(11)]+['Running Avg']
@@ -364,6 +360,11 @@ def get_my_grades_testing(start_date='2025-01-06'):
     reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.
     fills in 0 for missing assignments
     calculate running average of each category"""
+    
+     # set up new df format
+    weights = {'homework':0.15, 'lab':0.15, 'lecture':0.15, 'quiz':0.15, 'readings':0.15, 
+            # 'midterm':0.15, 'final':0.2
+            'labattendance':0.05,  'practicequiz':0.05, }
     
     assignments, student_subs = get_assignments_submissions()
     
