@@ -79,7 +79,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         env:
-          HOME: "${{ github.workspace }}/../" # Because self-hosted runner is root
+          HOME: "${HOME:-${{ github.workspace }}/../}" # In case self-hosted runner is root
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_TOKEN }}
