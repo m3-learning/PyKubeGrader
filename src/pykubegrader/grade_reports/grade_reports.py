@@ -4,9 +4,17 @@ import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 
+#
+# Note from Theo: This module is a mess.
+#                 Why is it running so much code outside of functions?
+#                 I added a few safeguards, but this needs to be cleaned up.
+#
+
 api_base_url = os.getenv("DB_URL")
 student_user = os.getenv("user_name_student")
 student_pw = os.getenv("keys_student")
+if not api_base_url or not student_user or not student_pw:
+    raise ValueError("Environment variables not set")
 
 from_env = os.getenv("JUPYTERHUB_USER")
 params = {"username": from_env}
@@ -18,9 +26,9 @@ res = requests.get(
     url=api_base_url.rstrip("/") + "/my-grades-testing",
     params=params,
     # auth=HTTPBasicAuth("admin", "TrgpUuadm2PWtdgtC7Yt"),
-    auth=HTTPBasicAuth(os.getenv("user_name_student"), os.getenv("keys_student")),
+    auth=HTTPBasicAuth(student_user, student_pw),
 )
-api_base_url = os.getenv("DB_URL")
+
 
 # def get_all_students():
 #     '''admin only'''
@@ -61,11 +69,14 @@ def format_assignment_table(assignments):
 
 
 def get_student_grades(student_username):
+    if not api_base_url or not student_user or not student_pw:
+        raise ValueError("Environment variables not set")
+
     params = {"username": student_username}
     res = requests.get(
         url=api_base_url.rstrip("/") + "/student-grades-testing",
         params=params,
-        auth=HTTPBasicAuth(os.getenv("user_name_student"), os.getenv("keys_student")),
+        auth=HTTPBasicAuth(student_user, student_pw),
     )
     [assignments, sub] = res.json()
 
