@@ -8,7 +8,6 @@ import socket
 from typing import Any, Optional
 
 import nacl.public
-import numpy as np
 import pandas as pd
 import requests
 from IPython.core.interactiveshell import ExecutionInfo
