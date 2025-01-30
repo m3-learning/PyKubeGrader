@@ -347,7 +347,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
 
         return new_weekly_grades
 
-def current_week(start_date):
+def get_current_week(start_date):
     # Calculate the current week (1-based indexing)
     start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
     today = datetime.datetime.now()
@@ -372,7 +372,7 @@ def get_my_grades_testing(start_date='2025-01-06'):
 
     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)
 
-    current_week = current_week(start_date)
+    current_week = get_current_week(start_date)
 
     # Get average until current week
     new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[:current_week-1].mean()
