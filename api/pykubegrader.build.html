@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.build package &#8212; PyKubeGrader 0.0.post1.dev1+gf6cb04c documentation</title>
+    <title>pykubegrader.build package &#8212; PyKubeGrader 0.0.post1.dev1+g04d3c9e documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=1633083d"></script>
+    <script src="../_static/documentation_options.js?v=bf9ddcaa"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader package" href="pykubegrader.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+gf6cb04c" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g04d3c9e" />
     <meta name="docbuild:last-update" content="Jan 29, 2025"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gf6cb04c documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gf6cb04c documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g04d3c9e documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g04d3c9e documentation - Home"/>
   
   
 </a></div>
@@ -662,7 +662,7 @@ within the group of the same question. All cells will have both flags.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.build.collate.QuestionCollator.collate_questions">
 <span class="sig-name descname"><span class="pre">collate_questions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/collate.html#QuestionCollator.collate_questions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.collate.QuestionCollator.collate_questions" title="Link to this definition">#</a></dt>
-<dd><p>Collates questions from all solution files and saves them to a new notebook.</p>
+<dd><p>Collates questions from all solution folders and saves them to a new notebook.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -684,11 +684,11 @@ within the group of the same question. All cells will have both flags.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.build.collate.QuestionCollator.extract_questions">
-<span class="sig-name descname"><span class="pre">extract_questions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/collate.html#QuestionCollator.extract_questions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.collate.QuestionCollator.extract_questions" title="Link to this definition">#</a></dt>
-<dd><p>Extracts questions from a solution file and categorizes them by type.</p>
+<span class="sig-name descname"><span class="pre">extract_questions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/collate.html#QuestionCollator.extract_questions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.collate.QuestionCollator.extract_questions" title="Link to this definition">#</a></dt>
+<dd><p>Extracts questions from all notebooks in the solution folder.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the solution file.</p>
+<dd class="field-odd"><p><strong>folder_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Path to the solution folder.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Dictionary of categorized questions.</p>
@@ -700,12 +700,12 @@ within the group of the same question. All cells will have both flags.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pykubegrader.build.collate.QuestionCollator.find_solution_files">
-<span class="sig-name descname"><span class="pre">find_solution_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/collate.html#QuestionCollator.find_solution_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.collate.QuestionCollator.find_solution_files" title="Link to this definition">#</a></dt>
-<dd><p>Finds all files containing ‘_solution’ in their names within the root folder.</p>
+<dt class="sig sig-object py" id="pykubegrader.build.collate.QuestionCollator.find_solution_folders">
+<span class="sig-name descname"><span class="pre">find_solution_folders</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/build/collate.html#QuestionCollator.find_solution_folders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.build.collate.QuestionCollator.find_solution_folders" title="Link to this definition">#</a></dt>
+<dd><p>Finds all immediate subdirectories inside ‘_solution*’ folders that contain notebooks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List of file paths.</p>
+<dd class="field-odd"><p>List of folder paths containing notebooks.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
@@ -859,7 +859,7 @@ within the group of the same question. All cells will have both flags.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.collate.QuestionCollator.collate_questions"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.collate_questions()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.collate.QuestionCollator.create_collated_notebook"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.create_collated_notebook()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.collate.QuestionCollator.extract_questions"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.extract_questions()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.collate.QuestionCollator.find_solution_files"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.find_solution_files()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.collate.QuestionCollator.find_solution_folders"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.find_solution_folders()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.build.collate.QuestionCollator.save_notebook"><code class="docutils literal notranslate"><span class="pre">QuestionCollator.save_notebook()</span></code></a></li>
 </ul>
 </li>
