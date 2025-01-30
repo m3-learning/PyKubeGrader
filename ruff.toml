@@ -1,2 +1,2 @@
 [lint.per-file-ignores]
-"*.ipynb" = ["F811", "F841"]
+"*.ipynb" = ["F811", "F821", "F841"]
