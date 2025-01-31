@@ -1,4 +1,4 @@
-import asyncio
+# import asyncio
 import base64
 import os
 
@@ -24,6 +24,7 @@ def get_credentials():
     return {"username": username, "password": password}
 
 
+# TODO: Rename to `call_score_assignment` once the async version is removed
 def call_score_assignment_sync(
     assignment_title: str, notebook_title: str, file_path: str = ".output_reduced.log"
 ) -> dict[str, str]:
@@ -72,6 +73,7 @@ def call_score_assignment_sync(
         raise RuntimeError(f"An unexpected error occurred: {err}")
 
 
+# TODO: Remove this function once the sync version is tested and working
 async def call_score_assignment(
     assignment_title: str, notebook_title: str, file_path: str = ".output_reduced.log"
 ) -> dict:
@@ -135,17 +137,21 @@ def submit_assignment(
         assignment_title (str): Title of the assignment.
         file_path (str): Path to the log file to upload.
     """
-    # Get the current event loop or create one
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
 
-    # Run the async function in the event loop
-    response = loop.run_until_complete(
-        call_score_assignment(assignment_title, notebook_title, file_path)
-    )
+    # Get the current event loop or create one
+    # try:
+    #     loop = asyncio.get_event_loop()
+    # except RuntimeError:
+    #     loop = asyncio.new_event_loop()
+    #     asyncio.set_event_loop(loop)
+
+    # # Run the async function in the event loop
+    # response = loop.run_until_complete(
+    #     call_score_assignment(assignment_title, notebook_title, file_path)
+    # )
+
+    # If this works, we can remove the async code
+    response = call_score_assignment_sync(assignment_title, notebook_title, file_path)
     print("Server Response:", response.get("message", "No message in response"))
 
 
