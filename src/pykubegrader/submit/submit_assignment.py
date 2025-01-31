@@ -1,14 +1,7 @@
-# import asyncio
-import base64
 import os
 
-import httpx
-import nest_asyncio  # type: ignore
 import requests
 from requests.auth import HTTPBasicAuth
-
-# Apply nest_asyncio for environments like Jupyter
-nest_asyncio.apply()
 
 
 def get_credentials():
@@ -24,8 +17,7 @@ def get_credentials():
     return {"username": username, "password": password}
 
 
-# TODO: Rename to `call_score_assignment` once the async version is removed
-def call_score_assignment_sync(
+def call_score_assignment(
     assignment_title: str, notebook_title: str, file_path: str = ".output_reduced.log"
 ) -> dict[str, str]:
     """
@@ -73,58 +65,6 @@ def call_score_assignment_sync(
         raise RuntimeError(f"An unexpected error occurred: {err}")
 
 
-# TODO: Remove this function once the sync version is tested and working
-async def call_score_assignment(
-    assignment_title: str, notebook_title: str, file_path: str = ".output_reduced.log"
-) -> dict:
-    """
-    Submit an assignment to the scoring endpoint.
-
-    Args:
-        assignment_title (str): Title of the assignment.
-        file_path (str): Path to the log file to upload.
-
-    Returns:
-        dict: JSON response from the server.
-    """
-    # Fetch the endpoint URL from environment variables
-    base_url = os.getenv("DB_URL")
-    if not base_url:
-        raise ValueError("Environment variable 'DB_URL' is not set.")
-    url = f"{base_url}score-assignment?assignment_title={assignment_title}&notebook_title={notebook_title}"
-
-    # Get credentials
-    credentials = get_credentials()
-    username = credentials["username"]
-    password = credentials["password"]
-
-    # Encode credentials for Basic Authentication
-    auth_header = (
-        f"Basic {base64.b64encode(f'{username}:{password}'.encode()).decode()}"
-    )
-
-    # Send the POST request
-    async with httpx.AsyncClient() as client:
-        try:
-            with open(file_path, "rb") as file:
-                response = await client.post(
-                    url,
-                    headers={"Authorization": auth_header},  # Add Authorization header
-                    files={"log_file": file},  # Upload log file
-                )
-
-                # Handle the response
-                response.raise_for_status()  # Raise an exception for HTTP errors
-                response_data = response.json()
-                return response_data
-        except FileNotFoundError:
-            raise FileNotFoundError(f"The file {file_path} does not exist.")
-        except httpx.RequestError as e:
-            raise RuntimeError(f"An error occurred while requesting {url}: {e}")
-        except Exception as e:
-            raise RuntimeError(f"An unexpected error occurred: {e}")
-
-
 def submit_assignment(
     assignment_title: str,
     notebook_title: str,
@@ -138,20 +78,8 @@ def submit_assignment(
         file_path (str): Path to the log file to upload.
     """
 
-    # Get the current event loop or create one
-    # try:
-    #     loop = asyncio.get_event_loop()
-    # except RuntimeError:
-    #     loop = asyncio.new_event_loop()
-    #     asyncio.set_event_loop(loop)
+    response = call_score_assignment(assignment_title, notebook_title, file_path)
 
-    # # Run the async function in the event loop
-    # response = loop.run_until_complete(
-    #     call_score_assignment(assignment_title, notebook_title, file_path)
-    # )
-
-    # If this works, we can remove the async code
-    response = call_score_assignment_sync(assignment_title, notebook_title, file_path)
     print("Server Response:", response.get("message", "No message in response"))
 
 
