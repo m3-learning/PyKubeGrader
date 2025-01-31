@@ -4,7 +4,7 @@ import re
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import nbformat
 
@@ -16,14 +16,14 @@ class FastAPINotebookBuilder:
     assignment_tag: Optional[str] = ""
     require_key: Optional[bool] = False
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.root_path, self.filename = FastAPINotebookBuilder.get_filename_and_root(
             self.notebook_path
         )
         self.total_points = 0
         self.run()
 
-    def run(self):
+    def run(self) -> None:
         # here for easy debugging
         if self.temp_notebook is not None:
             shutil.copy(
@@ -36,7 +36,7 @@ class FastAPINotebookBuilder:
         self.assertion_tests_dict = self.question_dict()
         self.add_api_code()
 
-    def add_api_code(self):
+    def add_api_code(self) -> None:
         self.compute_max_points_free_response()
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
@@ -94,7 +94,7 @@ class FastAPINotebookBuilder:
 
             self.replace_cell_source(cell_index, updated_cell_source)
 
-    def compute_max_points_free_response(self):
+    def compute_max_points_free_response(self) -> None:
         for cell_dict in self.assertion_tests_dict.values():
             # gets the question name from the first cell to not double count
             if cell_dict["is_first"]:
@@ -107,7 +107,7 @@ class FastAPINotebookBuilder:
 
                 self.total_points += max_question_points
 
-    def construct_first_cell_question_header(self, cell_dict):
+    def construct_first_cell_question_header(self, cell_dict: dict) -> list[str]:
         max_question_points = sum(
             cell["points"]
             for cell in self.assertion_tests_dict.values()
@@ -136,7 +136,7 @@ class FastAPINotebookBuilder:
         return first_cell_header
 
     @staticmethod
-    def construct_update_responses(cell_dict):
+    def construct_update_responses(cell_dict: dict) -> list[str]:
         update_responses = []
 
         logging_variables = cell_dict["logging_variables"]
@@ -149,7 +149,9 @@ class FastAPINotebookBuilder:
         return update_responses
 
     @staticmethod
-    def split_list_at_marker(input_list, marker="""# END TEST CONFIG"""):
+    def split_list_at_marker(
+        input_list: list[str], marker: str = """# END TEST CONFIG"""
+    ) -> tuple[list[str], list[str]]:
         """
         Splits a list into two parts at the specified marker string.
 
@@ -172,7 +174,7 @@ class FastAPINotebookBuilder:
             )  # If the marker is not in the list, return the original list and an empty list
 
     @staticmethod
-    def construct_graders(cell_dict):
+    def construct_graders(cell_dict: dict) -> list[str]:
         # Generate Python code
         added_code = [
             "if "
@@ -184,7 +186,7 @@ class FastAPINotebookBuilder:
         return added_code
 
     @staticmethod
-    def construct_question_info(cell_dict):
+    def construct_question_info(cell_dict: dict) -> list[str]:
         question_info = []
 
         question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"])
@@ -197,8 +199,12 @@ class FastAPINotebookBuilder:
 
     @staticmethod
     def insert_list_at_index(
-        original_list, insert_list, index, line_break=True, inplace_line_break=True
-    ):
+        original_list: list[str],
+        insert_list: list[str],
+        index: int,
+        line_break: bool = True,
+        inplace_line_break: bool = True,
+    ) -> list[str]:
         """
         Inserts a list into another list at a specific index.
 
@@ -223,7 +229,7 @@ class FastAPINotebookBuilder:
         return original_list[:index] + insert_list + original_list[index:]
 
     @staticmethod
-    def add_import_statements_to_tests(cell_source):
+    def add_import_statements_to_tests(cell_source: list[str]) -> list[str]:
         """
         Adds the necessary import statements to the first cell of the notebook.
         """
@@ -251,7 +257,12 @@ class FastAPINotebookBuilder:
                 ] + imports  # Add a blank line for readability
                 return cell_source  # Exit the loop once the imports are inserted
 
-    def extract_first_cell(self):
+        raise ValueError("End of test configuration not found")
+
+    # TODO: `Any` return not good; would be better to specify return type(s)
+    def extract_first_cell(self) -> Any:
+        if not self.temp_notebook:
+            raise ValueError("No temporary notebook file path provided")
         with open(self.temp_notebook, "r", encoding="utf-8") as f:
             notebook = json.load(f)
         if "cells" in notebook and len(notebook["cells"]) > 0:
@@ -260,13 +271,16 @@ class FastAPINotebookBuilder:
             return None
 
     @staticmethod
-    def get_filename_and_root(path):
+    def get_filename_and_root(path: str) -> tuple[Path, str]:
         path_obj = Path(path).resolve()  # Resolve the path to get an absolute path
         root_path = path_obj.parent  # Get the parent directory
         filename = path_obj.name  # Get the filename
         return root_path, filename
 
-    def get_cell(self, cell_index):
+    # TODO: `Any` return not good; would be better to specify return type(s)
+    def get_cell(self, cell_index: int) -> Any:
+        if not self.temp_notebook:
+            raise ValueError("No temporary notebook file path provided")
         with open(self.temp_notebook, "r", encoding="utf-8") as f:
             notebook = json.load(f)
         if "cells" in notebook and len(notebook["cells"]) > cell_index:
@@ -274,7 +288,7 @@ class FastAPINotebookBuilder:
         else:
             return None
 
-    def replace_cell_source(self, cell_index, new_source):
+    def replace_cell_source(self, cell_index: int, new_source: str | list[str]) -> None:
         """
         Replace the source code of a specific Jupyter notebook cell.
 
@@ -283,6 +297,8 @@ class FastAPINotebookBuilder:
             new_source (str): New source code to replace the cell's content.
         """
         # Load the notebook
+        if not self.temp_notebook:
+            raise ValueError("No temporary notebook file path provided")
         with open(self.temp_notebook, "r", encoding="utf-8") as f:
             notebook = nbformat.read(f, as_version=4)
 
@@ -301,7 +317,7 @@ class FastAPINotebookBuilder:
         print(f"Updated notebook saved to {self.temp_notebook}")
 
     @staticmethod
-    def find_last_import_line(cell_source):
+    def find_last_import_line(cell_source: list[str]) -> int:
         """
         Finds the index of the last line with an import statement in a list of code lines,
         including multiline import statements.
@@ -339,7 +355,7 @@ class FastAPINotebookBuilder:
         return last_import_index
 
     @staticmethod
-    def extract_log_variables(cell):
+    def extract_log_variables(cell: dict) -> list[str]:
         """Extracts log variables from the first cell."""
         if "source" in cell:
             for line in cell["source"]:
@@ -355,7 +371,8 @@ class FastAPINotebookBuilder:
                         pass
         return []
 
-    def tag_questions(cells_dict):
+    @staticmethod
+    def tag_questions(cells_dict: dict) -> dict:
         """
         Adds 'is_first' and 'is_last' boolean flags to the cells based on their position
         within the group of the same question. All cells will have both flags.
@@ -377,7 +394,7 @@ class FastAPINotebookBuilder:
                 raise KeyError(f"Cell {key} is missing the 'question' key.")
 
         # Group the keys by question name
-        question_groups = {}
+        question_groups: dict = {}
         for key, cell in cells_dict.items():
             question = cell.get(
                 "question"
@@ -397,7 +414,9 @@ class FastAPINotebookBuilder:
 
         return cells_dict
 
-    def question_dict(self):
+    def question_dict(self) -> dict:
+        if not self.temp_notebook:
+            raise ValueError("No temporary notebook file path provided")
         notebook_path = Path(self.temp_notebook)
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
@@ -406,15 +425,14 @@ class FastAPINotebookBuilder:
             notebook = json.load(f)
 
         results_dict = {}
+        question_name = None  # At least define the variable up front
 
         for cell_index, cell in enumerate(notebook.get("cells", [])):
             if cell.get("cell_type") == "raw":
                 source = "".join(cell.get("source", ""))
                 if source.strip().startswith("# BEGIN QUESTION"):
-                    question_name = re.search(r"name:\s*(.*)", source)
-                    question_name = (
-                        question_name.group(1).strip() if question_name else None
-                    )
+                    name_match = re.search(r"name:\s*(.*)", source)
+                    question_name = name_match.group(1).strip() if name_match else None
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
