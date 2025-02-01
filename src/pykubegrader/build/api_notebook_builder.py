@@ -5,6 +5,7 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
+import base64
 
 import nbformat
 
@@ -36,6 +37,44 @@ class FastAPINotebookBuilder:
         self.assertion_tests_dict = self.question_dict()
         self.add_api_code()
 
+    @staticmethod
+    def conceal_tests(cell_source):
+        """
+        Takes a list of code lines, detects blocks between `# BEGIN HIDE` and `# END HIDE`,
+        encodes them in Base64, and replaces them with an `exec()` statement.
+
+        Returns a new list of lines with the concealed blocks.
+        """
+
+        concealed_lines = []
+        hide_mode = False
+        hidden_code = []
+
+        for line in cell_source:
+            if "# BEGIN HIDE" in line:
+                hide_mode = True
+                hidden_code = []  # Start a new hidden block
+                concealed_lines.append(line)  # Keep the marker for clarity
+                continue
+            elif "# END HIDE" in line:
+                hide_mode = False
+                # Encode the entire block
+                encoded_block = base64.b64encode(
+                    "\n".join(hidden_code).encode()
+                ).decode()
+                concealed_lines.append(
+                    f'exec(base64.b64decode("{encoded_block}").decode())  # Obfuscated\n'
+                )
+                concealed_lines.append(line)  # Keep the marker for clarity
+                continue
+
+            if hide_mode:
+                hidden_code.append(line.strip())  # Collect hidden code
+            else:
+                concealed_lines.append(line)
+
+        return concealed_lines
+
     def add_api_code(self):
         self.compute_max_points_free_response()
 
@@ -48,6 +87,8 @@ class FastAPINotebookBuilder:
             cell_source = FastAPINotebookBuilder.add_import_statements_to_tests(
                 cell["source"]
             )
+            
+            cell_source = FastAPINotebookBuilder.conceal_tests(cell_source)
 
             last_import_line_ind = FastAPINotebookBuilder.find_last_import_line(
                 cell_source
@@ -241,6 +282,7 @@ class FastAPINotebookBuilder:
             "    update_responses,\n",
             ")\n",
             "import os\n",
+            "import base64\n",
         ]
 
         for i, line in enumerate(cell_source):
