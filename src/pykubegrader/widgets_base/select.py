@@ -58,7 +58,7 @@ class SelectQuestion:
         widget_pairs = shuffle_questions(desc_widgets, self.widgets, seed)
 
         self.layout = pn.Column(
-            f"# Question {self.question_number} (points {np.sum(points)}): {title}",
+            f"# Question {self.question_number} (Points {np.sum(points)}): {title}",
             *(
                 pn.Column(desc_widget, pn.Row(dropdown))
                 for desc_widget, dropdown in widget_pairs

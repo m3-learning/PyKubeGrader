@@ -71,7 +71,7 @@ class MultiSelectQuestion:
 
         # Panel layout
         question_header = pn.pane.HTML(
-            f"<h2>Question {self.question_number} (points {np.sum(points)}): {title}</h2>"
+            f"<h2>Question {self.question_number} (Points {np.sum(points)}): {title}</h2>"
         )
 
         question_body = pn.Column(
