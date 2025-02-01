@@ -2,6 +2,7 @@ import time
 from typing import Callable, Optional, Tuple
 
 import panel as pn
+import numpy as np
 
 from ..telemetry import ensure_responses, score_question, update_responses
 from ..utils import shuffle_options, shuffle_questions
@@ -70,7 +71,7 @@ class MultiSelectQuestion:
 
         # Panel layout
         question_header = pn.pane.HTML(
-            f"<h2>Question {self.question_number} (points {points}): {title}</h2>"
+            f"<h2>Question {self.question_number} (points {np.sum(points)}): {title}</h2>"
         )
 
         question_body = pn.Column(
