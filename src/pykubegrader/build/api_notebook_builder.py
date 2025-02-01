@@ -88,7 +88,7 @@ class FastAPINotebookBuilder:
             print(question)
             index, source = self.find_question_description(question)
             
-            modified_source  = self.add_text_after_double_hash(source, f"Question {i} (Points: {self.max_question_points[question]})")
+            modified_source  = FastAPINotebookBuilder.add_text_after_double_hash(source, f"Question {i} (Points: {self.max_question_points[question]})")
             
             self.replace_cell_source(index, modified_source)
 
@@ -173,28 +173,29 @@ class FastAPINotebookBuilder:
                     if cell["question"] == cell_dict["question"]
                 )
 
-def add_text_after_double_hash(markdown_source, insert_text):
-    """
-    Adds insert_text immediately after the first '##' in the first line that starts with '##'.
-    
-    Args:
-    - markdown_source (list of str): The list of lines in the markdown cell.
-    - insert_text (str): The text to be inserted.
-    
-    Returns:
-    - list of str: The modified markdown cell content.
-    """
-    modified_source = []
-    inserted = False
-    
-    for line in markdown_source:
-        if not inserted and line.startswith("## "):
-            modified_source.append(f"## {insert_text} {line[3:]}")  # Insert text after '##'
-            inserted = True  # Ensure it only happens once
-        else:
-            modified_source.append(line)
-    
-    return modified_source
+    @staticmethod
+    def add_text_after_double_hash(markdown_source, insert_text):
+        """
+        Adds insert_text immediately after the first '##' in the first line that starts with '##'.
+        
+        Args:
+        - markdown_source (list of str): The list of lines in the markdown cell.
+        - insert_text (str): The text to be inserted.
+        
+        Returns:
+        - list of str: The modified markdown cell content.
+        """
+        modified_source = []
+        inserted = False
+        
+        for line in markdown_source:
+            if not inserted and line.startswith("## "):
+                modified_source.append(f"## {insert_text} {line[3:]}")  # Insert text after '##'
+                inserted = True  # Ensure it only happens once
+            else:
+                modified_source.append(line)
+        
+        return modified_source
 
     def compute_max_points_free_response(self) -> None:
         for cell_dict in self.assertion_tests_dict.values():
