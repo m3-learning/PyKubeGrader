@@ -4,42 +4,6 @@ import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 
-#
-# Note from Theo: This module is a mess.
-#                 Why is it running so much code outside of functions?
-#                 I added a few safeguards, but this needs to be cleaned up.
-#
-
-api_base_url = os.getenv("DB_URL")
-student_user = os.getenv("user_name_student")
-student_pw = os.getenv("keys_student")
-if not api_base_url or not student_user or not student_pw:
-    raise ValueError("Environment variables not set")
-
-from_env = os.getenv("JUPYTERHUB_USER")
-params = {"username": from_env}
-
-
-# get submission information
-res = requests.get(
-    # url=api_base_url.rstrip("/") + "/student-grades-testing",
-    url=api_base_url.rstrip("/") + "/my-grades-testing",
-    params=params,
-    # auth=HTTPBasicAuth("admin", "TrgpUuadm2PWtdgtC7Yt"),
-    auth=HTTPBasicAuth(student_user, student_pw),
-)
-
-
-# def get_all_students():
-#     '''admin only'''
-#     from ..build.passwords import password, user
-#     res = requests.get(
-#         url=api_base_url.rstrip("/") + "/get-all-submission-emails",
-#         auth=HTTPBasicAuth(user(), password()),
-#     )
-
-#     return res.json()
-
 
 def format_assignment_table(assignments):
     # Create DataFrame
@@ -69,6 +33,11 @@ def format_assignment_table(assignments):
 
 
 def get_student_grades(student_username):
+    # Get env variables here, in the function, rather than globally
+    api_base_url = os.getenv("DB_URL")
+    student_user = os.getenv("user_name_student")
+    student_pw = os.getenv("keys_student")
+
     if not api_base_url or not student_user or not student_pw:
         raise ValueError("Environment variables not set")
 

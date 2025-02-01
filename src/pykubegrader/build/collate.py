@@ -1,7 +1,8 @@
 import argparse
-import os
 import json
-from nbformat.v4 import new_notebook, new_markdown_cell
+import os
+
+from nbformat.v4 import new_markdown_cell, new_notebook
 
 
 class QuestionCollator:
