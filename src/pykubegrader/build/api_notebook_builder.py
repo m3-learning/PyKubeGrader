@@ -17,12 +17,15 @@ class FastAPINotebookBuilder:
     temp_notebook: Optional[str] = None
     assignment_tag: Optional[str] = ""
     require_key: Optional[bool] = False
+    verbose: Optional[bool] = False
 
     def __post_init__(self) -> None:
         self.root_path, self.filename = FastAPINotebookBuilder.get_filename_and_root(
             self.notebook_path
         )
         self.total_points = 0
+        
+        self.max_question_points = {}
         self.run()
 
     def run(self) -> None:
@@ -37,6 +40,9 @@ class FastAPINotebookBuilder:
 
         self.assertion_tests_dict = self.question_dict()
         self.add_api_code()
+    
+        # add the point total to the end of the notebook
+        self.add_total_points_to_notebook()
 
     @staticmethod
     def conceal_tests(cell_source):
@@ -76,14 +82,18 @@ class FastAPINotebookBuilder:
 
         return concealed_lines
 
-    def add_api_code(self):
     def add_api_code(self) -> None:
         self.compute_max_points_free_response()
+        for question in self.max_question_points.keys():
+            print(question)
+            index, source = self.find_question_description(question)
+            print(index, source)
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
-            print(
-                f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}"
-            )
+            if self.verbose: 
+                print(
+                    f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}"
+                )
 
             cell = self.get_cell(cell_index)
             cell_source = FastAPINotebookBuilder.add_import_statements_to_tests(
@@ -95,8 +105,6 @@ class FastAPINotebookBuilder:
             last_import_line_ind = FastAPINotebookBuilder.find_last_import_line(
                 cell_source
             )
-
-            # header, body = FastAPINotebookBuilder.split_list_at_marker(cell_source)
 
             updated_cell_source = []
             updated_cell_source.extend(cell_source[: last_import_line_ind + 1])
@@ -135,18 +143,42 @@ class FastAPINotebookBuilder:
                 FastAPINotebookBuilder.construct_update_responses(cell_dict)
             )
 
-            self.replace_cell_source(cell_index, updated_cell_source)
+            self.replace_cell_source(cell_index, updated_cell_source)   
+            
+    def find_question_description(self, search_string):
+        with open(self.temp_notebook, 'r', encoding='utf-8') as f:
+            nb_data = json.load(f)
+        
+        found_raw = False
+        
+        for idx, cell in enumerate(nb_data.get("cells", [])):
+            if cell["cell_type"] == "raw" and any("# BEGIN QUESTION" in line for line in cell.get("source", [])):
+                found_raw = True
+            elif found_raw and cell["cell_type"] == "markdown":
+                return idx, cell.get("source", [])  # Return the index of the first matching markdown cell
+        
+        return None, None  # Return None if no such markdown cell is found 
+        
+    def add_total_points_to_notebook(self) -> None:
+        self.max_question_points.keys()
+        
+    
+    def get_max_question_points(self, cell_dict) -> float:
+        return sum(
+                    cell["points"]
+                    for cell in self.assertion_tests_dict.values()
+                    if cell["question"] == cell_dict["question"]
+                )
 
     def compute_max_points_free_response(self) -> None:
         for cell_dict in self.assertion_tests_dict.values():
             # gets the question name from the first cell to not double count
             if cell_dict["is_first"]:
                 # get the max points for the question
-                max_question_points = sum(
-                    cell["points"]
-                    for cell in self.assertion_tests_dict.values()
-                    if cell["question"] == cell_dict["question"]
-                )
+                max_question_points = self.get_max_question_points(cell_dict)
+                
+                # store the max points for the question
+                self.max_question_points[f"{cell_dict["question"]}"] = max_question_points
 
                 self.total_points += max_question_points
 
