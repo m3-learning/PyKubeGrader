@@ -80,6 +80,7 @@ class NotebookProcessor:
                 week_num = assignment.get("week")
                 self.assignment_type = assignment.get("assignment_type")
                 self.bonus_points = assignment.get("bonus_points", 0)
+                self.require_key = assignment.get("require_key", False)
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
             week_num = self.assignment_tag.split("-")[-1]

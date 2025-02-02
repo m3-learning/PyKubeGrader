@@ -85,11 +85,8 @@ class FastAPINotebookBuilder:
     def add_api_code(self) -> None:
         self.compute_max_points_free_response()
         for i, question in enumerate(self.max_question_points.keys()):
-            print(question)
             index, source = self.find_question_description(question)
-            
-            modified_source  = FastAPINotebookBuilder.add_text_after_double_hash(source, f"Question {i} (Points: {self.max_question_points[question]})")
-            
+            modified_source  = FastAPINotebookBuilder.add_text_after_double_hash(source, f"Question {i+1} (Points: {self.max_question_points[question]}):")
             self.replace_cell_source(index, modified_source)
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
@@ -155,7 +152,7 @@ class FastAPINotebookBuilder:
         found_raw = False
         
         for idx, cell in enumerate(nb_data.get("cells", [])):
-            if cell["cell_type"] == "raw" and any("# BEGIN QUESTION" in line for line in cell.get("source", [])):
+            if cell["cell_type"] == "raw" and any("# BEGIN QUESTION" in line for line in cell.get("source", [])) and any(search_string in line for line in cell.get("source", [])):
                 found_raw = True
             elif found_raw and cell["cell_type"] == "markdown":
                 return idx, cell.get("source", [])  # Return the index of the first matching markdown cell
