@@ -330,8 +330,8 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         # get the assignment from all submissions
         subs = [ sub for sub in student_subs if (sub['assignment_type']==assignment['assignment_type']) and (sub['week_number']==assignment['week_number']) ]
 
-        print(assignments)
-        print(student_subs)
+        print(assignment)
+        print(student_subs[:5])
         if len(subs) == 0:
             print(assignment['title'], 0, assignment['max_score'])
         elif len(subs) == 1:
