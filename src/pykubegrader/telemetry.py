@@ -331,8 +331,6 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         subs = [ 
             sub for sub in student_subs if sub["assignment_type"] == assignment["assignment_type"] and sub["week_number"] == assignment["week_number"]
         ]
-        print(assignment)
-        print(subs)
         if len(subs) == 0:
             print(assignment['title'], 0, assignment['max_score'])
             continue
@@ -357,10 +355,10 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
             print(assignment['title'], grades, assignment['max_score'])
             grade = max(grades) / assignment["max_score"]
 
-        # fill out new df with max
-        new_weekly_grades.loc[
-            f"week{assignment['week_number']}", assignment["assignment_type"]
-        ] = grade
+            # fill out new df with max
+            new_weekly_grades.loc[
+                f"week{assignment['week_number']}", assignment["assignment_type"]
+            ] = grade
 
         # Merge different names
         new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(
