@@ -303,7 +303,7 @@ def get_assignments_submissions():
     from_env = os.getenv("JUPYTERHUB_USER")
     if from_hostname != from_env:
         raise ValueError("Problem with JupyterHub username")
-
+    print(from_env)
     params = {"username": from_env}
     # get submission information
     res = requests.get(
@@ -408,7 +408,7 @@ def get_my_grades_testing(start_date="2025-01-06"):
     }
 
     assignments, student_subs = get_assignments_submissions()
-
+    print(assignments,student_subs)
     new_grades_df = setup_grades_df(assignments)
 
     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)
