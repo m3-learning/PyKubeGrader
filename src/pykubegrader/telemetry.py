@@ -333,7 +333,6 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         ]
         if len(subs) == 0:
             print(assignment['title'], 0, assignment['max_score'])
-            continue
         elif len(subs) == 1:
             grade = subs[0]["raw_score"] / assignment["max_score"]
             print(assignment['title'], sub['raw_score'], assignment['max_score'])
