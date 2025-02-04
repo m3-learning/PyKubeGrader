@@ -399,7 +399,7 @@ def get_average_weighted_grade(assignments, current_week, new_weekly_grades, wei
     # Get average until current week
     for col in new_weekly_grades.columns:
         skip_weeks = skip_assignments(assignments, col, current_week)
-        col.iloc[-1] = col.iloc[: current_week - 1].mean()
+        new_weekly_grades[col].iloc[-1] = new_weekly_grades[col].iloc[~skip_weeks].mean()
 
     # make new dataframe with the midterm, final, and running average
     total = 0
