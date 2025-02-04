@@ -324,6 +324,11 @@ def setup_grades_df(assignments):
     new_weekly_grades.set_index("inds", inplace=True)
     return new_weekly_grades
 
+def skip_assignments(assignments, assignment_type, current_week):
+    skip_weeks = []
+    to_check = [assignment for assignment in assignments if assignment["assignment_type"] == assignment_type]
+    weeks = [assignment["week_number"] for assignment in to_check]
+    return [i for i in range(11) if i+1 not in weeks and i<current_week]
 
 def fill_grades_df(new_weekly_grades, assignments, student_subs):
     for assignment in assignments:
@@ -390,9 +395,11 @@ def get_current_week(start_date):
     return days_since_start // 7 + 1
 
 
-def get_average_weighted_grade(current_week, new_weekly_grades, weights, verbose=True):
+def get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights, verbose=True):
     # Get average until current week
-    new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[: current_week - 1].mean()
+    for col in new_weekly_grades.columns:
+        skip_weeks = skip_assignments(assignments, col, current_week)
+        col.iloc[-1] = col.iloc[: current_week - 1].mean()
 
     # make new dataframe with the midterm, final, and running average
     max_key_length = max(len(k) for k in weights.keys())
@@ -413,9 +420,7 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
     reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.
     fills in 0 for missing assignments
     calculate running average of each category"""
-# TODO: if there are no assignments for the week/category, skip them when calculating average (filtered_data = df.loc[~df.index.isin(exclude_indices), 'column_name'])
-# TODO: fix the ec for practice midterm
-# TODO: check lecture for completion only
+    
     # set up new df format
     weights = {
         "homework": 0.15,
@@ -435,6 +440,8 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)
 
     current_week = get_current_week(start_date)
+    
+    avg_grades_dict = get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights, verbose)
 
     return new_weekly_grades  # get rid of test and running avg columns
 
