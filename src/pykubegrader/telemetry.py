@@ -395,14 +395,13 @@ def get_current_week(start_date):
     return days_since_start // 7 + 1
 
 
-def get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights, verbose=True):
+def get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights):
     # Get average until current week
     for col in new_weekly_grades.columns:
         skip_weeks = skip_assignments(assignments, col, current_week)
         col.iloc[-1] = col.iloc[: current_week - 1].mean()
 
     # make new dataframe with the midterm, final, and running average
-    max_key_length = max(len(k) for k in weights.keys())
     total = 0
     avg_grades_dict = {}
     for k, v in weights.items():
@@ -442,6 +441,11 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
     current_week = get_current_week(start_date)
     
     avg_grades_dict = get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights, verbose)
+    
+    if verbose:
+        max_key_length = max(len(k) for k in weights.keys())
+        for k, v in avg_grades_dict.items():
+            print(f'{k:<{max_key_length}}:\t {v:.2f}')
 
     return new_weekly_grades  # get rid of test and running avg columns
 
