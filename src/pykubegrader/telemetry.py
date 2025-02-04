@@ -404,7 +404,8 @@ def get_my_grades_testing(start_date="2025-01-06"):
     }
 
     assignments, student_subs = get_assignments_submissions()
-
+    print(assignments)
+    print(student_subs)
     new_grades_df = setup_grades_df(assignments)
 
     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)
