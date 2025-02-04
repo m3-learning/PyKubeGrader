@@ -319,7 +319,7 @@ def setup_grades_df(assignments):
 
     inds = [f"week{i + 1}" for i in range(11)] + ["Running Avg"]
     restruct_grades = {k: [0 for i in range(len(inds))] for k in assignment_types}
-    restruct_grades["inds"] = inds
+    restruct_grades["inds"] = [str(ind) for ind in inds]
     new_weekly_grades = pd.DataFrame(restruct_grades,dtype=float)
     new_weekly_grades.set_index("inds", inplace=True)
     return new_weekly_grades
