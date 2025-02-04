@@ -320,7 +320,7 @@ def setup_grades_df(assignments):
     inds = [f"week{i + 1}" for i in range(11)] + ["Running Avg"]
     restruct_grades = {k: [0 for i in range(len(inds))] for k in assignment_types}
     restruct_grades["inds"] = inds
-    new_weekly_grades = pd.DataFrame(restruct_grades)
+    new_weekly_grades = pd.DataFrame(restruct_grades,dtype=float)
     new_weekly_grades.set_index("inds", inplace=True)
     return new_weekly_grades
 
@@ -329,7 +329,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
     for assignment in assignments:
         # get the assignment from all submissions
         subs = [ sub for sub in student_subs if (sub['assignment_type']==assignment['assignment_type']) and (sub['week_number']==assignment['week_number']) ]
-        print(assignment, subs)
+        # print(assignment, subs)
         # print(assignment)
         # print(student_subs[:5])
         if len(subs) == 0:
