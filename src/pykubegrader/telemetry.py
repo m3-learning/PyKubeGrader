@@ -330,13 +330,14 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         # get the assignment from all submissions
         subs = [ sub for sub in student_subs if (sub['assignment_type']==assignment['assignment_type']) and (sub['week_number']==assignment['week_number']) ]
 
-        print(assignment)
-        print(student_subs[:5])
+        # print(assignment)
+        # print(student_subs[:5])
         if len(subs) == 0:
-            print(assignment['title'], 0, assignment['max_score'])
+            # print(assignment['title'], 0, assignment['max_score'])
+            continue
         elif len(subs) == 1:
             grade = subs[0]["raw_score"] / assignment["max_score"]
-            print(assignment['title'], sub['raw_score'], assignment['max_score'])
+            # print(assignment['title'], sub['raw_score'], assignment['max_score'])
         else:
             # get due date from assignment
             due_date = parser.parse(assignment["due_date"])
@@ -352,7 +353,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
                             entry_date.strftime("%Y-%m-%d %H:%M:%S"),
                         )
                     )
-            print(assignment['title'], grades, assignment['max_score'])
+            # print(assignment['title'], grades, assignment['max_score'])
             grade = max(grades) / assignment["max_score"]
 
             # fill out new df with max
