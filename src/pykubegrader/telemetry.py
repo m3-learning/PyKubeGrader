@@ -360,21 +360,21 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
                 f"week{assignment['week_number']}", assignment["assignment_type"]
             ] = grade
 
-        # Merge different names
-        new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(
-            axis=1
-        )
-        new_weekly_grades["practicequiz"] = new_weekly_grades[
-            ["practicequiz", "practice-quiz"]
-        ].max(axis=1)
-        new_weekly_grades.drop(
-            ["attendance", "practice-quiz", "test"],
-            axis=1,
-            inplace=True,
-            errors="ignore",
-        )
+    # Merge different names
+    new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(
+        axis=1
+    )
+    new_weekly_grades["practicequiz"] = new_weekly_grades[
+        ["practicequiz", "practice-quiz"]
+    ].max(axis=1)
+    new_weekly_grades.drop(
+        ["attendance", "practice-quiz", "test"],
+        axis=1,
+        inplace=True,
+        errors="ignore",
+    )
 
-        return new_weekly_grades
+    return new_weekly_grades
 
 
 def get_current_week(start_date):
@@ -425,3 +425,7 @@ def get_my_grades_testing(start_date="2025-01-06"):
     print(f"\nTotal: {total}")  # exclude midterm and final
 
     return new_weekly_grades  # get rid of test and running avg columns
+
+
+# def all_student_grades_testing(start_date="2025-01-06"):
+    
