@@ -356,10 +356,10 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
             # print(assignment['title'], grades, assignment['max_score'])
             grade = max(grades) / assignment["max_score"]
 
-            # fill out new df with max
-            new_weekly_grades.loc[
-                f"week{assignment['week_number']}", assignment["assignment_type"]
-            ] = grade
+        # fill out new df with max
+        new_weekly_grades.loc[
+            f"week{assignment['week_number']}", assignment["assignment_type"]
+        ] = grade
 
     # Merge different names
     new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(axis=1)
@@ -426,5 +426,45 @@ def get_my_grades_testing(start_date="2025-01-06"):
     return new_weekly_grades  # get rid of test and running avg columns
 
 
-# def all_student_grades_testing(start_date="2025-01-06"):
+# def all_student_grades_testing(admin_user, admin_pw, start_date="2025-01-06"):
+#     """takes in json.
+#     reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.
+#     fills in 0 for missing assignments
+#     calculate running average of each category"""
+
+#     # set up new df format
+#     weights = {
+#         "homework": 0.15,
+#         "lab": 0.15,
+#         "lecture": 0.15,
+#         "quiz": 0.15,
+#         "readings": 0.15,
+#         # 'midterm':0.15, 'final':0.2
+#         "labattendance": 0.05,
+#         "practicequiz": 0.05,
+#     }
+
+#     student_usernames = get_student_usernames(admin_user, admin_pw)
+    
+#     assignments, student_subs = get_assignments_submissions(admin_user, admin_pw)
+
+#     new_grades_df = setup_grades_df(assignments)
+
+#     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)
+
+#     current_week = get_current_week(start_date)
+
+#     # Get average until current week
+#     new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[: current_week - 1].mean()
+
+#     # make new dataframe with the midterm, final, and running average
+#     max_key_length = max(len(k) for k in weights.keys())
+#     total = 0
+#     for k, v in weights.items():
+#         grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]
+#         total += grade * v
+#         print(f"{k:<{max_key_length}}:\t {grade:.2f}")
+#     print(f"\nTotal: {total}")  # exclude midterm and final
+
+#     return new_weekly_grades  # get rid of test and running avg columns
     
