@@ -332,6 +332,13 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         # print(assignment, subs)
         # print(assignment)
         # print(student_subs[:5])
+        if assignment["assignment_type"] == "lecture":
+            if sum([sub["raw_score"] for sub in subs]) > 0: # TODO: good way to check for completion?
+                new_weekly_grades.loc[f"week{assignment['week_number']}", "lecture"] = 1.0
+        if assignment["assignment_type"] == "final":
+            continue
+        if assignment["assignment_type"] == "midterm":
+            continue
         if len(subs) == 0:
             # print(assignment['title'], 0, assignment['max_score'])
             continue
@@ -364,10 +371,9 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
     # Merge different names
     new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(axis=1)
     new_weekly_grades["practicequiz"] = new_weekly_grades[["practicequiz", "practice-quiz"]].max(axis=1)
-    new_weekly_grades["lab"] = new_weekly_grades[["lab", "PracticeMidterm"]].max(axis=1)
-    new_weekly_grades["lab"] = new_weekly_grades[["lab", "practicemidterm"]].max(axis=1)
+    new_weekly_grades["practicemidterm"] = new_weekly_grades[["practicemidterm", "PracticeMidterm"]].max(axis=1)
     new_weekly_grades.drop(
-        ["attendance", "practice-quiz", "test", "PracticeMidterm", "practicemidterm"],
+        ["attendance", "practice-quiz", "test", "PracticeMidterm"],
         axis=1,
         inplace=True,
         errors="ignore",
@@ -384,13 +390,32 @@ def get_current_week(start_date):
     return days_since_start // 7 + 1
 
 
+def get_average_weighted_grade(current_week, new_weekly_grades, weights, verbose=True):
+    # Get average until current week
+    new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[: current_week - 1].mean()
+
+    # make new dataframe with the midterm, final, and running average
+    max_key_length = max(len(k) for k in weights.keys())
+    total = 0
+    avg_grades_dict = {}
+    for k, v in weights.items():
+        grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]
+        total += grade * v
+        avg_grades_dict[k] = grade
+    avg_grades_dict['Total'] = total  # excluded midterm and final
+    
+    return avg_grades_dict
+
+
 # This function currently has many undefined variables and other problems!
-def get_my_grades_testing(start_date="2025-01-06"):
+def get_my_grades_testing(start_date="2025-01-06", verbose=True):
     """takes in json.
     reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.
     fills in 0 for missing assignments
     calculate running average of each category"""
-
+# TODO: if there are no assignments for the week/category, skip them when calculating average (filtered_data = df.loc[~df.index.isin(exclude_indices), 'column_name'])
+# TODO: fix the ec for practice midterm
+# TODO: check lecture for completion only
     # set up new df format
     weights = {
         "homework": 0.15,
@@ -411,19 +436,18 @@ def get_my_grades_testing(start_date="2025-01-06"):
 
     current_week = get_current_week(start_date)
 
-    # Get average until current week
-    new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[: current_week - 1].mean()
-
-    # make new dataframe with the midterm, final, and running average
-    max_key_length = max(len(k) for k in weights.keys())
-    total = 0
-    for k, v in weights.items():
-        grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]
-        total += grade * v
-        print(f"{k:<{max_key_length}}:\t {grade:.2f}")
-    print(f"\nTotal: {total}")  # exclude midterm and final
-
     return new_weekly_grades  # get rid of test and running avg columns
+
+
+def get_all_students(admin_user, admin_pw):
+    res = requests.get(
+        url=api_base_url.rstrip("/") + "/students",
+        auth=HTTPBasicAuth(admin_user, admin_pw),
+    )
+    res.raise_for_status()
+
+    # Input: List of players
+    return [student['email'].split('@')[0] for student in res.json()]
 
 
 # def all_student_grades_testing(admin_user, admin_pw, start_date="2025-01-06"):
