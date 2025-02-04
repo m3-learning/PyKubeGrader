@@ -739,7 +739,7 @@ class NotebookProcessor:
     @staticmethod
     def add_validate_token_cell(notebook_path: str, require_key: bool) -> None:
         """
-        Adds a new code cell at the top of a Jupyter notebook if require_key is True.
+        Modifies the first code cell of a Jupyter notebook to add the validate_token call if require_key is True.
 
         Args:
             notebook_path (str): The path to the notebook file to modify.
@@ -749,21 +749,24 @@ class NotebookProcessor:
             None
         """
         if not require_key:
-            print("require_key is False. No changes made to the notebook.")
             return
 
         # Load the notebook
         with open(notebook_path, "r", encoding="utf-8") as f:
             notebook = nbformat.read(f, as_version=4)
 
-        # Create the new code cell
-        new_cell = nbformat.v4.new_code_cell(
+        # Prepare the validation code
+        validation_code = (
             "from pykubegrader.tokens.validate_token import validate_token\n"
             "validate_token('type the key provided by your instructor here')\n"
         )
 
-        # Add the new cell to the top of the notebook
-        notebook.cells.insert(0, new_cell)
+        # Modify the first cell if it's a code cell, otherwise insert a new one
+        if notebook.cells and notebook.cells[0].cell_type == "code":
+            notebook.cells[0].source = validation_code + "\n" + notebook.cells[0].source
+        else:
+            new_cell = nbformat.v4.new_code_cell(validation_code)
+            notebook.cells.insert(0, new_cell)
 
         # Save the modified notebook
         with open(notebook_path, "w", encoding="utf-8") as f:
