@@ -440,7 +440,7 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
 
     current_week = get_current_week(start_date)
     
-    avg_grades_dict = get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights, verbose)
+    avg_grades_dict = get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights)
     
     if verbose:
         max_key_length = max(len(k) for k in weights.keys())
