@@ -329,7 +329,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
     for assignment in assignments:
         # get the assignment from all submissions
         subs = [ sub for sub in student_subs if (sub['assignment_type']==assignment['assignment_type']) and (sub['week_number']==assignment['week_number']) ]
-
+        print(assignment, subs)
         # print(assignment)
         # print(student_subs[:5])
         if len(subs) == 0:
@@ -362,14 +362,12 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
             ] = grade
 
     # Merge different names
-    new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(
-        axis=1
-    )
-    new_weekly_grades["practicequiz"] = new_weekly_grades[
-        ["practicequiz", "practice-quiz"]
-    ].max(axis=1)
+    new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(axis=1)
+    new_weekly_grades["practicequiz"] = new_weekly_grades[["practicequiz", "practice-quiz"]].max(axis=1)
+    new_weekly_grades["lab"] = new_weekly_grades[["lab", "PracticeMidterm"]].max(axis=1)
+    new_weekly_grades["lab"] = new_weekly_grades[["lab", "practicemidterm"]].max(axis=1)
     new_weekly_grades.drop(
-        ["attendance", "practice-quiz", "test"],
+        ["attendance", "practice-quiz", "test", "PracticeMidterm", "practicemidterm"],
         axis=1,
         inplace=True,
         errors="ignore",
