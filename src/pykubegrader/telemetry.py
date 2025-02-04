@@ -328,9 +328,10 @@ def setup_grades_df(assignments):
 def fill_grades_df(new_weekly_grades, assignments, student_subs):
     for assignment in assignments:
         # get the assignment from all submissions
-        subs = [ 
-            sub for sub in student_subs if sub["assignment_type"] == assignment["assignment_type"] and sub["week_number"] == assignment["week_number"]
-        ]
+        subs = [ sub for sub in student_subs if (sub['assignment_type']==assignment['assignment_type']) and (sub['week_number']==assignment['week_number']) ]
+
+        print(assignments)
+        print(student_subs)
         if len(subs) == 0:
             print(assignment['title'], 0, assignment['max_score'])
         elif len(subs) == 1:
@@ -404,8 +405,7 @@ def get_my_grades_testing(start_date="2025-01-06"):
     }
 
     assignments, student_subs = get_assignments_submissions()
-    print(assignments)
-    print(student_subs)
+    
     new_grades_df = setup_grades_df(assignments)
 
     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)
