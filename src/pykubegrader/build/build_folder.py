@@ -796,9 +796,7 @@ class NotebookProcessor:
             notebook = nbformat.read(f, as_version=4)
 
         # Prepare the validation code
-        validation_code = (
-            "validate_token('type the key provided by your instructor here')\n"
-        )
+        validation_code = "validate_token()\n"
 
         # Modify the first cell if it's a code cell, otherwise insert a new one
         if notebook.cells and notebook.cells[0].cell_type == "code":
