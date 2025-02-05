@@ -323,12 +323,12 @@ def setup_grades_df(assignments):
     new_weekly_grades["inds"] = inds
     new_weekly_grades.set_index("inds", inplace=True)
     return new_weekly_grades
-
+import numpy as np
 def skip_assignments(assignments, assignment_type, current_week):
     skip_weeks = []
     to_check = [assignment for assignment in assignments if assignment["assignment_type"] == assignment_type]
     weeks = [assignment["week_number"] for assignment in to_check]
-    return [i for i in range(11) if i+1 not in weeks and i<current_week]
+    return np.array([1 if i+1 in weeks and i<current_week else 0 for i in range(11)])
 
 def fill_grades_df(new_weekly_grades, assignments, student_subs):
     for assignment in assignments:
@@ -399,7 +399,7 @@ def get_average_weighted_grade(assignments, current_week, new_weekly_grades, wei
     # Get average until current week
     for col in new_weekly_grades.columns:
         skip_weeks = skip_assignments(assignments, col, current_week)
-        new_weekly_grades[col].iloc[-1] = new_weekly_grades[col].iloc[~skip_weeks].mean()
+        new_weekly_grades[col].iloc[-1] = new_weekly_grades[col].iloc[skip_weeks].mean()
         
 
     # make new dataframe with the midterm, final, and running average
