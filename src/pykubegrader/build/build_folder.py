@@ -584,13 +584,13 @@ class NotebookProcessor:
             code_cell = nbformat.v4.new_code_cell(
                 f"{validate_token_line}\n\n"  # Add the validate_token() line
                 "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-                f'submit_assignment({self.assignment_tag}, "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
+                f'submit_assignment("{self.assignment_tag}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
             )
         else:
             # Define the Code cell without validate_token()
             code_cell = nbformat.v4.new_code_cell(
                 "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-                f'submit_assignment({self.assignment_tag}, "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
+                f'submit_assignment("{self.assignment_tag}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
             )
 
         # Make the code cell non-editable and non-deletable
