@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.telemetry &#8212; PyKubeGrader 0.0.post1.dev1+g9d2f916 documentation</title>
+    <title>pykubegrader.telemetry &#8212; PyKubeGrader 0.0.post1.dev1+g55c1d11 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=b0beef16"></script>
+    <script src="../../_static/documentation_options.js?v=a9b9c00f"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g9d2f916" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g55c1d11" />
     <meta name="docbuild:last-update" content="Feb 04, 2025"/>
   </head>
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g9d2f916 documentation - Home"/>
-    <img src="../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g9d2f916 documentation - Home"/>
+    <img src="../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g55c1d11 documentation - Home"/>
+    <img src="../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g55c1d11 documentation - Home"/>
   
   
 </a></div>
@@ -768,14 +768,14 @@
     <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;inds&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">new_weekly_grades</span></div>
 
-
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <div class="viewcode-block" id="skip_assignments">
 <a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.skip_assignments">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">skip_assignments</span><span class="p">(</span><span class="n">assignments</span><span class="p">,</span> <span class="n">assignment_type</span><span class="p">,</span> <span class="n">current_week</span><span class="p">):</span>
     <span class="n">skip_weeks</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">to_check</span> <span class="o">=</span> <span class="p">[</span><span class="n">assignment</span> <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="n">assignments</span> <span class="k">if</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">assignment_type</span><span class="p">]</span>
     <span class="n">weeks</span> <span class="o">=</span> <span class="p">[</span><span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;week_number&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="n">to_check</span><span class="p">]</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">weeks</span> <span class="ow">and</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">current_week</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="ow">in</span> <span class="n">weeks</span> <span class="ow">and</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">current_week</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)])</span></div>
 
 
 <div class="viewcode-block" id="fill_grades_df">
@@ -855,7 +855,7 @@
     <span class="c1"># Get average until current week</span>
     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="n">skip_weeks</span> <span class="o">=</span> <span class="n">skip_assignments</span><span class="p">(</span><span class="n">assignments</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">current_week</span><span class="p">)</span>
-        <span class="n">new_weekly_grades</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">~</span><span class="n">skip_weeks</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">new_weekly_grades</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">skip_weeks</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         
 
     <span class="c1"># make new dataframe with the midterm, final, and running average</span>
