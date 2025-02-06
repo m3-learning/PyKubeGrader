@@ -328,7 +328,7 @@ def setup_grades_df(assignments):
 def skipped_assignment_mask(assignments):
     existing_assignment_mask = setup_grades_df(assignments)
     for assignment in assignments:
-        existing_assignment_mask.loc[f"week{assignment['week_number']}"][assignment["assignment_type"]] = True
+        existing_assignment_mask.loc[f"week{assignment['week_number']+1}"][assignment["assignment_type"]] = True
     return existing_assignment_mask.astype(bool)
 
 def fill_grades_df(new_weekly_grades, assignments, student_subs):
@@ -340,7 +340,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         # print(student_subs[:5])
         if assignment["assignment_type"] == "lecture":
             if sum([sub["raw_score"] for sub in subs]) > 0: # TODO: good way to check for completion?
-                new_weekly_grades.loc[f"week{assignment['week_number']}", "lecture"] = 1.0
+                new_weekly_grades.loc[f"week{assignment['week_number']:+12d}", "lecture"] = 1.0
         if assignment["assignment_type"] == "final":
             continue
         if assignment["assignment_type"] == "midterm":
