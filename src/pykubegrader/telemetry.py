@@ -326,9 +326,10 @@ def setup_grades_df(assignments):
 
 
 def skipped_assignment_mask(assignments):
-    existing_assignment_mask = setup_grades_df(assignments)
+    existing_assignment_mask = setup_grades_df(assignments).astype(bool)
     for assignment in assignments:
-        existing_assignment_mask.loc[f"week{assignment['week_number']:2d}"][assignment["assignment_type"]] = True
+        # existing_assignment_mask[assignment["assignment_type"]].iloc[assignment["week_number"]-1] = True
+        existing_assignment_mask.loc[f'week{assignment["week_number"]}', assignment["assignment_type"]] = True
     return existing_assignment_mask.astype(bool)
 
 def fill_grades_df(new_weekly_grades, assignments, student_subs):
@@ -340,7 +341,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         # print(student_subs[:5])
         if assignment["assignment_type"] == "lecture":
             if sum([sub["raw_score"] for sub in subs]) > 0: # TODO: good way to check for completion?
-                new_weekly_grades.loc[f"week{assignment['week_number']:2d}", "lecture"] = 1.0
+                new_weekly_grades.loc[f"week{assignment['week_number']}", "lecture"] = 1.0
         if assignment["assignment_type"] == "final":
             continue
         if assignment["assignment_type"] == "midterm":
@@ -399,7 +400,7 @@ def get_average_weighted_grade(assignments, current_week, new_weekly_grades, wei
     # Get average until current week
     skip_weeks = skipped_assignment_mask(assignments)
     for col in new_weekly_grades.columns:
-        new_weekly_grades.loc["Running Avg", col] = new_weekly_grades.loc[skip_weeks[col] == 1, col].mean()
+        new_weekly_grades.loc["Running Avg", col] = new_weekly_grades.loc[skip_weeks[col]==True, col].mean()
     # for col in new_weekly_grades.columns:
     #     skip_weeks = skipped_assignment_mask(assignments)
     #     skip_weeks_series = pd.Series(skip_weeks)
@@ -453,8 +454,6 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
             print(f'{k:<{max_key_length}}:\t {v:.2f}')
 
     return new_weekly_grades  # get rid of test and running avg columns
-
-
 def get_all_students(admin_user, admin_pw):
     res = requests.get(
         url=api_base_url.rstrip("/") + "/students",
