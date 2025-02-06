@@ -398,7 +398,6 @@ def get_current_week(start_date):
 def get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights):
     # Get average until current week
     skip_weeks = skipped_assignment_mask(assignments)
-    new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[~skip_weeks].mean(axis=1) 
     for col in new_weekly_grades.columns:
         new_weekly_grades.loc["Running Avg", col] = new_weekly_grades.loc[skip_weeks[col] == 1, col].mean()
     # for col in new_weekly_grades.columns:
