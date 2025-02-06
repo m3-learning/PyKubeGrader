@@ -328,7 +328,7 @@ def setup_grades_df(assignments):
 def skipped_assignment_mask(assignments):
     existing_assignment_mask = setup_grades_df(assignments)
     for assignment in assignments:
-        existing_assignment_mask.iloc[f'week{assignment["week_number"]-1:2d}'], assignment["assignment_type"]= True
+        existing_assignment_mask.loc[f'week{assignment["week_number"]-1:2d}', assignment["assignment_type"]] = True
     return existing_assignment_mask
 
 def fill_grades_df(new_weekly_grades, assignments, student_subs):
