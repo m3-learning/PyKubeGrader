@@ -77,16 +77,21 @@ class NotebookProcessor:
                 data = yaml.safe_load(file)
                 # Extract assignment details
                 assignment = data.get("assignment", {})
-                week_num = assignment.get("week")
+                self.week_num = assignment.get("week")
                 self.assignment_type = assignment.get("assignment_type")
                 self.bonus_points = assignment.get("bonus_points", 0)
                 self.require_key = assignment.get("require_key", False)
+                self.assignment_tag = assignment.get(
+                    "assignment_tag",
+                    f"week{assignment.get("week")}-{self.assignment_type}",
+                )
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
-            week_num = self.assignment_tag.split("-")[-1]
+            self.week_num = self.assignment_tag.split("-")[-1]
+            self.assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 
-        self.week_num = week_num
-        self.week = f"week_{week_num}"
+        # self.week_num = week_num
+        self.week = f"week_{self.week_num}"
 
         # Define the folder to store solutions and ensure it exists
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
@@ -180,12 +185,12 @@ class NotebookProcessor:
 
     def update_initialize_function(self):
         for key, value in self.total_point_log.items():
-            assignment_tag = f"week{self.week_num}-{self.assignment_type}"
+            # assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 
             update_initialize_assignment(
                 notebook_path=os.path.join(self.root_folder, key + ".ipynb"),
                 assignment_points=value,
-                assignment_tag=assignment_tag,
+                assignment_tag=self.assignment_tag,
             )
 
     def build_payload(self, yaml_content):
@@ -579,17 +584,17 @@ class NotebookProcessor:
             code_cell = nbformat.v4.new_code_cell(
                 f"{validate_token_line}\n\n"  # Add the validate_token() line
                 "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-                f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
+                f'submit_assignment("{self.assignment_tag}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
             )
         else:
             # Define the Code cell without validate_token()
             code_cell = nbformat.v4.new_code_cell(
                 "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-                f'submit_assignment("week{self.week_num}-{self.assignment_type}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
+                f'submit_assignment("{self.assignment_tag}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
             )
 
         # Make the code cell non-editable and non-deletable
-        code_cell.metadata = {"editable": False, "deletable": False}
+        code_cell.metadata = {"editable": True, "deletable": False}
         code_cell.metadata["tags"] = ["skip-execution"]
 
         # Add the cells to the notebook
@@ -739,6 +744,41 @@ class NotebookProcessor:
     @staticmethod
     def add_validate_token_cell(notebook_path: str, require_key: bool) -> None:
         """
+        Adds a new code cell at the top of a Jupyter notebook if require_key is True.
+
+        Args:
+            notebook_path (str): The path to the notebook file to modify.
+            require_key (bool): Whether to add the validate_token cell.
+
+        Returns:
+            None
+        """
+        if not require_key:
+            print("require_key is False. No changes made to the notebook.")
+            return
+
+        NotebookProcessor.add_validate_block(notebook_path, require_key)
+
+        # Load the notebook
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            notebook = nbformat.read(f, as_version=4)
+
+        # Create the new code cell
+        new_cell = nbformat.v4.new_code_cell(
+            "from pykubegrader.tokens.validate_token import validate_token\n"
+            "validate_token('type the key provided by your instructor here')\n"
+        )
+
+        # Add the new cell to the top of the notebook
+        notebook.cells.insert(0, new_cell)
+
+        # Save the modified notebook
+        with open(notebook_path, "w", encoding="utf-8") as f:
+            nbformat.write(notebook, f)
+
+    @staticmethod
+    def add_validate_block(notebook_path: str, require_key: bool) -> None:
+        """
         Modifies the first code cell of a Jupyter notebook to add the validate_token call if require_key is True.
 
         Args:
@@ -756,10 +796,7 @@ class NotebookProcessor:
             notebook = nbformat.read(f, as_version=4)
 
         # Prepare the validation code
-        validation_code = (
-            "from pykubegrader.tokens.validate_token import validate_token\n"
-            "validate_token('type the key provided by your instructor here')\n"
-        )
+        validation_code = "validate_token()\n"
 
         # Modify the first cell if it's a code cell, otherwise insert a new one
         if notebook.cells and notebook.cells[0].cell_type == "code":

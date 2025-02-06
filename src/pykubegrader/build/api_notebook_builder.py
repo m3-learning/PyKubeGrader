@@ -24,7 +24,7 @@ class FastAPINotebookBuilder:
             self.notebook_path
         )
         self.total_points = 0
-        
+
         self.max_question_points = {}
         self.run()
 
@@ -40,7 +40,7 @@ class FastAPINotebookBuilder:
 
         self.assertion_tests_dict = self.question_dict()
         self.add_api_code()
-    
+
         # add the point total to the end of the notebook
         self.add_total_points_to_notebook()
 
@@ -86,8 +86,11 @@ class FastAPINotebookBuilder:
         self.compute_max_points_free_response()
         for i, question in enumerate(self.max_question_points.keys()):
             index, source = self.find_question_description(question)
-            modified_source  = FastAPINotebookBuilder.add_text_after_double_hash(source, f"Question {i+1} (Points: {self.max_question_points[question]}):")
-            self.replace_cell_source(index, modified_source)
+            try:
+                modified_source  = FastAPINotebookBuilder.add_text_after_double_hash(source, f"Question {i+1} (Points: {self.max_question_points[question]}):")
+                self.replace_cell_source(index, modified_source)
+            except:
+                pass
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
             if self.verbose: 
@@ -97,9 +100,9 @@ class FastAPINotebookBuilder:
 
             cell = self.get_cell(cell_index)
             cell_source = FastAPINotebookBuilder.add_import_statements_to_tests(
-                cell["source"]
+                cell["source"], require_key=self.require_key,
             )
-            
+
             cell_source = FastAPINotebookBuilder.conceal_tests(cell_source)
 
             last_import_line_ind = FastAPINotebookBuilder.find_last_import_line(
@@ -144,25 +147,24 @@ class FastAPINotebookBuilder:
             )
 
             self.replace_cell_source(cell_index, updated_cell_source)   
-            
+
     def find_question_description(self, search_string):
         with open(self.temp_notebook, 'r', encoding='utf-8') as f:
             nb_data = json.load(f)
-        
+
         found_raw = False
-        
+
         for idx, cell in enumerate(nb_data.get("cells", [])):
             if cell["cell_type"] == "raw" and any("# BEGIN QUESTION" in line for line in cell.get("source", [])) and any(search_string in line for line in cell.get("source", [])):
                 found_raw = True
             elif found_raw and cell["cell_type"] == "markdown":
                 return idx, cell.get("source", [])  # Return the index of the first matching markdown cell
-        
+
         return None, None  # Return None if no such markdown cell is found 
-        
+
     def add_total_points_to_notebook(self) -> None:
         self.max_question_points.keys()
-        
-    
+
     def get_max_question_points(self, cell_dict) -> float:
         return sum(
                     cell["points"]
@@ -184,14 +186,14 @@ class FastAPINotebookBuilder:
         """
         modified_source = []
         inserted = False
-        
+
         for line in markdown_source:
             if not inserted and line.startswith("## "):
                 modified_source.append(f"## {insert_text} {line[3:]}")  # Insert text after '##'
                 inserted = True  # Ensure it only happens once
             else:
                 modified_source.append(line)
-        
+
         return modified_source
 
     def compute_max_points_free_response(self) -> None:
@@ -200,7 +202,7 @@ class FastAPINotebookBuilder:
             if cell_dict["is_first"]:
                 # get the max points for the question
                 max_question_points = self.get_max_question_points(cell_dict)
-                
+
                 # store the max points for the question
                 self.max_question_points[f"{cell_dict["question"]}"] = max_question_points
 
@@ -328,7 +330,7 @@ class FastAPINotebookBuilder:
         return original_list[:index] + insert_list + original_list[index:]
 
     @staticmethod
-    def add_import_statements_to_tests(cell_source: list[str]) -> list[str]:
+    def add_import_statements_to_tests(cell_source: list[str], require_key:bool = False) -> list[str]:
         """
         Adds the necessary import statements to the first cell of the notebook.
         """
@@ -348,6 +350,11 @@ class FastAPINotebookBuilder:
             "import os\n",
             "import base64\n",
         ]
+
+        if require_key:
+            imports.append(
+                "from pykubegrader.tokens.validate_token import validate_token\nvalidate_token()\n"
+            )
 
         for i, line in enumerate(cell_source):
             if end_test_config_line in line:
