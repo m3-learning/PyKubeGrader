@@ -33,6 +33,21 @@ def get_students():
 
     # Print response
     if response.status_code == 200:
-        return response.json()
+        return [student["email"].split("@")[0] for student in responses.json()]
+    else:
+        print(f"Error {response.status_code}: {response.text}")
+
+
+def get_assignments():
+    # Make the request
+    response = requests.get(
+        f"{api_base_url}assignments",
+        auth=HTTPBasicAuth("user", "pass"),  # Basic Auth
+        params={"requester": get_jhub_user()},  # Query parameter
+    )
+
+    # Print response
+    if response.status_code == 200:
+        return [assignment["title"] for assignment in responses.json()]
     else:
         print(f"Error {response.status_code}: {response.text}")
