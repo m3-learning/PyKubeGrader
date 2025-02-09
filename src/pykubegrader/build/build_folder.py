@@ -578,7 +578,7 @@ class NotebookProcessor:
 
         if self.require_key:
             # Add an additional line for validate_token()
-            validate_token_line = "from pykubegrader.tokens.validate_token import validate_token\nvalidate_token()\n"
+            validate_token_line =f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment = '{self.assignment_tag}')\n"
 
             # Define the Code cell
             code_cell = nbformat.v4.new_code_cell(
@@ -681,6 +681,7 @@ class NotebookProcessor:
                 self.week,
                 self.assignment_type,
                 require_key=self.require_key,
+                assignment_tag = self.assignment_tag,
             )
 
             NotebookProcessor.replace_temp_in_notebook(
@@ -711,6 +712,7 @@ class NotebookProcessor:
                 self.week,
                 self.assignment_type,
                 require_key=self.require_key,
+                assignment_tag = self.assignment_tag
             )
             NotebookProcessor.replace_temp_no_otter(
                 temp_notebook_path, temp_notebook_path
@@ -742,7 +744,7 @@ class NotebookProcessor:
             nbformat.write(notebook, f)
 
     @staticmethod
-    def add_validate_token_cell(notebook_path: str, require_key: bool) -> None:
+    def add_validate_token_cell(notebook_path: str, require_key: bool, **kwargs) -> None:
         """
         Adds a new code cell at the top of a Jupyter notebook if require_key is True.
 
@@ -756,18 +758,24 @@ class NotebookProcessor:
         if not require_key:
             print("require_key is False. No changes made to the notebook.")
             return
-
-        NotebookProcessor.add_validate_block(notebook_path, require_key)
+        
+        NotebookProcessor.add_validate_block(notebook_path, require_key, assignment_tag = kwargs.get("assignment_tag", None))
 
         # Load the notebook
         with open(notebook_path, "r", encoding="utf-8") as f:
             notebook = nbformat.read(f, as_version=4)
 
         # Create the new code cell
-        new_cell = nbformat.v4.new_code_cell(
+        if kwargs.get("assignment_tag", None):
+            new_cell = nbformat.v4.new_code_cell(
+            "from pykubegrader.tokens.validate_token import validate_token\n"
+            f"validate_token('type the key provided by your instructor here', assignment = '{kwargs.get('assignment_tag')}')\n"
+            )
+        else:
+            new_cell = nbformat.v4.new_code_cell(
             "from pykubegrader.tokens.validate_token import validate_token\n"
             "validate_token('type the key provided by your instructor here')\n"
-        )
+            )
 
         # Add the new cell to the top of the notebook
         notebook.cells.insert(0, new_cell)
@@ -777,7 +785,7 @@ class NotebookProcessor:
             nbformat.write(notebook, f)
 
     @staticmethod
-    def add_validate_block(notebook_path: str, require_key: bool) -> None:
+    def add_validate_block(notebook_path: str, require_key: bool, **kwargs) -> None:
         """
         Modifies the first code cell of a Jupyter notebook to add the validate_token call if require_key is True.
 
@@ -811,7 +819,7 @@ class NotebookProcessor:
 
     @staticmethod
     def add_initialization_code(
-        notebook_path, week, assignment_type, require_key=False
+        notebook_path, week, assignment_type, require_key=False, **kwargs,
     ):
         # finds the first code cell
         index, cell = find_first_code_cell(notebook_path)
@@ -823,7 +831,7 @@ class NotebookProcessor:
         replace_cell_source(notebook_path, index, cell)
 
         if require_key:
-            NotebookProcessor.add_validate_token_cell(notebook_path, require_key)
+            NotebookProcessor.add_validate_token_cell(notebook_path, require_key, assignment_tag = kwargs.get("assignment_tag", None))
 
     def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
         ### Parse the notebook for multiple choice questions
