@@ -6,6 +6,16 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 
+def get_jhub_user():
+    """
+    Fetches the JupyterHub user from the environment.
+    """
+    jhub_user = os.getenv("JUPYTERHUB_USER")
+    if jhub_user is None:
+        raise ValueError("JupyterHub user not found")
+    return jhub_user
+
+
 class TokenValidationError(Exception):
     """
     Custom exception raised when the token validation fails.
@@ -44,7 +54,6 @@ def get_credentials() -> dict[str, str]:
 def validate_token(
     token: Optional[str] = None,
     assignment: Optional[str] = None,
-    student_id: Optional[int] = None,
 ) -> None:
     if token:
         os.environ["TOKEN"] = token  # If token passed, set env var
@@ -67,8 +76,8 @@ def validate_token(
     params = {}
     if assignment:
         params["assignment"] = assignment
-    if student_id:
-        params["student_id"] = student_id
+
+    params["student_id"] = get_jhub_user()
 
     # Get credentials
     try:
