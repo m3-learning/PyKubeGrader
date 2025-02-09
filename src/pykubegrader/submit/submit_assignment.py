@@ -42,6 +42,9 @@ def call_score_assignment(
         "assignment_title": assignment_title,
         "notebook_title": notebook_title,
     }
+    
+    if  os.environ["TOKEN"] is not None:
+        params["token"] = os.environ["TOKEN"]
 
     username, password = get_credentials().values()
 
