@@ -1,6 +1,7 @@
 import panel as pn
 import requests
 from requests.auth import HTTPBasicAuth
+import os
 
 from ..utils import api_base_url
 
