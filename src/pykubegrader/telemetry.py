@@ -454,6 +454,7 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
             print(f'{k:<{max_key_length}}:\t {v:.2f}')
 
     return new_weekly_grades  # get rid of test and running avg columns
+
 def get_all_students(admin_user, admin_pw):
     res = requests.get(
         url=api_base_url.rstrip("/") + "/students",
