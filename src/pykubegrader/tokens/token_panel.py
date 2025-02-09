@@ -33,7 +33,7 @@ def get_students():
 
     # Print response
     if response.status_code == 200:
-        return [student["email"].split("@")[0] for student in responses.json()]
+        return [student["email"].split("@")[0] for student in response.json()]
     else:
         print(f"Error {response.status_code}: {response.text}")
 
@@ -48,6 +48,6 @@ def get_assignments():
 
     # Print response
     if response.status_code == 200:
-        return [assignment["title"] for assignment in responses.json()]
+        return [assignment["title"] for assignment in response.json()]
     else:
         print(f"Error {response.status_code}: {response.text}")
