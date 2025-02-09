@@ -30,13 +30,17 @@ class Assignment(assignment_type):
 
     def add_exempted_students(self, students):
         self.students_exempted.extend(students)
+        
+    def get_grade(self):
+        """Get the grade of the assignment."""
+        return self.grade_adjustment()
 
     def grade_adjustment(self):
         """Apply the adjustment function if provided."""
         if self.grade_adjustment_func:
-            self.score = self.grade_adjustment_func(self.score)
+            return self.grade_adjustment_func(self.score)
         else:
-            print("No adjustment function provided.")
+            return self.score
 
 
 #### BEGIN CONFIGURATION ####
