@@ -41,7 +41,11 @@ def get_credentials() -> dict[str, str]:
     return {"username": username, "password": password}
 
 
-def validate_token(token: Optional[str] = None) -> None:
+def validate_token(
+    token: Optional[str] = None,
+    assignment: Optional[str] = None,
+    student_id: Optional[int] = None,
+) -> None:
     if token:
         os.environ["TOKEN"] = token  # If token passed, set env var
     else:
@@ -55,7 +59,16 @@ def validate_token(token: Optional[str] = None) -> None:
     if not base_url:
         print("Error: Environment variable 'DB_URL' not set", file=sys.stderr)
         sys.exit(1)
+
+    # Construct endpoint with optional parameters
     endpoint = f"{base_url.rstrip('/')}/validate-token/{token}"
+
+    # Build query parameters
+    params = {}
+    if assignment:
+        params["assignment"] = assignment
+    if student_id:
+        params["student_id"] = student_id
 
     # Get credentials
     try:
@@ -69,7 +82,10 @@ def validate_token(token: Optional[str] = None) -> None:
     basic_auth = HTTPBasicAuth(username, password)
 
     try:
-        response = requests.get(url=endpoint, auth=basic_auth, timeout=10)
+        # Send request with optional query parameters
+        response = requests.get(
+            url=endpoint, auth=basic_auth, timeout=10, params=params
+        )
         response.raise_for_status()
 
         detail = response.json().get("detail", response.text)
