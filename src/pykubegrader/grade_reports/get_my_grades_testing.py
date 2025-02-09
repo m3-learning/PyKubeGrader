@@ -86,7 +86,7 @@ class GradeReport:
         self.assignment_type_list = assignment_type_list
         self.aliases = aliases
 
-        self.assignment_submissions, self.student_subs = get_assignments_submissions()
+        self.assignments, self.student_subs = get_assignments_submissions()
         self.setup_grades_df()
         self.build_assignments()
         # self.new_weekly_grades = fill_grades_df(
@@ -131,16 +131,18 @@ class GradeReport:
 
     #         filtered = self.filter_submissions(assignment.week, assignment.name, self.aliases)
 
-    def filter_submissions(self, week_number, assignment_type, aliases):
+    def filter_submissions(self, week_number, assignment_type):
         # Normalize the assignment type using aliases
-        normalized_type = aliases.get(assignment_type.lower(), assignment_type.lower())
+        normalized_type = self.aliases.get(
+            assignment_type.lower(), assignment_type.lower()
+        )
 
         # Filter the assignments based on the week number and normalized assignment type
         filtered = [
             assignment
-            for assignment in self.assignment_submissions
+            for assignment in self.student_subs
             if assignment["week_number"] == week_number
-            and aliases.get(
+            and self.aliases.get(
                 assignment["assignment_type"].lower(),
                 assignment["assignment_type"].lower(),
             )
@@ -167,9 +169,7 @@ class GradeReport:
 
     def get_num_weeks(self):
         """Get the number of weeks in the course"""
-        max_week_number = max(
-            item["week_number"] for item in self.assignment_submissions
-        )
+        max_week_number = max(item["week_number"] for item in self.assignments)
         return max_week_number
 
     def setup_grades_df(self):
