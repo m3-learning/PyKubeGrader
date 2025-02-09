@@ -13,9 +13,11 @@ class assignment_type:
         self.weight = weight
 
 
-class assignment(assignment_type):
+class Assignment(assignment_type):
 
-    def __init__(self, name, weekly, weight, score, **kwargs):
+    def __init__(
+        self, name, weekly, weight, score, grade_adjustment_func=None, **kwargs
+    ):
         super().__init__(name, weekly, weight)
         self.score = score
         self.week = kwargs.get("week", None)
@@ -23,8 +25,18 @@ class assignment(assignment_type):
         self.graded = kwargs.get("graded", False)
         self.students_exempted = kwargs.get("students_exempted", [])
 
+        # Store the function for later use
+        self.grade_adjustment_func = grade_adjustment_func
+
     def add_exempted_students(self, students):
         self.students_exempted.extend(students)
+
+    def grade_adjustment(self):
+        """Apply the adjustment function if provided."""
+        if self.grade_adjustment_func:
+            self.score = self.grade_adjustment_func(self.score)
+        else:
+            print("No adjustment function provided.")
 
 
 #### BEGIN CONFIGURATION ####
@@ -55,7 +67,7 @@ class GradeReport:
         self.assignment_list = assignments_list
 
         self.assignments, self.student_subs = get_assignments_submissions()
-        self.new_grades_df = self.setup_grades_df()
+        self.setup_grades_df()
         # self.new_weekly_grades = fill_grades_df(
         #     self.new_grades_df, self.assignments, self.student_subs
         # )
@@ -85,4 +97,62 @@ class GradeReport:
         new_weekly_grades = pd.DataFrame(restruct_grades, dtype=float)
         new_weekly_grades["inds"] = inds
         new_weekly_grades.set_index("inds", inplace=True)
-        self.week_grades_df = new_weekly_grades
+        self.weekly_grades_df = new_weekly_grades
+        
+    def fill_grades_df(self, student_subs):
+        
+        for assignment in assignments:
+            
+            # get the assignment from all submissions
+            subs = [ sub for sub in student_subs if (sub['assignment_type']==assignment['assignment_type']) and (sub['week_number']==assignment['week_number']) ]
+            # print(assignment, subs)
+            # print(assignment)
+            # print(student_subs[:5])
+            if assignment["assignment_type"] == "lecture":
+                if sum([sub["raw_score"] for sub in subs]) > 0: # TODO: good way to check for completion?
+                    new_weekly_grades.loc[f"week{assignment['week_number']}", "lecture"] = 1.0
+            if assignment["assignment_type"] == "final":
+                continue
+            if assignment["assignment_type"] == "midterm":
+                continue
+            if len(subs) == 0:
+                # print(assignment['title'], 0, assignment['max_score'])
+                continue
+            elif len(subs) == 1:
+                grade = subs[0]["raw_score"] / assignment["max_score"]
+                # print(assignment['title'], sub['raw_score'], assignment['max_score'])
+            else:
+                # get due date from assignment
+                due_date = parser.parse(assignment["due_date"])
+                grades = []
+                for sub in subs:
+                    entry_date = parser.parse(sub["timestamp"])
+                    if entry_date <= due_date:
+                        grades.append(sub["raw_score"])
+                    else:
+                        grades.append(
+                            calculate_late_submission(
+                                due_date.strftime("%Y-%m-%d %H:%M:%S"),
+                                entry_date.strftime("%Y-%m-%d %H:%M:%S"),
+                            )
+                        )
+                # print(assignment['title'], grades, assignment['max_score'])
+                grade = max(grades) / assignment["max_score"]
+
+            # fill out new df with max
+            new_weekly_grades.loc[
+                f"week{assignment['week_number']}", assignment["assignment_type"]
+            ] = grade
+
+        # Merge different names
+        new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(axis=1)
+        new_weekly_grades["practicequiz"] = new_weekly_grades[["practicequiz", "practice-quiz"]].max(axis=1)
+        new_weekly_grades["practicemidterm"] = new_weekly_grades[["practicemidterm", "PracticeMidterm"]].max(axis=1)
+        new_weekly_grades.drop(
+            ["attendance", "practice-quiz", "test", "PracticeMidterm"],
+            axis=1,
+            inplace=True,
+            errors="ignore",
+        )
+
+        return new_weekly_grades
