@@ -7,10 +7,13 @@ from ..utils import api_base_url
 
 
 def build_token_payload(token: str, duration: int, **kwargs) -> dict:
-    
+
     student_id = kwargs.get("student_id", None)
     assignment = kwargs.get("assignment", None)
-    
+
+    print(f"Student ID: {student_id}")
+    print(f"Assignment: {assignment}")
+
     jhub_user = os.getenv("JUPYTERHUB_USER")
     if jhub_user is None:
         raise ValueError("JupyterHub user not found")
@@ -27,6 +30,7 @@ def build_token_payload(token: str, duration: int, **kwargs) -> dict:
         payload["assignment"] = assignment
 
     return payload
+
 
 def add_token(token: str, duration: int = 20, **kwargs) -> None:
     """
