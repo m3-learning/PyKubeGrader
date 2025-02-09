@@ -1,4 +1,7 @@
 from pykubegrader.telemetry import get_assignments_submissions
+from dateutil import parser
+from pykubegrader.graders.late_assignments import calculate_late_submission
+
 
 # from pykubegrader.assignments import assignment_type
 
@@ -23,7 +26,9 @@ class Assignment(assignment_type):
         self.week = kwargs.get("week", None)
         self.exempted = kwargs.get("exempted", False)
         self.graded = kwargs.get("graded", False)
+        self.late_adjustment = kwargs.get("late_adjustment", True)
         self.students_exempted = kwargs.get("students_exempted", [])
+        self.due_date = kwargs.get("due_date", None)
 
         # Store the function for later use
         self.grade_adjustment_func = grade_adjustment_func
@@ -31,16 +36,31 @@ class Assignment(assignment_type):
     def add_exempted_students(self, students):
         self.students_exempted.extend(students)
 
-    def get_grade(self):
-        """Get the grade of the assignment."""
+    def update_score(self, score):
 
-        return self.grade_adjustment()
-
-    def grade_adjustment(self):
-        """Apply the adjustment function if provided."""
-        if self.grade_adjustment_func:
-            return self.grade_adjustment_func(self.score)
+        if self.exempted:
+            self.score = "Exempt"
+            return self.score
         else:
+            self.score = self.grade_adjustment(score)
+            return self.score
+
+    def grade_adjustment(self, submission):
+        """Apply the adjustment function if provided."""
+
+        score = submission["raw_score"]
+        entry_date = parser.parse(submission["timestamp"])
+
+        if self.grade_adjustment_func:
+            return self.grade_adjustment_func(score)
+        else:
+            if self.late_adjustment:
+
+                calculate_late_submission(
+                    self.due_date.strftime("%Y-%m-%d %H:%M:%S"),
+                    entry_date.strftime("%Y-%m-%d %H:%M:%S"),
+                )
+
             return self.score
 
 
@@ -87,6 +107,7 @@ class GradeReport:
         self.aliases = aliases
 
         self.assignments, self.student_subs = get_assignments_submissions()
+
         self.setup_grades_df()
         self.build_assignments()
         # self.new_weekly_grades = fill_grades_df(
@@ -121,6 +142,10 @@ class GradeReport:
             weight=assignment_type.weight,
             score=0,
             grade_adjustment_func=custom_func,
+            # filters the submissions for an assignment and gets the last due date
+            due_date=self.determine_due_date(
+                self.get_assignment(kwargs.get("week", None), assignment_type.name)
+            ),
             **kwargs,
         )
         self.graded_assignments.append(new_assignment)
@@ -150,6 +175,39 @@ class GradeReport:
         ]
 
         return filtered
+
+    def get_assignment(self, week_number, assignment_type):
+        # Normalize the assignment type using aliases
+        normalized_type = self.aliases.get(
+            assignment_type.lower(), assignment_type.lower()
+        )
+
+        # Filter the assignments based on the week number and normalized assignment type
+        filtered = [
+            assignment
+            for assignment in self.assignments
+            if assignment["week_number"] == week_number
+            and self.aliases.get(
+                assignment["assignment_type"].lower(),
+                assignment["assignment_type"].lower(),
+            )
+            == normalized_type
+        ]
+
+        return filtered
+
+    def determine_due_date(self, filtered_assignments):
+
+        if not filtered_assignments:
+            return None  # Return None if the list is empty
+
+        # Convert due_date strings to datetime objects and find the max
+        max_due = max(
+            filtered_assignments,
+            key=lambda x: datetime.fromisoformat(x["due_date"].replace("Z", "+00:00")),
+        )
+
+        return max_due["due_date"]  # Return the max due date as a string
 
     def get_non_weekly_assignments(self):
         """Get all weekly assignments from the assignment list configuration"""
