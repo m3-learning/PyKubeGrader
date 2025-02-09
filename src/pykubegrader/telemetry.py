@@ -16,8 +16,8 @@ from requests import Response
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import RequestException
 
-from .graders.late_assignments import calculate_late_submission
-from .utils import api_base_url, student_pw, student_user
+from pykubegrader.graders.late_assignments import calculate_late_submission
+from pykubegrader.utils import api_base_url, student_pw, student_user
 
 #
 # Logging setup
@@ -312,17 +312,6 @@ def get_assignments_submissions():
         auth=HTTPBasicAuth(student_user, student_pw),
     )
     return res.json()
-
-
-def setup_grades_df(assignments):
-    assignment_types = list(set([a["assignment_type"] for a in assignments]))
-
-    inds = [f"week{i + 1}" for i in range(11)] + ["Running Avg"]
-    restruct_grades = {k: [0 for i in range(len(inds))] for k in assignment_types}
-    new_weekly_grades = pd.DataFrame(restruct_grades,dtype=float)
-    new_weekly_grades["inds"] = inds
-    new_weekly_grades.set_index("inds", inplace=True)
-    return new_weekly_grades
 
 
 def skipped_assignment_mask(assignments):

@@ -1,44 +1,60 @@
+from pykubegrader.telemetry import get_assignments_submissions
+
+##### CONFIGURATION #####
+
+weights = {
+    "homework": 0.15,
+    "lab": 0.15,
+    "lecture": 0.15,
+    "quiz": 0.15,
+    "readings": 0.15,
+    "labattendance": 0.05,
+    "practicequiz": 0.015,
+    "practicemidterm": 0.015,
+    "midterm": 0.15,
+    "practicefinal": 0.02,
+    "final": 0.2,
+}
+
+##### END CONFIGURATION #####
 
 
-# ##### CONFIGURATION #####
-
-# weights = {
-#     "homework": 0.15,
-#     "lab": 0.15,
-#     "lecture": 0.15,
-#     "quiz": 0.15,
-#     "readings": 0.15,
-#     "labattendance": 0.05,
-#     "practicequiz": 0.015,
-#     "practicemidterm": 0.015,
-#     "midterm": 0.15,
-#     "practicefinal": 0.02,
-#     "final": 0.2,
-# }
-
-# ##### END CONFIGURATION #####
-
-
-# class GradeReport:
+class GradeReport:
     
-#     def __init__(self, start_date="2025-01-06", verbose=True):
-#         self.start_date = start_date
-#         self.verbose = verbose
-#         self.weights = weights
+    def __init__(self, start_date="2025-01-06", verbose=True):
+        self.start_date = start_date
+        self.verbose = verbose
+        self.weights = weights
        
-#         self.assignments, self.student_subs = get_assignments_submissions()
-#         self.new_grades_df = setup_grades_df(self.assignments)
-#         self.new_weekly_grades = fill_grades_df(
-#             self.new_grades_df, self.assignments, self.student_subs
-#         )
-#         self.current_week = get_current_week(self.start_date)
-#         self.avg_grades_dict = get_average_weighted_grade(
-#             self.assignments, self.current_week, self.new_weekly_grades, self.weights
-#         )
+        self.assignments, self.student_subs = get_assignments_submissions()
+        self.new_grades_df = setup_grades_df(self.assignments)
+        self.new_weekly_grades = fill_grades_df(
+            self.new_grades_df, self.assignments, self.student_subs
+        )
+        self.current_week = get_current_week(self.start_date)
+        self.avg_grades_dict = get_average_weighted_grade(
+            self.assignments, self.current_week, self.new_weekly_grades, self.weights
+        )
     
-#     @property
-#     def weights(self):
-#         return self.weights
+    @property
+    def weights(self):
+        return self._weights
+
+    @weights.setter
+    def weights(self, new_weights):
+        if not isinstance(new_weights, dict):
+            raise ValueError("Weights must be a dictionary")
+        self._weights = new_weights
+    
+    def setup_grades_df(self):
+        assignment_types = list(set([a["assignment_type"] for a in self.assignments]))
+
+        inds = [f"week{i + 1}" for i in range(11)] + ["Running Avg"]
+        restruct_grades = {k: [0 for i in range(len(inds))] for k in assignment_types}
+        new_weekly_grades = pd.DataFrame(restruct_grades, dtype=float)
+        new_weekly_grades["inds"] = inds
+        new_weekly_grades.set_index("inds", inplace=True)
+        return new_weekly_grades
 
 
 # def get_my_grades_testing(start_date="2025-01-06", verbose=True):
