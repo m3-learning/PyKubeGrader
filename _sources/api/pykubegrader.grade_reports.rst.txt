@@ -6,6 +6,14 @@ pykubegrader.grade\_reports namespace
 Submodules
 ----------
 
+pykubegrader.grade\_reports.get\_my\_grades\_testing module
+-----------------------------------------------------------
+
+.. automodule:: pykubegrader.grade_reports.get_my_grades_testing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pykubegrader.grade\_reports.grade\_reports module
 -------------------------------------------------
 
