@@ -26,7 +26,7 @@ def get_students():
 
     # Make the request
     response = requests.get(
-        f"{api_base_url}/students",
+        f"{api_base_url}students",
         auth=HTTPBasicAuth("user", "pass"),  # Basic Auth
         params={"requester": get_jhub_user()},  # Query parameter
     )
