@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.graders.late_assignments &#8212; PyKubeGrader 0.0.post1.dev1+g92aebdc documentation</title>
+    <title>pykubegrader.tokens.token_panel &#8212; PyKubeGrader 0.0.post1.dev1+g92aebdc documentation</title>
   
   
   
@@ -43,7 +43,7 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/graders/late_assignments';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/tokens/token_panel';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -386,7 +386,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.graders.late_assignments</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.tokens.token_panel</span></li>
   </ul>
 </nav>
 </div>
@@ -403,54 +403,49 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pykubegrader.graders.late_assignments</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+  <h1>Source code for pykubegrader.tokens.token_panel</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">panel</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">api_base_url</span>
+
+<span class="c1"># Dummy credentials for HTTP Basic Auth</span>
+<span class="n">AUTH</span> <span class="o">=</span> <span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">)</span>
+
+<span class="c1"># Panel configuration</span>
+<span class="n">pn</span><span class="o">.</span><span class="n">extension</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="calculate_late_submission">
-<a class="viewcode-back" href="../../../api/pykubegrader.graders.html#pykubegrader.graders.late_assignments.calculate_late_submission">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">calculate_late_submission</span><span class="p">(</span>
-    <span class="n">due</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">submitted</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">Q0</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="n">Q_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
-    <span class="n">k</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.88e-5</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="get_jhub_user">
+<a class="viewcode-back" href="../../../api/pykubegrader.tokens.html#pykubegrader.tokens.token_panel.get_jhub_user">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_jhub_user</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the percentage value based on an exponential decay model</span>
-<span class="sd">    with respect to a due date, using datetime string inputs.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">    - due_date_str (str): The due date as a string in the format &quot;%Y-%m-%d %H:%M:%S&quot;.</span>
-<span class="sd">    - submission_date (str): The comparison date as a string in the format &quot;%Y-%m-%d %H:%M:%S&quot;.</span>
-<span class="sd">    - Q0 (float): Initial value (default is 100).</span>
-<span class="sd">    - Q_min (float): Minimum value (default is 40).</span>
-<span class="sd">    - k (float): Decay constant per minute (default is 6.88e-5).</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    - float: The percentage value after decay, bounded between Q_min and Q0.</span>
+<span class="sd">    Fetches the JupyterHub user from the environment.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">jhub_user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;JUPYTERHUB_USER&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">jhub_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JupyterHub user not found&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jhub_user</span></div>
 
-    <span class="c1"># Convert datetime strings to UNIX timestamps</span>
-    <span class="n">due_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">due</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
-    <span class="n">submitted_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">submitted</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Calculate time difference in seconds</span>
-    <span class="n">time_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">submitted_date</span> <span class="o">-</span> <span class="n">due_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
 
-    <span class="c1"># Convert time difference from seconds to minutes</span>
-    <span class="n">time_in_minutes</span> <span class="o">=</span> <span class="n">time_difference</span> <span class="o">/</span> <span class="mf">60.0</span>
+<div class="viewcode-block" id="get_students">
+<a class="viewcode-back" href="../../../api/pykubegrader.tokens.html#pykubegrader.tokens.token_panel.get_students">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_students</span><span class="p">():</span>
 
-    <span class="c1"># Calculate the exponential decay</span>
-    <span class="n">Q</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Q0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span> <span class="o">*</span> <span class="n">time_in_minutes</span><span class="p">)</span>
+    <span class="c1"># Make the request</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">api_base_url</span><span class="si">}</span><span class="s2">/students&quot;</span><span class="p">,</span>
+        <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;pass&quot;</span><span class="p">),</span>  <span class="c1"># Basic Auth</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;requester&quot;</span><span class="p">:</span> <span class="n">get_jhub_user</span><span class="p">()},</span>  <span class="c1"># Query parameter</span>
+    <span class="p">)</span>
 
-    <span class="c1"># Apply floor and ceiling conditions</span>
-    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q_min</span><span class="p">)</span>
-    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q0</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">Q</span></div>
+    <span class="c1"># Print response</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 
