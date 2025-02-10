@@ -127,6 +127,7 @@ class GradeReport:
 
         self.setup_grades_df()
         self.build_assignments()
+        self.calculate_grades()
         # self.new_weekly_grades = fill_grades_df(
         #     self.new_grades_df, self.assignments, self.student_subs
         # )
@@ -167,11 +168,14 @@ class GradeReport:
         )
         self.graded_assignments.append(new_assignment)
 
-    # def calculate_grades(self):
+    def calculate_grades(self):
 
-    #     for assignment in self.graded_assignments:
+        for assignment in self.graded_assignments:
 
-    #         filtered = self.filter_submissions(assignment.week, assignment.name, self.aliases)
+            filtered_submission = self.filter_submissions(assignment.week, assignment.name, self.aliases)
+            
+            for submission in filtered_submission:
+                assignment.update_score(submission)
 
     def filter_submissions(self, week_number, assignment_type):
         # Normalize the assignment type using aliases
