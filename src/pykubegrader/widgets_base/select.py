@@ -1,8 +1,8 @@
 import time
 from typing import Callable, Optional, Tuple
 
-import panel as pn
 import numpy as np
+import panel as pn
 
 from ..telemetry import ensure_responses, score_question, update_responses
 from ..utils import shuffle_options, shuffle_questions

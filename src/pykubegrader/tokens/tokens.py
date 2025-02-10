@@ -7,7 +7,6 @@ from ..utils import api_base_url
 
 
 def build_token_payload(token: str, duration: int, **kwargs) -> dict:
-
     student_id = kwargs.get("student_id", None)
     assignment = kwargs.get("assignment", None)
 

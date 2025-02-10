@@ -1,5 +1,3 @@
-
-
 # ##### CONFIGURATION #####
 
 # weights = {
@@ -20,12 +18,12 @@
 
 
 # class GradeReport:
-    
+
 #     def __init__(self, start_date="2025-01-06", verbose=True):
 #         self.start_date = start_date
 #         self.verbose = verbose
 #         self.weights = weights
-       
+
 #         self.assignments, self.student_subs = get_assignments_submissions()
 #         self.new_grades_df = setup_grades_df(self.assignments)
 #         self.new_weekly_grades = fill_grades_df(
@@ -35,7 +33,7 @@
 #         self.avg_grades_dict = get_average_weighted_grade(
 #             self.assignments, self.current_week, self.new_weekly_grades, self.weights
 #         )
-    
+
 #     @property
 #     def weights(self):
 #         return self.weights
