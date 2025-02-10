@@ -36,19 +36,25 @@ class Assignment(assignment_type):
     def add_exempted_students(self, students):
         self.students_exempted.extend(students)
 
-    def update_score(self, score):
+    def update_score(self, submission):
 
         if self.exempted:
             self.score = "Exempt"
             return self.score
         else:
-            self.score = self.grade_adjustment(score)
+            score_ = self.grade_adjustment(submission)
+            
+            # Update the score if the new score is higher
+            if score_ > self.score:
+                self.score = score_
+                
             return self.score
 
     def grade_adjustment(self, submission):
         """Apply the adjustment function if provided."""
 
         score = submission["raw_score"]
+        max_score = submission["max_score"]
         entry_date = parser.parse(submission["timestamp"])
 
         if self.grade_adjustment_func:
@@ -56,12 +62,23 @@ class Assignment(assignment_type):
         else:
             if self.late_adjustment:
 
-                calculate_late_submission(
+                late_modifier = calculate_late_submission(
                     self.due_date.strftime("%Y-%m-%d %H:%M:%S"),
                     entry_date.strftime("%Y-%m-%d %H:%M:%S"),
                 )
 
-            return self.score
+                # return score for on-time submissions
+                return (score / max_score) * late_modifier
+
+            else:
+
+                # return score for on-time submissions
+                if entry_date < self.due_date:
+                    return score / max_score
+
+                # zero score for late submissions w/o late adjustment
+                else:
+                    return 0
 
 
 #### BEGIN CONFIGURATION ####
