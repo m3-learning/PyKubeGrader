@@ -5,6 +5,8 @@ from pykubegrader.graders.late_assignments import calculate_late_submission
 import pandas as pd
 from datetime import datetime
 
+import numpy as np
+
 
 # from pykubegrader.assignments import assignment_type
 
@@ -43,7 +45,7 @@ class Assignment(assignment_type):
     def update_score(self, submission):
 
         if self.exempted:
-            self.score = "Exempt"
+            self.score = np.nan
             return self.score
         else:
             score_ = self.grade_adjustment(submission)
@@ -110,6 +112,8 @@ assignment_type_list = [
 # }
 custom_grade_adjustments = {("quiz", 3): lambda score: "Exempt"}
 
+globally_exempted_assignments = [("quiz", 2)]
+
 # Common Assignment Aliases
 aliases = {
     "practicequiz": "practice quiz",
@@ -130,11 +134,13 @@ class GradeReport:
         self.verbose = verbose
         self.assignment_type_list = assignment_type_list
         self.aliases = aliases
+        self.globally_exempted_assignments = globally_exempted_assignments
 
         self.assignments, self.student_subs = get_assignments_submissions()
 
         self.setup_grades_df()
         self.build_assignments()
+        self.update_global_exempted_assignments()
         self.calculate_grades()
         self.update_weekly_table()
         # self.new_weekly_grades = fill_grades_df(
@@ -144,13 +150,19 @@ class GradeReport:
         # self.avg_grades_dict = get_average_weighted_grade(
         #     self.assignments, self.current_week, self.new_weekly_grades, self.weights
         # )
-        
+
     def update_weekly_table(self):
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df.loc[
                     f"week{assignment.week}", assignment.name
                 ] = assignment.score
+
+    def update_global_exempted_assignments(self):
+
+        for assignment_type, week in self.globally_exempted_assignments:
+
+            self.get_graded_assignment(week, assignment_type)[0].exempted = True
 
     def build_assignments(self):
         """Generates a list of Assignment objects for each week, applying custom adjustments where needed."""
