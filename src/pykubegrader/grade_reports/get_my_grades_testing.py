@@ -32,6 +32,7 @@ class Assignment(assignment_type):
         self.late_adjustment = kwargs.get("late_adjustment", True)
         self.students_exempted = kwargs.get("students_exempted", [])
         self.due_date = kwargs.get("due_date", None)
+        self.max_score = kwargs.get("max_score", None)
 
         # Store the function for later use
         self.grade_adjustment_func = grade_adjustment_func
@@ -57,7 +58,6 @@ class Assignment(assignment_type):
         """Apply the adjustment function if provided."""
 
         score = submission["raw_score"]
-        max_score = submission["max_score"]
         entry_date = parser.parse(submission["timestamp"])
 
         if self.grade_adjustment_func:
@@ -65,19 +65,22 @@ class Assignment(assignment_type):
         else:
             if self.late_adjustment:
 
+                # Convert to datetime object
+                due_date = datetime.fromisoformat(self.due_date.replace("Z", "+00:00"))
+
                 late_modifier = calculate_late_submission(
-                    self.due_date.strftime("%Y-%m-%d %H:%M:%S"),
+                    due_date.strftime("%Y-%m-%d %H:%M:%S"),
                     entry_date.strftime("%Y-%m-%d %H:%M:%S"),
                 )
 
                 # return score for on-time submissions
-                return (score / max_score) * late_modifier
+                return (score / self.max_score) * late_modifier
 
             else:
 
                 # return score for on-time submissions
                 if entry_date < self.due_date:
-                    return score / max_score
+                    return score / self.max_score
 
                 # zero score for late submissions w/o late adjustment
                 else:
@@ -157,6 +160,11 @@ class GradeReport:
 
     def graded_assignment_constructor(self, assignment_type, **kwargs):
         custom_func = custom_grade_adjustments.get((assignment_type.name, None), None)
+
+        filtered_assignments = self.get_assignment(
+            kwargs.get("week", None), assignment_type.name
+        )
+
         new_assignment = Assignment(
             name=assignment_type.name,
             weekly=assignment_type.weekly,
@@ -164,9 +172,8 @@ class GradeReport:
             score=0,
             grade_adjustment_func=custom_func,
             # filters the submissions for an assignment and gets the last due date
-            due_date=self.determine_due_date(
-                self.get_assignment(kwargs.get("week", None), assignment_type.name)
-            ),
+            due_date=self.determine_due_date(filtered_assignments),
+            max_score=self.get_max_score(filtered_assignments),
             **kwargs,
         )
         self.graded_assignments.append(new_assignment)
@@ -221,6 +228,17 @@ class GradeReport:
         ]
 
         return filtered
+
+    def get_max_score(self, filtered_assignments):
+        if not filtered_assignments:
+            return None
+
+        max_score = min(
+            filtered_assignments,
+            key=lambda x: x["max_score"],
+        )
+
+        return max_score["max_score"]
 
     def determine_due_date(self, filtered_assignments):
 
