@@ -1,7 +1,8 @@
+import os
+
 import panel as pn
 import requests
 from requests.auth import HTTPBasicAuth
-import os
 
 from ..utils import api_base_url
 
@@ -23,7 +24,6 @@ def get_jhub_user():
 
 
 def get_students():
-
     # Make the request
     response = requests.get(
         f"{api_base_url}students",

@@ -319,7 +319,7 @@ def setup_grades_df(assignments):
 
     inds = [f"week{i + 1}" for i in range(11)] + ["Running Avg"]
     restruct_grades = {k: [0 for i in range(len(inds))] for k in assignment_types}
-    new_weekly_grades = pd.DataFrame(restruct_grades,dtype=float)
+    new_weekly_grades = pd.DataFrame(restruct_grades, dtype=float)
     new_weekly_grades["inds"] = inds
     new_weekly_grades.set_index("inds", inplace=True)
     return new_weekly_grades
@@ -329,19 +329,31 @@ def skipped_assignment_mask(assignments):
     existing_assignment_mask = setup_grades_df(assignments).astype(bool)
     for assignment in assignments:
         # existing_assignment_mask[assignment["assignment_type"]].iloc[assignment["week_number"]-1] = True
-        existing_assignment_mask.loc[f'week{assignment["week_number"]}', assignment["assignment_type"]] = True
+        existing_assignment_mask.loc[
+            f"week{assignment['week_number']}", assignment["assignment_type"]
+        ] = True
     return existing_assignment_mask.astype(bool)
+
 
 def fill_grades_df(new_weekly_grades, assignments, student_subs):
     for assignment in assignments:
         # get the assignment from all submissions
-        subs = [ sub for sub in student_subs if (sub['assignment_type']==assignment['assignment_type']) and (sub['week_number']==assignment['week_number']) ]
+        subs = [
+            sub
+            for sub in student_subs
+            if (sub["assignment_type"] == assignment["assignment_type"])
+            and (sub["week_number"] == assignment["week_number"])
+        ]
         # print(assignment, subs)
         # print(assignment)
         # print(student_subs[:5])
         if assignment["assignment_type"] == "lecture":
-            if sum([sub["raw_score"] for sub in subs]) > 0: # TODO: good way to check for completion?
-                new_weekly_grades.loc[f"week{assignment['week_number']}", "lecture"] = 1.0
+            if (
+                sum([sub["raw_score"] for sub in subs]) > 0
+            ):  # TODO: good way to check for completion?
+                new_weekly_grades.loc[f"week{assignment['week_number']}", "lecture"] = (
+                    1.0
+                )
         if assignment["assignment_type"] == "final":
             continue
         if assignment["assignment_type"] == "midterm":
@@ -376,9 +388,15 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         ] = grade
 
     # Merge different names
-    new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(axis=1)
-    new_weekly_grades["practicequiz"] = new_weekly_grades[["practicequiz", "practice-quiz"]].max(axis=1)
-    new_weekly_grades["practicemidterm"] = new_weekly_grades[["practicemidterm", "PracticeMidterm"]].max(axis=1)
+    new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(
+        axis=1
+    )
+    new_weekly_grades["practicequiz"] = new_weekly_grades[
+        ["practicequiz", "practice-quiz"]
+    ].max(axis=1)
+    new_weekly_grades["practicemidterm"] = new_weekly_grades[
+        ["practicemidterm", "PracticeMidterm"]
+    ].max(axis=1)
     new_weekly_grades.drop(
         ["attendance", "practice-quiz", "test", "PracticeMidterm"],
         axis=1,
@@ -388,6 +406,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
 
     return new_weekly_grades
 
+
 def get_current_week(start_date):
     # Calculate the current week (1-based indexing)
     start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
@@ -396,11 +415,13 @@ def get_current_week(start_date):
     return days_since_start // 7 + 1
 
 
-def get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights):
+def get_average_weighted_grade(assignments, new_weekly_grades, weights):
     # Get average until current week
     skip_weeks = skipped_assignment_mask(assignments)
     for col in new_weekly_grades.columns:
-        new_weekly_grades.loc["Running Avg", col] = new_weekly_grades.loc[skip_weeks[col]==True, col].mean()
+        new_weekly_grades.loc["Running Avg", col] = new_weekly_grades.loc[
+            skip_weeks[col], col
+        ].mean()
     # for col in new_weekly_grades.columns:
     #     skip_weeks = skipped_assignment_mask(assignments)
     #     skip_weeks_series = pd.Series(skip_weeks)
@@ -414,8 +435,8 @@ def get_average_weighted_grade(assignments, current_week, new_weekly_grades, wei
         grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]
         total += grade * v
         avg_grades_dict[k] = grade
-    avg_grades_dict['Total'] = total  # excluded midterm and final
-    
+    avg_grades_dict["Total"] = total  # excluded midterm and final
+
     return avg_grades_dict
 
 
@@ -425,7 +446,7 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
     reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.
     fills in 0 for missing assignments
     calculate running average of each category"""
-    
+
     # set up new df format
     weights = {
         "homework": 0.15,
@@ -439,21 +460,24 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
     }
 
     assignments, student_subs = get_assignments_submissions()
-    
+
     new_grades_df = setup_grades_df(assignments)
 
     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)
 
-    current_week = get_current_week(start_date)
-    
-    avg_grades_dict = get_average_weighted_grade(assignments, current_week, new_weekly_grades, weights)
-    
+    # current_week = get_current_week(start_date)
+
+    avg_grades_dict = get_average_weighted_grade(
+        assignments, new_weekly_grades, weights
+    )
+
     if verbose:
         max_key_length = max(len(k) for k in weights.keys())
         for k, v in avg_grades_dict.items():
-            print(f'{k:<{max_key_length}}:\t {v:.2f}')
+            print(f"{k:<{max_key_length}}:\t {v:.2f}")
 
     return new_weekly_grades  # get rid of test and running avg columns
+
 
 def get_all_students(admin_user, admin_pw):
     res = requests.get(
@@ -463,7 +487,7 @@ def get_all_students(admin_user, admin_pw):
     res.raise_for_status()
 
     # Input: List of players
-    return [student['email'].split('@')[0] for student in res.json()]
+    return [student["email"].split("@")[0] for student in res.json()]
 
 
 # def all_student_grades_testing(admin_user, admin_pw, start_date="2025-01-06"):
@@ -485,7 +509,7 @@ def get_all_students(admin_user, admin_pw):
 #     }
 
 #     student_usernames = get_student_usernames(admin_user, admin_pw)
-    
+
 #     assignments, student_subs = get_assignments_submissions(admin_user, admin_pw)
 
 #     new_grades_df = setup_grades_df(assignments)
@@ -507,4 +531,3 @@ def get_all_students(admin_user, admin_pw):
 #     print(f"\nTotal: {total}")  # exclude midterm and final
 
 #     return new_weekly_grades  # get rid of test and running avg columns
-    

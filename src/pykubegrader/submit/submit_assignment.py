@@ -42,7 +42,7 @@ def call_score_assignment(
         "assignment_title": assignment_title,
         "notebook_title": notebook_title,
     }
-    
+
     token = os.getenv("TOKEN")
     if token:
         params["key_used"] = token
