@@ -134,6 +134,7 @@ class GradeReport:
         self.setup_grades_df()
         self.build_assignments()
         self.calculate_grades()
+        self.update_weekly_table()
         # self.new_weekly_grades = fill_grades_df(
         #     self.new_grades_df, self.assignments, self.student_subs
         # )
@@ -141,6 +142,13 @@ class GradeReport:
         # self.avg_grades_dict = get_average_weighted_grade(
         #     self.assignments, self.current_week, self.new_weekly_grades, self.weights
         # )
+        
+    def update_weekly_table(self):
+        for assignment in self.graded_assignments:
+            if assignment.weekly:
+                self.weekly_grades_df.loc[
+                    f"week{assignment.week}", assignment.name
+                ] = assignment.score
 
     def build_assignments(self):
         """Generates a list of Assignment objects for each week, applying custom adjustments where needed."""
