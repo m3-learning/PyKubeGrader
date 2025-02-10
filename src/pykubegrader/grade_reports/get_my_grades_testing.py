@@ -2,6 +2,9 @@ from pykubegrader.telemetry import get_assignments_submissions
 from dateutil import parser
 from pykubegrader.graders.late_assignments import calculate_late_submission
 
+import pandas as pd
+from datetime import datetime
+
 
 # from pykubegrader.assignments import assignment_type
 
@@ -43,11 +46,11 @@ class Assignment(assignment_type):
             return self.score
         else:
             score_ = self.grade_adjustment(submission)
-            
+
             # Update the score if the new score is higher
             if score_ > self.score:
                 self.score = score_
-                
+
             return self.score
 
     def grade_adjustment(self, submission):
@@ -172,8 +175,10 @@ class GradeReport:
 
         for assignment in self.graded_assignments:
 
-            filtered_submission = self.filter_submissions(assignment.week, assignment.name, self.aliases)
-            
+            filtered_submission = self.filter_submissions(
+                assignment.week, assignment.name
+            )
+
             for submission in filtered_submission:
                 assignment.update_score(submission)
 
