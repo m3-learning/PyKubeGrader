@@ -108,7 +108,7 @@ assignment_type_list = [
 #     ("quiz", 3): lambda score: score * 1.10,  # Example: Boost Quiz in Week 3 by 10%
 #     ("homework", 5): lambda score: min(score + 5, 100),  # Example: Add 5 points to Homework in Week 5
 # }
-custom_grade_adjustments = {}
+custom_grade_adjustments = {("quiz", 3): lambda score: "Exempt"}
 
 # Common Assignment Aliases
 aliases = {
@@ -117,6 +117,8 @@ aliases = {
     "attend": "attendance",
     "attendance": "attendance",
 }
+
+skipped_assignments = {}
 
 ##### END CONFIGURATION #####
 
