@@ -229,6 +229,16 @@ class GradeReport:
 
         return filtered
 
+    def get_graded_assignment(self, week_number, assignment_type):
+        return list(
+            filter(
+                lambda a: isinstance(a, Assignment)
+                and a.name == assignment_type
+                and a.week == week_number,
+                self.graded_assignments,
+            )
+        )
+
     def get_max_score(self, filtered_assignments):
         if not filtered_assignments:
             return None
