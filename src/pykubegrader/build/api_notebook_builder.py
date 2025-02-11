@@ -100,7 +100,7 @@ class FastAPINotebookBuilder:
 
             cell = self.get_cell(cell_index)
             cell_source = FastAPINotebookBuilder.add_import_statements_to_tests(
-                cell["source"], require_key=self.require_key,
+                cell["source"], require_key=self.require_key, assignment_tag = self.assignment_tag,
             )
 
             cell_source = FastAPINotebookBuilder.conceal_tests(cell_source)
@@ -224,7 +224,7 @@ class FastAPINotebookBuilder:
 
         if self.require_key:
             first_cell_header.append(
-                "from pykubegrader.tokens.validate_token import validate_token\nvalidate_token()\n"
+                f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment='{self.assignment_tag}')\n"
             )
 
         short_filename = self.filename.split(".")[0].replace("_temp", "")
@@ -330,7 +330,7 @@ class FastAPINotebookBuilder:
         return original_list[:index] + insert_list + original_list[index:]
 
     @staticmethod
-    def add_import_statements_to_tests(cell_source: list[str], require_key:bool = False) -> list[str]:
+    def add_import_statements_to_tests(cell_source: list[str], require_key:bool = False, **kwargs) -> list[str]:
         """
         Adds the necessary import statements to the first cell of the notebook.
         """
