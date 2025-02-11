@@ -176,13 +176,10 @@ class GradeReport:
         self.drop_lowest_n_for_types(1)
         self.update_weekly_table()
         self._update_running_avg()
-        # self.new_weekly_grades = fill_grades_df(
-        #     self.new_grades_df, self.assignments, self.student_subs
-        # )
-        # self.current_week = get_current_week(self.start_date)
-        # self.avg_grades_dict = get_average_weighted_grade(
-        #     self.assignments, self.current_week, self.new_weekly_grades, self.weights
-        # )
+
+    def grade_report(self):
+        self._update_running_avg()
+        return self.weekly_grades_df
 
     def update_weekly_table(self):
         for assignment in self.graded_assignments:
@@ -384,7 +381,10 @@ class GradeReport:
         assignment_groups = defaultdict(list)
         for assignment in self.graded_assignments:
             if assignments_ is None:
-                if assignment.name in self.dropped_assignments and not assignment.exempted:
+                if (
+                    assignment.name in self.dropped_assignments
+                    and not assignment.exempted
+                ):
                     assignment_groups[assignment.name].append(assignment)
             else:
                 if assignment.name in assignments_ and not assignment.exempted:
