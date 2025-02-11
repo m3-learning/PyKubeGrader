@@ -42,18 +42,22 @@ class Assignment(assignment_type):
     def add_exempted_students(self, students):
         self.students_exempted.extend(students)
 
-    def update_score(self, submission):
+    def update_score(self, submission=None):
 
         if self.exempted:
             self.score = np.nan
             return self.score
-        else:
+        elif submission is not None:
             score_ = self.grade_adjustment(submission)
 
             # Update the score if the new score is higher
             if score_ > self.score:
                 self.score = score_
 
+            return self.score
+        # sets the score to zero if not exempted and no submission
+        else:
+            self.score = 0
             return self.score
 
     def grade_adjustment(self, submission):
@@ -112,7 +116,15 @@ assignment_type_list = [
 # }
 custom_grade_adjustments = {("quiz", 3): lambda score: "Exempt"}
 
-globally_exempted_assignments = [("quiz", 2)]
+globally_exempted_assignments = [
+    ("readings", 6),
+    ("quiz", 6),
+    ("practicequiz", 6),
+    ("lecture", 6),
+    ("homework", 5),
+    ("lab", 5),
+    ("labattendance", 5),
+]
 
 # Common Assignment Aliases
 aliases = {
@@ -123,6 +135,8 @@ aliases = {
 }
 
 skipped_assignments = {}
+
+drop_lowest_score = 
 
 ##### END CONFIGURATION #####
 
@@ -143,6 +157,7 @@ class GradeReport:
         self.update_global_exempted_assignments()
         self.calculate_grades()
         self.update_weekly_table()
+        self._update_running_avg()
         # self.new_weekly_grades = fill_grades_df(
         #     self.new_grades_df, self.assignments, self.student_subs
         # )
@@ -154,15 +169,17 @@ class GradeReport:
     def update_weekly_table(self):
         for assignment in self.graded_assignments:
             if assignment.weekly:
-                self.weekly_grades_df.loc[
-                    f"week{assignment.week}", assignment.name
-                ] = assignment.score
+                self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
+                    assignment.score
+                )
 
     def update_global_exempted_assignments(self):
 
         for assignment_type, week in self.globally_exempted_assignments:
-
-            self.get_graded_assignment(week, assignment_type)[0].exempted = True
+            try:
+                self.get_graded_assignment(week, assignment_type)[0].exempted = True
+            except:
+                pass
 
     def build_assignments(self):
         """Generates a list of Assignment objects for each week, applying custom adjustments where needed."""
@@ -208,8 +225,13 @@ class GradeReport:
                 assignment.week, assignment.name
             )
 
-            for submission in filtered_submission:
-                assignment.update_score(submission)
+            if filtered_submission:
+                for submission in filtered_submission:
+                    assignment.update_score(submission)
+
+            # runs if there are no filtered submissions
+            else:
+                assignment.update_score()
 
     def filter_submissions(self, week_number, assignment_type):
         # Normalize the assignment type using aliases
@@ -318,6 +340,14 @@ class GradeReport:
         new_weekly_grades["inds"] = inds
         new_weekly_grades.set_index("inds", inplace=True)
         self.weekly_grades_df = new_weekly_grades
+
+    def _update_running_avg(self):
+        """
+        Subfunction to compute and update the Running Avg row, handling NaNs.
+        """
+        self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.mean(
+            axis=0, skipna=True
+        )
 
     # def fill_grades_df(self, student_subs):
 
