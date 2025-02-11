@@ -136,7 +136,15 @@ aliases = {
 
 skipped_assignments = {}
 
-drop_lowest_score = 
+dropped_assignments = [
+    "readings",
+    "lecture",
+    "practicequiz",
+    "quiz",
+    "homework",
+    "lab",
+    "labattendance",
+]
 
 ##### END CONFIGURATION #####
 
@@ -149,6 +157,7 @@ class GradeReport:
         self.assignment_type_list = assignment_type_list
         self.aliases = aliases
         self.globally_exempted_assignments = globally_exempted_assignments
+        self.dropped_assignments = dropped_assignments
 
         self.assignments, self.student_subs = get_assignments_submissions()
 
@@ -156,6 +165,7 @@ class GradeReport:
         self.build_assignments()
         self.update_global_exempted_assignments()
         self.calculate_grades()
+        self.drop_lowest_n_for_types(1)
         self.update_weekly_table()
         self._update_running_avg()
         # self.new_weekly_grades = fill_grades_df(
@@ -348,6 +358,36 @@ class GradeReport:
         self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.mean(
             axis=0, skipna=True
         )
+
+    def drop_lowest_n_for_types(self, n):
+        """
+        Exempts the lowest n assignments for each specified assignment type.
+
+        :param assignment_names: List of assignment types (names) to process.
+        :param n: Number of lowest scores to exempt per type.
+        """
+        from collections import defaultdict
+        import numpy as np
+
+        # Group assignments by name
+        assignment_groups = defaultdict(list)
+        for assignment in self.graded_assignments:
+            if assignment.name in self.dropped_assignments and not assignment.exempted:
+                assignment_groups[assignment.name].append(assignment)
+
+        # Iterate over each specified assignment type and drop the lowest n scores
+        for name, assignments in assignment_groups.items():
+            # Filter assignments that are not already exempted (NaN scores should not count)
+            valid_assignments = [a for a in assignments if not np.isnan(a.score)]
+
+            # Sort assignments by score in ascending order
+            valid_assignments.sort(key=lambda a: a.score)
+
+            # Exempt the lowest `n` assignments
+            for i in range(min(n, len(valid_assignments))):
+                valid_assignments[i].exempted = True
+        
+        self.calculate_grades()
 
     # def fill_grades_df(self, student_subs):
 
