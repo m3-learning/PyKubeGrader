@@ -330,7 +330,7 @@ class FastAPINotebookBuilder:
         return original_list[:index] + insert_list + original_list[index:]
 
     @staticmethod
-    def add_import_statements_to_tests(cell_source: list[str], require_key:bool = False, **kwargs) -> list[str]:
+    def add_import_statements_to_tests(cell_source: list[str], require_key:bool = False, assignment_tag = None) -> list[str]:
         """
         Adds the necessary import statements to the first cell of the notebook.
         """
@@ -353,7 +353,7 @@ class FastAPINotebookBuilder:
 
         if require_key:
             imports.append(
-                "from pykubegrader.tokens.validate_token import validate_token\nvalidate_token()\n"
+                f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment='{assignment_tag}')\n"
             )
 
         for i, line in enumerate(cell_source):
