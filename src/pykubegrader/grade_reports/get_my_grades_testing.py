@@ -114,7 +114,12 @@ assignment_type_list = [
 #     ("quiz", 3): lambda score: score * 1.10,  # Example: Boost Quiz in Week 3 by 10%
 #     ("homework", 5): lambda score: min(score + 5, 100),  # Example: Add 5 points to Homework in Week 5
 # }
-custom_grade_adjustments = {("quiz", 3): lambda score: "Exempt"}
+
+custom_grade_adjustments = {
+    ("lecture", 3): lambda score: 100.0 if score > 0 else 0.0,
+    ("lecture", 4): lambda score: 100.0 if score > 0 else 0.0,
+    ("lecture", 5): lambda score: 100.0 if score > 0 else 0.0,
+}
 
 globally_exempted_assignments = [
     ("readings", 6),
@@ -146,6 +151,8 @@ dropped_assignments = [
     "labattendance",
 ]
 
+optional_drop_week = [1]
+
 ##### END CONFIGURATION #####
 
 
@@ -158,6 +165,7 @@ class GradeReport:
         self.aliases = aliases
         self.globally_exempted_assignments = globally_exempted_assignments
         self.dropped_assignments = dropped_assignments
+        self.optional_drop_week = optional_drop_week
 
         self.assignments, self.student_subs = get_assignments_submissions()
 
@@ -208,7 +216,9 @@ class GradeReport:
             self.graded_assignment_constructor(assignment_type)
 
     def graded_assignment_constructor(self, assignment_type, **kwargs):
-        custom_func = custom_grade_adjustments.get((assignment_type.name, None), None)
+        custom_func = custom_grade_adjustments.get(
+            (assignment_type.name, kwargs.get("week", None)), None
+        )
 
         filtered_assignments = self.get_assignment(
             kwargs.get("week", None), assignment_type.name
@@ -359,11 +369,12 @@ class GradeReport:
             axis=0, skipna=True
         )
 
-    def drop_lowest_n_for_types(self, n):
+    def drop_lowest_n_for_types(self, n, assignments_=None):
         """
         Exempts the lowest n assignments for each specified assignment type.
+        If the lowest dropped score is from week 1, an additional lowest score is dropped.
 
-        :param assignment_names: List of assignment types (names) to process.
+        :param assignments_: List of assignment types (names) to process.
         :param n: Number of lowest scores to exempt per type.
         """
         from collections import defaultdict
@@ -372,8 +383,12 @@ class GradeReport:
         # Group assignments by name
         assignment_groups = defaultdict(list)
         for assignment in self.graded_assignments:
-            if assignment.name in self.dropped_assignments and not assignment.exempted:
-                assignment_groups[assignment.name].append(assignment)
+            if assignments_ is None:
+                if assignment.name in self.dropped_assignments and not assignment.exempted:
+                    assignment_groups[assignment.name].append(assignment)
+            else:
+                if assignment.name in assignments_ and not assignment.exempted:
+                    assignment_groups[assignment.name].append(assignment)
 
         # Iterate over each specified assignment type and drop the lowest n scores
         for name, assignments in assignment_groups.items():
@@ -384,9 +399,19 @@ class GradeReport:
             valid_assignments.sort(key=lambda a: a.score)
 
             # Exempt the lowest `n` assignments
+            dropped = []
             for i in range(min(n, len(valid_assignments))):
                 valid_assignments[i].exempted = True
-        
+                dropped.append(valid_assignments[i])
+
+            # Check if the lowest dropped assignment is from week 1
+            if dropped and any(a.week in self.optional_drop_week for a in dropped):
+                # Find the next lowest non-exempted assignment and drop it
+                for a in valid_assignments:
+                    if not a.exempted:
+                        a.exempted = True
+                        break
+
         self.calculate_grades()
 
     # def fill_grades_df(self, student_subs):
