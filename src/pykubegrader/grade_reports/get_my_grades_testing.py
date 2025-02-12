@@ -48,8 +48,11 @@ class Assignment(assignment_type):
             self.score = np.nan
             return self.score
         elif submission is not None:
+            
+            # deal with incomplete submissions
             score_ = self.grade_adjustment(submission)
 
+                
             # Update the score if the new score is higher
             if score_ > self.score:
                 self.score = score_
@@ -241,7 +244,7 @@ class GradeReport:
             filtered_submission = self.filter_submissions(
                 assignment.week, assignment.name
             )
-
+            
             if filtered_submission:
                 for submission in filtered_submission:
                     assignment.update_score(submission)
@@ -271,17 +274,31 @@ class GradeReport:
             assignment_type.lower(), assignment_type.lower()
         )
 
-        # Filter the assignments based on the week number and normalized assignment type
-        filtered = [
-            assignment
-            for assignment in self.student_subs
-            if assignment["week_number"] == week_number
-            and self.aliases.get(
-                assignment["assignment_type"].lower(),
-                assignment["assignment_type"].lower(),
-            )
-            == normalized_type
-        ]
+        if week_number:
+            # Filter the assignments based on the week number and normalized assignment type
+            filtered = [
+                assignment
+                for assignment in self.student_subs
+                if assignment["week_number"] == week_number
+                and self.aliases.get(
+                    assignment["assignment_type"].lower(),
+                    assignment["assignment_type"].lower(),
+                )
+                == normalized_type
+            ]
+
+        # If week_number is None, filter based on the normalized assignment type only
+        else:
+            # Filter the assignments based on the normalized assignment type
+            filtered = [
+                assignment
+                for assignment in self.student_subs
+                if self.aliases.get(
+                    assignment["assignment_type"].lower(),
+                    assignment["assignment_type"].lower(),
+                )
+                == normalized_type
+            ]
 
         return filtered
 
@@ -295,7 +312,7 @@ class GradeReport:
         filtered = [
             assignment
             for assignment in self.assignments
-            if assignment["week_number"] == week_number
+            if (assignment["week_number"] == week_number or week_number is None)
             and self.aliases.get(
                 assignment["assignment_type"].lower(),
                 assignment["assignment_type"].lower(),
@@ -310,7 +327,7 @@ class GradeReport:
             filter(
                 lambda a: isinstance(a, Assignment)
                 and a.name == assignment_type
-                and a.week == week_number,
+                and (week_number is None or a.week == week_number),
                 self.graded_assignments,
             )
         )
