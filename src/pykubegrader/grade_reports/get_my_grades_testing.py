@@ -14,18 +14,32 @@ import numpy as np
 
 
 class assignment_type:
-
-    def __init__(self, name, weekly, weight):
+    """ Base class for assignment types."""
+    def __init__(self, name:str, weekly:bool, weight:float):
+        """Initializes an instance of the assignment_type class.
+        Args:
+            name (str): The name of the assignment.
+            weekly (bool): Indicates if the assignment is weekly.
+            weight (float): The weight of the assignment in the overall grade."""
         self.name = name
         self.weekly = weekly
         self.weight = weight
 
 
 class Assignment(assignment_type):
-
+    """ Class for storing and updating assignment scores."""
     def __init__(
-        self, name, weekly, weight, score, grade_adjustment_func=None, **kwargs
+        self, name:str, weekly:bool, weight:float, score:float, grade_adjustment_func=None, **kwargs
     ):
+        """Initializes an instance of the Assignment class.
+
+        Args:
+            name (str): The name of the assignment.
+            weekly (bool):  Indicates if the assignment is weekly.
+            weight (float): The weight of the assignment in the overall grade.
+            score (float): The current score of the assignment.
+            grade_adjustment_func (optional): Used to calculate the grade in the case of late or exempted submissions. Defaults to None.
+        """
         super().__init__(name, weekly, weight)
         self.score = score
         self.week = kwargs.get("week", None)
@@ -40,10 +54,21 @@ class Assignment(assignment_type):
         self.grade_adjustment_func = grade_adjustment_func
 
     def add_exempted_students(self, students):
+        """Add students to the exempted list.
+        Args:
+            students (list): List of student IDs to exempt from the assignment.
+        """
         self.students_exempted.extend(students)
 
     def update_score(self, submission=None):
+        """Update the score of the assignment based on the submission.
 
+        Args:
+            submission (dict, optional): Defaults to None.
+
+        Returns:
+            float: Adjusted submission score
+        """
         if self.exempted:
             self.score = np.nan
             return self.score
@@ -61,7 +86,12 @@ class Assignment(assignment_type):
             return self.score
 
     def grade_adjustment(self, submission):
-        """Apply the adjustment function if provided."""
+        """Apply the adjustment function if provided.
+        Args:
+            submission (dict): Submission data.
+        Returns:
+            float: Score adjusted for lateness or exemptions. If none are present, returns 0.
+        """
 
         score = submission["raw_score"]
         entry_date = parser.parse(submission["timestamp"])
@@ -157,8 +187,14 @@ optional_drop_week = [1]
 
 
 class GradeReport:
-
+    """Class to generate a grade report for a course and perform grade calculations for each student.
+    """
     def __init__(self, start_date="2025-01-06", verbose=True):
+        """Initializes an instance of the GradeReport class.
+        Args:
+            start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
+            verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
+        """
         self.start_date = start_date
         self.verbose = verbose
         self.assignment_type_list = assignment_type_list
@@ -178,10 +214,16 @@ class GradeReport:
         self._update_running_avg()
 
     def grade_report(self):
+        """Generates a grade report for the course.
+        Returns:
+            pd.DataFrame: A DataFrame containing the grade report or weekly grades only.
+        """
         self._update_running_avg()
         return self.weekly_grades_df
 
     def update_weekly_table(self):
+        """Updates the weekly grades table with the calculated scores.
+        """
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
@@ -189,7 +231,8 @@ class GradeReport:
                 )
 
     def update_global_exempted_assignments(self):
-
+        """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass.
+        """
         for assignment_type, week in self.globally_exempted_assignments:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
@@ -209,10 +252,14 @@ class GradeReport:
         non_weekly_assignments = self.get_non_weekly_assignments()
 
         for assignment_type in non_weekly_assignments:
-
             self.graded_assignment_constructor(assignment_type)
 
-    def graded_assignment_constructor(self, assignment_type, **kwargs):
+    def graded_assignment_constructor(self, assignment_type:str, **kwargs):
+        """Constructs a graded assignment object and appends it to the graded_assignments list.
+
+        Args:
+            assignment_type (str): Type of assigment. Options: readings, lecture, practicequiz, quiz, homework, lab, labattendance, practicemidterm, midterm, practicefinal, final.
+        """
         custom_func = custom_grade_adjustments.get(
             (assignment_type.name, kwargs.get("week", None)), None
         )
@@ -235,7 +282,10 @@ class GradeReport:
         self.graded_assignments.append(new_assignment)
 
     def calculate_grades(self):
-
+        """Calculates the grades for each student based on the graded assignments.
+        If there are filtered assignments, the score is updated based on the submission.
+        Otherwise, 
+        """
         for assignment in self.graded_assignments:
 
             filtered_submission = self.filter_submissions(
