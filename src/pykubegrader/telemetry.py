@@ -296,7 +296,7 @@ def upload_execution_log() -> None:
 #
 
 
-def get_assignments_submissions():
+def get_assignments_submissions(params=None):
     if not student_user or not student_pw or not api_base_url:
         raise ValueError("Necessary environment variables not set")
     from_hostname = socket.gethostname().removeprefix("jupyter-")
@@ -304,7 +304,7 @@ def get_assignments_submissions():
     if from_hostname != from_env:
         raise ValueError("Problem with JupyterHub username")
     print(from_env)
-    params = {"username": from_env}
+    if not params: params = {"username": from_env}
     # get submission information
     res = requests.get(
         url=api_base_url.rstrip("/") + "/my-grades-testing",
