@@ -523,7 +523,7 @@ class GradeReport:
 #################################################
 # Class Grades
 #################################################
-from pykubegrader.telemetry import get_all_students
+from ..telemetry import get_all_students
 from build.passwords import password, user
 import tqdm
 class ClassGradeReport():
