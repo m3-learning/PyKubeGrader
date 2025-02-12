@@ -250,6 +250,21 @@ class GradeReport:
             else:
                 assignment.update_score()
 
+    def compute_final_average(self):
+        """
+        Computes the final average by combining the running average from weekly assignments 
+        and the midterm/final exam scores.
+        """
+
+        # Extract running average from the weekly table
+        self.final_grades = self.weekly_grades_df.loc["Running Avg"]
+
+        for assignment in self.graded_assignments:
+            if not assignment.weekly:
+                self.final_grades[f"{assignment.name}"] = assignment.score
+
+        return self.final_grades
+
     def filter_submissions(self, week_number, assignment_type):
         # Normalize the assignment type using aliases
         normalized_type = self.aliases.get(
