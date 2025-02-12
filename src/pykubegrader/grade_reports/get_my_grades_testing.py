@@ -1,6 +1,7 @@
 from pykubegrader.telemetry import get_assignments_submissions, get_all_students
 from dateutil import parser
 from pykubegrader.graders.late_assignments import calculate_late_submission
+from collections import defaultdict
 
 import pandas as pd
 from datetime import datetime
@@ -14,8 +15,9 @@ import numpy as np
 
 
 class assignment_type:
-    """ Base class for assignment types."""
-    def __init__(self, name:str, weekly:bool, weight:float):
+    """Base class for assignment types."""
+
+    def __init__(self, name: str, weekly: bool, weight: float):
         """Initializes an instance of the assignment_type class.
         Args:
             name (str): The name of the assignment.
@@ -27,9 +29,16 @@ class assignment_type:
 
 
 class Assignment(assignment_type):
-    """ Class for storing and updating assignment scores."""
+    """Class for storing and updating assignment scores."""
+
     def __init__(
-        self, name:str, weekly:bool, weight:float, score:float, grade_adjustment_func=None, **kwargs
+        self,
+        name: str,
+        weekly: bool,
+        weight: float,
+        score: float,
+        grade_adjustment_func=None,
+        **kwargs,
     ):
         """Initializes an instance of the Assignment class.
 
@@ -73,11 +82,10 @@ class Assignment(assignment_type):
             self.score = np.nan
             return self.score
         elif submission is not None:
-            
+
             # deal with incomplete submissions
             score_ = self.grade_adjustment(submission)
 
-                
             # Update the score if the new score is higher
             if score_ > self.score:
                 self.score = score_
@@ -192,8 +200,8 @@ exclude_from_running_avg = ["final"]
 
 
 class GradeReport:
-    """Class to generate a grade report for a course and perform grade calculations for each student.
-    """
+    """Class to generate a grade report for a course and perform grade calculations for each student."""
+
     def __init__(self, start_date="2025-01-06", verbose=True):
         """Initializes an instance of the GradeReport class.
         Args:
@@ -220,7 +228,7 @@ class GradeReport:
         self._calculate_final_average()
 
     def _calculate_final_average(self):
-        """Calculates the final average for the course and creates breakdowns for each assignment type. 
+        """Calculates the final average for the course and creates breakdowns for each assignment type.
         Sets class attributes `self.final_grade` for final grade and 'self.weighted_average_grades' for weighted average grades dataframe.
         """
         total_percentage = 1
@@ -231,13 +239,19 @@ class GradeReport:
 
             if assignment_type.name in exclude_from_running_avg:
                 total_percentage -= assignment_type.weight
-                
+
             score_earned += assignment_type.weight * df_[assignment_type.name]
-            
+
         self.final_grade = score_earned / total_percentage
         self.weighted_average_grades = pd.concat(
-            [ pd.DataFrame(self.final_grades),
-              pd.DataFrame({'Running Avg':[self.final_grade]}, index=['Weighted Average Grade']) ] )
+            [
+                pd.DataFrame(self.final_grades),
+                pd.DataFrame(
+                    {"Running Avg": [self.final_grade]},
+                    index=["Weighted Average Grade"],
+                ),
+            ]
+        )
 
     def grade_report(self):
         """Generates a grade report for the course.
@@ -248,8 +262,7 @@ class GradeReport:
         return self.weekly_grades_df
 
     def update_weekly_table(self):
-        """Updates the weekly grades table with the calculated scores.
-        """
+        """Updates the weekly grades table with the calculated scores."""
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
@@ -257,8 +270,7 @@ class GradeReport:
                 )
 
     def update_global_exempted_assignments(self):
-        """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass.
-        """
+        """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass."""
         for assignment_type, week in self.globally_exempted_assignments:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
@@ -280,7 +292,7 @@ class GradeReport:
         for assignment_type in non_weekly_assignments:
             self.graded_assignment_constructor(assignment_type)
 
-    def graded_assignment_constructor(self, assignment_type:str, **kwargs):
+    def graded_assignment_constructor(self, assignment_type: str, **kwargs):
         """Constructs a graded assignment object and appends it to the graded_assignments list.
 
         Args:
@@ -328,7 +340,7 @@ class GradeReport:
 
     def compute_final_average(self):
         """
-        Computes the final average by combining the running average from weekly assignments 
+        Computes the final average by combining the running average from weekly assignments
         and the midterm/final exam scores.
         """
 
@@ -473,32 +485,40 @@ class GradeReport:
 
     def drop_lowest_n_for_types(self, n, assignments_=None):
         """
-        Exempts the lowest n assignments for each specified assignment type.
-        If the lowest dropped score is from week 1, an additional lowest score is dropped.
+        Drops the lowest `n` scores for each assignment type specified.
+        This method groups assignments by their name and drops the lowest `n` scores
+        for each group. If an assignment is already exempted (NaN scores), it will not
+        be considered for dropping. Additionally, if the lowest dropped assignment is
+        from a specified optional drop week, the next lowest non-exempted assignment
+        will be dropped instead.
 
-        :param assignments_: List of assignment types (names) to process.
-        :param n: Number of lowest scores to exempt per type.
+        Parameters:
+        -----------
+        n : int
+            The number of lowest scores to drop for each assignment type.
+        assignments_ : list of str, optional
+            A list of assignment names to consider for dropping scores. If None, all
+            assignments will be considered.
+
+        Returns:
+        --------
+        None
         """
-        from collections import defaultdict
-        import numpy as np
 
         # Group assignments by name
         assignment_groups = defaultdict(list)
         for assignment in self.graded_assignments:
-            if assignments_ is None:
-                if (
-                    assignment.name in self.dropped_assignments
-                    and not assignment.exempted
-                ):
-                    assignment_groups[assignment.name].append(assignment)
-            else:
-                if assignment.name in assignments_ and not assignment.exempted:
-                    assignment_groups[assignment.name].append(assignment)
+            if (
+                assignments_ is None or assignment.name in assignments_
+            ) and not assignment.exempted:
+                assignment_groups[assignment.name].append(assignment)
 
         # Iterate over each specified assignment type and drop the lowest n scores
         for name, assignments in assignment_groups.items():
             # Filter assignments that are not already exempted (NaN scores should not count)
-            valid_assignments = [a for a in assignments if not np.isnan(a.score)]
+            valid_assignments = [
+                a for a in assignments if a.score is not None and not np.isnan(a.score)
+            ]
 
             # Sort assignments by score in ascending order
             valid_assignments.sort(key=lambda a: a.score)
@@ -509,13 +529,12 @@ class GradeReport:
                 valid_assignments[i].exempted = True
                 dropped.append(valid_assignments[i])
 
-            # Check if the lowest dropped assignment is from week 1
+            # Check if the lowest dropped assignment is from an optional drop week
             if dropped and any(a.week in self.optional_drop_week for a in dropped):
                 # Find the next lowest non-exempted assignment and drop it
-                for a in valid_assignments:
-                    if not a.exempted:
-                        a.exempted = True
-                        break
+                remaining = [a for a in valid_assignments if not a.exempted]
+                if remaining:
+                    remaining[0].exempted = True  # Drop the next lowest non-exempted
 
         self.calculate_grades()
 
@@ -526,27 +545,30 @@ class GradeReport:
 from pykubegrader.telemetry import get_all_students
 from build.passwords import password, user
 import tqdm
-class ClassGradeReport():
-    
+
+
+class ClassGradeReport:
+
     def __init__(self):
-        self.student_list = get_all_students(user,password)
+        self.student_list = get_all_students(user, password)
         self.student_list.sort()
 
         self.setup_class_grades()
         self.fill_class_grades()
 
     def setup_class_grades(self):
-        self.all_student_grades_df = pd.DataFrame(np.nan, 
-                  index=self.student_list, 
-                  columns=[a.name for a in assignment_type_list]+['Weighted Average Grade'] )
+        self.all_student_grades_df = pd.DataFrame(
+            np.nan,
+            index=self.student_list,
+            columns=[a.name for a in assignment_type_list] + ["Weighted Average Grade"],
+        )
 
     def fill_class_grades(self):
         for student in tqdm.tqdm(self.student_list):
             report = GradeReport(params={"username": student})
-            weighted = report.weighted_average_grades.transpose()     
-            self.all_student_grades_df.loc[student] = weighted['Weighted Average Grade']
-    
-    
+            weighted = report.weighted_average_grades.transpose()
+            self.all_student_grades_df.loc[student] = weighted["Weighted Average Grade"]
+
     # def fill_grades_df(self, student_subs):
 
     # for assignment in assignments:
