@@ -1,4 +1,4 @@
-from pykubegrader.telemetry import get_assignments_submissions
+from pykubegrader.telemetry import get_assignments_submissions, get_all_students
 from dateutil import parser
 from pykubegrader.graders.late_assignments import calculate_late_submission
 
@@ -220,7 +220,9 @@ class GradeReport:
         self._calculate_final_average()
 
     def _calculate_final_average(self):
-
+        """Calculates the final average for the course and creates breakdowns for each assignment type. 
+        Sets class attributes `self.final_grade` for final grade and 'self.weighted_average_grades' for weighted average grades dataframe.
+        """
         total_percentage = 1
         df_ = self.compute_final_average()
         score_earned = 0
@@ -308,7 +310,7 @@ class GradeReport:
     def calculate_grades(self):
         """Calculates the grades for each student based on the graded assignments.
         If there are filtered assignments, the score is updated based on the submission.
-        Otherwise, 
+        Otherwise, check other adjustments.
         """
         for assignment in self.graded_assignments:
 
@@ -517,6 +519,34 @@ class GradeReport:
 
         self.calculate_grades()
 
+
+#################################################
+# Class Grades
+#################################################
+from pykubegrader.telemetry import get_all_students
+from build.passwords import password, user
+import tqdm
+class ClassGradeReport():
+    
+    def __init__(self):
+        self.student_list = get_all_students(user,password)
+        self.student_list.sort()
+
+        self.setup_class_grades()
+        self.fill_class_grades()
+
+    def setup_class_grades(self):
+        self.all_student_grades_df = pd.DataFrame(np.nan, 
+                  index=self.student_list, 
+                  columns=[a.name for a in assignment_type_list]+['Weighted Average Grade'] )
+
+    def fill_class_grades(self):
+        for student in tqdm.tqdm(self.student_list):
+            report = GradeReport(params={"username": student})
+            weighted = report.weighted_average_grades.transpose()     
+            self.all_student_grades_df.loc[student] = weighted['Weighted Average Grade']
+    
+    
     # def fill_grades_df(self, student_subs):
 
     # for assignment in assignments:
