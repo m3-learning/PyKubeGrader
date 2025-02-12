@@ -73,8 +73,11 @@ class Assignment(assignment_type):
             self.score = np.nan
             return self.score
         elif submission is not None:
+            
+            # deal with incomplete submissions
             score_ = self.grade_adjustment(submission)
 
+                
             # Update the score if the new score is higher
             if score_ > self.score:
                 self.score = score_
@@ -134,9 +137,9 @@ assignment_type_list = [
     assignment_type("lab", True, 0.15),
     assignment_type("labattendance", True, 0.05),
     assignment_type("practicemidterm", False, 0.015),
-    assignment_type("midterm", False, 0.015),
+    assignment_type("midterm", False, 0.15),
     assignment_type("practicefinal", False, 0.02),
-    assignment_type("final", False, 0.015),
+    assignment_type("final", False, 0.2),
 ]
 
 # Dictionary to store custom grading functions for specific assignments
@@ -183,6 +186,8 @@ dropped_assignments = [
 
 optional_drop_week = [1]
 
+exclude_from_running_avg = ["final"]
+
 ##### END CONFIGURATION #####
 
 
@@ -211,7 +216,26 @@ class GradeReport:
         self.calculate_grades()
         self.drop_lowest_n_for_types(1)
         self.update_weekly_table()
-        self._update_running_avg()
+        self._build_running_avg()
+        self._calculate_final_average()
+
+    def _calculate_final_average(self):
+
+        total_percentage = 1
+        df_ = self.compute_final_average()
+        score_earned = 0
+
+        for assignment_type in self.assignment_type_list:
+
+            if assignment_type.name in exclude_from_running_avg:
+                total_percentage -= assignment_type.weight
+                
+            score_earned += assignment_type.weight * df_[assignment_type.name]
+            
+        self.final_grade = score_earned / total_percentage
+        self.weighted_average_grades = pd.concat(
+            [ pd.DataFrame(self.final_grades),
+              pd.DataFrame({'Running Avg':[self.final_grade]}, index=['Weighted Average Grade']) ] )
 
     def grade_report(self):
         """Generates a grade report for the course.
@@ -321,17 +345,31 @@ class GradeReport:
             assignment_type.lower(), assignment_type.lower()
         )
 
-        # Filter the assignments based on the week number and normalized assignment type
-        filtered = [
-            assignment
-            for assignment in self.student_subs
-            if assignment["week_number"] == week_number
-            and self.aliases.get(
-                assignment["assignment_type"].lower(),
-                assignment["assignment_type"].lower(),
-            )
-            == normalized_type
-        ]
+        if week_number:
+            # Filter the assignments based on the week number and normalized assignment type
+            filtered = [
+                assignment
+                for assignment in self.student_subs
+                if assignment["week_number"] == week_number
+                and self.aliases.get(
+                    assignment["assignment_type"].lower(),
+                    assignment["assignment_type"].lower(),
+                )
+                == normalized_type
+            ]
+
+        # If week_number is None, filter based on the normalized assignment type only
+        else:
+            # Filter the assignments based on the normalized assignment type
+            filtered = [
+                assignment
+                for assignment in self.student_subs
+                if self.aliases.get(
+                    assignment["assignment_type"].lower(),
+                    assignment["assignment_type"].lower(),
+                )
+                == normalized_type
+            ]
 
         return filtered
 
@@ -345,7 +383,7 @@ class GradeReport:
         filtered = [
             assignment
             for assignment in self.assignments
-            if assignment["week_number"] == week_number
+            if (assignment["week_number"] == week_number or week_number is None)
             and self.aliases.get(
                 assignment["assignment_type"].lower(),
                 assignment["assignment_type"].lower(),
@@ -360,7 +398,7 @@ class GradeReport:
             filter(
                 lambda a: isinstance(a, Assignment)
                 and a.name == assignment_type
-                and a.week == week_number,
+                and (week_number is None or a.week == week_number),
                 self.graded_assignments,
             )
         )
@@ -423,7 +461,7 @@ class GradeReport:
         new_weekly_grades.set_index("inds", inplace=True)
         self.weekly_grades_df = new_weekly_grades
 
-    def _update_running_avg(self):
+    def _build_running_avg(self):
         """
         Subfunction to compute and update the Running Avg row, handling NaNs.
         """
