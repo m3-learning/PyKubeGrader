@@ -107,9 +107,9 @@ assignment_type_list = [
     assignment_type("lab", True, 0.15),
     assignment_type("labattendance", True, 0.05),
     assignment_type("practicemidterm", False, 0.015),
-    assignment_type("midterm", False, 0.015),
+    assignment_type("midterm", False, 0.15),
     assignment_type("practicefinal", False, 0.02),
-    assignment_type("final", False, 0.015),
+    assignment_type("final", False, 0.2),
 ]
 
 # Dictionary to store custom grading functions for specific assignments
@@ -156,6 +156,8 @@ dropped_assignments = [
 
 optional_drop_week = [1]
 
+exclude_from_running_avg = ["final"]
+
 ##### END CONFIGURATION #####
 
 
@@ -178,10 +180,26 @@ class GradeReport:
         self.calculate_grades()
         self.drop_lowest_n_for_types(1)
         self.update_weekly_table()
-        self._update_running_avg()
+        self._build_running_avg()
+        self._calculate_final_average()
+
+    def _calculate_final_average(self):
+
+        total_percentage = 1
+        df_ = self.compute_final_average()
+        score_earned = 0
+
+        for assignment_type in self.assignment_type_list:
+
+            if assignment_type.name in exclude_from_running_avg:
+                total_percentage -= assignment_type.weight
+                
+            score_earned += assignment_type.weight * df_[assignment_type.name]
+            
+        self.final_grade = score_earned / total_percentage
 
     def grade_report(self):
-        self._update_running_avg()
+        self._build_running_avg()
         return self.weekly_grades_df
 
     def update_weekly_table(self):
@@ -244,7 +262,7 @@ class GradeReport:
             filtered_submission = self.filter_submissions(
                 assignment.week, assignment.name
             )
-            
+
             if filtered_submission:
                 for submission in filtered_submission:
                     assignment.update_score(submission)
@@ -390,7 +408,7 @@ class GradeReport:
         new_weekly_grades.set_index("inds", inplace=True)
         self.weekly_grades_df = new_weekly_grades
 
-    def _update_running_avg(self):
+    def _build_running_avg(self):
         """
         Subfunction to compute and update the Running Avg row, handling NaNs.
         """
