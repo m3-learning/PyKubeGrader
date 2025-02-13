@@ -90,41 +90,57 @@ class Assignment(assignment_type):
         """
         self.students_exempted.extend(students)
 
+
     def update_score(self, submission=None):
-        """Update the score of the assignment based on the submission.
+        """Updates the assignment score based on the given submission.
+
+        This method adjusts the score using the `grade_adjustment` function if a submission
+        is provided. If the submission results in a higher score than the current score,
+        the assignment score is updated. If no submission is provided and the student is
+        not exempted, the score is set to zero. If the student is exempted, the score
+        is set to NaN.
 
         Args:
-            submission (dict, optional): Defaults to None.
+            submission (dict, optional): The submission data, expected to contain relevant
+                details for grading. Defaults to None.
 
         Returns:
-            float: Adjusted submission score
+            float: The updated assignment score. If exempted, returns NaN. If no submission
+                is provided, returns 0.
         """
         if self.exempted:
             self.score = np.nan
             return self.score
         elif submission is not None:
-
-            # deal with incomplete submissions
+            # Adjust the score based on submission
             score_ = self.grade_adjustment(submission)
 
-            # Update the score if the new score is higher
+            # Update the score only if the new score is higher
             if score_ > self.score:
                 self.score = score_
 
             return self.score
-        # sets the score to zero if not exempted and no submission
         else:
+            # Set the score to zero if not exempted and no submission
             self.score = 0
             return self.score
 
     def grade_adjustment(self, submission):
-        """Apply the adjustment function if provided.
-        Args:
-            submission (dict): Submission data.
-        Returns:
-            float: Score adjusted for lateness or exemptions. If none are present, returns 0.
-        """
+        """Applies adjustments to the submission score based on grading policies.
 
+        This method applies any provided grade adjustment function to the raw score. 
+        If no custom function is given, it determines the final score by considering 
+        lateness penalties based on the submission timestamp and due date.
+
+        Args:
+            submission (dict): A dictionary containing:
+                - `"raw_score"` (float): The initial unadjusted score.
+                - `"timestamp"` (str): The submission timestamp in a parseable format.
+
+        Returns:
+            float: The adjusted score, incorporating lateness penalties if applicable. 
+                Returns 0 for late submissions if no late adjustment policy is defined.
+        """
         score = submission["raw_score"]
         entry_date = parser.parse(submission["timestamp"])
 
@@ -132,8 +148,7 @@ class Assignment(assignment_type):
             return self.grade_adjustment_func(score)
         else:
             if self.late_adjustment:
-
-                # Convert to datetime object
+                # Convert due date to datetime object
                 due_date = datetime.fromisoformat(self.due_date.replace("Z", "+00:00"))
 
                 late_modifier = calculate_late_submission(
@@ -141,15 +156,12 @@ class Assignment(assignment_type):
                     entry_date.strftime("%Y-%m-%d %H:%M:%S"),
                 )
 
-                # return score for on-time submissions
+                # Apply late modifier and normalize score
                 return (score / self.max_score) * late_modifier
-
             else:
-
-                # return score for on-time submissions
+                # Return normalized score if on time
                 if entry_date < self.due_date:
                     return score / self.max_score
-
-                # zero score for late submissions w/o late adjustment
+                # Assign zero score for late submissions without a late adjustment policy
                 else:
                     return 0
