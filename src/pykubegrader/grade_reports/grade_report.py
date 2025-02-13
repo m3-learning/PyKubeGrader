@@ -220,10 +220,7 @@ class GradeReport:
             assignment
             for assignment in self.assignments
             if (assignment["week_number"] == week_number or week_number is None)
-            and self.aliases.get(
-                assignment["assignment_type"].lower(),
-                assignment["assignment_type"].lower(),
-            )
+            and assignment["assignment_type"].lower()
             in normalized_type
         ]
 
