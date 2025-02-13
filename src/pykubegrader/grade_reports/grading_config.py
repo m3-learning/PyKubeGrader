@@ -60,6 +60,9 @@ dropped_assignments = [
     "labattendance",
 ]
 
+# TAs and other users to skip in class grade report
+skipped_users = ['JCA', 'jca92', 'cnp68', 'dak329', 'xz498', 'ag4328', 'rg897', 'jce63', 'qt49']
+
 # Optional drop week, a list of weeks where the lowest score will be dropped
 optional_drop_week = [1]
 

@@ -4,8 +4,10 @@
 # except:  # noqa: E722
 #     print("Passwords not found, cannot access database")
 
-from pykubegrader.grade_reports.grading_config import assignment_type_list
+from pykubegrader.grade_reports.grading_config import assignment_type_list, skipped_users
 from pykubegrader.grade_reports.grade_report import GradeReport
+from ..build.passwords import password, user
+from ..telemetry import get_all_students, get_assignments_submissions
 
 
 import os
@@ -62,10 +64,12 @@ class ClassGradeReport:
         self.password = password
         
         self.student_list = get_all_students(self.user, self.password)
+        self.student_list = list( set(self.student_list)-set(skipped_users) )
         self.student_list.sort()
 
         self.setup_class_grades()
         self.fill_class_grades()
+        self.get_class_stats()
         
 
     def setup_class_grades(self):
@@ -129,6 +133,10 @@ def get_all_students(user, password):
     # Input: List of players
     return [student["email"].split("@")[0] for student in res.json()]
 
+
+def get_class_stats(self):
+    # Calculate descriptive statistics
+    self.stats_df = self.all_student_grades_df.describe(include='all')
 
 def get_assignments_submissions(params=None):
     """
