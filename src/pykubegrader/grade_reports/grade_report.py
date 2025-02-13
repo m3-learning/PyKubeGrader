@@ -1,20 +1,18 @@
 from pykubegrader.telemetry import get_assignments_submissions
+from pykubegrader.grade_reports.assignments import Assignment
 from dateutil import parser
 from pykubegrader.graders.late_assignments import calculate_late_submission
 import pandas as pd
 from datetime import datetime
 import numpy as np
-import requests
-import os
-from requests import Response
-from requests.auth import HTTPBasicAuth
-from requests.exceptions import RequestException
+
 # from pykubegrader.telemetry import get_assignments_submissions
 from dateutil import parser
 from pykubegrader.graders.late_assignments import calculate_late_submission
 import pandas as pd
 from datetime import datetime
 import numpy as np
+
 
 class GradeReport:
     """Class to generate a grade report for a course and perform grade calculations for each student."""
@@ -50,7 +48,6 @@ class GradeReport:
         score_earned = 0
 
         for assignment_type in self.assignment_type_list:
-
             if assignment_type.name in exclude_from_running_avg:
                 total_percentage -= assignment_type.weight
 
@@ -98,7 +95,6 @@ class GradeReport:
 
         for assignment_type in weekly_assignments:
             for week in range(1, self.get_num_weeks() + 1):  # Weeks start at 1
-
                 self.graded_assignment_constructor(assignment_type, week=week)
 
         non_weekly_assignments = self.get_non_weekly_assignments()
@@ -139,7 +135,6 @@ class GradeReport:
         Otherwise,
         """
         for assignment in self.graded_assignments:
-
             filtered_submission = self.filter_submissions(
                 assignment.week, assignment.name
             )
@@ -243,7 +238,6 @@ class GradeReport:
         return max_score["max_score"]
 
     def determine_due_date(self, filtered_assignments):
-
         if not filtered_assignments:
             return None  # Return None if the list is empty
 
@@ -277,7 +271,6 @@ class GradeReport:
         return max_week_number
 
     def setup_grades_df(self):
-
         weekly_assignments = self.get_weekly_assignments()
         max_week_number = self.get_num_weeks()
         inds = [f"week{i + 1}" for i in range(max_week_number)] + ["Running Avg"]
@@ -344,9 +337,6 @@ class GradeReport:
                         break
 
         self.calculate_grades()
-
-
-
 
 
 class_grades = ClassGradeReport()
