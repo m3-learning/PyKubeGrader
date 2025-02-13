@@ -200,14 +200,16 @@ exclude_from_running_avg = ["final"]
 
 
 class GradeReport:
-    """Class to generate a grade report for a course and perform grade calculations for each student."""
-
-    def __init__(self, start_date="2025-01-06", verbose=True):
+    """Class to generate a grade report for a course and perform grade calculations for each student.
+    """
+    def __init__(self, start_date="2025-01-06", verbose=True,params=None):
         """Initializes an instance of the GradeReport class.
         Args:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
         """
+        self.assignments, self.student_subs = get_assignments_submissions(params=params)
+
         self.start_date = start_date
         self.verbose = verbose
         self.assignment_type_list = assignment_type_list
@@ -215,8 +217,6 @@ class GradeReport:
         self.globally_exempted_assignments = globally_exempted_assignments
         self.dropped_assignments = dropped_assignments
         self.optional_drop_week = optional_drop_week
-
-        self.assignments, self.student_subs = get_assignments_submissions()
 
         self.setup_grades_df()
         self.build_assignments()
@@ -228,9 +228,6 @@ class GradeReport:
         self._calculate_final_average()
 
     def _calculate_final_average(self):
-        """Calculates the final average for the course and creates breakdowns for each assignment type.
-        Sets class attributes `self.final_grade` for final grade and 'self.weighted_average_grades' for weighted average grades dataframe.
-        """
         total_percentage = 1
         df_ = self.compute_final_average()
         score_earned = 0
@@ -239,19 +236,13 @@ class GradeReport:
 
             if assignment_type.name in exclude_from_running_avg:
                 total_percentage -= assignment_type.weight
-
+                
             score_earned += assignment_type.weight * df_[assignment_type.name]
-
+            
         self.final_grade = score_earned / total_percentage
         self.weighted_average_grades = pd.concat(
-            [
-                pd.DataFrame(self.final_grades),
-                pd.DataFrame(
-                    {"Running Avg": [self.final_grade]},
-                    index=["Weighted Average Grade"],
-                ),
-            ]
-        )
+            [ pd.DataFrame(self.final_grades),
+              pd.DataFrame({'Running Avg':[self.final_grade]}, index=['Weighted Average Grade']) ] )
 
     def grade_report(self):
         """Generates a grade report for the course.
@@ -262,7 +253,8 @@ class GradeReport:
         return self.weekly_grades_df
 
     def update_weekly_table(self):
-        """Updates the weekly grades table with the calculated scores."""
+        """Updates the weekly grades table with the calculated scores.
+        """
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
@@ -270,7 +262,8 @@ class GradeReport:
                 )
 
     def update_global_exempted_assignments(self):
-        """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass."""
+        """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass.
+        """
         for assignment_type, week in self.globally_exempted_assignments:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
@@ -292,7 +285,7 @@ class GradeReport:
         for assignment_type in non_weekly_assignments:
             self.graded_assignment_constructor(assignment_type)
 
-    def graded_assignment_constructor(self, assignment_type: str, **kwargs):
+    def graded_assignment_constructor(self, assignment_type:str, **kwargs):
         """Constructs a graded assignment object and appends it to the graded_assignments list.
 
         Args:
@@ -322,7 +315,7 @@ class GradeReport:
     def calculate_grades(self):
         """Calculates the grades for each student based on the graded assignments.
         If there are filtered assignments, the score is updated based on the submission.
-        Otherwise, check other adjustments.
+        Otherwise, 
         """
         for assignment in self.graded_assignments:
 
@@ -340,7 +333,7 @@ class GradeReport:
 
     def compute_final_average(self):
         """
-        Computes the final average by combining the running average from weekly assignments
+        Computes the final average by combining the running average from weekly assignments 
         and the midterm/final exam scores.
         """
 
@@ -485,40 +478,32 @@ class GradeReport:
 
     def drop_lowest_n_for_types(self, n, assignments_=None):
         """
-        Drops the lowest `n` scores for each assignment type specified.
-        This method groups assignments by their name and drops the lowest `n` scores
-        for each group. If an assignment is already exempted (NaN scores), it will not
-        be considered for dropping. Additionally, if the lowest dropped assignment is
-        from a specified optional drop week, the next lowest non-exempted assignment
-        will be dropped instead.
+        Exempts the lowest n assignments for each specified assignment type.
+        If the lowest dropped score is from week 1, an additional lowest score is dropped.
 
-        Parameters:
-        -----------
-        n : int
-            The number of lowest scores to drop for each assignment type.
-        assignments_ : list of str, optional
-            A list of assignment names to consider for dropping scores. If None, all
-            assignments will be considered.
-
-        Returns:
-        --------
-        None
+        :param assignments_: List of assignment types (names) to process.
+        :param n: Number of lowest scores to exempt per type.
         """
+        from collections import defaultdict
+        import numpy as np
 
         # Group assignments by name
         assignment_groups = defaultdict(list)
         for assignment in self.graded_assignments:
-            if (
-                assignments_ is None or assignment.name in assignments_
-            ) and not assignment.exempted:
-                assignment_groups[assignment.name].append(assignment)
+            if assignments_ is None:
+                if (
+                    assignment.name in self.dropped_assignments
+                    and not assignment.exempted
+                ):
+                    assignment_groups[assignment.name].append(assignment)
+            else:
+                if assignment.name in assignments_ and not assignment.exempted:
+                    assignment_groups[assignment.name].append(assignment)
 
         # Iterate over each specified assignment type and drop the lowest n scores
         for name, assignments in assignment_groups.items():
             # Filter assignments that are not already exempted (NaN scores should not count)
-            valid_assignments = [
-                a for a in assignments if a.score is not None and not np.isnan(a.score)
-            ]
+            valid_assignments = [a for a in assignments if not np.isnan(a.score)]
 
             # Sort assignments by score in ascending order
             valid_assignments.sort(key=lambda a: a.score)
@@ -529,100 +514,45 @@ class GradeReport:
                 valid_assignments[i].exempted = True
                 dropped.append(valid_assignments[i])
 
-            # Check if the lowest dropped assignment is from an optional drop week
+            # Check if the lowest dropped assignment is from week 1
             if dropped and any(a.week in self.optional_drop_week for a in dropped):
                 # Find the next lowest non-exempted assignment and drop it
-                remaining = [a for a in valid_assignments if not a.exempted]
-                if remaining:
-                    remaining[0].exempted = True  # Drop the next lowest non-exempted
+                for a in valid_assignments:
+                    if not a.exempted:
+                        a.exempted = True
+                        break
 
         self.calculate_grades()
 
 
-#################################################
-# Class Grades
-#################################################
+
+#############  Class Grades  #######################
+
+
 from ..telemetry import get_all_students
 from build.passwords import password, user
 import tqdm
-
-
-class ClassGradeReport:
-
+class ClassGradeReport():
+    
     def __init__(self):
-        self.student_list = get_all_students(user, password)
+        self.student_list = get_all_students(user,password)
         self.student_list.sort()
 
         self.setup_class_grades()
         self.fill_class_grades()
 
     def setup_class_grades(self):
-        self.all_student_grades_df = pd.DataFrame(
-            np.nan,
-            index=self.student_list,
-            columns=[a.name for a in assignment_type_list] + ["Weighted Average Grade"],
-        )
+        self.all_student_grades_df = pd.DataFrame(np.nan, dtype=float,
+                  index=self.student_list, 
+                  columns=[a.name for a in assignment_type_list]+['Weighted Average Grade'], )
 
+    def update_student_grade(self, student):
+        report = GradeReport(params={"username": student})
+        row_series = report.weighted_average_grades.transpose().iloc[0]  # example
+        row_series = row_series.reindex(self.all_student_grades_df.columns)
+        self.all_student_grades_df.loc[student] = row_series
+    
     def fill_class_grades(self):
         for student in tqdm.tqdm(self.student_list):
-            report = GradeReport(params={"username": student})
-            weighted = report.weighted_average_grades.transpose()
-            self.all_student_grades_df.loc[student] = weighted["Weighted Average Grade"]
-
-    # def fill_grades_df(self, student_subs):
-
-    # for assignment in assignments:
-
-    #     # get the assignment from all submissions
-    #     subs = [ sub for sub in student_subs if (sub['assignment_type']==assignment['assignment_type']) and (sub['week_number']==assignment['week_number']) ]
-    #     # print(assignment, subs)
-    #     # print(assignment)
-    #     # print(student_subs[:5])
-    #     if assignment["assignment_type"] == "lecture":
-    #         if sum([sub["raw_score"] for sub in subs]) > 0: # TODO: good way to check for completion?
-    #             new_weekly_grades.loc[f"week{assignment['week_number']}", "lecture"] = 1.0
-    #     if assignment["assignment_type"] == "final":
-    #         continue
-    #     if assignment["assignment_type"] == "midterm":
-    #         continue
-    #     if len(subs) == 0:
-    #         # print(assignment['title'], 0, assignment['max_score'])
-    #         continue
-    #     elif len(subs) == 1:
-    #         grade = subs[0]["raw_score"] / assignment["max_score"]
-    #         # print(assignment['title'], sub['raw_score'], assignment['max_score'])
-    #     else:
-    #         # get due date from assignment
-    #         due_date = parser.parse(assignment["due_date"])
-    #         grades = []
-    #         for sub in subs:
-    #             entry_date = parser.parse(sub["timestamp"])
-    #             if entry_date <= due_date:
-    #                 grades.append(sub["raw_score"])
-    #             else:
-    #                 grades.append(
-    #                     calculate_late_submission(
-    #                         due_date.strftime("%Y-%m-%d %H:%M:%S"),
-    #                         entry_date.strftime("%Y-%m-%d %H:%M:%S"),
-    #                     )
-    #                 )
-    #         # print(assignment['title'], grades, assignment['max_score'])
-    #         grade = max(grades) / assignment["max_score"]
-
-    #     # fill out new df with max
-    #     new_weekly_grades.loc[
-    #         f"week{assignment['week_number']}", assignment["assignment_type"]
-    #     ] = grade
-
-    # # Merge different names
-    # new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(axis=1)
-    # new_weekly_grades["practicequiz"] = new_weekly_grades[["practicequiz", "practice-quiz"]].max(axis=1)
-    # new_weekly_grades["practicemidterm"] = new_weekly_grades[["practicemidterm", "PracticeMidterm"]].max(axis=1)
-    # new_weekly_grades.drop(
-    #     ["attendance", "practice-quiz", "test", "PracticeMidterm"],
-    #     axis=1,
-    #     inplace=True,
-    #     errors="ignore",
-    # )
-
-    # return new_weekly_grades
+            self.update_student_grade(student)
+            
