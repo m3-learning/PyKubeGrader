@@ -1,3 +1,9 @@
+import numpy as np
+from dateutil import parser
+from datetime import datetime
+from pykubegrader.graders.late_assignments import calculate_late_submission
+
+
 class assignment_type:
     """
     Base class for assignment types.
@@ -38,10 +44,10 @@ class Assignment(assignment_type):
     Methods:
         add_exempted_students(students):
             Add students to the exempted list.
-            
+
         update_score(submission=None):
             Update the score of the assignment based on the submission.
-            
+
         grade_adjustment(submission):
             Apply the adjustment function if provided.
     """
@@ -90,7 +96,6 @@ class Assignment(assignment_type):
         """
         self.students_exempted.extend(students)
 
-
     def update_score(self, submission=None):
         """Updates the assignment score based on the given submission.
 
@@ -128,17 +133,17 @@ class Assignment(assignment_type):
     def grade_adjustment(self, submission):
         """Applies adjustments to the submission score based on grading policies.
 
-        This method applies any provided grade adjustment function to the raw score. 
-        If no custom function is given, it determines the final score by considering 
+        This method applies any provided grade adjustment function to the raw score.
+        If no custom function is given, it determines the final score by considering
         lateness penalties based on the submission timestamp and due date.
 
         Args:
             submission (dict): A dictionary containing:
                 - `"raw_score"` (float): The initial unadjusted score.
-                - `"timestamp"` (str): The submission timestamp in a parseable format.
+                - `"timestamp"` (str): The submission timestamp in a parsable format.
 
         Returns:
-            float: The adjusted score, incorporating lateness penalties if applicable. 
+            float: The adjusted score, incorporating lateness penalties if applicable.
                 Returns 0 for late submissions if no late adjustment policy is defined.
         """
         score = submission["raw_score"]
