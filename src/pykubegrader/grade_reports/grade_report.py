@@ -47,6 +47,7 @@ class GradeReport:
         self.update_global_exempted_assignments()
         self.calculate_grades()
         self.update_assignments_not_due_yet()
+        self.calculate_grades()
         self.drop_lowest_n_for_types(1)
         self.update_weekly_table()
         self._build_running_avg()
