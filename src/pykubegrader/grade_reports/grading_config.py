@@ -1,4 +1,4 @@
-from pykubegrader.grade_reports.assignment_type import assignment_type
+from pykubegrader.grade_reports.assignments import assignment_type
 
 # Assignment types, weekly, and weight
 # Total should add up to 1.0
