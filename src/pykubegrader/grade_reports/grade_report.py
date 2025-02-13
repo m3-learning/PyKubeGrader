@@ -1,8 +1,8 @@
 # TODO: if not due yet and score is 0, make NAN, fix the rendering
 
-from pykubegrader.telemetry import get_assignments_submissions
-from pykubegrader.grade_reports.assignments import Assignment
-from pykubegrader.grade_reports.grading_config import (
+from ..telemetry import get_assignments_submissions
+from assignments import Assignment
+from grading_config import (
     assignment_type_list,
     aliases,
     globally_exempted_assignments,
