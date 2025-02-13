@@ -1,27 +1,19 @@
 from pykubegrader.telemetry import get_assignments_submissions
 from dateutil import parser
 from pykubegrader.graders.late_assignments import calculate_late_submission
-
 import pandas as pd
 from datetime import datetime
-
 import numpy as np
-import tqdm
-
-
 import requests
 import os
 from requests import Response
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import RequestException
-
 # from pykubegrader.telemetry import get_assignments_submissions
 from dateutil import parser
 from pykubegrader.graders.late_assignments import calculate_late_submission
-
 import pandas as pd
 from datetime import datetime
-
 import numpy as np
 
 class GradeReport:
@@ -354,36 +346,7 @@ class GradeReport:
         self.calculate_grades()
 
 
-# from pykubegrader.telemetry import get_all_students
-# from build.passwords import password, user # for use in final version
 
-
-class ClassGradeReport:
-
-    def __init__(self):
-        self.student_list = get_all_students(user, password)
-        self.student_list.sort()
-
-        self.setup_class_grades()
-        self.fill_class_grades()
-
-    def setup_class_grades(self):
-        self.all_student_grades_df = pd.DataFrame(
-            np.nan,
-            dtype=float,
-            index=self.student_list,
-            columns=[a.name for a in assignment_type_list] + ["Weighted Average Grade"],
-        )
-
-    def update_student_grade(self, student):
-        report = GradeReport(params={"username": student})
-        row_series = report.weighted_average_grades.transpose().iloc[0]  # example
-        row_series = row_series.reindex(self.all_student_grades_df.columns)
-        self.all_student_grades_df.loc[student] = row_series
-
-    def fill_class_grades(self):
-        for student in tqdm.tqdm(self.student_list):
-            self.update_student_grade(student)
 
 
 class_grades = ClassGradeReport()

@@ -4,10 +4,17 @@ try:
 except:  # noqa: E722
     print("Passwords not found, cannot access database")
 
+from pykubegrader.grade_reports.grading_config import assignment_type_list
+from pykubegrader.grade_reports.grade_report import GradeReport
+
+
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import socket
+import pandas as pd
+import numpy as np
+import tqdm
 
 # Set the environment variables for the database
 os.environ["JUPYTERHUB_USER"] = "jca92"
@@ -19,6 +26,78 @@ os.environ["user_name_student"] = "student"
 api_base_url = os.getenv("DB_URL")
 student_user = os.getenv("user_name_student")
 student_pw = os.getenv("keys_student")
+
+
+class ClassGradeReport:
+    """Generates and manages a class-wide grade report.
+
+    This class retrieves a list of students, initializes a structured grade report,
+    and populates it with individual student grade data. The final report includes
+    both assignment-specific grades and a weighted average grade.
+
+    Attributes:
+        student_list (list): A sorted list of all students in the class.
+        all_student_grades_df (pd.DataFrame): A DataFrame storing grades for each student,
+            including assignment scores and a weighted average.
+
+    Methods:
+        setup_class_grades():
+            Initializes an empty DataFrame with assignment names and weighted average columns.
+        update_student_grade(student):
+            Fetches and updates an individual student’s weighted average grades in the DataFrame.
+        fill_class_grades():
+            Iterates through all students to populate the class-wide grade report.
+    """
+
+    def __init__(self):
+        """Initializes the class grade report.
+
+        Retrieves the student list using authentication, sorts it, and sets up
+        the class-wide grade report by initializing and populating a DataFrame.
+        """
+        self.student_list = get_all_students(user, password)
+        self.student_list.sort()
+
+        self.setup_class_grades()
+        self.fill_class_grades()
+
+    def setup_class_grades(self):
+        """Creates an empty DataFrame to store grades for all students.
+
+        The DataFrame contains assignment columns and a "Weighted Average Grade" column,
+        with students as index labels.
+        """
+        self.all_student_grades_df = pd.DataFrame(
+            np.nan,
+            dtype=float,
+            index=self.student_list,
+            columns=[a.name for a in assignment_type_list] + ["Weighted Average Grade"],
+        )
+
+    def update_student_grade(self, student):
+        """Fetches and updates the grade report for an individual student.
+
+        Args:
+            student (str): The username or identifier of the student.
+
+        Updates:
+            The student's row in `all_student_grades_df` with their weighted average grades.
+        """
+        report = GradeReport(params={"username": student})
+        row_series = report.weighted_average_grades.transpose().iloc[
+            0
+        ]  # Example transformation
+        row_series = row_series.reindex(self.all_student_grades_df.columns)
+        self.all_student_grades_df.loc[student] = row_series
+
+    def fill_class_grades(self):
+        """Populates the class-wide grade report with data from all students.
+
+        Iterates through the `student_list` and updates the DataFrame by fetching
+        and storing each student's weighted average grades.
+        """
+        for student in tqdm.tqdm(self.student_list):
+            self.update_student_grade(student)
 
 
 def get_all_students(user, password):
