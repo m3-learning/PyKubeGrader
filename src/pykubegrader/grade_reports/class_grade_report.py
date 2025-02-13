@@ -4,10 +4,10 @@
 # except:  # noqa: E722
 #     print("Passwords not found, cannot access database")
 
-from grading_config import assignment_type_list, skipped_users
-from grade_reports import GradeReport
+from pykubegrader.grade_reports.grading_config import assignment_type_list, skipped_users
+from pykubegrader.grade_reports.grade_report import GradeReport
 # from ..build.passwords import password, user
-from ..telemetry import get_all_students
+from pykubegrader.telemetry import get_all_students
 
 
 import os
