@@ -90,7 +90,7 @@ class ClassGradeReport:
         Updates:
             The student's row in `all_student_grades_df` with their weighted average grades.
         """
-        report = GradeReport(params={"username": student}, display=False)
+        report = GradeReport(params={"username": student}, display_=False)
         row_series = report.weighted_average_grades.transpose().iloc[
             0
         ]  # Example transformation
