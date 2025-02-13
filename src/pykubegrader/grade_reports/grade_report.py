@@ -339,6 +339,4 @@ class GradeReport:
         self.calculate_grades()
 
 
-class_grades = ClassGradeReport()
 
-class_grades.all_student_grades_df

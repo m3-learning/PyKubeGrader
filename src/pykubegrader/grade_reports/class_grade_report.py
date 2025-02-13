@@ -157,3 +157,10 @@ def get_assignments_submissions(params=None):
     )
 
     return res.json()
+
+def main():
+    class_grades = ClassGradeReport()
+    print(class_grades.all_student_grades_df)
+
+if __name__ == "__main__":
+    main()
