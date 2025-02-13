@@ -1,17 +1,19 @@
 from pykubegrader.telemetry import get_assignments_submissions
 from pykubegrader.grade_reports.assignments import Assignment
-from dateutil import parser
-from pykubegrader.graders.late_assignments import calculate_late_submission
+from pykubegrader.grade_reports.grading_config import (
+    assignment_type_list,
+    aliases,
+    globally_exempted_assignments,
+    dropped_assignments,
+    optional_drop_week,
+    exclude_from_running_avg,
+    custom_grade_adjustments,
+)
+
 import pandas as pd
 from datetime import datetime
-import numpy as np
 
 # from pykubegrader.telemetry import get_assignments_submissions
-from dateutil import parser
-from pykubegrader.graders.late_assignments import calculate_late_submission
-import pandas as pd
-from datetime import datetime
-import numpy as np
 
 
 class GradeReport:
@@ -85,7 +87,7 @@ class GradeReport:
         for assignment_type, week in self.globally_exempted_assignments:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
-            except:
+            except:  # noqa: E722
                 pass
 
     def build_assignments(self):
@@ -106,7 +108,7 @@ class GradeReport:
         """Constructs a graded assignment object and appends it to the graded_assignments list.
 
         Args:
-            assignment_type (str): Type of assigment. Options: readings, lecture, practicequiz, quiz, homework, lab, labattendance, practicemidterm, midterm, practicefinal, final.
+            assignment_type (str): Type of assignment. Options: readings, lecture, practicequiz, quiz, homework, lab, labattendance, practicemidterm, midterm, practicefinal, final.
         """
         custom_func = custom_grade_adjustments.get(
             (assignment_type.name, kwargs.get("week", None)), None
@@ -337,6 +339,3 @@ class GradeReport:
                         break
 
         self.calculate_grades()
-
-
-
