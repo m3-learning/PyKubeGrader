@@ -1,7 +1,6 @@
-from pykubegrader.telemetry import get_assignments_submissions, get_all_students
+from pykubegrader.telemetry import get_assignments_submissions
 from dateutil import parser
 from pykubegrader.graders.late_assignments import calculate_late_submission
-from collections import defaultdict
 
 import pandas as pd
 from datetime import datetime
@@ -9,129 +8,28 @@ from datetime import datetime
 import numpy as np
 
 
-# from pykubegrader.assignments import assignment_type
+# user, password = "admin", "TrgpUuadm2PWtdgtC7Yt"
+import tqdm
+
+
+import requests
+import os
+from requests import Response
+from requests.auth import HTTPBasicAuth
+from requests.exceptions import RequestException
+
+# from pykubegrader.telemetry import get_assignments_submissions
+from dateutil import parser
+from pykubegrader.graders.late_assignments import calculate_late_submission
+
+import pandas as pd
+from datetime import datetime
+
+import numpy as np
 
 ##### assignment.py #####
 
 
-class assignment_type:
-    """Base class for assignment types."""
-
-    def __init__(self, name: str, weekly: bool, weight: float):
-        """Initializes an instance of the assignment_type class.
-        Args:
-            name (str): The name of the assignment.
-            weekly (bool): Indicates if the assignment is weekly.
-            weight (float): The weight of the assignment in the overall grade."""
-        self.name = name
-        self.weekly = weekly
-        self.weight = weight
-
-
-class Assignment(assignment_type):
-    """Class for storing and updating assignment scores."""
-
-    def __init__(
-        self,
-        name: str,
-        weekly: bool,
-        weight: float,
-        score: float,
-        grade_adjustment_func=None,
-        **kwargs,
-    ):
-        """Initializes an instance of the Assignment class.
-
-        Args:
-            name (str): The name of the assignment.
-            weekly (bool):  Indicates if the assignment is weekly.
-            weight (float): The weight of the assignment in the overall grade.
-            score (float): The current score of the assignment.
-            grade_adjustment_func (optional): Used to calculate the grade in the case of late or exempted submissions. Defaults to None.
-        """
-        super().__init__(name, weekly, weight)
-        self.score = score
-        self.week = kwargs.get("week", None)
-        self.exempted = kwargs.get("exempted", False)
-        self.graded = kwargs.get("graded", False)
-        self.late_adjustment = kwargs.get("late_adjustment", True)
-        self.students_exempted = kwargs.get("students_exempted", [])
-        self.due_date = kwargs.get("due_date", None)
-        self.max_score = kwargs.get("max_score", None)
-
-        # Store the function for later use
-        self.grade_adjustment_func = grade_adjustment_func
-
-    def add_exempted_students(self, students):
-        """Add students to the exempted list.
-        Args:
-            students (list): List of student IDs to exempt from the assignment.
-        """
-        self.students_exempted.extend(students)
-
-    def update_score(self, submission=None):
-        """Update the score of the assignment based on the submission.
-
-        Args:
-            submission (dict, optional): Defaults to None.
-
-        Returns:
-            float: Adjusted submission score
-        """
-        if self.exempted:
-            self.score = np.nan
-            return self.score
-        elif submission is not None:
-
-            # deal with incomplete submissions
-            score_ = self.grade_adjustment(submission)
-
-            # Update the score if the new score is higher
-            if score_ > self.score:
-                self.score = score_
-
-            return self.score
-        # sets the score to zero if not exempted and no submission
-        else:
-            self.score = 0
-            return self.score
-
-    def grade_adjustment(self, submission):
-        """Apply the adjustment function if provided.
-        Args:
-            submission (dict): Submission data.
-        Returns:
-            float: Score adjusted for lateness or exemptions. If none are present, returns 0.
-        """
-
-        score = submission["raw_score"]
-        entry_date = parser.parse(submission["timestamp"])
-
-        if self.grade_adjustment_func:
-            return self.grade_adjustment_func(score)
-        else:
-            if self.late_adjustment:
-
-                # Convert to datetime object
-                due_date = datetime.fromisoformat(self.due_date.replace("Z", "+00:00"))
-
-                late_modifier = calculate_late_submission(
-                    due_date.strftime("%Y-%m-%d %H:%M:%S"),
-                    entry_date.strftime("%Y-%m-%d %H:%M:%S"),
-                )
-
-                # return score for on-time submissions
-                return (score / self.max_score) * late_modifier
-
-            else:
-
-                # return score for on-time submissions
-                if entry_date < self.due_date:
-                    return score / self.max_score
-
-                # zero score for late submissions w/o late adjustment
-                else:
-                    return 0
 
 
 #### BEGIN CONFIGURATION ####
@@ -200,9 +98,9 @@ exclude_from_running_avg = ["final"]
 
 
 class GradeReport:
-    """Class to generate a grade report for a course and perform grade calculations for each student.
-    """
-    def __init__(self, start_date="2025-01-06", verbose=True,params=None):
+    """Class to generate a grade report for a course and perform grade calculations for each student."""
+
+    def __init__(self, start_date="2025-01-06", verbose=True, params=None):
         """Initializes an instance of the GradeReport class.
         Args:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
@@ -236,13 +134,19 @@ class GradeReport:
 
             if assignment_type.name in exclude_from_running_avg:
                 total_percentage -= assignment_type.weight
-                
+
             score_earned += assignment_type.weight * df_[assignment_type.name]
-            
+
         self.final_grade = score_earned / total_percentage
         self.weighted_average_grades = pd.concat(
-            [ pd.DataFrame(self.final_grades),
-              pd.DataFrame({'Running Avg':[self.final_grade]}, index=['Weighted Average Grade']) ] )
+            [
+                pd.DataFrame(self.final_grades),
+                pd.DataFrame(
+                    {"Running Avg": [self.final_grade]},
+                    index=["Weighted Average Grade"],
+                ),
+            ]
+        )
 
     def grade_report(self):
         """Generates a grade report for the course.
@@ -253,8 +157,7 @@ class GradeReport:
         return self.weekly_grades_df
 
     def update_weekly_table(self):
-        """Updates the weekly grades table with the calculated scores.
-        """
+        """Updates the weekly grades table with the calculated scores."""
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
@@ -262,8 +165,7 @@ class GradeReport:
                 )
 
     def update_global_exempted_assignments(self):
-        """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass.
-        """
+        """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass."""
         for assignment_type, week in self.globally_exempted_assignments:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
@@ -285,7 +187,7 @@ class GradeReport:
         for assignment_type in non_weekly_assignments:
             self.graded_assignment_constructor(assignment_type)
 
-    def graded_assignment_constructor(self, assignment_type:str, **kwargs):
+    def graded_assignment_constructor(self, assignment_type: str, **kwargs):
         """Constructs a graded assignment object and appends it to the graded_assignments list.
 
         Args:
@@ -315,7 +217,7 @@ class GradeReport:
     def calculate_grades(self):
         """Calculates the grades for each student based on the graded assignments.
         If there are filtered assignments, the score is updated based on the submission.
-        Otherwise, 
+        Otherwise,
         """
         for assignment in self.graded_assignments:
 
@@ -333,7 +235,7 @@ class GradeReport:
 
     def compute_final_average(self):
         """
-        Computes the final average by combining the running average from weekly assignments 
+        Computes the final average by combining the running average from weekly assignments
         and the midterm/final exam scores.
         """
 
@@ -525,34 +427,38 @@ class GradeReport:
         self.calculate_grades()
 
 
+# from pykubegrader.telemetry import get_all_students
+# from build.passwords import password, user # for use in final version
 
-#############  Class Grades  #######################
 
+class ClassGradeReport:
 
-from ..telemetry import get_all_students
-from build.passwords import password, user
-import tqdm
-class ClassGradeReport():
-    
     def __init__(self):
-        self.student_list = get_all_students(user,password)
+        self.student_list = get_all_students(user, password)
         self.student_list.sort()
 
         self.setup_class_grades()
         self.fill_class_grades()
 
     def setup_class_grades(self):
-        self.all_student_grades_df = pd.DataFrame(np.nan, dtype=float,
-                  index=self.student_list, 
-                  columns=[a.name for a in assignment_type_list]+['Weighted Average Grade'], )
+        self.all_student_grades_df = pd.DataFrame(
+            np.nan,
+            dtype=float,
+            index=self.student_list,
+            columns=[a.name for a in assignment_type_list] + ["Weighted Average Grade"],
+        )
 
     def update_student_grade(self, student):
         report = GradeReport(params={"username": student})
         row_series = report.weighted_average_grades.transpose().iloc[0]  # example
         row_series = row_series.reindex(self.all_student_grades_df.columns)
         self.all_student_grades_df.loc[student] = row_series
-    
+
     def fill_class_grades(self):
         for student in tqdm.tqdm(self.student_list):
             self.update_student_grade(student)
-            
+
+
+class_grades = ClassGradeReport()
+
+class_grades.all_student_grades_df
