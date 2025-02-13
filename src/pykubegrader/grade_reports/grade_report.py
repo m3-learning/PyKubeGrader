@@ -297,9 +297,10 @@ class GradeReport:
         """
         Subfunction to compute and update the Running Avg row, handling NaNs.
         """
-        self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.mean(
-            axis=0, skipna=True
-        )
+        
+        self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.drop(
+            "Running Avg", errors="ignore"
+        ).mean(axis=0, skipna=True)
 
     def drop_lowest_n_for_types(self, n, assignments_=None):
         """
