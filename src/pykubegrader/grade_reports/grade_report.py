@@ -23,7 +23,7 @@ import numpy as np
 class GradeReport:
     """Class to generate a grade report for a course and perform grade calculations for each student."""
 
-    def __init__(self, start_date="2025-01-06", verbose=True, params=None):
+    def __init__(self, start_date="2025-01-06", verbose=True, params=None, display_ = True):
         """Initializes an instance of the GradeReport class.
         Args:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
@@ -52,11 +52,12 @@ class GradeReport:
         self.update_weekly_table()
         self._build_running_avg()
         self._calculate_final_average()
-        try:
-            display(self.weekly_grades_df)
-            display(self.weighted_average_grades)
-        except:  # noqa: E722
-            pass
+        if display_:
+            try:
+                display(self.weekly_grades_df)
+                display(self.weighted_average_grades)
+            except:  # noqa: E722
+                pass
 
     def update_assignments_not_due_yet(self):
         """
