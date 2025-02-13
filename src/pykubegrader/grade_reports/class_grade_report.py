@@ -117,6 +117,12 @@ class ClassGradeReport:
         # Calculate descriptive statistics
         self.stats_df = self.all_student_grades_df.describe(include='all')
 
+    def write_excel_spreadsheet(self, out_name='output.xlsx'):
+        # Export to Excel with different sheets
+        with pd.ExcelWriter('output.xlsx') as writer:
+            self.all_student_grades_df.to_excel(writer, sheet_name='all_student_grades', index=False)
+            self.stats_df.to_excel(writer, sheet_name='performance_statistics', index=False)
+
 
 def main():
     class_grades = ClassGradeReport()
