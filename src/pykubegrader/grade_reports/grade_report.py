@@ -238,12 +238,7 @@ class GradeReport:
         if not filtered_assignments:
             return None
 
-        max_score = min(
-            filtered_assignments,
-            key=lambda x: x["max_score"],
-        )
-
-        return max_score["max_score"]
+        return max(filtered_assignments, key=lambda x: x["id"])["max_score"]
 
     def determine_due_date(self, filtered_assignments):
         if not filtered_assignments:
