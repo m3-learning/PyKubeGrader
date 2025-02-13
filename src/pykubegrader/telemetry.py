@@ -296,22 +296,22 @@ def upload_execution_log() -> None:
 #
 
 
-# def get_assignments_submissions(params=None):
-#     if not student_user or not student_pw or not api_base_url:
-#         raise ValueError("Necessary environment variables not set")
-#     from_hostname = socket.gethostname().removeprefix("jupyter-")
-#     from_env = os.getenv("JUPYTERHUB_USER")
-#     if from_hostname != from_env:
-#         raise ValueError("Problem with JupyterHub username")
+def get_assignments_submissions(params=None):
+    if not student_user or not student_pw or not api_base_url:
+        raise ValueError("Necessary environment variables not set")
+    from_hostname = socket.gethostname().removeprefix("jupyter-")
+    from_env = os.getenv("JUPYTERHUB_USER")
+    if from_hostname != from_env:
+        raise ValueError("Problem with JupyterHub username")
  
-#     if not params: params = {"username": from_env}
-#     # get submission information
-#     res = requests.get(
-#         url=api_base_url.rstrip("/") + "/my-grades-testing",
-#         params=params,
-#         auth=HTTPBasicAuth(student_user, student_pw),
-#     )
-#     return res.json()
+    if not params: params = {"username": from_env}
+    # get submission information
+    res = requests.get(
+        url=api_base_url.rstrip("/") + "/my-grades-testing",
+        params=params,
+        auth=HTTPBasicAuth(student_user, student_pw),
+    )
+    return res.json()
 
 
 # def skipped_assignment_mask(assignments):
