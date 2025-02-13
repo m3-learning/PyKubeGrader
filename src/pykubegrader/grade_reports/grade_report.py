@@ -187,10 +187,7 @@ class GradeReport:
                 assignment
                 for assignment in self.student_subs
                 if assignment["week_number"] == week_number
-                and self.aliases.get(
-                    assignment["assignment_type"].lower(),
-                    assignment["assignment_type"].lower(),
-                )
+                and assignment["assignment_type"].lower()
                 in normalized_type
             ]
 
@@ -200,11 +197,7 @@ class GradeReport:
             filtered = [
                 assignment
                 for assignment in self.student_subs
-                if self.aliases.get(
-                    assignment["assignment_type"].lower(),
-                    assignment["assignment_type"].lower(),
-                )
-                in normalized_type
+                if assignment["assignment_type"].lower() in normalized_type
             ]
 
         return filtered
