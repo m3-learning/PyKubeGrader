@@ -77,6 +77,7 @@ class Assignment(assignment_type):
         """
         super().__init__(name, weekly, weight)
         self.score = score
+        self._score = score
         self.week = kwargs.get("week", None)
         self.exempted = kwargs.get("exempted", False)
         self.graded = kwargs.get("graded", False)
@@ -115,6 +116,15 @@ class Assignment(assignment_type):
         """
         if self.exempted:
             self.score = np.nan
+
+            # Saves a table with the score of the exempted assignment still recorded.
+            try: 
+                # Adjust the score based on submission
+                score_ = self.grade_adjustment(submission)
+                if score_ > self._score:
+                    self._score = score_
+            except:
+                pass
             return self.score
         elif submission is not None:
             # Adjust the score based on submission
@@ -123,11 +133,13 @@ class Assignment(assignment_type):
             # Update the score only if the new score is higher
             if score_ > self.score:
                 self.score = score_
+                self._score = score_
 
             return self.score
         else:
             # Set the score to zero if not exempted and no submission
             self.score = 0
+            self._score = 0
             return self.score
 
     def grade_adjustment(self, submission):
