@@ -62,7 +62,9 @@ class GradeReport:
         Updates the score of assignments that are not due yet to NaN.
         """
         for assignment in self.graded_assignments:
-            if assignment.due_date > datetime.now() and assignment.score == 0:
+            # Convert due date to datetime object
+            due_date = datetime.fromisoformat(assignment.due_date.replace("Z", "+00:00"))
+            if due_date > datetime.now() and assignment.score == 0:
                 assignment.score = np.NaN
                 assignment.exempted = True
 
