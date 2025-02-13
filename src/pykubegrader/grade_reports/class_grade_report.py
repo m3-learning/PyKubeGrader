@@ -1,8 +1,8 @@
-# import the password and user from the build folder
-try:
-    from pykubegrader.build.passwords import password, user
-except:  # noqa: E722
-    print("Passwords not found, cannot access database")
+# # import the password and user from the build folder
+# try:
+#     from pykubegrader.build.passwords import password, user
+# except:  # noqa: E722
+#     print("Passwords not found, cannot access database")
 
 from pykubegrader.grade_reports.grading_config import assignment_type_list
 from pykubegrader.grade_reports.grade_report import GradeReport
@@ -15,6 +15,9 @@ import socket
 import pandas as pd
 import numpy as np
 import tqdm
+
+# user = user()
+# password = password()
 
 # Set the environment variables for the database
 os.environ["JUPYTERHUB_USER"] = "jca92"
@@ -49,13 +52,16 @@ class ClassGradeReport:
             Iterates through all students to populate the class-wide grade report.
     """
 
-    def __init__(self):
+    def __init__(self, user, password):
         """Initializes the class grade report.
 
         Retrieves the student list using authentication, sorts it, and sets up
         the class-wide grade report by initializing and populating a DataFrame.
         """
-        self.student_list = get_all_students(user, password)
+        self.user = user
+        self.password = password
+        
+        self.student_list = get_all_students(self.user, self.password)
         self.student_list.sort()
 
         self.setup_class_grades()
