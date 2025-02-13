@@ -12,6 +12,7 @@ from pykubegrader.grade_reports.grading_config import (
 
 import pandas as pd
 from datetime import datetime
+from IPython.display import display
 
 # from pykubegrader.telemetry import get_assignments_submissions
 
@@ -43,6 +44,11 @@ class GradeReport:
         self.update_weekly_table()
         self._build_running_avg()
         self._calculate_final_average()
+        try:
+            display(self.weekly_grades_df)
+            display(self.weighted_average_grades)
+        except:  # noqa: E722
+            pass
 
     def _calculate_final_average(self):
         total_percentage = 1
