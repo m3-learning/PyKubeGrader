@@ -6,6 +6,14 @@ pykubegrader.tokens namespace
 Submodules
 ----------
 
+pykubegrader.tokens.generator module
+------------------------------------
+
+.. automodule:: pykubegrader.tokens.generator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pykubegrader.tokens.token\_panel module
 ---------------------------------------
 
