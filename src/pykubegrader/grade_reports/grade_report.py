@@ -15,6 +15,7 @@ from pykubegrader.grade_reports.grading_config import (
 import pandas as pd
 from datetime import datetime
 from IPython.display import display
+import numpy as np
 
 # from pykubegrader.telemetry import get_assignments_submissions
 
@@ -45,6 +46,7 @@ class GradeReport:
         self.build_assignments()
         self.update_global_exempted_assignments()
         self.calculate_grades()
+        self.update_assignments_not_due_yet()
         self.drop_lowest_n_for_types(1)
         self.update_weekly_table()
         self._build_running_avg()
@@ -54,6 +56,15 @@ class GradeReport:
             display(self.weighted_average_grades)
         except:  # noqa: E722
             pass
+
+    def update_assignments_not_due_yet(self):
+        """
+        Updates the score of assignments that are not due yet to NaN.
+        """
+        for assignment in self.graded_assignments:
+            if assignment.due_date > datetime.now() and assignment.score == 0:
+                assignment.score = np.NaN
+                assignment.exempted = True
 
     def _calculate_final_average(self):
         total_percentage = 1
@@ -187,8 +198,7 @@ class GradeReport:
                 assignment
                 for assignment in self.student_subs
                 if assignment["week_number"] == week_number
-                and assignment["assignment_type"].lower()
-                in normalized_type
+                and assignment["assignment_type"].lower() in normalized_type
             ]
 
         # If week_number is None, filter based on the normalized assignment type only
@@ -213,8 +223,7 @@ class GradeReport:
             assignment
             for assignment in self.assignments
             if (assignment["week_number"] == week_number or week_number is None)
-            and assignment["assignment_type"].lower()
-            in normalized_type
+            and assignment["assignment_type"].lower() in normalized_type
         ]
 
         return filtered
