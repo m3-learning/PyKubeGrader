@@ -36,10 +36,8 @@ globally_exempted_assignments = [
 
 # Common Assignment Aliases, these are other names used for the same assignment category
 aliases = {
-    "practicequiz": "practice quiz",
-    "practice-quiz": "practice quiz",
-    "attend": "attendance",
-    "attendance": "attendance",
+    "practicequiz": ["practice quiz","practice-quiz","practice quiz","practice_quiz"],
+    "labattendance": ["labattendance","attendance","attend"],
 }
 
 # Skipped assignments, key is a tuple of assignment type and week

@@ -173,7 +173,7 @@ class GradeReport:
     def filter_submissions(self, week_number, assignment_type):
         # Normalize the assignment type using aliases
         normalized_type = self.aliases.get(
-            assignment_type.lower(), assignment_type.lower()
+            assignment_type.lower(), [assignment_type.lower()]
         )
 
         if week_number:
@@ -186,7 +186,7 @@ class GradeReport:
                     assignment["assignment_type"].lower(),
                     assignment["assignment_type"].lower(),
                 )
-                == normalized_type
+                in normalized_type
             ]
 
         # If week_number is None, filter based on the normalized assignment type only
@@ -199,7 +199,7 @@ class GradeReport:
                     assignment["assignment_type"].lower(),
                     assignment["assignment_type"].lower(),
                 )
-                == normalized_type
+                in  normalized_type
             ]
 
         return filtered
@@ -207,7 +207,7 @@ class GradeReport:
     def get_assignment(self, week_number, assignment_type):
         # Normalize the assignment type using aliases
         normalized_type = self.aliases.get(
-            assignment_type.lower(), assignment_type.lower()
+            assignment_type.lower(), [assignment_type.lower()]
         )
 
         # Filter the assignments based on the week number and normalized assignment type
@@ -219,7 +219,7 @@ class GradeReport:
                 assignment["assignment_type"].lower(),
                 assignment["assignment_type"].lower(),
             )
-            == normalized_type
+            in normalized_type
         ]
 
         return filtered
