@@ -7,7 +7,7 @@
 from pykubegrader.grade_reports.grading_config import assignment_type_list, skipped_users
 from pykubegrader.grade_reports.grade_report import GradeReport
 # from ..build.passwords import password, user
-from ..telemetry import get_all_students, get_assignments_submissions
+from ..telemetry import get_all_students
 
 
 import os
@@ -110,68 +110,13 @@ class ClassGradeReport:
         for student in tqdm.tqdm(self.student_list):
             self.update_student_grade(student)
 
+    def get_class_stats(self):
+        """Calculates and stores descriptive statistics for the class-wide grade report.
+        Requires filling class grades first
+        """
+        # Calculate descriptive statistics
+        self.stats_df = self.all_student_grades_df.describe(include='all')
 
-def get_all_students(user, password):
-    """
-    Fetches a list of all students from the API and returns their usernames.
-
-    Args:
-        user (str): The username for HTTP basic authentication.
-        password (str): The password for HTTP basic authentication.
-
-    Returns:
-        list: A list of usernames extracted from the students' email addresses.
-
-    Raises:
-        requests.exceptions.HTTPError: If the HTTP request returned an unsuccessful status code.
-    """
-    res = requests.get(
-        url=api_base_url.rstrip("/") + "/students",
-        auth=HTTPBasicAuth(user, password),
-    )
-    res.raise_for_status()
-    # Input: List of players
-    return [student["email"].split("@")[0] for student in res.json()]
-
-
-def get_class_stats(self):
-    # Calculate descriptive statistics
-    self.stats_df = self.all_student_grades_df.describe(include='all')
-
-def get_assignments_submissions(params=None):
-    """
-    Fetches assignment submissions for a student from the grading API.
-    This function retrieves the assignment submissions for a student by making a GET request to the grading API.
-    It requires certain environment variables to be set and validates the JupyterHub username.
-    Args:
-        params (dict, optional): A dictionary of parameters to be sent in the query string. Defaults to None. If not provided, it will default to {"username": <JUPYTERHUB_USER>}.
-    Raises:
-        ValueError: If necessary environment variables (student_user, student_pw, api_base_url) are not set.
-        ValueError: If there is a mismatch between the JupyterHub username from the hostname and the environment variable.
-    Returns:
-        dict: A dictionary containing the JSON response from the API with the assignment submissions.
-    """
-
-    if not student_user or not student_pw or not api_base_url:
-        raise ValueError("Necessary environment variables not set")
-
-    from_hostname = socket.gethostname().removeprefix("jupyter-")
-    from_env = os.getenv("JUPYTERHUB_USER")
-
-    if from_hostname != from_env:
-        raise ValueError("Problem with JupyterHub username")
-
-    if not params:
-        params = {"username": from_env}
-
-    # get submission information
-    res = requests.get(
-        url=api_base_url.rstrip("/") + "/my-grades-testing",
-        params=params,
-        auth=HTTPBasicAuth(student_user, student_pw),
-    )
-
-    return res.json()
 
 def main():
     class_grades = ClassGradeReport()

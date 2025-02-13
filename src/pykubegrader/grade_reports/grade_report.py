@@ -17,7 +17,7 @@ from datetime import datetime
 from IPython.display import display
 import numpy as np
 
-# from pykubegrader.telemetry import get_assignments_submissions
+from ..telemetry import get_assignments_submissions
 
 
 class GradeReport:
