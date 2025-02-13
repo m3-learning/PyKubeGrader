@@ -120,8 +120,8 @@ class ClassGradeReport:
     def write_excel_spreadsheet(self, out_name='output.xlsx'):
         # Export to Excel with different sheets
         with pd.ExcelWriter('output.xlsx') as writer:
-            self.all_student_grades_df.to_excel(writer, sheet_name='all_student_grades', index=False)
-            self.stats_df.to_excel(writer, sheet_name='performance_statistics', index=False)
+            self.all_student_grades_df.to_excel(writer, sheet_name='all_student_grades', index=True)
+            self.stats_df.to_excel(writer, sheet_name='performance_statistics', index=True)
 
 
 def main():
