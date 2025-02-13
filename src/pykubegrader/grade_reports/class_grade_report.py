@@ -118,6 +118,11 @@ class ClassGradeReport:
         self.stats_df = self.all_student_grades_df.describe(include='all')
 
     def write_excel_spreadsheet(self, out_name='output.xlsx'):
+        """Exports the class-wide grade report to an Excel spreadsheet.
+
+        Args:
+            out_name (str, optional): Name of output file. Defaults to 'output.xlsx'.
+        """
         # Export to Excel with different sheets
         with pd.ExcelWriter('output.xlsx') as writer:
             self.all_student_grades_df.to_excel(writer, sheet_name='all_student_grades')
