@@ -6,7 +6,7 @@
 
 from pykubegrader.grade_reports.grading_config import assignment_type_list, skipped_users
 from pykubegrader.grade_reports.grade_report import GradeReport
-from ..build.passwords import password, user
+# from ..build.passwords import password, user
 from ..telemetry import get_all_students, get_assignments_submissions
 
 
