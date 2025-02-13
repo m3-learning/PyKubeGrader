@@ -60,6 +60,7 @@ class ClassGradeReport:
 
         self.setup_class_grades()
         self.fill_class_grades()
+        
 
     def setup_class_grades(self):
         """Creates an empty DataFrame to store grades for all students.

@@ -1,4 +1,4 @@
-#TODO: if not due yet and score is 0, make NAN, fix the rendering
+# TODO: if not due yet and score is 0, make NAN, fix the rendering
 
 from pykubegrader.telemetry import get_assignments_submissions
 from pykubegrader.grade_reports.assignments import Assignment
@@ -37,6 +37,9 @@ class GradeReport:
         self.globally_exempted_assignments = globally_exempted_assignments
         self.dropped_assignments = dropped_assignments
         self.optional_drop_week = optional_drop_week
+
+        # assignments that have been dropped for a given students.
+        self.student_assignments_dropped = []
 
         self.setup_grades_df()
         self.build_assignments()
@@ -201,7 +204,7 @@ class GradeReport:
                     assignment["assignment_type"].lower(),
                     assignment["assignment_type"].lower(),
                 )
-                in  normalized_type
+                in normalized_type
             ]
 
         return filtered
@@ -332,6 +335,7 @@ class GradeReport:
             for i in range(min(n, len(valid_assignments))):
                 valid_assignments[i].exempted = True
                 dropped.append(valid_assignments[i])
+                self.student_assignments_dropped.append(valid_assignments[i])
 
             # Check if the lowest dropped assignment is from week 1
             if dropped and any(a.week in self.optional_drop_week for a in dropped):
