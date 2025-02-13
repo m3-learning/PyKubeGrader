@@ -20,11 +20,11 @@ import tqdm
 # password = password()
 
 # Set the environment variables for the database
-os.environ["JUPYTERHUB_USER"] = "jca92"
-os.environ["TOKEN"] = "token"
-os.environ["DB_URL"] = "https://engr-131-api.eastus.cloudapp.azure.com/"
-os.environ["keys_student"] = "capture"
-os.environ["user_name_student"] = "student"
+# os.environ["JUPYTERHUB_USER"] = "jca92"
+# os.environ["TOKEN"] = "token"
+# os.environ["DB_URL"] = "https://engr-131-api.eastus.cloudapp.azure.com/"
+# os.environ["keys_student"] = "capture"
+# os.environ["user_name_student"] = "student"
 
 api_base_url = os.getenv("DB_URL")
 student_user = os.getenv("user_name_student")
