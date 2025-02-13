@@ -6,9 +6,6 @@ import pandas as pd
 from datetime import datetime
 
 import numpy as np
-
-
-# user, password = "admin", "TrgpUuadm2PWtdgtC7Yt"
 import tqdm
 
 
@@ -26,10 +23,6 @@ import pandas as pd
 from datetime import datetime
 
 import numpy as np
-
-
-##### END CONFIGURATION #####
-
 
 class GradeReport:
     """Class to generate a grade report for a course and perform grade calculations for each student."""
