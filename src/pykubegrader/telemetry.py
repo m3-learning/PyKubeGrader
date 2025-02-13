@@ -303,7 +303,7 @@ def get_assignments_submissions(params=None):
     from_env = os.getenv("JUPYTERHUB_USER")
     if from_hostname != from_env:
         raise ValueError("Problem with JupyterHub username")
-    print(from_env)
+ 
     if not params: params = {"username": from_env}
     # get submission information
     res = requests.get(
