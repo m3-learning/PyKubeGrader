@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.telemetry &#8212; PyKubeGrader 0.0.post1.dev1+gfa15804 documentation</title>
+    <title>pykubegrader.telemetry &#8212; PyKubeGrader 0.0.post1.dev1+gfb64af7 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=2957a0b6"></script>
+    <script src="../../_static/documentation_options.js?v=ed79dbe4"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,8 +48,8 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+gfa15804" />
-    <meta name="docbuild:last-update" content="Feb 13, 2025"/>
+  <meta name="docsearch:version" content="0.0.post1.dev1+gfb64af7" />
+    <meta name="docbuild:last-update" content="Feb 14, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gfa15804 documentation - Home"/>
-    <img src="../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gfa15804 documentation - Home"/>
+    <img src="../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gfb64af7 documentation - Home"/>
+    <img src="../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gfb64af7 documentation - Home"/>
   
   
 </a></div>
@@ -422,8 +422,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">requests.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">requests.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestException</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.graders.late_assignments</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_late_submission</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">api_base_url</span><span class="p">,</span> <span class="n">student_pw</span><span class="p">,</span> <span class="n">student_user</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pykubegrader.graders.late_assignments</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_late_submission</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pykubegrader.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">api_base_url</span><span class="p">,</span> <span class="n">student_pw</span><span class="p">,</span> <span class="n">student_user</span>
 
 <span class="c1">#</span>
 <span class="c1"># Logging setup</span>
@@ -730,28 +730,68 @@
 
 
 
-<span class="c1"># #</span>
-<span class="c1"># # Qiao&#39;s work on grades</span>
-<span class="c1">#</span>
+<div class="viewcode-block" id="get_all_students">
+<a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.get_all_students">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_students</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetches a list of all students from the API and returns their usernames.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user (str): The username for HTTP basic authentication.</span>
+<span class="sd">        password (str): The password for HTTP basic authentication.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of usernames extracted from the students&#39; email addresses.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        requests.exceptions.HTTPError: If the HTTP request returned an unsuccessful status code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/students&quot;</span><span class="p">,</span>
+        <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    
+    <span class="c1"># Input: List of players</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">student</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">student</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()]</span></div>
+
 
 
 <div class="viewcode-block" id="get_assignments_submissions">
 <a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.get_assignments_submissions">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_assignments_submissions</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_assignments_submissions</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetches assignment submissions for a student from the grading API.</span>
+<span class="sd">    This function retrieves the assignment submissions for a student by making a GET request to the grading API.</span>
+<span class="sd">    It requires certain environment variables to be set and validates the JupyterHub username.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        params (dict, optional): A dictionary of parameters to be sent in the query string. Defaults to None. If not provided, it will default to {&quot;username&quot;: &lt;JUPYTERHUB_USER&gt;}.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If necessary environment variables (student_user, student_pw, api_base_url) are not set.</span>
+<span class="sd">        ValueError: If there is a mismatch between the JupyterHub username from the hostname and the environment variable.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary containing the JSON response from the API with the assignment submissions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">student_user</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">student_pw</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">api_base_url</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Necessary environment variables not set&quot;</span><span class="p">)</span>
+
     <span class="n">from_hostname</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;jupyter-&quot;</span><span class="p">)</span>
     <span class="n">from_env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;JUPYTERHUB_USER&quot;</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">from_hostname</span> <span class="o">!=</span> <span class="n">from_env</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Problem with JupyterHub username&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">from_env</span><span class="p">)</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">from_env</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">from_env</span><span class="p">}</span>
+
     <span class="c1"># get submission information</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="n">url</span><span class="o">=</span><span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/my-grades-testing&quot;</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
         <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">student_user</span><span class="p">,</span> <span class="n">student_pw</span><span class="p">),</span>
     <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
 
 
@@ -832,10 +872,6 @@
             <span class="c1"># print(assignment[&#39;title&#39;], grades, assignment[&#39;max_score&#39;])</span>
             <span class="n">grade</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grades</span><span class="p">)</span> <span class="o">/</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;max_score&quot;</span><span class="p">]</span>
 
-        <span class="c1"># fill out new df with max</span>
-        <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="p">[</span><span class="s1">&#39;week_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="n">grade</span>
 
     <span class="c1"># Merge different names</span>
     <span class="n">new_weekly_grades</span><span class="p">[</span><span class="s2">&quot;attend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="p">[[</span><span class="s2">&quot;attend&quot;</span><span class="p">,</span> <span class="s2">&quot;attendance&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
@@ -852,10 +888,10 @@
         <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
-    <span class="k">return</span> <span class="n">new_weekly_grades</span></div>
 
+<span class="c1">#     return new_weekly_grades</span>
 
 
 <div class="viewcode-block" id="get_current_week">
@@ -938,62 +974,6 @@
     <span class="k">return</span> <span class="n">new_weekly_grades</span>  <span class="c1"># get rid of test and running avg columns</span></div>
 
 
-
-<div class="viewcode-block" id="get_all_students">
-<a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.get_all_students">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_all_students</span><span class="p">(</span><span class="n">admin_user</span><span class="p">,</span> <span class="n">admin_pw</span><span class="p">):</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-        <span class="n">url</span><span class="o">=</span><span class="n">api_base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/students&quot;</span><span class="p">,</span>
-        <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">admin_user</span><span class="p">,</span> <span class="n">admin_pw</span><span class="p">),</span>
-    <span class="p">)</span>
-    <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-
-    <span class="c1"># Input: List of players</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">student</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">student</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()]</span></div>
-
-
-
-<span class="c1"># def all_student_grades_testing(admin_user, admin_pw, start_date=&quot;2025-01-06&quot;):</span>
-<span class="c1">#     &quot;&quot;&quot;takes in json.</span>
-<span class="c1">#     reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.</span>
-<span class="c1">#     fills in 0 for missing assignments</span>
-<span class="c1">#     calculate running average of each category&quot;&quot;&quot;</span>
-
-<span class="c1">#     # set up new df format</span>
-<span class="c1">#     weights = {</span>
-<span class="c1">#         &quot;homework&quot;: 0.15,</span>
-<span class="c1">#         &quot;lab&quot;: 0.15,</span>
-<span class="c1">#         &quot;lecture&quot;: 0.15,</span>
-<span class="c1">#         &quot;quiz&quot;: 0.15,</span>
-<span class="c1">#         &quot;readings&quot;: 0.15,</span>
-<span class="c1">#         # &#39;midterm&#39;:0.15, &#39;final&#39;:0.2</span>
-<span class="c1">#         &quot;labattendance&quot;: 0.05,</span>
-<span class="c1">#         &quot;practicequiz&quot;: 0.05,</span>
-<span class="c1">#     }</span>
-
-<span class="c1">#     student_usernames = get_student_usernames(admin_user, admin_pw)</span>
-
-<span class="c1">#     assignments, student_subs = get_assignments_submissions(admin_user, admin_pw)</span>
-
-<span class="c1">#     new_grades_df = setup_grades_df(assignments)</span>
-
-<span class="c1">#     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)</span>
-
-<span class="c1">#     current_week = get_current_week(start_date)</span>
-
-<span class="c1">#     # Get average until current week</span>
-<span class="c1">#     new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[: current_week - 1].mean()</span>
-
-<span class="c1">#     # make new dataframe with the midterm, final, and running average</span>
-<span class="c1">#     max_key_length = max(len(k) for k in weights.keys())</span>
-<span class="c1">#     total = 0</span>
-<span class="c1">#     for k, v in weights.items():</span>
-<span class="c1">#         grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]</span>
-<span class="c1">#         total += grade * v</span>
-<span class="c1">#         print(f&quot;{k:&lt;{max_key_length}}:\t {grade:.2f}&quot;)</span>
-<span class="c1">#     print(f&quot;\nTotal: {total}&quot;)  # exclude midterm and final</span>
-
-<span class="c1">#     return new_weekly_grades  # get rid of test and running avg columns</span>
 </pre></div>
 
                 </article>
