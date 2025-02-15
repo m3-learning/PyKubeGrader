@@ -791,7 +791,7 @@ class NotebookProcessor:
             nbformat.write(notebook, f)
 
     @staticmethod
-    def add_validate_block(notebook_path: str, require_key: bool, **kwargs) -> None:
+    def add_validate_block(notebook_path: str, require_key: bool, assignment_tag = None, **kwargs) -> None:
         """
         Modifies the first code cell of a Jupyter notebook to add the validate_token call if require_key is True.
 
@@ -810,7 +810,7 @@ class NotebookProcessor:
             notebook = nbformat.read(f, as_version=4)
 
         # Prepare the validation code
-        validation_code = "validate_token()\n"
+        validation_code = f"validate_token(assignment = '{assignment_tag}')\n"
 
         # Modify the first cell if it's a code cell, otherwise insert a new one
         if notebook.cells and notebook.cells[0].cell_type == "code":

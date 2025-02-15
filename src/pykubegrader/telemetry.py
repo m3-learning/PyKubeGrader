@@ -16,8 +16,8 @@ from requests import Response
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import RequestException
 
-from .graders.late_assignments import calculate_late_submission
-from .utils import api_base_url, student_pw, student_user
+from pykubegrader.graders.late_assignments import calculate_late_submission
+from pykubegrader.utils import api_base_url, student_pw, student_user
 
 #
 # Logging setup
@@ -291,26 +291,63 @@ def upload_execution_log() -> None:
     print("Execution log uploaded successfully")
 
 
-# #
-# # Qiao's work on grades
-#
+def get_all_students(user, password):
+    """
+    Fetches a list of all students from the API and returns their usernames.
+
+    Args:
+        user (str): The username for HTTP basic authentication.
+        password (str): The password for HTTP basic authentication.
+
+    Returns:
+        list: A list of usernames extracted from the students' email addresses.
+
+    Raises:
+        requests.exceptions.HTTPError: If the HTTP request returned an unsuccessful status code.
+    """
+    res = requests.get(
+        url=api_base_url.rstrip("/") + "/students",
+        auth=HTTPBasicAuth(user, password),
+    )
+    res.raise_for_status()
+    
+    # Input: List of players
+    return [student["email"].split("@")[0] for student in res.json()]
 
 
-def get_assignments_submissions():
+def get_assignments_submissions(params=None):
+    """
+    Fetches assignment submissions for a student from the grading API.
+    This function retrieves the assignment submissions for a student by making a GET request to the grading API.
+    It requires certain environment variables to be set and validates the JupyterHub username.
+    Args:
+        params (dict, optional): A dictionary of parameters to be sent in the query string. Defaults to None. If not provided, it will default to {"username": <JUPYTERHUB_USER>}.
+    Raises:
+        ValueError: If necessary environment variables (student_user, student_pw, api_base_url) are not set.
+        ValueError: If there is a mismatch between the JupyterHub username from the hostname and the environment variable.
+    Returns:
+        dict: A dictionary containing the JSON response from the API with the assignment submissions.
+    """
+
     if not student_user or not student_pw or not api_base_url:
         raise ValueError("Necessary environment variables not set")
+
     from_hostname = socket.gethostname().removeprefix("jupyter-")
     from_env = os.getenv("JUPYTERHUB_USER")
+
     if from_hostname != from_env:
         raise ValueError("Problem with JupyterHub username")
-    print(from_env)
-    params = {"username": from_env}
+
+    if not params:
+        params = {"username": from_env}
+
     # get submission information
     res = requests.get(
         url=api_base_url.rstrip("/") + "/my-grades-testing",
         params=params,
         auth=HTTPBasicAuth(student_user, student_pw),
     )
+
     return res.json()
 
 
@@ -382,10 +419,6 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
             # print(assignment['title'], grades, assignment['max_score'])
             grade = max(grades) / assignment["max_score"]
 
-        # fill out new df with max
-        new_weekly_grades.loc[
-            f"week{assignment['week_number']}", assignment["assignment_type"]
-        ] = grade
 
     # Merge different names
     new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(
@@ -404,7 +437,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         errors="ignore",
     )
 
-    return new_weekly_grades
+#     return new_weekly_grades
 
 
 def get_current_week(start_date):
@@ -478,56 +511,3 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
 
     return new_weekly_grades  # get rid of test and running avg columns
 
-
-def get_all_students(admin_user, admin_pw):
-    res = requests.get(
-        url=api_base_url.rstrip("/") + "/students",
-        auth=HTTPBasicAuth(admin_user, admin_pw),
-    )
-    res.raise_for_status()
-
-    # Input: List of players
-    return [student["email"].split("@")[0] for student in res.json()]
-
-
-# def all_student_grades_testing(admin_user, admin_pw, start_date="2025-01-06"):
-#     """takes in json.
-#     reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.
-#     fills in 0 for missing assignments
-#     calculate running average of each category"""
-
-#     # set up new df format
-#     weights = {
-#         "homework": 0.15,
-#         "lab": 0.15,
-#         "lecture": 0.15,
-#         "quiz": 0.15,
-#         "readings": 0.15,
-#         # 'midterm':0.15, 'final':0.2
-#         "labattendance": 0.05,
-#         "practicequiz": 0.05,
-#     }
-
-#     student_usernames = get_student_usernames(admin_user, admin_pw)
-
-#     assignments, student_subs = get_assignments_submissions(admin_user, admin_pw)
-
-#     new_grades_df = setup_grades_df(assignments)
-
-#     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)
-
-#     current_week = get_current_week(start_date)
-
-#     # Get average until current week
-#     new_weekly_grades.iloc[-1] = new_weekly_grades.iloc[: current_week - 1].mean()
-
-#     # make new dataframe with the midterm, final, and running average
-#     max_key_length = max(len(k) for k in weights.keys())
-#     total = 0
-#     for k, v in weights.items():
-#         grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]
-#         total += grade * v
-#         print(f"{k:<{max_key_length}}:\t {grade:.2f}")
-#     print(f"\nTotal: {total}")  # exclude midterm and final
-
-#     return new_weekly_grades  # get rid of test and running avg columns
