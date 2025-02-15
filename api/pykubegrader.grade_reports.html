@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+gfa15804 documentation</title>
+    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+gfb64af7 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=2957a0b6"></script>
+    <script src="../_static/documentation_options.js?v=ed79dbe4"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,8 +51,8 @@
     <link rel="prev" title="pykubegrader.build package" href="pykubegrader.build.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+gfa15804" />
-    <meta name="docbuild:last-update" content="Feb 13, 2025"/>
+  <meta name="docsearch:version" content="0.0.post1.dev1+gfb64af7" />
+    <meta name="docbuild:last-update" content="Feb 14, 2025"/>
   </head>
   
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gfa15804 documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gfa15804 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gfb64af7 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gfb64af7 documentation - Home"/>
   
   
 </a></div>
@@ -438,40 +438,449 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
 </section>
-<section id="module-pykubegrader.grade_reports.get_my_grades_testing">
-<span id="pykubegrader-grade-reports-get-my-grades-testing-module"></span><h2>pykubegrader.grade_reports.get_my_grades_testing module<a class="headerlink" href="#module-pykubegrader.grade_reports.get_my_grades_testing" title="Link to this heading">#</a></h2>
-</section>
-<section id="module-pykubegrader.grade_reports.grade_reports">
-<span id="pykubegrader-grade-reports-grade-reports-module"></span><h2>pykubegrader.grade_reports.grade_reports module<a class="headerlink" href="#module-pykubegrader.grade_reports.grade_reports" title="Link to this heading">#</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_reports.filter_assignments">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.grade_reports.</span></span><span class="sig-name descname"><span class="pre">filter_assignments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_week</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_reports.html#filter_assignments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_reports.filter_assignments" title="Link to this definition">#</a></dt>
-<dd><p>Remove assignments with week_number greater than max_week
-or with specific assignment types.</p>
+<section id="module-pykubegrader.grade_reports.assignments">
+<span id="pykubegrader-grade-reports-assignments-module"></span><h2>pykubegrader.grade_reports.assignments module<a class="headerlink" href="#module-pykubegrader.grade_reports.assignments" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.assignments.</span></span><span class="sig-name descname"><span class="pre">Assignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">weekly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">grade_adjustment_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pykubegrader.grade_reports.assignments.assignment_type" title="pykubegrader.grade_reports.assignments.assignment_type"><code class="xref py py-class docutils literal notranslate"><span class="pre">assignment_type</span></code></a></p>
+<p>Class for storing and updating assignment scores.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.week">
+<span class="sig-name descname"><span class="pre">week</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.week" title="Link to this definition">#</a></dt>
+<dd><p>The week number of the assignment.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> – DataFrame containing assignments.</p></li>
-<li><p><strong>max_week</strong> – Maximum allowed week_number (int).</p></li>
-<li><p><strong>exclude_types</strong> – A single assignment type or a list of assignment types to exclude.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Filtered DataFrame.</p>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)">int</a>, optional</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_reports.format_assignment_table">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.grade_reports.</span></span><span class="sig-name descname"><span class="pre">format_assignment_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assignments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_reports.html#format_assignment_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_reports.format_assignment_table" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.exempted">
+<span class="sig-name descname"><span class="pre">exempted</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.exempted" title="Link to this definition">#</a></dt>
+<dd><p>Indicates if the assignment is exempted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.graded">
+<span class="sig-name descname"><span class="pre">graded</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.graded" title="Link to this definition">#</a></dt>
+<dd><p>Indicates if the assignment has been graded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.late_adjustment">
+<span class="sig-name descname"><span class="pre">late_adjustment</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.late_adjustment" title="Link to this definition">#</a></dt>
+<dd><p>Indicates if late submissions are allowed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.students_exempted">
+<span class="sig-name descname"><span class="pre">students_exempted</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.students_exempted" title="Link to this definition">#</a></dt>
+<dd><p>List of student IDs exempted from the assignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.due_date">
+<span class="sig-name descname"><span class="pre">due_date</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.due_date" title="Link to this definition">#</a></dt>
+<dd><p>The due date of the assignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.max_score">
+<span class="sig-name descname"><span class="pre">max_score</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.max_score" title="Link to this definition">#</a></dt>
+<dd><p>The maximum score possible for the assignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)">float</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.grade_adjustment_func">
+<span class="sig-name descname"><span class="pre">grade_adjustment_func</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.grade_adjustment_func" title="Link to this definition">#</a></dt>
+<dd><p>Function to adjust the grade for late or exempted submissions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.add_exempted_students">
+<span class="sig-name descname"><span class="pre">add_exempted_students</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">students</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.add_exempted_students"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.add_exempted_students" title="Link to this definition">#</a></dt>
+<dd><p>Add students to the exempted list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.update_score">
+<span class="sig-name descname"><span class="pre">update_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.update_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.update_score" title="Link to this definition">#</a></dt>
+<dd><p>Update the score of the assignment based on the submission.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.grade_adjustment">
+<span class="sig-name descname"><span class="pre">grade_adjustment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submission</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.grade_adjustment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.grade_adjustment" title="Link to this definition">#</a></dt>
+<dd><p>Apply the adjustment function if provided.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">add_exempted_students</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">students</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.add_exempted_students"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>Add students to the exempted list.
+:param students: List of student IDs to exempt from the assignment.
+:type students: list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">grade_adjustment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submission</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.grade_adjustment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<dd><p>Applies adjustments to the submission score based on grading policies.</p>
+<p>This method applies any provided grade adjustment function to the raw score.
+If no custom function is given, it determines the final score by considering
+lateness penalties based on the submission timestamp and due date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>submission</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – A dictionary containing:
+- <cite>“raw_score”</cite> (float): The initial unadjusted score.
+- <cite>“timestamp”</cite> (str): The submission timestamp in a parsable format.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The adjusted score, incorporating lateness penalties if applicable.</dt><dd><p>Returns 0 for late submissions if no late adjustment policy is defined.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">update_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.update_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<dd><p>Updates the assignment score based on the given submission.</p>
+<p>This method adjusts the score using the <cite>grade_adjustment</cite> function if a submission
+is provided. If the submission results in a higher score than the current score,
+the assignment score is updated. If no submission is provided and the student is
+not exempted, the score is set to zero. If the student is exempted, the score
+is set to NaN.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>submission</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a><em>, </em><em>optional</em>) – The submission data, expected to contain relevant
+details for grading. Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The updated assignment score. If exempted, returns NaN. If no submission</dt><dd><p>is provided, returns 0.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.assignment_type">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.assignments.</span></span><span class="sig-name descname"><span class="pre">assignment_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">weekly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#assignment_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.assignments.assignment_type" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Base class for assignment types.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.assignment_type.weight">
+<span class="sig-name descname"><span class="pre">weight</span></span><a class="headerlink" href="#pykubegrader.grade_reports.assignments.assignment_type.weight" title="Link to this definition">#</a></dt>
+<dd><p>The weight of the assignment in the overall grade.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__init__(name</span></span></dt>
+<dd><p>str, weekly: bool, weight: float):
+Initializes an instance of the assignment_type class.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pykubegrader.grade_reports.class_grade_report">
+<span id="pykubegrader-grade-reports-class-grade-report-module"></span><h2>pykubegrader.grade_reports.class_grade_report module<a class="headerlink" href="#module-pykubegrader.grade_reports.class_grade_report" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.class_grade_report.</span></span><span class="sig-name descname"><span class="pre">ClassGradeReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Generates and manages a class-wide grade report.</p>
+<p>This class retrieves a list of students, initializes a structured grade report,
+and populates it with individual student grade data. The final report includes
+both assignment-specific grades and a weighted average grade.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport.student_list">
+<span class="sig-name descname"><span class="pre">student_list</span></span><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.student_list" title="Link to this definition">#</a></dt>
+<dd><p>A sorted list of all students in the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport.all_student_grades_df">
+<span class="sig-name descname"><span class="pre">all_student_grades_df</span></span><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.all_student_grades_df" title="Link to this definition">#</a></dt>
+<dd><p>A DataFrame storing grades for each student,
+including assignment scores and a weighted average.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport.setup_class_grades">
+<span class="sig-name descname"><span class="pre">setup_class_grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.setup_class_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.setup_class_grades" title="Link to this definition">#</a></dt>
+<dd><p>Initializes an empty DataFrame with assignment names and weighted average columns.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport.update_student_grade">
+<span class="sig-name descname"><span class="pre">update_student_grade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">student</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.update_student_grade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.update_student_grade" title="Link to this definition">#</a></dt>
+<dd><p>Fetches and updates an individual student’s weighted average grades in the DataFrame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport.fill_class_grades">
+<span class="sig-name descname"><span class="pre">fill_class_grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.fill_class_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.fill_class_grades" title="Link to this definition">#</a></dt>
+<dd><p>Iterates through all students to populate the class-wide grade report.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">fill_class_grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.fill_class_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition">#</a></dt>
+<dd><p>Populates the class-wide grade report with data from all students.</p>
+<p>Iterates through the <cite>student_list</cite> and updates the DataFrame by fetching
+and storing each student’s weighted average grades.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport.get_class_stats">
+<span class="sig-name descname"><span class="pre">get_class_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.get_class_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.get_class_stats" title="Link to this definition">#</a></dt>
+<dd><p>Calculates and stores descriptive statistics for the class-wide grade report.
+Requires filling class grades first</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">setup_class_grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.setup_class_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition">#</a></dt>
+<dd><p>Creates an empty DataFrame to store grades for all students.</p>
+<p>The DataFrame contains assignment columns and a “Weighted Average Grade” column,
+with students as index labels.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">update_student_grade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">student</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.update_student_grade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Link to this definition">#</a></dt>
+<dd><p>Fetches and updates the grade report for an individual student.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>student</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The username or identifier of the student.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Updates:</dt><dd><p>The student’s row in <cite>all_student_grades_df</cite> with their weighted average grades.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport.write_excel_spreadsheet">
+<span class="sig-name descname"><span class="pre">write_excel_spreadsheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output.xlsx'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.write_excel_spreadsheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.write_excel_spreadsheet" title="Link to this definition">#</a></dt>
+<dd><p>Exports the class-wide grade report to an Excel spreadsheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>out_name</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>optional</em>) – Name of output file. Defaults to ‘output.xlsx’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_reports.get_student_grades">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.grade_reports.</span></span><span class="sig-name descname"><span class="pre">get_student_grades</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">student_username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_reports.html#get_student_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_reports.get_student_grades" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.main">
+<span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.class_grade_report.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.main" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+</section>
+<section id="module-pykubegrader.grade_reports.grade_report">
+<span id="pykubegrader-grade-reports-grade-report-module"></span><h2>pykubegrader.grade_reports.grade_report module<a class="headerlink" href="#module-pykubegrader.grade_reports.grade_report" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.grade_report.</span></span><span class="sig-name descname"><span class="pre">GradeReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2025-01-06'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class to generate a grade report for a course and perform grade calculations for each student.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.build_assignments">
+<span class="sig-name descname"><span class="pre">build_assignments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.build_assignments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.build_assignments" title="Link to this definition">#</a></dt>
+<dd><p>Generates a list of Assignment objects for each week, applying custom adjustments where needed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.calculate_grades">
+<span class="sig-name descname"><span class="pre">calculate_grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.calculate_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.calculate_grades" title="Link to this definition">#</a></dt>
+<dd><p>Calculates the grades for each student based on the graded assignments.
+If there are filtered assignments, the score is updated based on the submission.
+Otherwise,</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.compute_final_average">
+<span class="sig-name descname"><span class="pre">compute_final_average</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.compute_final_average"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.compute_final_average" title="Link to this definition">#</a></dt>
+<dd><p>Computes the final average by combining the running average from weekly assignments
+and the midterm/final exam scores.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.determine_due_date">
+<span class="sig-name descname"><span class="pre">determine_due_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filtered_assignments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.determine_due_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.determine_due_date" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.drop_lowest_n_for_types">
+<span class="sig-name descname"><span class="pre">drop_lowest_n_for_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignments_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.drop_lowest_n_for_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.drop_lowest_n_for_types" title="Link to this definition">#</a></dt>
+<dd><p>Exempts the lowest n assignments for each specified assignment type.
+If the lowest dropped score is from week 1, an additional lowest score is dropped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>assignments</strong> – List of assignment types (names) to process.</p></li>
+<li><p><strong>n</strong> – Number of lowest scores to exempt per type.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.filter_submissions">
+<span class="sig-name descname"><span class="pre">filter_submissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">week_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.filter_submissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.filter_submissions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.get_assignment">
+<span class="sig-name descname"><span class="pre">get_assignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">week_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.get_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_assignment" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.get_graded_assignment">
+<span class="sig-name descname"><span class="pre">get_graded_assignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">week_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.get_graded_assignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_graded_assignment" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.get_max_score">
+<span class="sig-name descname"><span class="pre">get_max_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filtered_assignments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.get_max_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_max_score" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.get_non_weekly_assignments">
+<span class="sig-name descname"><span class="pre">get_non_weekly_assignments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.get_non_weekly_assignments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_non_weekly_assignments" title="Link to this definition">#</a></dt>
+<dd><p>Get all weekly assignments from the assignment list configuration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.get_num_weeks">
+<span class="sig-name descname"><span class="pre">get_num_weeks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.get_num_weeks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_num_weeks" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of weeks in the course</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.get_weekly_assignments">
+<span class="sig-name descname"><span class="pre">get_weekly_assignments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.get_weekly_assignments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_weekly_assignments" title="Link to this definition">#</a></dt>
+<dd><p>Get all weekly assignments from the assignment list configuration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.grade_report">
+<span class="sig-name descname"><span class="pre">grade_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.grade_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.grade_report" title="Link to this definition">#</a></dt>
+<dd><p>Generates a grade report for the course.
+:returns: A DataFrame containing the grade report or weekly grades only.
+:rtype: pd.DataFrame</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.graded_assignment_constructor">
+<span class="sig-name descname"><span class="pre">graded_assignment_constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assignment_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.graded_assignment_constructor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.graded_assignment_constructor" title="Link to this definition">#</a></dt>
+<dd><p>Constructs a graded assignment object and appends it to the graded_assignments list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>assignment_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Type of assignment. Options: readings, lecture, practicequiz, quiz, homework, lab, labattendance, practicemidterm, midterm, practicefinal, final.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.setup_grades_df">
+<span class="sig-name descname"><span class="pre">setup_grades_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.setup_grades_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.setup_grades_df" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.update_assignments_not_due_yet">
+<span class="sig-name descname"><span class="pre">update_assignments_not_due_yet</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.update_assignments_not_due_yet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.update_assignments_not_due_yet" title="Link to this definition">#</a></dt>
+<dd><p>Updates the score of assignments that are not due yet to NaN.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.update_global_exempted_assignments">
+<span class="sig-name descname"><span class="pre">update_global_exempted_assignments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.update_global_exempted_assignments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.update_global_exempted_assignments" title="Link to this definition">#</a></dt>
+<dd><p>Updates the graded assignments with the globally exempted assignments. If assignment doesn’t exist, pass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.update_weekly_table">
+<span class="sig-name descname"><span class="pre">update_weekly_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.update_weekly_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.update_weekly_table" title="Link to this definition">#</a></dt>
+<dd><p>Updates the weekly grades table with the calculated scores.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pykubegrader.grade_reports.grading_config">
+<span id="pykubegrader-grade-reports-grading-config-module"></span><h2>pykubegrader.grade_reports.grading_config module<a class="headerlink" href="#module-pykubegrader.grade_reports.grading_config" title="Link to this heading">#</a></h2>
 </section>
 </section>
 
@@ -523,13 +932,72 @@ or with specific assignment types.</p>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.grade_reports.get_my_grades_testing">pykubegrader.grade_reports.get_my_grades_testing module</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.grade_reports.grade_reports">pykubegrader.grade_reports.grade_reports module</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_reports.filter_assignments"><code class="docutils literal notranslate"><span class="pre">filter_assignments()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_reports.format_assignment_table"><code class="docutils literal notranslate"><span class="pre">format_assignment_table()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_reports.get_student_grades"><code class="docutils literal notranslate"><span class="pre">get_student_grades()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.grade_reports.assignments">pykubegrader.grade_reports.assignments module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment"><code class="docutils literal notranslate"><span class="pre">Assignment</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.week"><code class="docutils literal notranslate"><span class="pre">Assignment.week</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.exempted"><code class="docutils literal notranslate"><span class="pre">Assignment.exempted</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.graded"><code class="docutils literal notranslate"><span class="pre">Assignment.graded</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.late_adjustment"><code class="docutils literal notranslate"><span class="pre">Assignment.late_adjustment</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.students_exempted"><code class="docutils literal notranslate"><span class="pre">Assignment.students_exempted</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.due_date"><code class="docutils literal notranslate"><span class="pre">Assignment.due_date</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.max_score"><code class="docutils literal notranslate"><span class="pre">Assignment.max_score</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.grade_adjustment_func"><code class="docutils literal notranslate"><span class="pre">Assignment.grade_adjustment_func</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.add_exempted_students"><code class="docutils literal notranslate"><span class="pre">Assignment.add_exempted_students()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.update_score"><code class="docutils literal notranslate"><span class="pre">Assignment.update_score()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.Assignment.grade_adjustment"><code class="docutils literal notranslate"><span class="pre">Assignment.grade_adjustment()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">Assignment.add_exempted_students()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">Assignment.grade_adjustment()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">Assignment.update_score()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.assignment_type"><code class="docutils literal notranslate"><span class="pre">assignment_type</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.assignments.assignment_type.weight"><code class="docutils literal notranslate"><span class="pre">assignment_type.weight</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.grade_reports.class_grade_report">pykubegrader.grade_reports.class_grade_report module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.student_list"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.student_list</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.all_student_grades_df"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.all_student_grades_df</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.setup_class_grades"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.setup_class_grades()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.update_student_grade"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.update_student_grade()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.fill_class_grades"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.fill_class_grades()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.fill_class_grades()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.get_class_stats"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.get_class_stats()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.setup_class_grades()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.update_student_grade()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.write_excel_spreadsheet"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.write_excel_spreadsheet()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.grade_reports.grade_report">pykubegrader.grade_reports.grade_report module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport"><code class="docutils literal notranslate"><span class="pre">GradeReport</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.build_assignments"><code class="docutils literal notranslate"><span class="pre">GradeReport.build_assignments()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.calculate_grades"><code class="docutils literal notranslate"><span class="pre">GradeReport.calculate_grades()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.compute_final_average"><code class="docutils literal notranslate"><span class="pre">GradeReport.compute_final_average()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.determine_due_date"><code class="docutils literal notranslate"><span class="pre">GradeReport.determine_due_date()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.drop_lowest_n_for_types"><code class="docutils literal notranslate"><span class="pre">GradeReport.drop_lowest_n_for_types()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.filter_submissions"><code class="docutils literal notranslate"><span class="pre">GradeReport.filter_submissions()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_assignment"><code class="docutils literal notranslate"><span class="pre">GradeReport.get_assignment()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_graded_assignment"><code class="docutils literal notranslate"><span class="pre">GradeReport.get_graded_assignment()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_max_score"><code class="docutils literal notranslate"><span class="pre">GradeReport.get_max_score()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_non_weekly_assignments"><code class="docutils literal notranslate"><span class="pre">GradeReport.get_non_weekly_assignments()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_num_weeks"><code class="docutils literal notranslate"><span class="pre">GradeReport.get_num_weeks()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_weekly_assignments"><code class="docutils literal notranslate"><span class="pre">GradeReport.get_weekly_assignments()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.grade_report"><code class="docutils literal notranslate"><span class="pre">GradeReport.grade_report()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.graded_assignment_constructor"><code class="docutils literal notranslate"><span class="pre">GradeReport.graded_assignment_constructor()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.setup_grades_df"><code class="docutils literal notranslate"><span class="pre">GradeReport.setup_grades_df()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.update_assignments_not_due_yet"><code class="docutils literal notranslate"><span class="pre">GradeReport.update_assignments_not_due_yet()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.update_global_exempted_assignments"><code class="docutils literal notranslate"><span class="pre">GradeReport.update_global_exempted_assignments()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.update_weekly_table"><code class="docutils literal notranslate"><span class="pre">GradeReport.update_weekly_table()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.grade_reports.grading_config">pykubegrader.grade_reports.grading_config module</a></li>
 </ul>
   </nav></div>
 
