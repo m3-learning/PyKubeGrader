@@ -9,13 +9,13 @@ pykubegrader.log\_parser.parse module
 
 .. automodule:: pykubegrader.log_parser.parse
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: pykubegrader.log_parser
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

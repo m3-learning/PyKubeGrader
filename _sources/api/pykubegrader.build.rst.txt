@@ -9,45 +9,45 @@ pykubegrader.build.api\_notebook\_builder module
 
 .. automodule:: pykubegrader.build.api_notebook_builder
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.build.build\_folder module
 ---------------------------------------
 
 .. automodule:: pykubegrader.build.build_folder
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.build.clean\_folder module
 ---------------------------------------
 
 .. automodule:: pykubegrader.build.clean_folder
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.build.collate module
 ---------------------------------
 
 .. automodule:: pykubegrader.build.collate
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.build.markdown\_questions module
 ---------------------------------------------
 
 .. automodule:: pykubegrader.build.markdown_questions
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: pykubegrader.build
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

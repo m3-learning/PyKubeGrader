@@ -9,69 +9,69 @@ pykubegrader.widgets.multiple\_choice module
 
 .. automodule:: pykubegrader.widgets.multiple_choice
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets.question\_processor module
 -----------------------------------------------
 
 .. automodule:: pykubegrader.widgets.question_processor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets.reading\_question module
 ---------------------------------------------
 
 .. automodule:: pykubegrader.widgets.reading_question
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets.select\_many module
 ----------------------------------------
 
 .. automodule:: pykubegrader.widgets.select_many
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets.student\_info module
 -----------------------------------------
 
 .. automodule:: pykubegrader.widgets.student_info
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets.style module
 ---------------------------------
 
 .. automodule:: pykubegrader.widgets.style
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets.true\_false module
 ---------------------------------------
 
 .. automodule:: pykubegrader.widgets.true_false
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets.types\_question module
 -------------------------------------------
 
 .. automodule:: pykubegrader.widgets.types_question
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: pykubegrader.widgets
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -9,29 +9,29 @@ pykubegrader.widgets\_base.multi\_select module
 
 .. automodule:: pykubegrader.widgets_base.multi_select
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets\_base.reading module
 -----------------------------------------
 
 .. automodule:: pykubegrader.widgets_base.reading
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.widgets\_base.select module
 ----------------------------------------
 
 .. automodule:: pykubegrader.widgets_base.select
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: pykubegrader.widgets_base
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
