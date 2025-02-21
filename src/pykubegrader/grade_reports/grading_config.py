@@ -21,7 +21,8 @@ custom_grade_adjustments = {
     ("lecture", 3): lambda score: 100.0 if score > 0 else 0.0,
     ("lecture", 4): lambda score: 100.0 if score > 0 else 0.0,
     ("lecture", 5): lambda score: 100.0 if score > 0 else 0.0,
-}
+    ("lecture", 7): lambda score: 100.0,
+} 
 
 # Exempted assignments, key is a tuple of assignment type and week
 globally_exempted_assignments = [

@@ -116,8 +116,20 @@ class GradeReport:
         """
         self._update_running_avg()
         return self.weekly_grades_df
-
+    
     def update_weekly_table(self):
+        self._update_weekly_table_nan()
+        self._update_weekly_table_scores()
+    
+    # TODO: populate with average scores calculated from the exempted 
+    def _update_week_table_scores(self):
+        for assignment in self.graded_assignments:
+            if assignment.weekly:
+                self.weekly_grades_df_display.loc[f"week{assignment.week}", assignment.name] = (
+                    assignment.score_
+                )
+
+    def _update_weekly_table_nan(self):
         """Updates the weekly grades table with the calculated scores."""
         for assignment in self.graded_assignments:
             if assignment.weekly:
@@ -309,7 +321,7 @@ class GradeReport:
         new_weekly_grades["inds"] = inds
         new_weekly_grades.set_index("inds", inplace=True)
         self.weekly_grades_df = new_weekly_grades
-
+        self.weekly_grades_df_display = new_weekly_grades.copy()
     def _build_running_avg(self):
         """
         Subfunction to compute and update the Running Avg row, handling NaNs.
@@ -353,17 +365,13 @@ class GradeReport:
 
             # Exempt the lowest `n` assignments
             dropped = []
-            for i in range(min(n, len(valid_assignments))):
+            i = -1
+            while i < n:
+                i += 1
                 valid_assignments[i].exempted = True
+                if valid_assignments[i].week in self.optional_drop_week:
+                    continue
                 dropped.append(valid_assignments[i])
                 self.student_assignments_dropped.append(valid_assignments[i])
-
-            # Check if the lowest dropped assignment is from week 1
-            if dropped and any(a.week in self.optional_drop_week for a in dropped):
-                # Find the next lowest non-exempted assignment and drop it
-                for a in valid_assignments:
-                    if not a.exempted:
-                        a.exempted = True
-                        break
-
+                
         self.calculate_grades()
