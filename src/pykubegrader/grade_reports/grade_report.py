@@ -109,13 +109,13 @@ class GradeReport:
             ]
         )
 
-    def grade_report(self):
-        """Generates a grade report for the course.
-        Returns:
-            pd.DataFrame: A DataFrame containing the grade report or weekly grades only.
-        """
-        self._update_running_avg()
-        return self.weekly_grades_df
+    # def grade_report(self):
+    #     """Generates a grade report for the course.
+    #     Returns:
+    #         pd.DataFrame: A DataFrame containing the grade report or weekly grades only.
+    #     """
+    #     self._update_running_avg()
+    #     return self.weekly_grades_df
     
     def update_weekly_table(self):
         self._update_weekly_table_nan()
@@ -322,12 +322,16 @@ class GradeReport:
         new_weekly_grades.set_index("inds", inplace=True)
         self.weekly_grades_df = new_weekly_grades
         self.weekly_grades_df_display = new_weekly_grades.copy()
+        
     def _build_running_avg(self):
         """
         Subfunction to compute and update the Running Avg row, handling NaNs.
         """
         
         self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.drop(
+            "Running Avg", errors="ignore"
+        ).mean(axis=0, skipna=True)
+        self.weekly_grades_df_display.loc["Running Avg"] = self.weekly_grades_df_display.drop(
             "Running Avg", errors="ignore"
         ).mean(axis=0, skipna=True)
 
