@@ -11,29 +11,29 @@ pykubegrader.grade\_reports.assignments module
 
 .. automodule:: pykubegrader.grade_reports.assignments
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.grade\_reports.class\_grade\_report module
 -------------------------------------------------------
 
 .. automodule:: pykubegrader.grade_reports.class_grade_report
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.grade\_reports.grade\_report module
 ------------------------------------------------
 
 .. automodule:: pykubegrader.grade_reports.grade_report
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pykubegrader.grade\_reports.grading\_config module
 --------------------------------------------------
 
 .. automodule:: pykubegrader.grade_reports.grading_config
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
