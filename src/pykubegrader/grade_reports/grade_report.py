@@ -387,7 +387,7 @@ class GradeReport:
                 self.student_assignments_dropped.append(valid_assignments[i])
                 
                 self.weekly_grades_df_styler = self.color_cells(
-                    self.weekly_grades_df_styler, f"week{valid_assignments[i].week}", name
+                    self.weekly_grades_df_styler, f"week{valid_assignments[i].week}", name, color="red"
                 )
                 
         self.calculate_grades()
