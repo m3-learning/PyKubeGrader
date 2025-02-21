@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+ge0c8851 documentation</title>
+    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+g150faa6 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=b25e02e8"></script>
+    <script src="../_static/documentation_options.js?v=e8a44630"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader.build package" href="pykubegrader.build.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+ge0c8851" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g150faa6" />
     <meta name="docbuild:last-update" content="Feb 21, 2025"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+ge0c8851 documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+ge0c8851 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g150faa6 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g150faa6 documentation - Home"/>
   
   
 </a></div>
@@ -771,7 +771,7 @@ Otherwise,</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.color_cells">
-<span class="sig-name descname"><span class="pre">color_cells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">styler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">week</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'yellow'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.color_cells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.color_cells" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">color_cells</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">styler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">week_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.color_cells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.color_cells" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -784,8 +784,7 @@ and the midterm/final exam scores.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.determine_due_date">
 <span class="sig-name descname"><span class="pre">determine_due_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filtered_assignments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.determine_due_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.determine_due_date" title="Link to this definition">#</a></dt>
-<dd><p>Determines the due date for the assignment based on the max due date.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.drop_lowest_n_for_types">
@@ -862,8 +861,7 @@ If the lowest dropped score is from week 1, an additional lowest score is droppe
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.setup_grades_df">
 <span class="sig-name descname"><span class="pre">setup_grades_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.setup_grades_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.setup_grades_df" title="Link to this definition">#</a></dt>
-<dd><p>Initializes the DataFrame for storing weekly grades.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.update_assignments_not_due_yet">

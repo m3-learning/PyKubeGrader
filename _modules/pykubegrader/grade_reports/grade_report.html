@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.grade_reports.grade_report &#8212; PyKubeGrader 0.0.post1.dev1+ge0c8851 documentation</title>
+    <title>pykubegrader.grade_reports.grade_report &#8212; PyKubeGrader 0.0.post1.dev1+g150faa6 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=b25e02e8"></script>
+    <script src="../../../_static/documentation_options.js?v=e8a44630"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+ge0c8851" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g150faa6" />
     <meta name="docbuild:last-update" content="Feb 21, 2025"/>
   </head>
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+ge0c8851 documentation - Home"/>
-    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+ge0c8851 documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g150faa6 documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g150faa6 documentation - Home"/>
   
   
 </a></div>
@@ -460,42 +460,45 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_weekly_table</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_running_avg</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_final_average</span><span class="p">()</span>
-        
         <span class="k">if</span> <span class="n">display_</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df</span><span class="p">)</span>
-                <span class="c1"># display(self.weekly_grades_df_styler)</span>
                 <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weighted_average_grades</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
                 <span class="k">pass</span>
 
-<div class="viewcode-block" id="GradeReport.setup_grades_df">
-<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.setup_grades_df">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setup_grades_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the DataFrame for storing weekly grades.&quot;&quot;&quot;</span>
-        <span class="n">weekly_assignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_weekly_assignments</span><span class="p">()</span>
-        <span class="n">max_week_number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_weeks</span><span class="p">()</span>
-        <span class="n">inds</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_week_number</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Running Avg&quot;</span><span class="p">]</span>
-        <span class="n">restruct_grades</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inds</span><span class="p">))]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">weekly_assignments</span>
-        <span class="p">}</span>
-        <span class="n">new_weekly_grades</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">restruct_grades</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="n">new_weekly_grades</span><span class="p">[</span><span class="s2">&quot;inds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inds</span>
-        <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;inds&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df</span> <span class="o">=</span> <span class="n">new_weekly_grades</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_display</span> <span class="o">=</span> <span class="n">new_weekly_grades</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_styler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_display</span><span class="o">.</span><span class="n">style</span></div>
+<div class="viewcode-block" id="GradeReport.update_assignments_not_due_yet">
+<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.update_assignments_not_due_yet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_assignments_not_due_yet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the score of assignments that are not due yet to NaN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graded_assignments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">assignment</span><span class="o">.</span><span class="n">due_date</span><span class="p">:</span>
+                <span class="c1"># Convert due date to datetime object</span>
+                <span class="n">due_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">assignment</span><span class="o">.</span><span class="n">due_date</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;+00:00&quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">due_date</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">due_date</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">)</span> <span class="ow">and</span> <span class="n">assignment</span><span class="o">.</span><span class="n">score</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">assignment</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">assignment</span><span class="o">.</span><span class="n">exempted</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-       
-    <span class="c1"># CHANGED                        </span>
+                    
+                    
 <div class="viewcode-block" id="GradeReport.color_cells">
 <a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.color_cells">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">color_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">styler</span><span class="p">,</span> <span class="n">week</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">):</span>
-        <span class="c1"># Apply the style to the current cell</span>
-        <span class="k">return</span> <span class="n">styler</span><span class="o">.</span><span class="n">set_properties</span><span class="p">(</span>
-            <span class="n">subset</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">IndexSlice</span><span class="p">[[</span><span class="n">week</span><span class="p">],</span> <span class="p">[</span><span class="n">name</span><span class="p">]],</span>
-            <span class="o">**</span><span class="p">{</span><span class="s1">&#39;background-color&#39;</span><span class="p">:</span> <span class="n">color</span><span class="p">})</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">color_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">styler</span><span class="p">,</span> <span class="n">week_list</span><span class="p">,</span> <span class="n">assignment_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">week_list</span><span class="p">:</span>
+            <span class="n">week</span> <span class="o">=</span> <span class="n">week_list</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">assignment</span> <span class="o">=</span> <span class="n">assignment_list</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+            <span class="c1"># Apply the style to the current cell</span>
+            <span class="n">styler</span> <span class="o">=</span> <span class="n">styler</span><span class="o">.</span><span class="n">set_properties</span><span class="p">(</span>
+                <span class="n">subset</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">IndexSlice</span><span class="p">[[</span><span class="n">week</span><span class="p">],</span> <span class="p">[</span><span class="n">assignment</span><span class="p">]],</span>
+                <span class="o">**</span><span class="p">{</span><span class="s1">&#39;background-color&#39;</span><span class="p">:</span> <span class="s1">&#39;yellow&#39;</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="c1"># Recursive call</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_cells</span><span class="p">(</span><span class="n">styler</span><span class="p">,</span> <span class="n">week_list</span><span class="p">,</span> <span class="n">assignment_list</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">styler</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_final_average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -537,6 +540,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_weekly_table_nan</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_weekly_table_scores</span><span class="p">()</span></div>
 
+    
+    <span class="c1"># TODO: populate with average scores calculated from the exempted </span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_week_table_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graded_assignments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">assignment</span><span class="o">.</span><span class="n">weekly</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_display</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="o">.</span><span class="n">week</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">assignment</span><span class="o">.</span><span class="n">score_</span>
+                <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_weekly_table_nan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the weekly grades table with the calculated scores.&quot;&quot;&quot;</span>
@@ -545,17 +556,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="o">.</span><span class="n">week</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">assignment</span><span class="o">.</span><span class="n">score</span>
                 <span class="p">)</span>
-    
-    <span class="c1"># CHANGED</span>
-    <span class="c1"># TODO: populate with average scores calculated from the exempted </span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_update_weekly_table_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graded_assignments</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">assignment</span><span class="o">.</span><span class="n">weekly</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_display</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="o">.</span><span class="n">week</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">assignment</span><span class="o">.</span><span class="n">_score</span>
-                <span class="p">)</span>
 
-    <span class="c1"># CHANGED</span>
 <div class="viewcode-block" id="GradeReport.update_global_exempted_assignments">
 <a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.update_global_exempted_assignments">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_global_exempted_assignments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -563,32 +564,10 @@
         <span class="k">for</span> <span class="n">assignment_type</span><span class="p">,</span> <span class="n">week</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">globally_exempted_assignments</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">get_graded_assignment</span><span class="p">(</span><span class="n">week</span><span class="p">,</span> <span class="n">assignment_type</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">exempted</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_styler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_cells</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_styler</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">week</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment_type</span>
-                <span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
                 <span class="k">pass</span></div>
 
 
-    <span class="c1"># CHANGED (but how come there are NaNs in the last row?)</span>
-<div class="viewcode-block" id="GradeReport.update_assignments_not_due_yet">
-<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.update_assignments_not_due_yet">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">update_assignments_not_due_yet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the score of assignments that are not due yet to NaN.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graded_assignments</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">assignment</span><span class="o">.</span><span class="n">due_date</span><span class="p">:</span>
-                <span class="c1"># Convert due date to datetime object</span>
-                <span class="n">due_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">assignment</span><span class="o">.</span><span class="n">due_date</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;+00:00&quot;</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">due_date</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">due_date</span><span class="o">.</span><span class="n">tzinfo</span><span class="p">)</span> <span class="ow">and</span> <span class="n">assignment</span><span class="o">.</span><span class="n">score</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">assignment</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                    <span class="n">assignment</span><span class="o">.</span><span class="n">exempted</span> <span class="o">=</span> <span class="kc">True</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_styler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_cells</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_styler</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="o">.</span><span class="n">week</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment</span><span class="o">.</span><span class="n">name</span>
-                    <span class="p">)</span></div>
-
-                    
 <div class="viewcode-block" id="GradeReport.build_assignments">
 <a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.build_assignments">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_assignments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -748,7 +727,6 @@
 <div class="viewcode-block" id="GradeReport.determine_due_date">
 <a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.determine_due_date">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">determine_due_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filtered_assignments</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determines the due date for the assignment based on the max due date.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filtered_assignments</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Return None if the list is empty</span>
 
@@ -791,7 +769,21 @@
         <span class="k">return</span> <span class="n">max_week_number</span></div>
 
 
-    <span class="c1"># CHANGED</span>
+<div class="viewcode-block" id="GradeReport.setup_grades_df">
+<a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.setup_grades_df">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_grades_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">weekly_assignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_weekly_assignments</span><span class="p">()</span>
+        <span class="n">max_week_number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_weeks</span><span class="p">()</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_week_number</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Running Avg&quot;</span><span class="p">]</span>
+        <span class="n">restruct_grades</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inds</span><span class="p">))]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">weekly_assignments</span>
+        <span class="p">}</span>
+        <span class="n">new_weekly_grades</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">restruct_grades</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">new_weekly_grades</span><span class="p">[</span><span class="s2">&quot;inds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inds</span>
+        <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;inds&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df</span> <span class="o">=</span> <span class="n">new_weekly_grades</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_display</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_running_avg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Subfunction to compute and update the Running Avg row, handling NaNs.</span>
@@ -800,8 +792,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;Running Avg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
             <span class="s2">&quot;Running Avg&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span>
         <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_display</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;Running Avg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;Running Avg&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="GradeReport.drop_lowest_n_for_types">
 <a class="viewcode-back" href="../../../api/pykubegrader.grade_reports.html#pykubegrader.grade_reports.grade_report.GradeReport.drop_lowest_n_for_types">[docs]</a>
@@ -820,9 +810,10 @@
         <span class="n">assignment_groups</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graded_assignments</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">assignments_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">assignment</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropped_assignments</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">assignment</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropped_assignments</span>
                     <span class="ow">and</span> <span class="ow">not</span> <span class="n">assignment</span><span class="o">.</span><span class="n">exempted</span>
-                    <span class="p">):</span>
+                <span class="p">):</span>
                     <span class="n">assignment_groups</span><span class="p">[</span><span class="n">assignment</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">assignment</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">assignments_</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">assignment</span><span class="o">.</span><span class="n">exempted</span><span class="p">:</span>
@@ -842,17 +833,10 @@
             <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">valid_assignments</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">exempted</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">if</span> <span class="n">valid_assignments</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">week</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_drop_week</span><span class="p">:</span>                
-                    <span class="c1"># self.weekly_grades_df_styler = self.color_cells(</span>
-                    <span class="c1">#     self.weekly_grades_df_styler, [f&quot;week{valid_assignments[i].week}&quot;], [name]</span>
-                    <span class="c1"># )</span>
+                <span class="k">if</span> <span class="n">valid_assignments</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">week</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_drop_week</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="n">dropped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">valid_assignments</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">student_assignments_dropped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">valid_assignments</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                
-                <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_styler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_cells</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">weekly_grades_df_styler</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">valid_assignments</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">week</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
-                <span class="p">)</span>
                 
         <span class="bp">self</span><span class="o">.</span><span class="n">calculate_grades</span><span class="p">()</span></div>
 </div>
