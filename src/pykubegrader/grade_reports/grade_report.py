@@ -55,8 +55,8 @@ class GradeReport:
         
         if display_:
             try:
-                # display(self.weekly_grades_df)
-                display(self.weekly_grades_df_styler)
+                display(self.weekly_grades_df)
+                # display(self.weekly_grades_df_styler)
                 display(self.weighted_average_grades)
             except:  # noqa: E722
                 pass
