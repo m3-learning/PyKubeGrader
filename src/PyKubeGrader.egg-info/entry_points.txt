@@ -1,0 +1,3 @@
+[console_scripts]
+otter-folder-builder = pykubegrader.build.build_folder:main
+otter-folder-cleaner = pykubegrader.build.clean_folder:main
