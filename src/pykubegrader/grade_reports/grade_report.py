@@ -52,6 +52,7 @@ class GradeReport:
         self.update_weekly_table()
         self._build_running_avg()
         self._calculate_final_average()
+        
         if display_:
             try:
                 display(self.weekly_grades_df)
@@ -59,19 +60,22 @@ class GradeReport:
             except:  # noqa: E722
                 pass
 
-    def update_assignments_not_due_yet(self):
-        """
-        Updates the score of assignments that are not due yet to NaN.
-        """
-        for assignment in self.graded_assignments:
-            if assignment.due_date:
-                # Convert due date to datetime object
-                due_date = datetime.fromisoformat(assignment.due_date.replace("Z", "+00:00"))
-                if due_date > datetime.now(due_date.tzinfo) and assignment.score == 0:
-                    assignment.score = np.nan
-                    assignment.exempted = True
-                    
-                    
+    def setup_grades_df(self):
+        """Initializes the DataFrame for storing weekly grades."""
+        weekly_assignments = self.get_weekly_assignments()
+        max_week_number = self.get_num_weeks()
+        inds = [f"week{i + 1}" for i in range(max_week_number)] + ["Running Avg"]
+        restruct_grades = {
+            k.name: [0 for i in range(len(inds))] for k in weekly_assignments
+        }
+        new_weekly_grades = pd.DataFrame(restruct_grades, dtype=float)
+        new_weekly_grades["inds"] = inds
+        new_weekly_grades.set_index("inds", inplace=True)
+        
+        self.weekly_grades_df = new_weekly_grades
+        self.weekly_grades_df_display = new_weekly_grades
+        self.weekly_grades_df_styler = self.weekly_grades_df_display.style
+                               
     def color_cells(self, styler, week_list, assignment_list):
         if week_list:
             week = week_list.pop()
@@ -120,14 +124,6 @@ class GradeReport:
     def update_weekly_table(self):
         self._update_weekly_table_nan()
         self._update_weekly_table_scores()
-    
-    # TODO: populate with average scores calculated from the exempted 
-    def _update_week_table_scores(self):
-        for assignment in self.graded_assignments:
-            if assignment.weekly:
-                self.weekly_grades_df_display.loc[f"week{assignment.week}", assignment.name] = (
-                    assignment.score_
-                )
 
     def _update_weekly_table_nan(self):
         """Updates the weekly grades table with the calculated scores."""
@@ -136,15 +132,44 @@ class GradeReport:
                 self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
                     assignment.score
                 )
+    
+    # CHANGED
+    # TODO: populate with average scores calculated from the exempted 
+    def _update_weekly_table_scores(self):
+        for assignment in self.graded_assignments:
+            if assignment.weekly:
+                self.weekly_grades_df_display.loc[f"week{assignment.week}", assignment.name] = (
+                    assignment._score
+                )
 
+    # CHANGED
     def update_global_exempted_assignments(self):
         """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass."""
         for assignment_type, week in self.globally_exempted_assignments:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
+                self.weekly_grades_df_styler = self.color_cells(
+                    self.weekly_grades_df_styler, [f"week{week}"], [assignment_type]
+                )
             except:  # noqa: E722
                 pass
 
+    # CHANGED (but how come there are NaNs in the last row?)
+    def update_assignments_not_due_yet(self):
+        """
+        Updates the score of assignments that are not due yet to NaN.
+        """
+        for assignment in self.graded_assignments:
+            if assignment.due_date:
+                # Convert due date to datetime object
+                due_date = datetime.fromisoformat(assignment.due_date.replace("Z", "+00:00"))
+                if due_date > datetime.now(due_date.tzinfo) and assignment.score == 0:
+                    assignment.score = np.nan
+                    assignment.exempted = True
+                    self.weekly_grades_df_styler = self.color_cells(
+                        self.weekly_grades_df_styler, [f"week{assignment.week}"], [assignment.name]
+                    )
+                    
     def build_assignments(self):
         """Generates a list of Assignment objects for each week, applying custom adjustments where needed."""
         self.graded_assignments = []
@@ -278,6 +303,7 @@ class GradeReport:
         return max(filtered_assignments, key=lambda x: x["id"])["max_score"]
 
     def determine_due_date(self, filtered_assignments):
+        """Determines the due date for the assignment based on the max due date."""
         if not filtered_assignments:
             return None  # Return None if the list is empty
 
@@ -310,18 +336,7 @@ class GradeReport:
         max_week_number = max(item["week_number"] for item in self.assignments)
         return max_week_number
 
-    def setup_grades_df(self):
-        weekly_assignments = self.get_weekly_assignments()
-        max_week_number = self.get_num_weeks()
-        inds = [f"week{i + 1}" for i in range(max_week_number)] + ["Running Avg"]
-        restruct_grades = {
-            k.name: [0 for i in range(len(inds))] for k in weekly_assignments
-        }
-        new_weekly_grades = pd.DataFrame(restruct_grades, dtype=float)
-        new_weekly_grades["inds"] = inds
-        new_weekly_grades.set_index("inds", inplace=True)
-        self.weekly_grades_df = new_weekly_grades
-        self.weekly_grades_df_display = new_weekly_grades.copy()
+    # CHANGED
     def _build_running_avg(self):
         """
         Subfunction to compute and update the Running Avg row, handling NaNs.
@@ -330,6 +345,8 @@ class GradeReport:
         self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.drop(
             "Running Avg", errors="ignore"
         ).mean(axis=0, skipna=True)
+        
+        self.weekly_grades_df_display.loc["Running Avg"] = self.weekly_grades_df.loc["Running Avg"]
 
     def drop_lowest_n_for_types(self, n, assignments_=None):
         """
@@ -346,10 +363,9 @@ class GradeReport:
         assignment_groups = defaultdict(list)
         for assignment in self.graded_assignments:
             if assignments_ is None:
-                if (
-                    assignment.name in self.dropped_assignments
+                if (assignment.name in self.dropped_assignments
                     and not assignment.exempted
-                ):
+                    ):
                     assignment_groups[assignment.name].append(assignment)
             else:
                 if assignment.name in assignments_ and not assignment.exempted:
@@ -369,9 +385,16 @@ class GradeReport:
             while i < n:
                 i += 1
                 valid_assignments[i].exempted = True
-                if valid_assignments[i].week in self.optional_drop_week:
+                if valid_assignments[i].week in self.optional_drop_week:                
+                    self.weekly_grades_df_styler = self.color_cells(
+                        self.weekly_grades_df_styler, [f"week{valid_assignments[i].week}"], [name]
+                    )
                     continue
                 dropped.append(valid_assignments[i])
                 self.student_assignments_dropped.append(valid_assignments[i])
+                
+                self.weekly_grades_df_styler = self.color_cells(
+                    self.weekly_grades_df_styler, [f"week{valid_assignments[i].week}"], [name]
+                )
                 
         self.calculate_grades()
