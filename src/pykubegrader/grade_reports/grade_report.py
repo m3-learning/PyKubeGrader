@@ -67,7 +67,7 @@ class GradeReport:
         highlight[ref.isna()] = 'background-color: red'
         return highlight
 
-    def highlight_nan(self):
+    def highlight_df(self):
         # Apply the styling to df2 based on NaNs in df1
         styled_df = self.weekly_grades_df_display.style.apply(self.highlight_nan, ref=self.weekly_grades_df, axis=None)
 
