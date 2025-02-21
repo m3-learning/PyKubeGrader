@@ -70,6 +70,22 @@ class GradeReport:
                 if due_date > datetime.now(due_date.tzinfo) and assignment.score == 0:
                     assignment.score = np.nan
                     assignment.exempted = True
+                    
+                    
+    def color_cells(self, styler, week_list, assignment_list):
+        if week_list:
+            week = week_list.pop()
+            assignment = assignment_list.pop()
+
+            # Apply the style to the current cell
+            styler = styler.set_properties(
+                subset=pd.IndexSlice[[week], [assignment]],
+                **{'background-color': 'yellow'}
+            )
+            # Recursive call
+            return self.color_cells(styler, week_list, assignment_list)
+        else:
+            return styler
 
     def _calculate_final_average(self):
         total_percentage = 1
