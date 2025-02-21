@@ -62,14 +62,14 @@ class GradeReport:
     # Custom function to highlight NaNs from df1 on df2
     def highlight_nan(self):
         # Create a DataFrame of the same shape filled with empty strings
-        highlight = pd.DataFrame('', index=self.weekly_grades_df_display.index, columns=data.columns)
+        highlight = pd.DataFrame('', index=self.weekly_grades_df_display.index, columns=self.weekly_grades_df_display.columns)
         # Fill with red background where ref is NaN
-        highlight[ref.isna()] = 'background-color: red'
+        highlight[self.weekly_grades_df.isna()] = 'background-color: red'
         return highlight
 
     def highlight_df(self):
         # Apply the styling to df2 based on NaNs in df1
-        styled_df = self.weekly_grades_df_display.style.apply(self.highlight_nan, ref=self.weekly_grades_df, axis=None)
+        styled_df = self.weekly_grades_df_display.style.apply(self.highlight_nan)
 
         # Display the styled DataFrame
         return styled_df
