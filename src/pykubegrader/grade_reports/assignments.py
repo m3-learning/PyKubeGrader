@@ -126,6 +126,7 @@ class Assignment(assignment_type):
             except:
                 pass
             return self.score
+        
         elif submission is not None:
             # Adjust the score based on submission
             score_ = self.grade_adjustment(submission)
