@@ -59,6 +59,21 @@ class GradeReport:
             except:  # noqa: E722
                 pass
 
+    # Custom function to highlight NaNs from df1 on df2
+    def highlight_nan(self):
+        # Create a DataFrame of the same shape filled with empty strings
+        highlight = pd.DataFrame('', index=self.weekly_grades_df_display.index, columns=data.columns)
+        # Fill with red background where ref is NaN
+        highlight[ref.isna()] = 'background-color: red'
+        return highlight
+
+    def highlight_nan(self):
+        # Apply the styling to df2 based on NaNs in df1
+        styled_df = self.weekly_grades_df_display.style.apply(self.highlight_nan, ref=self.weekly_grades_df, axis=None)
+
+        # Display the styled DataFrame
+        return styled_df
+
     def update_assignments_not_due_yet(self):
         """
         Updates the score of assignments that are not due yet to NaN.
