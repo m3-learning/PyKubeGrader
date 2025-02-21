@@ -142,7 +142,7 @@ class GradeReport:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
                 self.weekly_grades_df_styler = self.color_cells(
-                    self.weekly_grades_df_styler, [f"week{week}"], [assignment_type]
+                    self.weekly_grades_df_styler, f"week{week}", assignment_type
                 )
             except:  # noqa: E722
                 pass
@@ -160,7 +160,7 @@ class GradeReport:
                     assignment.score = np.nan
                     assignment.exempted = True
                     self.weekly_grades_df_styler = self.color_cells(
-                        self.weekly_grades_df_styler, [f"week{assignment.week}"], [assignment.name]
+                        self.weekly_grades_df_styler, f"week{assignment.week}", assignment.name
                     )
                     
     def build_assignments(self):
@@ -387,7 +387,7 @@ class GradeReport:
                 self.student_assignments_dropped.append(valid_assignments[i])
                 
                 self.weekly_grades_df_styler = self.color_cells(
-                    self.weekly_grades_df_styler, [f"week{valid_assignments[i].week}"], [name]
+                    self.weekly_grades_df_styler, f"week{valid_assignments[i].week}", name
                 )
                 
         self.calculate_grades()
