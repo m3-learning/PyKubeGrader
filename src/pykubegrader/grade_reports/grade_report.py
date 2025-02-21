@@ -338,7 +338,7 @@ class GradeReport:
             # Exempt the lowest `n` assignments
             dropped = []
             i = 0
-            while len(dropped) < n:
+            while i < n:
                 valid_assignments[i].exempted = True
                 if valid_assignments[i].week in self.optional_drop_week:
                     continue
