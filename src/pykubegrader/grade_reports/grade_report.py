@@ -331,7 +331,7 @@ class GradeReport:
         self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.drop(
             "Running Avg", errors="ignore"
         ).mean(axis=0, skipna=True)
-        self.weekly_grades_df_display.loc["Running Avg"] = self.weekly_grades_df_display.drop(
+        self.weekly_grades_df_display.loc["Running Avg"] = self.weekly_grades_df.drop(
             "Running Avg", errors="ignore"
         ).mean(axis=0, skipna=True)
 
