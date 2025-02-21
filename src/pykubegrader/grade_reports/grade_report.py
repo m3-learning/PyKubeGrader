@@ -126,7 +126,7 @@ class GradeReport:
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df_display.loc[f"week{assignment.week}", assignment.name] = (
-                    assignment.score_
+                    assignment._score
                 )
 
     def _update_weekly_table_nan(self):
