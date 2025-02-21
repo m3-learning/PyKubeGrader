@@ -122,7 +122,7 @@ class GradeReport:
         self._update_weekly_table_scores()
     
     # TODO: populate with average scores calculated from the exempted 
-    def _update_week_table_scores(self):
+    def _update_weekly_table_scores(self):
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df_display.loc[f"week{assignment.week}", assignment.name] = (
