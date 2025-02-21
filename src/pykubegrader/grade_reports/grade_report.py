@@ -100,8 +100,20 @@ class GradeReport:
         """
         self._update_running_avg()
         return self.weekly_grades_df
-
+    
     def update_weekly_table(self):
+        self._update_weekly_table_nan()
+        self._update_weekly_table_scores()
+    
+    # TODO: populate with average scores calculated from the exempted 
+    def _update_week_table_scores(self):
+        for assignment in self.graded_assignments:
+            if assignment.weekly:
+                self.weekly_grades_df_display.loc[f"week{assignment.week}", assignment.name] = (
+                    assignment.score_
+                )
+
+    def _update_weekly_table_nan(self):
         """Updates the weekly grades table with the calculated scores."""
         for assignment in self.graded_assignments:
             if assignment.weekly:
@@ -293,7 +305,7 @@ class GradeReport:
         new_weekly_grades["inds"] = inds
         new_weekly_grades.set_index("inds", inplace=True)
         self.weekly_grades_df = new_weekly_grades
-
+        self.weekly_grades_df_display = new_weekly_grades.copy()
     def _build_running_avg(self):
         """
         Subfunction to compute and update the Running Avg row, handling NaNs.
