@@ -76,21 +76,13 @@ class GradeReport:
         self.weekly_grades_df = new_weekly_grades
         self.weekly_grades_df_display = new_weekly_grades
         self.weekly_grades_df_styler = self.weekly_grades_df_display.style
-                               
-    def color_cells(self, styler, week_list, assignment_list):
-        if week_list:
-            week = week_list.pop()
-            assignment = assignment_list.pop()
-
-            # Apply the style to the current cell
-            styler = styler.set_properties(
-                subset=pd.IndexSlice[[week], [assignment]],
-                **{'background-color': 'yellow'}
-            )
-            # Recursive call
-            return self.color_cells(styler, week_list, assignment_list)
-        else:
-            return styler
+       
+    # CHANGED                        
+    def color_cells(self, styler, week, name, color="yellow"):
+        # Apply the style to the current cell
+        return styler.set_properties(
+            subset=pd.IndexSlice[[week], [name]],
+            **{'background-color': color})
 
     def _calculate_final_average(self):
         total_percentage = 1
@@ -387,9 +379,9 @@ class GradeReport:
                 i += 1
                 valid_assignments[i].exempted = True
                 if valid_assignments[i].week in self.optional_drop_week:                
-                    self.weekly_grades_df_styler = self.color_cells(
-                        self.weekly_grades_df_styler, [f"week{valid_assignments[i].week}"], [name]
-                    )
+                    # self.weekly_grades_df_styler = self.color_cells(
+                    #     self.weekly_grades_df_styler, [f"week{valid_assignments[i].week}"], [name]
+                    # )
                     continue
                 dropped.append(valid_assignments[i])
                 self.student_assignments_dropped.append(valid_assignments[i])
