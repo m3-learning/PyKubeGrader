@@ -116,6 +116,10 @@ class Assignment(assignment_type):
         """
         if self.exempted:
             self.score = np.nan
+            
+            # If the score is "---", return the score as is, this is an assignment that does not exist.
+            if self._score == "---":
+                return self.score
 
             # Saves a table with the score of the exempted assignment still recorded.
             try: 
