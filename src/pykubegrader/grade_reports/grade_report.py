@@ -52,29 +52,41 @@ class GradeReport:
         self.update_weekly_table()
         self._build_running_avg()
         self._calculate_final_average()
+        df = self.highlight_nans(self.weekly_grades_df, self.weekly_grades_df_display)
         if display_:
             try:
-                display(self.weekly_grades_df)
+                display(df)
                 display(self.weighted_average_grades)
             except:  # noqa: E722
                 pass
 
-    def highlight_nan(self):
-        # Align both DataFrames by index and columns
-        nan_mask = self.weekly_grades_df.isna().reindex_like(self.weekly_grades_df_display)
-        # Create a DataFrame of the same shape with default empty strings
-        highlight = pd.DataFrame('', index=self.weekly_grades_df_display.index, 
-                                columns=self.weekly_grades_df_display.columns)
-        # Apply the highlight where NaNs are found
-        highlight[nan_mask] = 'background-color: red'
-        return highlight
+    @staticmethod
+    def highlight_nans(nan_df, display_df, color='red'):
+        """
+        Highlights NaN values from nan_df on display_df.
+        
+        Parameters:
+        nan_df (pd.DataFrame): DataFrame containing NaNs to be highlighted.
+        display_df (pd.DataFrame): DataFrame to be recolored.
+        color (str): Background color for NaNs. Default is 'red'.
+        
+        Returns:
+        pd.io.formats.style.Styler: Styled DataFrame with NaNs highlighted.
+        """
+        # Ensure both DataFrames have the same index and columns
+        nan_mask = nan_df.isna().reindex_like(display_df)
+        
+        # Function to apply the highlight conditionally
+        def apply_highlight(row):
+            return [
+                f'background-color: {color}' if nan_mask.loc[row.name, col] else ''
+                for col in row.index
+            ]
 
-    def highlight_df(self):
-        # Apply the styling to df2 based on NaNs in df1
-        styled_df = self.weekly_grades_df_display.style.apply(self.highlight_nan(), axis=None)
-        # Display the styled DataFrame
+        # Apply the highlighting row-wise
+        styled_df = display_df.style.apply(apply_highlight, axis=1)
+        
         return styled_df
-
 
     def update_assignments_not_due_yet(self):
         """
