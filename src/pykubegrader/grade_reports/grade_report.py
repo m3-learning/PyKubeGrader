@@ -352,7 +352,7 @@ class GradeReport:
         new_weekly_grades["inds"] = inds
         new_weekly_grades.set_index("inds", inplace=True)
         self.weekly_grades_df = new_weekly_grades
-        self.weekly_grades_df_display = new_weekly_grades.copy().astype(str)
+        self.weekly_grades_df_display = new_weekly_grades.copy().astype(str) 
         
     def _build_running_avg(self):
         """
