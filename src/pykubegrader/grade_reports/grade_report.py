@@ -50,7 +50,6 @@ class GradeReport:
         self.update_assignments_not_due_yet()
         self.calculate_grades()
         self.duplicate_scores()
-        self.calculate_grades()
         self.drop_lowest_n_for_types(1)
         self.update_weekly_table()
         self._build_running_avg()
@@ -420,8 +419,6 @@ class GradeReport:
         """Duplicate scores from one assignment to another"""
         
         for (week, assignment_type), (duplicate_week, duplicate_assignment_type) in duplicated_scores:
-            print(week, assignment_type)
-            print(duplicate_week, duplicate_assignment_type)
             assignment = self.get_graded_assignment(week, assignment_type)[0]
             duplicate_assignment = self.get_graded_assignment(duplicate_week, duplicate_assignment_type)[0]
             duplicate_assignment.score = assignment.score
