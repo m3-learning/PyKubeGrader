@@ -419,7 +419,7 @@ class GradeReport:
     def duplicate_scores(self):
         """Duplicate scores from one assignment to another"""
         
-        for (assignment_type, week, duplicate_assignment_type, duplicate_week) in duplicated_scores:
+        for (week, assignment_type), (duplicate_week, duplicate_assignment_type) in duplicated_scores:
             print(week, assignment_type)
             print(duplicate_week, duplicate_assignment_type)
             assignment = self.get_graded_assignment(week, assignment_type)[0]
