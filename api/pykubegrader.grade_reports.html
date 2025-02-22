@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+g01fadd9 documentation</title>
+    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+gc64d665 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=610086e0"></script>
+    <script src="../_static/documentation_options.js?v=51e8d665"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader.build package" href="pykubegrader.build.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g01fadd9" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+gc64d665" />
     <meta name="docbuild:last-update" content="Feb 21, 2025"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g01fadd9 documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g01fadd9 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gc64d665 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gc64d665 documentation - Home"/>
   
   
 </a></div>
@@ -802,6 +802,12 @@ If the lowest dropped score is from week 1, an additional lowest score is droppe
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.duplicate_scores">
+<span class="sig-name descname"><span class="pre">duplicate_scores</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.duplicate_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.duplicate_scores" title="Link to this definition">#</a></dt>
+<dd><p>Duplicate scores from one assignment to another</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.grade_reports.grade_report.GradeReport.filter_submissions">
 <span class="sig-name descname"><span class="pre">filter_submissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">week_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignment_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/grade_report.html#GradeReport.filter_submissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.grade_report.GradeReport.filter_submissions" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
@@ -989,6 +995,7 @@ pd.io.formats.style.Styler: Styled DataFrame with NaNs highlighted.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.compute_final_average"><code class="docutils literal notranslate"><span class="pre">GradeReport.compute_final_average()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.determine_due_date"><code class="docutils literal notranslate"><span class="pre">GradeReport.determine_due_date()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.drop_lowest_n_for_types"><code class="docutils literal notranslate"><span class="pre">GradeReport.drop_lowest_n_for_types()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.duplicate_scores"><code class="docutils literal notranslate"><span class="pre">GradeReport.duplicate_scores()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.filter_submissions"><code class="docutils literal notranslate"><span class="pre">GradeReport.filter_submissions()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_assignment"><code class="docutils literal notranslate"><span class="pre">GradeReport.get_assignment()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.grade_report.GradeReport.get_graded_assignment"><code class="docutils literal notranslate"><span class="pre">GradeReport.get_graded_assignment()</span></code></a></li>
