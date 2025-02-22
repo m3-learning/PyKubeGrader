@@ -62,7 +62,7 @@ dropped_assignments = [
 ]
 
 # Duplicated scores, a list of tuples of assignment types and weeks where the scores will be duplicated
-duplicated_scores = [[("lab", 7), ("homework", 7)]]
+duplicated_scores = [[(7, "lab"), (7, "homework")]]
 
 # TAs and other users to skip in class grade report
 skipped_users = ['JCA', 'jca92', 'cnp68', 'dak329', 'xz498', 'ag4328', 'rg897', 'jce63', 'qt49']
