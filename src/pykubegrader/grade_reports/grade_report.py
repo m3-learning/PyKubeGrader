@@ -171,6 +171,7 @@ class GradeReport:
         for assignment_type, week in self.globally_exempted_assignments:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
+                self.get_graded_assignment(week, assignment_type)[0]._score = "---"
             except:  # noqa: E722
                 pass
 
