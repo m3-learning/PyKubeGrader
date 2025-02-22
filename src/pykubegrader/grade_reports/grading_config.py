@@ -22,7 +22,7 @@ custom_grade_adjustments = {
     ("lecture", 4): lambda score: 100.0 if score > 0 else 0.0,
     ("lecture", 5): lambda score: 100.0 if score > 0 else 0.0,
     ("lecture", 7): lambda score: 100.0,
-    ("homework", 7): lambda score, assignments: assignments.get_assignment(7, "lab").score,
+    ("homework", 7): lambda score: g.get_graded_assignment(7, "lab")[0]._score,
 } 
 
 # Exempted assignments, key is a tuple of assignment type and week
