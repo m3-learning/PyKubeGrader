@@ -10,6 +10,7 @@ from pykubegrader.grade_reports.grading_config import (
     optional_drop_week,
     exclude_from_running_avg,
     custom_grade_adjustments,
+    duplicated_scores,
 )
 
 import pandas as pd
@@ -47,6 +48,8 @@ class GradeReport:
         self.update_global_exempted_assignments()
         self.calculate_grades()
         self.update_assignments_not_due_yet()
+        self.calculate_grades()
+        self.duplicate_scores()
         self.calculate_grades()
         self.drop_lowest_n_for_types(1)
         self.update_weekly_table()
@@ -412,3 +415,14 @@ class GradeReport:
                 i += 1
                 
         self.calculate_grades()
+
+    def duplicate_scores(self):
+        """Duplicate scores from one assignment to another"""
+        
+        for (assignment_type, week, duplicate_assignment_type, duplicate_week) in duplicated_scores:
+            assignment = self.get_graded_assignment(week, assignment_type)[0]
+            duplicate_assignment = self.get_graded_assignment(duplicate_week, duplicate_assignment_type)[0]
+            duplicate_assignment.score = assignment.score
+            duplicate_assignment._score = assignment._score
+            duplicate_assignment.exempted = assignment.exempted
+            
