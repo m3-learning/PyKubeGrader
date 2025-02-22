@@ -98,6 +98,7 @@ class GradeReport:
                 due_date = datetime.fromisoformat(assignment.due_date.replace("Z", "+00:00"))
                 if due_date > datetime.now(due_date.tzinfo) and assignment.score == 0:
                     assignment.score = np.nan
+                    assignment._score = "---"
                     assignment.exempted = True
                     
                     
