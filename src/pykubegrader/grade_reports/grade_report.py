@@ -30,7 +30,7 @@ class GradeReport:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
         """
-        self.assignments, self.student_subs = get_assignments_submissions(params=params)
+        self.assignments, self.student_subs = get_assignments_submissions(params=params) 
 
         self.start_date = start_date
         self.verbose = verbose
