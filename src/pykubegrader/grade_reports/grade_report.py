@@ -413,8 +413,6 @@ class GradeReport:
                 dropped.append(valid_assignments[i+j])
                 self.student_assignments_dropped.append(valid_assignments[i+j])
                 i += 1
-                
-        self.calculate_grades()
 
     def duplicate_scores(self):
         """Duplicate scores from one assignment to another"""
