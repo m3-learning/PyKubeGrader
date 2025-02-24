@@ -204,7 +204,7 @@ class FastAPINotebookBuilder:
                 max_question_points = self.get_max_question_points(cell_dict)
 
                 # store the max points for the question
-                self.max_question_points[f"{cell_dict["question"]}"] = max_question_points
+                self.max_question_points[f'{cell_dict["question"]}'] = max_question_points
 
                 self.total_points += max_question_points
 
