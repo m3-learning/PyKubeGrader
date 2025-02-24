@@ -53,7 +53,7 @@ class GradeReport:
         self.duplicate_scores()
         self.drop_lowest_n_for_types(1)
         self.calculate_grades()
-        self.duplicate_scores()
+        self.duplicate_scores() 
         self.update_weekly_table()
         self._build_running_avg()
         self._calculate_final_average()
