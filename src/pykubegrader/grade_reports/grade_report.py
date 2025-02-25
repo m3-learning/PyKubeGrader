@@ -11,6 +11,7 @@ from pykubegrader.grade_reports.grading_config import (
     exclude_from_running_avg,
     custom_grade_adjustments,
     duplicated_scores,
+    optional_drop_assignments,
 )
 
 
@@ -40,6 +41,7 @@ class GradeReport:
         self.globally_exempted_assignments = globally_exempted_assignments
         self.dropped_assignments = dropped_assignments
         self.optional_drop_week = optional_drop_week
+        self.optional_drop_assignments = optional_drop_assignments
 
         # assignments that have been dropped for a given students.
         self.student_assignments_dropped = []
@@ -412,6 +414,11 @@ class GradeReport:
                 if valid_assignments[i+j].week in self.optional_drop_week:
                     j += 1
                     continue
+                
+                if (name, valid_assignments[i+j].week) in self.optional_drop_assignments:
+                    j += 1
+                    continue
+            
                 dropped.append(valid_assignments[i+j])
                 self.student_assignments_dropped.append(valid_assignments[i+j])
                 i += 1
