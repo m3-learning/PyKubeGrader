@@ -229,6 +229,7 @@ class GradeReport:
         If there are filtered assignments, the score is updated based on the submission.
         Otherwise,
         """
+        
         for assignment in self.graded_assignments:
             filtered_submission = self.filter_submissions(
                 assignment.week, assignment.name
