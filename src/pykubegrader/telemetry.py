@@ -310,7 +310,7 @@ def get_all_students(user, password):
         auth=HTTPBasicAuth(user, password),
     )
     res.raise_for_status()
-    
+
     # Input: List of players
     return [student["email"].split("@")[0] for student in res.json()]
 
@@ -372,7 +372,7 @@ def skipped_assignment_mask(assignments):
     return existing_assignment_mask.astype(bool)
 
 
-def fill_grades_df(new_weekly_grades, assignments, student_subs):
+def fill_grades_df(new_weekly_grades, assignments, student_subs) -> pd.DataFrame:
     for assignment in assignments:
         # get the assignment from all submissions
         subs = [
@@ -400,6 +400,9 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
             continue
         elif len(subs) == 1:
             grade = subs[0]["raw_score"] / assignment["max_score"]
+            new_weekly_grades.loc[
+                f"week{assignment['week_number']}", assignment["assignment_type"]
+            ] = grade
             # print(assignment['title'], sub['raw_score'], assignment['max_score'])
         else:
             # get due date from assignment
@@ -418,7 +421,9 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
                     )
             # print(assignment['title'], grades, assignment['max_score'])
             grade = max(grades) / assignment["max_score"]
-
+            new_weekly_grades.loc[
+                f"week{assignment['week_number']}", assignment["assignment_type"]
+            ] = grade
 
     # Merge different names
     new_weekly_grades["attend"] = new_weekly_grades[["attend", "attendance"]].max(
@@ -437,7 +442,7 @@ def fill_grades_df(new_weekly_grades, assignments, student_subs):
         errors="ignore",
     )
 
-#     return new_weekly_grades
+    return new_weekly_grades
 
 
 def get_current_week(start_date):
@@ -510,4 +515,3 @@ def get_my_grades_testing(start_date="2025-01-06", verbose=True):
             print(f"{k:<{max_key_length}}:\t {v:.2f}")
 
     return new_weekly_grades  # get rid of test and running avg columns
-

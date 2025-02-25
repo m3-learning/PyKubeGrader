@@ -1,38 +1,43 @@
 # TODO: if not due yet and score is 0, make NAN, fix the rendering
 
-from pykubegrader.telemetry import get_assignments_submissions
-from pykubegrader.grade_reports.assignments import Assignment
-from pykubegrader.grade_reports.grading_config import (
-    assignment_type_list,
-    aliases,
-    globally_exempted_assignments,
-    dropped_assignments,
-    optional_drop_week,
-    exclude_from_running_avg,
-    custom_grade_adjustments,
-    duplicated_scores,
-    optional_drop_assignments,
-)
-
-
-import pandas as pd
 from datetime import datetime
-from IPython.display import display
-import numpy as np
 
-from ..telemetry import get_assignments_submissions
+import numpy as np
+import pandas as pd
+from IPython.display import display
+
+from pykubegrader.grade_reports.assignments import (
+    Assignment,
+)
+from pykubegrader.grade_reports.assignments import (
+    assignment_type as AssignmentType,
+)
+from pykubegrader.grade_reports.grading_config import (
+    aliases,
+    assignment_type_list,
+    custom_grade_adjustments,
+    dropped_assignments,
+    duplicated_scores,
+    exclude_from_running_avg,
+    globally_exempted_assignments,
+    optional_drop_assignments,
+    optional_drop_week,
+)
+from pykubegrader.telemetry import get_assignments_submissions
 
 
 class GradeReport:
     """Class to generate a grade report for a course and perform grade calculations for each student."""
 
-    def __init__(self, start_date="2025-01-06", verbose=True, params=None, display_ = True):
+    def __init__(
+        self, start_date="2025-01-06", verbose=True, params=None, display_=True
+    ):
         """Initializes an instance of the GradeReport class.
         Args:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
         """
-        self.assignments, self.student_subs = get_assignments_submissions(params=params) 
+        self.assignments, self.student_subs = get_assignments_submissions(params=params)
 
         self.start_date = start_date
         self.verbose = verbose
@@ -55,7 +60,7 @@ class GradeReport:
         self.duplicate_scores()
         self.drop_lowest_n_for_types(1)
         self.calculate_grades()
-        self.duplicate_scores() 
+        self.duplicate_scores()
         self.update_weekly_table()
         self._build_running_avg()
         self._calculate_final_average()
@@ -68,31 +73,31 @@ class GradeReport:
                 pass
 
     @staticmethod
-    def highlight_nans(nan_df, display_df, color='red'):
+    def highlight_nans(nan_df, display_df, color="red"):
         """
         Highlights NaN values from nan_df on display_df.
-        
+
         Parameters:
         nan_df (pd.DataFrame): DataFrame containing NaNs to be highlighted.
         display_df (pd.DataFrame): DataFrame to be recolored.
         color (str): Background color for NaNs. Default is 'red'.
-        
+
         Returns:
         pd.io.formats.style.Styler: Styled DataFrame with NaNs highlighted.
         """
         # Ensure both DataFrames have the same index and columns
         nan_mask = nan_df.isna().reindex_like(display_df)
-        
+
         # Function to apply the highlight conditionally
         def apply_highlight(row):
             return [
-                f'background-color: {color}' if nan_mask.loc[row.name, col] else ''
+                f"background-color: {color}" if nan_mask.loc[row.name, col] else ""
                 for col in row.index
             ]
 
         # Apply the highlighting row-wise
         styled_df = display_df.style.apply(apply_highlight, axis=1)
-        
+
         return styled_df
 
     def update_assignments_not_due_yet(self):
@@ -102,13 +107,14 @@ class GradeReport:
         for assignment in self.graded_assignments:
             if assignment.due_date:
                 # Convert due date to datetime object
-                due_date = datetime.fromisoformat(assignment.due_date.replace("Z", "+00:00"))
+                due_date = datetime.fromisoformat(
+                    assignment.due_date.replace("Z", "+00:00")
+                )
                 if due_date > datetime.now(due_date.tzinfo) and assignment.score == 0:
                     assignment.score = np.nan
                     assignment._score = "---"
                     assignment.exempted = True
-                    
-                    
+
     def color_cells(self, styler, week_list, assignment_list):
         if week_list:
             week = week_list.pop()
@@ -117,7 +123,7 @@ class GradeReport:
             # Apply the style to the current cell
             styler = styler.set_properties(
                 subset=pd.IndexSlice[[week], [assignment]],
-                **{'background-color': 'yellow'}
+                **{"background-color": "yellow"},
             )
             # Recursive call
             return self.color_cells(styler, week_list, assignment_list)
@@ -153,18 +159,18 @@ class GradeReport:
     #     """
     #     self._update_running_avg()
     #     return self.weekly_grades_df
-    
+
     def update_weekly_table(self):
         self._update_weekly_table_nan()
         self._update_weekly_table_scores()
-    
-    # TODO: populate with average scores calculated from the exempted 
+
+    # TODO: populate with average scores calculated from the exempted
     def _update_weekly_table_scores(self):
         for assignment in self.graded_assignments:
             if assignment.weekly:
-                self.weekly_grades_df_display.loc[f"week{assignment.week}", assignment.name] = (
-                    assignment._score
-                )
+                self.weekly_grades_df_display.loc[
+                    f"week{assignment.week}", assignment.name
+                ] = assignment._score
 
     def _update_weekly_table_nan(self):
         """Updates the weekly grades table with the calculated scores."""
@@ -197,7 +203,7 @@ class GradeReport:
         for assignment_type in non_weekly_assignments:
             self.graded_assignment_constructor(assignment_type)
 
-    def graded_assignment_constructor(self, assignment_type: str, **kwargs):
+    def graded_assignment_constructor(self, assignment_type: AssignmentType, **kwargs):
         """Constructs a graded assignment object and appends it to the graded_assignments list.
 
         Args:
@@ -360,13 +366,13 @@ class GradeReport:
         new_weekly_grades["inds"] = inds
         new_weekly_grades.set_index("inds", inplace=True)
         self.weekly_grades_df = new_weekly_grades
-        self.weekly_grades_df_display = new_weekly_grades.copy().astype(str) 
-        
+        self.weekly_grades_df_display = new_weekly_grades.copy().astype(str)
+
     def _build_running_avg(self):
         """
         Subfunction to compute and update the Running Avg row, handling NaNs.
         """
-        
+
         self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.drop(
             "Running Avg", errors="ignore"
         ).mean(axis=0, skipna=True)
@@ -383,6 +389,7 @@ class GradeReport:
         :param n: Number of lowest scores to exempt per type.
         """
         from collections import defaultdict
+
         import numpy as np
 
         # Group assignments by name
@@ -411,26 +418,33 @@ class GradeReport:
             i = 0
             j = 0
             while i < n:
-                valid_assignments[i+j].exempted = True
-                if valid_assignments[i+j].week in self.optional_drop_week:
+                valid_assignments[i + j].exempted = True
+                if valid_assignments[i + j].week in self.optional_drop_week:
                     j += 1
                     continue
-                
-                if (name, valid_assignments[i+j].week) in self.optional_drop_assignments:
+
+                if (
+                    name,
+                    valid_assignments[i + j].week,
+                ) in self.optional_drop_assignments:
                     j += 1
                     continue
-            
-                dropped.append(valid_assignments[i+j])
-                self.student_assignments_dropped.append(valid_assignments[i+j])
+
+                dropped.append(valid_assignments[i + j])
+                self.student_assignments_dropped.append(valid_assignments[i + j])
                 i += 1
 
     def duplicate_scores(self):
         """Duplicate scores from one assignment to another"""
-        
-        for (week, assignment_type), (duplicate_week, duplicate_assignment_type) in duplicated_scores:
+
+        for (week, assignment_type), (
+            duplicate_week,
+            duplicate_assignment_type,
+        ) in duplicated_scores:
             assignment = self.get_graded_assignment(week, assignment_type)[0]
-            duplicate_assignment = self.get_graded_assignment(duplicate_week, duplicate_assignment_type)[0]
+            duplicate_assignment = self.get_graded_assignment(
+                duplicate_week, duplicate_assignment_type
+            )[0]
             duplicate_assignment.score = assignment.score
             duplicate_assignment._score = assignment._score
             duplicate_assignment.exempted = assignment.exempted
-            

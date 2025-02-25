@@ -4,19 +4,20 @@
 # except:  # noqa: E722
 #     print("Passwords not found, cannot access database")
 
-from pykubegrader.grade_reports.grading_config import assignment_type_list, skipped_users
+import os
+
+import numpy as np
+import pandas as pd
+import tqdm
+
 from pykubegrader.grade_reports.grade_report import GradeReport
+from pykubegrader.grade_reports.grading_config import (
+    assignment_type_list,
+    skipped_users,
+)
+
 # from ..build.passwords import password, user
 from pykubegrader.telemetry import get_all_students
-
-
-import os
-import requests
-from requests.auth import HTTPBasicAuth
-import socket
-import pandas as pd
-import numpy as np
-import tqdm
 
 # user = user()
 # password = password()
@@ -62,15 +63,14 @@ class ClassGradeReport:
         """
         self.user = user
         self.password = password
-        
+
         self.student_list = get_all_students(self.user, self.password)
-        self.student_list = list( set(self.student_list)-set(skipped_users) )
+        self.student_list = list(set(self.student_list) - set(skipped_users))
         self.student_list.sort()
 
         self.setup_class_grades()
         self.fill_class_grades()
         self.get_class_stats()
-        
 
     def setup_class_grades(self):
         """Creates an empty DataFrame to store grades for all students.
@@ -115,23 +115,24 @@ class ClassGradeReport:
         Requires filling class grades first
         """
         # Calculate descriptive statistics
-        self.stats_df = self.all_student_grades_df.describe(include='all')
+        self.stats_df = self.all_student_grades_df.describe(include="all")
 
-    def write_excel_spreadsheet(self, out_name='output.xlsx'):
+    def write_excel_spreadsheet(self, out_name="output.xlsx"):
         """Exports the class-wide grade report to an Excel spreadsheet.
 
         Args:
             out_name (str, optional): Name of output file. Defaults to 'output.xlsx'.
         """
         # Export to Excel with different sheets
-        with pd.ExcelWriter('output.xlsx') as writer:
-            self.all_student_grades_df.to_excel(writer, sheet_name='all_student_grades')
-            self.stats_df.to_excel(writer, sheet_name='performance_statistics')
+        with pd.ExcelWriter("output.xlsx") as writer:
+            self.all_student_grades_df.to_excel(writer, sheet_name="all_student_grades")
+            self.stats_df.to_excel(writer, sheet_name="performance_statistics")
 
 
 def main():
     class_grades = ClassGradeReport()
     print(class_grades.all_student_grades_df)
+
 
 if __name__ == "__main__":
     main()

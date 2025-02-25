@@ -1,6 +1,8 @@
+from datetime import datetime
+
 import numpy as np
 from dateutil import parser
-from datetime import datetime
+
 from pykubegrader.graders.late_assignments import calculate_late_submission
 
 
@@ -116,21 +118,21 @@ class Assignment(assignment_type):
         """
         if self.exempted:
             self.score = np.nan
-            
+
             # If the score is "---", return the score as is, this is an assignment that does not exist.
             if self._score == "---":
                 return self.score
 
             # Saves a table with the score of the exempted assignment still recorded.
-            try: 
+            try:
                 # Adjust the score based on submission
                 score_ = self.grade_adjustment(submission)
                 if score_ > self._score:
                     self._score = score_
-            except:
+            except Exception:
                 pass
             return self.score
-        
+
         elif submission is not None:
             # Adjust the score based on submission
             score_ = self.grade_adjustment(submission)
