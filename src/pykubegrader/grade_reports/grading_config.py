@@ -1,3 +1,5 @@
+from typing import Any
+
 from pykubegrader.grade_reports.assignments import assignment_type
 
 # Assignment types, weekly, and weight
@@ -9,7 +11,7 @@ assignment_type_list = [
     assignment_type("quiz", True, 0.15),
     assignment_type("homework", True, 0.15),
     assignment_type("lab", True, 0.15),
-    assignment_type("labattendance", True, 0.05), 
+    assignment_type("labattendance", True, 0.05),
     assignment_type("practicemidterm", False, 0.015),
     assignment_type("midterm", False, 0.15),
     assignment_type("practicefinal", False, 0.02),
@@ -22,7 +24,7 @@ custom_grade_adjustments = {
     ("lecture", 4): lambda score: 100.0 if score > 0 else 0.0,
     ("lecture", 5): lambda score: 100.0 if score > 0 else 0.0,
     ("lecture", 7): lambda score: 100.0,
-    ("quiz", 7): lambda score: min(score/28*100, 100.0),
+    ("quiz", 7): lambda score: min(score / 28 * 100, 100.0),
 }
 
 # Exempted assignments, key is a tuple of assignment type and week
@@ -49,7 +51,7 @@ aliases = {
 }
 
 # Skipped assignments, key is a tuple of assignment type and week
-skipped_assignments = {}
+skipped_assignments: dict[tuple, Any] = {}
 
 # Dropped assignments a list of assignments which lowest score will be dropped
 dropped_assignments = [
@@ -66,7 +68,17 @@ dropped_assignments = [
 duplicated_scores = [[(7, "lab"), (7, "homework")]]
 
 # TAs and other users to skip in class grade report
-skipped_users = ['JCA', 'jca92', 'cnp68', 'dak329', 'xz498', 'ag4328', 'rg897', 'jce63', 'qt49']
+skipped_users = [
+    "JCA",
+    "jca92",
+    "cnp68",
+    "dak329",
+    "xz498",
+    "ag4328",
+    "rg897",
+    "jce63",
+    "qt49",
+]
 
 # Optional drop week, a list of weeks where the lowest score will be dropped
 optional_drop_week = [1]
