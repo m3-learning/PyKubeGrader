@@ -72,5 +72,8 @@ skipped_users = ['JCA', 'jca92', 'cnp68', 'dak329', 'xz498', 'ag4328', 'rg897', 
 # Optional drop week, a list of weeks where the lowest score will be dropped
 optional_drop_week = [1]
 
+# Optional drop assignments, a list of tuples of assignment types and weeks where the lowest score will be dropped
+optional_drop_assignments = [("lab", 7), ("homework", 7)]
+
 # Excluded from running average, a list of assignment types that will be excluded from the running average calculation
 exclude_from_running_avg = ["final"]
