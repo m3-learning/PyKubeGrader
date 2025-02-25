@@ -23,7 +23,6 @@ custom_grade_adjustments = {
     ("lecture", 5): lambda score: 100.0 if score > 0 else 0.0,
     ("lecture", 7): lambda score: 100.0,
     ("quiz", 7): lambda score: min(score/28*100, 100.0),
-    ("lab", 7): lambda score: min((score+40)/186.0*100, 100.0),
 }
 
 # Exempted assignments, key is a tuple of assignment type and week
