@@ -83,7 +83,7 @@ class NotebookProcessor:
                 self.require_key = assignment.get("require_key", False)
                 self.assignment_tag = assignment.get(
                     "assignment_tag",
-                    f"week{assignment.get("week")}-{self.assignment_type}",
+                    f"week{assignment.get('week')}-{self.assignment_type}",
                 )
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
