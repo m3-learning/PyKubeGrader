@@ -29,7 +29,7 @@ custom_grade_adjustments = {
 
 # Exempted assignments, key is a tuple of assignment type and week
 globally_exempted_assignments = [
-    ("attend",1)
+    ("attend",1),
     ("readings", 6),
     ("quiz", 6),
     ("practicequiz", 6),
