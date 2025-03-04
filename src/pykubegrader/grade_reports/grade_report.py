@@ -136,19 +136,15 @@ class GradeReport:
         total_percentage = 1
         df_ = self.compute_final_average()
         score_earned = 0
-
-        final_weights = None
-        final_scores = None
-
+        
         optional_weighted_assignments = []
         final_weights = {}
-        final_scores = {}
         for assignment_type in self.assignment_type_list:
             if isinstance(assignment_type.weight,tuple):
                 total_percentage -= assignment_type.weight[0]
                 optional_weighted_assignments.append(assignment_type)
-
                 final_weights[assignment_type.name] = list(assignment_type.weight)
+            
             else:
                 score_earned += assignment_type.weight * df_[assignment_type.name]
 
@@ -157,6 +153,7 @@ class GradeReport:
         final_scores_list = []
         for weight_combo in combinations:
             score = 0
+            
             for i, assignment_type in enumerate(optional_weighted_assignments):
                 score += weight_combo[i]*df_[assignment_type.name]
             
@@ -177,14 +174,6 @@ class GradeReport:
                 ),
             ]
         )
-
-    # def grade_report(self):
-    #     """Generates a grade report for the course.
-    #     Returns:
-    #         pd.DataFrame: A DataFrame containing the grade report or weekly grades only.
-    #     """
-    #     self._update_running_avg()
-    #     return self.weekly_grades_df
 
     def update_weekly_table(self):
         self._update_weekly_table_nan()
