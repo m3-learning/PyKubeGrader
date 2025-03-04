@@ -10,7 +10,7 @@ assignment_type_list = [
     assignment_type("practicequiz", True, 0.015),
     assignment_type("quiz", True, 0.15),
     assignment_type("homework", True, 0.15),
-    assignment_type("lab", True, 0.15),
+    assignment_type("lab", True, (0.15,0.)),
     assignment_type("labattendance", True, 0.05),
     assignment_type("practicemidterm", False, 0.015),
     assignment_type("midterm", False, 0.15),
