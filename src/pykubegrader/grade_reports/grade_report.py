@@ -166,8 +166,8 @@ class GradeReport:
         score_earned_20 = score_earned + 0.2 * df_["final"]
         score_earned_40 = score_earned + 0.4 * df_["final"]
         self.final_grade = score_earned / total_percentage
-        self.final_grade_final = max(score_earned_20/total_percentage+.2,
-                                     score_earned_40/total_percentage+.4)
+        self.final_grade_final = max(score_earned_20/(total_percentage+.2),
+                                     score_earned_40/(total_percentage+.4))
         self.weighted_average_grades = pd.concat(
             [
                 pd.DataFrame(self.final_grades),
