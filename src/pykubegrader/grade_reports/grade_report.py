@@ -152,23 +152,28 @@ class GradeReport:
     #             ),
     #         ]
     #     )
-        
     def _calculate_final_average(self):
         total_percentage = 1
         df_ = self.compute_final_average()
         score_earned = 0
 
+        final_weights = None
+        final_scores = None
+
         for assignment_type in self.assignment_type_list:
-            if assignment_type.name in exclude_from_running_avg:
-                total_percentage -= assignment_type.weight
-            score_earned += assignment_type.weight * df_[assignment_type.name]
-            
-        wt_40 = 2/3*total_percentage
-        score_earned_20 = score_earned + 0.2 * df_["final"]
-        score_earned_40 = score_earned + wt_40 * df_["final"]
+            if assignment_type.name == "final":
+                total_percentage -= assignment_type.weight[0]
+                final_weights = assignment_type.weight
+                final_scores = [w * df_["final"] for w in assignment_type.weight]
+            else:
+                score_earned += assignment_type.weight * df_[assignment_type.name]
+
         self.final_grade = score_earned / total_percentage
-        self.final_grade_final = max(score_earned_20/(total_percentage+.2),
-                                     score_earned_40/(total_percentage+wt_40))
+        self.final_grade_final = max(
+            self.final_grade * (1 - final_weights[0]) + final_scores[0],
+            self.final_grade * (1 - final_weights[1]) + final_scores[1],
+        )
+
         self.weighted_average_grades = pd.concat(
             [
                 pd.DataFrame(self.final_grades),

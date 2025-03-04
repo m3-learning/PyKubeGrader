@@ -15,7 +15,7 @@ assignment_type_list = [
     assignment_type("practicemidterm", False, 0.015),
     assignment_type("midterm", False, 0.15),
     assignment_type("practicefinal", False, 0.02),
-    assignment_type("final", False, 0.2),
+    assignment_type("final", False, (0.2, 0.4)),
 ]
 
 # Custom grade adjustments, key is a tuple of assignment type and week, value is a lambda function that takes the score and returns the adjusted score
