@@ -131,6 +131,28 @@ class GradeReport:
         else:
             return styler
 
+    # def _calculate_final_average(self):
+    #     total_percentage = 1
+    #     df_ = self.compute_final_average()
+    #     score_earned = 0
+
+    #     for assignment_type in self.assignment_type_list:
+    #         if assignment_type.name in exclude_from_running_avg:
+    #             total_percentage -= assignment_type.weight
+
+    #         score_earned += assignment_type.weight * df_[assignment_type.name]
+
+    #     self.final_grade = score_earned / total_percentage
+    #     self.weighted_average_grades = pd.concat(
+    #         [
+    #             pd.DataFrame(self.final_grades),
+    #             pd.DataFrame(
+    #                 {"Running Avg": [self.final_grade]},
+    #                 index=["Weighted Average Grade"],
+    #             ),
+    #         ]
+    #     )
+        
     def _calculate_final_average(self):
         total_percentage = 1
         df_ = self.compute_final_average()
@@ -139,15 +161,22 @@ class GradeReport:
         for assignment_type in self.assignment_type_list:
             if assignment_type.name in exclude_from_running_avg:
                 total_percentage -= assignment_type.weight
-
             score_earned += assignment_type.weight * df_[assignment_type.name]
-
+            
+        score_earned_20 = score_earned + 0.2 * df_["final"]
+        score_earned_40 = score_earned + 0.4 * df_["final"]
         self.final_grade = score_earned / total_percentage
+        self.final_grade_final = max(score_earned_20/total_percentage+.2,
+                                     score_earned_40/total_percentage+.4)
         self.weighted_average_grades = pd.concat(
             [
                 pd.DataFrame(self.final_grades),
                 pd.DataFrame(
                     {"Running Avg": [self.final_grade]},
+                    index=["Weighted Average Grade"],
+                ),
+                pd.DataFrame(
+                    {"Running Avg w Final": [self.final_grade_final]},
                     index=["Weighted Average Grade"],
                 ),
             ]
@@ -264,7 +293,7 @@ class GradeReport:
                 self.final_grades[f"{assignment.name}"] = assignment.score
 
         return self.final_grades
-
+    
     def filter_submissions(self, week_number, assignment_type):
         # Normalize the assignment type using aliases
         normalized_type = self.aliases.get(
