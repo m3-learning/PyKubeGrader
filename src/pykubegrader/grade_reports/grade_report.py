@@ -181,7 +181,7 @@ class GradeReport:
             for i, assignment_type in enumerate(optional_weighted_assignments):
                 score += weight_combo[i]*df_[assignment_type.name]
             final_scores_list.append(non_optional_score*(1-sum(weight_combo)) + score)
-                
+        print(final_scores_list)        
         self.final_grade = score_earned / total_percentage
         self.final_grade_final = max(*final_scores_list)
         self.weighted_average_grades = pd.concat(
