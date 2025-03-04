@@ -176,8 +176,8 @@ class GradeReport:
                     index=["Weighted Average Grade"],
                 ),
                 pd.DataFrame(
-                    {"Running Avg w Final": [self.final_grade_final]},
-                    index=["Weighted Average Grade"],
+                    {"Running Avg": [self.final_grade_final]},
+                    index=["Weighted Average Grade w Final"],
                 ),
             ]
         )
