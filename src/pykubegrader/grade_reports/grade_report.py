@@ -22,6 +22,7 @@ from pykubegrader.grade_reports.grading_config import (
     globally_exempted_assignments,
     optional_drop_assignments,
     optional_drop_week,
+    max_week,
 )
 from pykubegrader.telemetry import get_assignments_submissions
 
@@ -38,7 +39,7 @@ class GradeReport:
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
         """
         self.assignments, self.student_subs = get_assignments_submissions(params=params)
-
+        self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
         self.verbose = verbose
         self.assignment_type_list = assignment_type_list
@@ -195,7 +196,7 @@ class GradeReport:
         weekly_assignments = self.get_weekly_assignments()
 
         for assignment_type in weekly_assignments:
-            for week in range(1, self.get_num_weeks() + 1):  # Weeks start at 1
+            for week in range(1, self.max_week + 1):  # Weeks start at 1
                 self.graded_assignment_constructor(assignment_type, week=week)
 
         non_weekly_assignments = self.get_non_weekly_assignments()
@@ -357,8 +358,7 @@ class GradeReport:
 
     def setup_grades_df(self):
         weekly_assignments = self.get_weekly_assignments()
-        max_week_number = self.get_num_weeks()
-        inds = [f"week{i + 1}" for i in range(max_week_number)] + ["Running Avg"]
+        inds = [f"week{i + 1}" for i in range(self.max_week)] + ["Running Avg"]
         restruct_grades = {
             k.name: [0 for i in range(len(inds))] for k in weekly_assignments
         }

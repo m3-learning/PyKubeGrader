@@ -96,3 +96,5 @@ optional_drop_assignments = [("lab", 7), ("homework", 7)]
 
 # Excluded from running average, a list of assignment types that will be excluded from the running average calculation
 exclude_from_running_avg = ["final"]
+
+max_week = 10
