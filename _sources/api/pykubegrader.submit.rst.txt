@@ -11,5 +11,5 @@ pykubegrader.submit.submit\_assignment module
 
 .. automodule:: pykubegrader.submit.submit_assignment
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:

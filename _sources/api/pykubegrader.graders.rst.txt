@@ -9,13 +9,13 @@ pykubegrader.graders.late\_assignments module
 
 .. automodule:: pykubegrader.graders.late_assignments
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
 
 .. automodule:: pykubegrader.graders
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:

@@ -24,37 +24,37 @@ pykubegrader.initialize module
 
 .. automodule:: pykubegrader.initialize
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pykubegrader.telemetry module
 -----------------------------
 
 .. automodule:: pykubegrader.telemetry
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pykubegrader.utils module
 -------------------------
 
 .. automodule:: pykubegrader.utils
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pykubegrader.validate module
 ----------------------------
 
 .. automodule:: pykubegrader.validate
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
 
 .. automodule:: pykubegrader
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:

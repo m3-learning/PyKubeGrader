@@ -11,29 +11,29 @@ pykubegrader.tokens.generator module
 
 .. automodule:: pykubegrader.tokens.generator
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pykubegrader.tokens.token\_panel module
 ---------------------------------------
 
 .. automodule:: pykubegrader.tokens.token_panel
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pykubegrader.tokens.tokens module
 ---------------------------------
 
 .. automodule:: pykubegrader.tokens.tokens
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pykubegrader.tokens.validate\_token module
 ------------------------------------------
 
 .. automodule:: pykubegrader.tokens.validate_token
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
