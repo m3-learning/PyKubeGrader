@@ -3,7 +3,7 @@ from typing import Any
 from pykubegrader.grade_reports.assignments import assignment_type
 
 # Assignment types, weekly, and weight
-# Total should add up to 1.0
+# Total of 1st values in tuple should add up to 1.0
 assignment_type_list = [
     assignment_type("readings", True, 0.15),
     assignment_type("lecture", True, 0.15),

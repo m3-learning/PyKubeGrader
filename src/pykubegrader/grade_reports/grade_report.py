@@ -1,6 +1,7 @@
 # TODO: if not due yet and score is 0, make NAN, fix the rendering
 
 from datetime import datetime
+from itertools import product
 
 import numpy as np
 import pandas as pd
@@ -160,20 +161,29 @@ class GradeReport:
         final_weights = None
         final_scores = None
 
+        optional_weighted_assignments = []
+        final_weights = {}
+        final_scores = {}
         for assignment_type in self.assignment_type_list:
-            if assignment_type.name == "final":
+            if isinstance(assignment_type.weight,tuple):
                 total_percentage -= assignment_type.weight[0]
-                final_weights = assignment_type.weight
-                final_scores = [w * df_["final"] for w in assignment_type.weight]
+                optional_weighted_assignments.append(assignment_type)
+
+                final_weights[assignment_type.name] = list(assignment_type.weight)
             else:
                 score_earned += assignment_type.weight * df_[assignment_type.name]
 
+        non_optional_score = score_earned / total_percentage
+        combinations = list(product(*final_weights.values()))
+        final_scores_list = []
+        for weight_combo in combinations:
+            score = 0
+            for i, assignment_type in enumerate(optional_weighted_assignments):
+                score += weight_combo[i]*df_[assignment_type.name]
+            final_scores_list.append(non_optional_score*(1-sum(weight_combo)) + score)
+                
         self.final_grade = score_earned / total_percentage
-        self.final_grade_final = max(
-            self.final_grade * (1 - final_weights[0]) + final_scores[0],
-            self.final_grade * (1 - final_weights[1]) + final_scores[1],
-        )
-
+        self.final_grade_final = max(*final_scores_list)
         self.weighted_average_grades = pd.concat(
             [
                 pd.DataFrame(self.final_grades),
