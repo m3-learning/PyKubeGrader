@@ -26,11 +26,12 @@ custom_grade_adjustments = {
     ("lecture", 7): lambda score: 100.0,
     ("quiz", 7): lambda score: min(score / 28 * 100, 100.0),
     ("attend", 8): lambda score: 100.0 if score > 0 else 0.0,
+    ("attend", 2): lambda score: 100.0 if score > 0 else 0.0,
 }
 
 # Exempted assignments, key is a tuple of assignment type and week
 globally_exempted_assignments = [
-    ("attend",1),
+    ("labattendance", 1),
     ("readings", 6), 
     ("quiz", 6),
     ("practicequiz", 6),
@@ -38,12 +39,6 @@ globally_exempted_assignments = [
     ("homework", 5),
     ("lab", 5),
     ("labattendance", 5),
-    ("quiz", 9),
-    ("practicequiz", 9),
-    ("lecture", 9),
-    ("homework", 9),
-    ("lab", 9),
-    ("labattendance", 9),
 ]
 
 # Common Assignment Aliases, these are other names used for the same assignment category
