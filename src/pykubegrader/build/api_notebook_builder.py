@@ -570,12 +570,24 @@ class FastAPINotebookBuilder:
         return question_name, question_number, question_part
 
     def question_dict(self) -> dict:
+        """
+        Builds a dictionary of question information from the notebook.
+
+        Returns:
+            dict: A dictionary containing question information.
+        """
+        
+        # Check if the temporary notebook file path is provided
         if not self.temp_notebook:
             raise ValueError("No temporary notebook file path provided")
+        
+        # Check if the file exists
         notebook_path = Path(self.temp_notebook)
+        
+        # Check if the file exists
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
-
+        
         # Read the notebook
         notebook = self.read_notebook(notebook_path)
 
@@ -591,99 +603,10 @@ class FastAPINotebookBuilder:
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
-
                 if source.strip().startswith('""" # BEGIN TEST CONFIG'):
-                    logging_variables = FastAPINotebookBuilder.extract_log_variables(
-                        cell
-                    )
-
-                    # Extract assert statements using a more robust approach
-                    assertions = []
-                    comments = []
-
-                    # Split the source into lines for processing
-                    lines = source.split("\n")
-                    i = 0
-                    while i < len(lines):
-                        line = lines[i].strip()
-                        if line.startswith("assert"):
-                            # Initialize assertion collection
-                            assertion_lines = []
-                            comment = None
-
-                            # Handle the first line
-                            first_line = line[6:].strip()  # Remove 'assert' keyword
-                            assertion_lines.append(first_line)
-
-                            # Stack to track parentheses
-                            paren_stack = []
-                            for char in first_line:
-                                if char == "(":
-                                    paren_stack.append(char)
-                                elif char == ")":
-                                    if paren_stack:
-                                        paren_stack.pop()
-
-                            # Continue collecting lines while we have unclosed parentheses
-                            current_line = i + 1
-                            while paren_stack and current_line < len(lines):
-                                next_line = lines[current_line].strip()
-                                assertion_lines.append(next_line)
-
-                                for char in next_line:
-                                    if char == "(":
-                                        paren_stack.append(char)
-                                    elif char == ")":
-                                        if paren_stack:
-                                            paren_stack.pop()
-
-                                current_line += 1
-
-                            # Join the assertion lines and clean up
-                            full_assertion = " ".join(assertion_lines)
-
-                            # Extract the comment if it exists (handling both f-strings and regular strings)
-                            comment_match = re.search(
-                                r',\s*(?:f?["\'])(.*?)(?:["\'])\s*(?:\)|$)',
-                                full_assertion,
-                            )
-                            if comment_match:
-                                comment = comment_match.group(1).strip()
-                                # Remove the comment from the assertion
-                                full_assertion = full_assertion[
-                                    : comment_match.start()
-                                ].strip()
-
-                            # Ensure proper parentheses closure
-                            open_count = full_assertion.count("(")
-                            close_count = full_assertion.count(")")
-                            if open_count > close_count:
-                                full_assertion += ")" * (open_count - close_count)
-
-                            # Clean up the assertion
-                            if full_assertion.startswith(
-                                "("
-                            ) and not full_assertion.endswith(")"):
-                                full_assertion += ")"
-
-                            assertions.append(full_assertion)
-                            comments.append(comment)
-
-                            # Update the line counter
-                            i = current_line
-                        else:
-                            i += 1
-
-                    # Extract points value
-                    points_line = next(
-                        (line for line in source.split("\n") if "points:" in line), None
-                    )
-                    points_value = None
-                    if points_line:
-                        try:
-                            points_value = float(points_line.split(":")[-1].strip())
-                        except ValueError:
-                            points_value = None
+                    
+                    # Extract the assertion test source
+                    logging_variables, assertions, comments, points_value = self.extract_assertion_test_source(cell, source)
 
                     # Add to results dictionary
                     results_dict[cell_index] = {
@@ -697,6 +620,116 @@ class FastAPINotebookBuilder:
                     results_dict = FastAPINotebookBuilder.tag_questions(results_dict)
 
         return results_dict
+
+    def extract_assertion_test_source(self, cell, source):
+        """
+        Extracts assertion test information from a given code cell source.
+
+        This method processes the source code of a Jupyter notebook cell to extract
+        logging variables, assertions, comments, and point values associated with
+        test configurations. It identifies and processes assertion statements,
+        ensuring proper handling of multi-line assertions and comments.
+
+        Args:
+            cell (dict): A dictionary representing a Jupyter notebook cell.
+            source (str): The source code of the cell as a string.
+
+        Returns:
+            tuple: A tuple containing:
+                - logging_variables (list): A list of variables used for logging.
+                - assertions (list): A list of assertion statements extracted from the source.
+                - comments (list): A list of comments associated with the assertions.
+                - points_value (float or None): The point value extracted from the source, or None if not found.
+
+        Raises:
+            ValueError: If the points value cannot be converted to a float.
+        """
+        logging_variables = FastAPINotebookBuilder.extract_log_variables(cell)
+
+        # Extract assert statements using a more robust approach
+        assertions = []
+        comments = []
+
+        # Split the source into lines for processing
+        lines = source.split("\n")
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            if line.startswith("assert"):
+                # Initialize assertion collection
+                assertion_lines = []
+                comment = None
+
+                # Handle the first line
+                first_line = line[6:].strip()  # Remove 'assert' keyword
+                assertion_lines.append(first_line)
+
+                # Stack to track parentheses
+                paren_stack = []
+                for char in first_line:
+                    if char == "(":
+                        paren_stack.append(char)
+                    elif char == ")":
+                        if paren_stack:
+                            paren_stack.pop()
+
+                # Continue collecting lines while we have unclosed parentheses
+                current_line = i + 1
+                while paren_stack and current_line < len(lines):
+                    next_line = lines[current_line].strip()
+                    assertion_lines.append(next_line)
+
+                    for char in next_line:
+                        if char == "(":
+                            paren_stack.append(char)
+                        elif char == ")":
+                            if paren_stack:
+                                paren_stack.pop()
+
+                    current_line += 1
+
+                # Join the assertion lines and clean up
+                full_assertion = " ".join(assertion_lines)
+
+                # Extract the comment if it exists (handling both f-strings and regular strings)
+                comment_match = re.search(
+                    r',\s*(?:f?["\'])(.*?)(?:["\'])\s*(?:\)|$)',
+                    full_assertion,
+                )
+                if comment_match:
+                    comment = comment_match.group(1).strip()
+                    # Remove the comment from the assertion
+                    full_assertion = full_assertion[: comment_match.start()].strip()
+
+                # Ensure proper parentheses closure
+                open_count = full_assertion.count("(")
+                close_count = full_assertion.count(")")
+                if open_count > close_count:
+                    full_assertion += ")" * (open_count - close_count)
+
+                # Clean up the assertion
+                if full_assertion.startswith("(") and not full_assertion.endswith(")"):
+                    full_assertion += ")"
+
+                assertions.append(full_assertion)
+                comments.append(comment)
+
+                # Update the line counter
+                i = current_line
+            else:
+                i += 1
+
+        # Extract points value
+        points_line = next(
+            (line for line in source.split("\n") if "points:" in line), None
+        )
+        points_value = None
+        if points_line:
+            try:
+                points_value = float(points_line.split(":")[-1].strip())
+            except ValueError:
+                points_value = None
+        return logging_variables, assertions, comments, points_value
 
     def read_notebook(self, notebook_path):
         with open(notebook_path, "r", encoding="utf-8") as f:
