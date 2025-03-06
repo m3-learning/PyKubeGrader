@@ -604,7 +604,7 @@ class FastAPINotebookBuilder:
                 source = "".join(cell.get("source", ""))
                 if source.strip().startswith('""" # BEGIN QUESTION'):
                 
-                    question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_name(cell)
+                    question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_name(source)
                     
                     print(question_name, question_number, question_part)
 
