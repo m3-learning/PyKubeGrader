@@ -26,8 +26,9 @@ custom_grade_adjustments = {
     ("lecture", 7): lambda score: 100.0,
     ("lecture", 9): lambda score: 100.0 if score > 0 else 0.0,
     ("quiz", 7): lambda score: min(score / 28 * 100, 100.0),
-    ("attend", 8): lambda score: 100.0 if score > 0 else 0.0,
-    ("attend", 2): lambda score: 100.0 if score > 0 else 0.0,
+    ("labattendance", 8): lambda score: 100.0 if score > 0 else 0.0,
+    ("labattendance", 2): lambda score: 100.0 if score > 0 else 0.0,
+    ("labattendance", 9): lambda score: 100.0 if score > 0 else 0.0,
     ("practicequiz", 9): lambda score: min(score/20 * 100, 100.0),
 }
 
