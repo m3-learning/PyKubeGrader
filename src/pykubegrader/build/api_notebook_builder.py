@@ -554,8 +554,16 @@ class FastAPINotebookBuilder:
             if cell.get("cell_type") == "raw":
                 source = "".join(cell.get("source", ""))
                 if source.strip().startswith("# BEGIN QUESTION"):
-                    name_match = re.search(r"name:\s*(.*)", source)
+                    name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
                     question_name = name_match.group(1).strip() if name_match else None
+                    question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
+                    question_number = (
+                        question_number.group(1).strip() if question_number else None
+                    )
+                    question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
+                    question_part = (
+                        question_part.group(1).strip() if question_part else None
+                    )
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
