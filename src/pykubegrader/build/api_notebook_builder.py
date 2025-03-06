@@ -564,6 +564,7 @@ class FastAPINotebookBuilder:
                     question_part = (
                         question_part.group(1).strip() if question_part else None
                     )
+                    print(question_name, question_number, question_part)
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
