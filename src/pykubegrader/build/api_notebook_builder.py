@@ -568,17 +568,14 @@ class FastAPINotebookBuilder:
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
 
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = json.load(f)
+        notebook = self.read_notebook(notebook_path)
 
         results_dict = {}
         question_name = None  # At least define the variable up front
 
         for cell_index, cell in enumerate(notebook.get("cells", [])):
             if cell.get("cell_type") == "raw":
-                
                 source = "".join(cell.get("source", ""))
-                
                 if source.strip().startswith("# BEGIN QUESTION"):
                     question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_information(source)
 
@@ -690,3 +687,8 @@ class FastAPINotebookBuilder:
                     results_dict = FastAPINotebookBuilder.tag_questions(results_dict)
 
         return results_dict
+
+    def read_notebook(self, notebook_path):
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            notebook = json.load(f)
+        return notebook
