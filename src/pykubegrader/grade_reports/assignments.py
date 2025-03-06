@@ -18,7 +18,7 @@ class assignment_type:
             Initializes an instance of the assignment_type class.
     """
 
-    def __init__(self, name: str, weekly: bool, weight: float):
+    def __init__(self, name: str, weekly: bool, weight: float | tuple[float, float]):
         """Initializes an instance of the assignment_type class.
         Args:
             name (str): The name of the assignment.

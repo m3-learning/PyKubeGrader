@@ -29,13 +29,13 @@ custom_grade_adjustments = {
     ("labattendance", 8): lambda score: 100.0 if score > 0 else 0.0,
     ("labattendance", 2): lambda score: 100.0 if score > 0 else 0.0,
     ("labattendance", 9): lambda score: 100.0 if score > 0 else 0.0,
-    ("practicequiz", 9): lambda score: min(score/20 * 100, 100.0),
+    ("practicequiz", 9): lambda score: min(score / 20 * 100, 100.0),
 }
 
 # Exempted assignments, key is a tuple of assignment type and week
 globally_exempted_assignments = [
     ("labattendance", 1),
-    ("readings", 6), 
+    ("readings", 6),
     ("quiz", 6),
     ("practicequiz", 6),
     ("lecture", 6),
@@ -71,8 +71,7 @@ dropped_assignments = [
 ]
 
 # Duplicated scores, a list of tuples of assignment types and weeks where the scores will be duplicated
-duplicated_scores = [[(7, "lab"), (7, "homework")],
-                     [(9, "lab"), (9, "homework")]]
+duplicated_scores = [[(7, "lab"), (7, "homework")], [(9, "lab"), (9, "homework")]]
 
 # TAs and other users to skip in class grade report
 skipped_users = [
