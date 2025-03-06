@@ -577,6 +577,8 @@ class FastAPINotebookBuilder:
             )
             
             return question_name, question_number, question_part
+        else:
+            return None, None, None
 
     def question_dict(self) -> dict:
         """
