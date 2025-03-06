@@ -536,6 +536,30 @@ class FastAPINotebookBuilder:
                 test_number += 1
 
         return cells_dict
+    
+    @staticmethod
+    def extract_question_information(source: str) -> tuple[str, str, str]:
+        """
+        Extracts question information from the given source string.
+
+        Args:
+            source (str): The source string containing question information.
+
+        Returns:
+            tuple[str, str, str]: A tuple containing the question name, question number, and question part.
+        """
+        name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
+        question_name = name_match.group(1).strip() if name_match else None
+        question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
+        question_number = (
+            question_number.group(1).strip() if question_number else None
+        )
+        question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
+        question_part = (
+            question_part.group(1).strip() if question_part else None
+        )
+       
+        return question_name, question_number, question_part
 
     def question_dict(self) -> dict:
         if not self.temp_notebook:
@@ -552,19 +576,11 @@ class FastAPINotebookBuilder:
 
         for cell_index, cell in enumerate(notebook.get("cells", [])):
             if cell.get("cell_type") == "raw":
+                
                 source = "".join(cell.get("source", ""))
+                
                 if source.strip().startswith("# BEGIN QUESTION"):
-                    name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
-                    question_name = name_match.group(1).strip() if name_match else None
-                    question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
-                    question_number = (
-                        question_number.group(1).strip() if question_number else None
-                    )
-                    question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
-                    question_part = (
-                        question_part.group(1).strip() if question_part else None
-                    )
-                    print(question_name, question_number, question_part)
+                    question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_information(source)
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
