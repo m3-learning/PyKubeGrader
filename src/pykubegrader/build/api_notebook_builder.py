@@ -183,7 +183,7 @@ class FastAPINotebookBuilder:
         )
 
     @staticmethod
-    def add_text_after_double_hash(markdown_source, insert_text):
+    def add_text_after_double_hash(markdown_source, insert_text, tag = "##"):
         """
         Adds insert_text immediately after the first '##' in the first line that starts with '##'.
 
@@ -198,9 +198,9 @@ class FastAPINotebookBuilder:
         inserted = False
 
         for line in markdown_source:
-            if not inserted and line.startswith("## "):
+            if not inserted and line.startswith(f"{tag} "):
                 modified_source.append(
-                    f"## {insert_text} {line[3:]}"
+                    f"{tag} {insert_text} {line[len(tag)+1:]}"
                 )  # Insert text after '##'
                 inserted = True  # Ensure it only happens once
             else:
