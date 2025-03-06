@@ -479,7 +479,15 @@ class FastAPINotebookBuilder:
 
     @staticmethod
     def extract_log_variables(cell: dict) -> list[str]:
-        """Extracts log variables from the first cell."""
+        """
+        Extracts log variables from the first cell.
+
+        Args:
+            cell (dict): A dictionary representing a notebook cell.
+
+        Returns:
+            list[str]: A list of log variable names extracted from the cell.
+        """
         if "source" in cell:
             for line in cell["source"]:
                 # Look for the log_variables pattern
