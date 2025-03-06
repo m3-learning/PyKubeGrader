@@ -19,11 +19,10 @@ from pykubegrader.grade_reports.grading_config import (
     custom_grade_adjustments,
     dropped_assignments,
     duplicated_scores,
-    exclude_from_running_avg,
     globally_exempted_assignments,
+    max_week,
     optional_drop_assignments,
     optional_drop_week,
-    max_week,
 )
 from pykubegrader.telemetry import get_assignments_submissions
 
@@ -136,15 +135,15 @@ class GradeReport:
         total_percentage = 1
         df_ = self.compute_final_average()
         score_earned = 0
-        
+
         optional_weighted_assignments = []
         final_weights = {}
         for assignment_type in self.assignment_type_list:
-            if isinstance(assignment_type.weight,tuple):
+            if isinstance(assignment_type.weight, tuple):
                 total_percentage -= assignment_type.weight[0]
                 optional_weighted_assignments.append(assignment_type)
                 final_weights[assignment_type.name] = list(assignment_type.weight)
-            
+
             else:
                 score_earned += assignment_type.weight * df_[assignment_type.name]
 
@@ -153,11 +152,13 @@ class GradeReport:
         final_scores_list = []
         for weight_combo in combinations:
             score = 0
-            
+
             for i, assignment_type in enumerate(optional_weighted_assignments):
-                score += weight_combo[i]*df_[assignment_type.name]
-            
-            final_scores_list.append(non_optional_score*(1-sum(weight_combo)) + score)
+                score += weight_combo[i] * df_[assignment_type.name]
+
+            final_scores_list.append(
+                non_optional_score * (1 - sum(weight_combo)) + score
+            )
 
         self.final_grade = score_earned / total_percentage
         self.final_grade_final = max(*final_scores_list)
@@ -250,7 +251,7 @@ class GradeReport:
         If there are filtered assignments, the score is updated based on the submission.
         Otherwise,
         """
-        
+
         for assignment in self.graded_assignments:
             filtered_submission = self.filter_submissions(
                 assignment.week, assignment.name
@@ -278,7 +279,7 @@ class GradeReport:
                 self.final_grades[f"{assignment.name}"] = assignment.score
 
         return self.final_grades
-    
+
     def filter_submissions(self, week_number, assignment_type):
         # Normalize the assignment type using aliases
         normalized_type = self.aliases.get(
