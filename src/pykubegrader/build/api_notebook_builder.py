@@ -553,32 +553,25 @@ class FastAPINotebookBuilder:
         return cells_dict
     
     @staticmethod
-    def extract_question_name(cell: str) -> tuple[str, str, str]:
+    def extract_question_name(source: str) -> tuple[str, str, str]:
         """
         Extracts the question name, question number, and question part from the source code.
         """
-        # Gets the source code of the cell
-        source = "".join(cell.get("source", ""))
+            
+        # Extracts the question name, question number, and question part
+        name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
+        question_name = name_match.group(1).strip() if name_match else None
+        question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
+        question_number = (
+            question_number.group(1).strip() if question_number else None
+        )
+        question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
+        question_part = (
+            question_part.group(1).strip() if question_part else None
+        )
         
-        # Checks if the cell starts with "# BEGIN QUESTION"
-        # This means the cell is the first cell for a question
-        if source.strip().startswith("# BEGIN QUESTION"):
-            
-            # Extracts the question name, question number, and question part
-            name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
-            question_name = name_match.group(1).strip() if name_match else None
-            question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
-            question_number = (
-                question_number.group(1).strip() if question_number else None
-            )
-            question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
-            question_part = (
-                question_part.group(1).strip() if question_part else None
-            )
-            
-            return question_name, question_number, question_part
-        else:
-            return None, None, None
+        return question_name, question_number, question_part
+
 
     def question_dict(self) -> dict:
         """
@@ -608,10 +601,12 @@ class FastAPINotebookBuilder:
         for cell_index, cell in enumerate(notebook.get("cells", [])):
             # Checks if the cell is a raw cell
             if cell.get("cell_type") == "raw":
+                source = "".join(cell.get("source", ""))
+                if source.strip().startswith('""" # BEGIN QUESTION'):
                 
-                question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_name(cell)
-                
-                print(question_name, question_number, question_part)
+                    question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_name(cell)
+                    
+                    print(question_name, question_number, question_part)
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
