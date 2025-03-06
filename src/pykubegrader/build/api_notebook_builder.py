@@ -613,6 +613,8 @@ class FastAPINotebookBuilder:
                         "assertions": assertions,
                         "comments": comments,
                         "question": question_name,
+                        "question_number": question_number,
+                        "question_part": question_part,
                         "points": points_value,
                         "logging_variables": logging_variables,
                     }
