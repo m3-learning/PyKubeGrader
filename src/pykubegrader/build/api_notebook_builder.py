@@ -568,8 +568,10 @@ class FastAPINotebookBuilder:
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
 
+        # Read the notebook
         notebook = self.read_notebook(notebook_path)
 
+        # Initialize the results dictionary
         results_dict = {}
         question_name = None  # At least define the variable up front
 
