@@ -12,6 +12,9 @@ import nbformat
 
 @dataclass
 class FastAPINotebookBuilder:
+    """
+    Builds a Jupyter notebook with the API code for the FastAPI endpoint.
+    """
     notebook_path: str
     temp_notebook: Optional[str] = None
     assignment_tag: str = ""
@@ -19,6 +22,9 @@ class FastAPINotebookBuilder:
     verbose: bool = False
 
     def __post_init__(self) -> None:
+        """
+        Initializes the FastAPINotebookBuilder instance.
+        """
         self.root_path, self.filename = FastAPINotebookBuilder.get_filename_and_root(
             self.notebook_path
         )
@@ -28,7 +34,22 @@ class FastAPINotebookBuilder:
         self.run()
 
     def run(self) -> None:
-        # here for easy debugging
+        """
+        Runs the FastAPINotebookBuilder instance.
+        """
+        # makes a temporary notebook with the same name as the original notebook for easy debugging
+        self.make_temp_notebook()
+
+        # gets the question dict from the temporary notebook
+        self.assertion_tests_dict = self.question_dict()
+
+        # adds the API code to the temporary notebook
+        self.add_api_code()
+
+        # add the point total to the end of the notebook
+        self.add_total_points_to_notebook()
+
+    def make_temp_notebook(self):
         if self.temp_notebook is not None:
             shutil.copy(
                 self.notebook_path, self.notebook_path.replace(".ipynb", "_temp.ipynb")
@@ -36,12 +57,6 @@ class FastAPINotebookBuilder:
             self.temp_notebook = self.notebook_path.replace(".ipynb", "_temp.ipynb")
         else:
             self.temp_notebook = self.notebook_path
-
-        self.assertion_tests_dict = self.question_dict()
-        self.add_api_code()
-
-        # add the point total to the end of the notebook
-        self.add_total_points_to_notebook()
 
     @staticmethod
     def conceal_tests(cell_source):
@@ -536,10 +551,43 @@ class FastAPINotebookBuilder:
                 test_number += 1
 
         return cells_dict
+    
+    @staticmethod
+    def extract_question_name(cell: str) -> tuple[str, str, str]:
+        """
+        Extracts the question name, question number, and question part from the source code.
+        """
+        # Gets the source code of the cell
+        source = "".join(cell.get("source", ""))
+        
+        # Checks if the cell starts with "# BEGIN QUESTION"
+        # This means the cell is the first cell for a question
+        if source.strip().startswith("# BEGIN QUESTION"):
+            
+            # Extracts the question name, question number, and question part
+            name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
+            question_name = name_match.group(1).strip() if name_match else None
+            question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
+            question_number = (
+                question_number.group(1).strip() if question_number else None
+            )
+            question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
+            question_part = (
+                question_part.group(1).strip() if question_part else None
+            )
+            
+            return question_name, question_number, question_part
 
     def question_dict(self) -> dict:
+        """
+        Extracts the question information from the temporary notebook.
+        """
+
+        # Checks if the temporary notebook file path is provided
         if not self.temp_notebook:
             raise ValueError("No temporary notebook file path provided")
+
+        # Checks if the temporary notebook file exists
         notebook_path = Path(self.temp_notebook)
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
@@ -547,23 +595,21 @@ class FastAPINotebookBuilder:
         with open(notebook_path, "r", encoding="utf-8") as f:
             notebook = json.load(f)
 
-        results_dict = {}
-        question_name = None  # At least define the variable up front
 
+        # Initializes the results dictionary
+        results_dict = {}
+
+        # Initializes the question name
+        question_name = None  
+
+        # Loops through the cells in the notebook
         for cell_index, cell in enumerate(notebook.get("cells", [])):
+            # Checks if the cell is a raw cell
             if cell.get("cell_type") == "raw":
-                source = "".join(cell.get("source", ""))
-                if source.strip().startswith("# BEGIN QUESTION"):
-                    name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
-                    question_name = name_match.group(1).strip() if name_match else None
-                    question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
-                    question_number = (
-                        question_number.group(1).strip() if question_number else None
-                    )
-                    question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
-                    question_part = (
-                        question_part.group(1).strip() if question_part else None
-                    )
+                
+                question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_name(cell)
+                
+                print(question_name, question_number, question_part)
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
