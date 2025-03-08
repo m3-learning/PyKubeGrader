@@ -123,10 +123,12 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_question_info(cell_dict)
             )
-
+            
             updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
             updated_cell_source.extend(["\n"])
-
+            
+            updated_cell_source.extend("import matplotlib\n")
+            updated_cell_source.extend("matplotlib.use('Agg')\n")
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_graders(cell_dict)
             )
