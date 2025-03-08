@@ -149,6 +149,18 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_update_responses(cell_dict)
             )
+            
+            # code to reset matplotlib
+            updated_cell_source.extend(
+                ["matplotlib.pyplot.close('all')\n"]
+            )
+            updated_cell_source.extend(
+                ["%matplotlib inline\n"]
+            )
+            
+            
+            
+            
 
             self.replace_cell_source(cell_index, updated_cell_source)
 
@@ -365,6 +377,7 @@ class FastAPINotebookBuilder:
             ")\n",
             "import os\n",
             "import base64\n",
+            "import matplotlib\n",
         ]
 
         if require_key:
