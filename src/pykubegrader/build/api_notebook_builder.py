@@ -154,9 +154,6 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(
                 ["matplotlib.pyplot.close('all')\n"]
             )
-            updated_cell_source.extend(
-                ["%matplotlib inline\n"]
-            )
             
             
             
