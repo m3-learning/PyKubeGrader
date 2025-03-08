@@ -127,8 +127,6 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
             updated_cell_source.extend(["\n"])
             
-            updated_cell_source.extend("import matplotlib\n")
-            updated_cell_source.extend("matplotlib.use('Agg')\n")
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_graders(cell_dict)
             )
@@ -373,6 +371,9 @@ class FastAPINotebookBuilder:
             imports.append(
                 f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment='{assignment_tag}')\n"
             )
+            
+        imports.append("import matplotlib\n")
+        imports.append("matplotlib.use('Agg')\n")
 
         for i, line in enumerate(cell_source):
             if end_test_config_line in line:
