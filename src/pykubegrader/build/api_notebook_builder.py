@@ -38,10 +38,111 @@ class FastAPINotebookBuilder:
             self.temp_notebook = self.notebook_path
 
         self.assertion_tests_dict = self.question_dict()
+        self.question_points = self.question_points_by_part = self.get_question_points_by_part(self.assertion_tests_dict)
+        self.add_points_to_notebook()
         self.add_api_code()
 
-        # add the point total to the end of the notebook
-        self.add_total_points_to_notebook()
+
+    def add_points_to_notebook(self) -> None:
+        self.add_question_points_to_notebook()
+        self.add_question_part_points_to_notebook()
+
+    def add_question_points_to_notebook(self) -> None:
+        for question, points in self.question_points['question_sums'].items():
+            index, source = self.find_first_markdown_cell_with(points['current_key'], points['previous_key'], f"## ")
+            
+            # if the question is not found, skip it
+            if index is None:
+                continue
+            
+            # add the question points to the question description
+            source = self.get_cell_source(self.temp_notebook, index)
+            modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
+                source,
+                f"Question {points['question_number']} (Points: {points['total_points']}):",
+            )
+            self.replace_cell_source(index, modified_source)
+            
+    def add_question_part_points_to_notebook(self) -> None:
+        for question, points in self.question_points['part_sums'].items():
+            for part, points in points.items():
+                index, source = self.find_first_markdown_cell_with(points['current_key'], points['previous_key'], f"### ")
+                
+                # if the question part is not found, skip it
+                if index is None:
+                    continue
+                
+                # add the question part points to the question part description
+                source = self.get_cell_source(self.temp_notebook, index)
+                modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
+                    source,
+                    f"Question {points['question_number']} Part {points['question_part_number']} (Points: {points['total_points']}):", '###',
+                )
+                self.replace_cell_source(index, modified_source)
+    
+    def find_first_markdown_cell_with(self, start_index: int, end_index: int = 0, code_to_find: str = "## "):
+        """
+        Finds the first markdown cell going backwards from the given start_index
+        to the given end_index where the first line starts with '##'.
+
+        Args:
+        - start_index (int): The index to start searching from.
+        - end_index (int): The index to stop searching at.
+
+        Returns:
+        - tuple: The index of the found markdown cell and its source content.
+        """
+        with open(self.temp_notebook, "r", encoding="utf-8") as f:
+            nb_data = json.load(f)
+
+        for idx in range(start_index, end_index - 1, -1):
+            cell = nb_data.get("cells", [])[idx]
+            if cell["cell_type"] == "markdown" and cell.get("source", [])[0].startswith(code_to_find):
+                return idx, cell.get("source", [])
+
+        return None, None  # Return None if no such markdown cell is found
+        
+    @staticmethod
+    def get_question_points_by_part(question_dict: dict) -> dict:
+        """
+        Get the points for each part of a question.
+        """
+        # Compute sum for each question and store the previous cell number (key)
+        question_sums = {}
+        prev_question = 0  # Initialize previous cell number as 0
+
+        for key, entry in question_dict.items():
+            question_number = entry['question_number']
+            if question_number not in question_sums:
+                question_sums[question_number] = {'total_points': 0, 'previous_key': prev_question, 'current_key': None, 'question_number': question_number}
+                prev_question = key  # Update previous key for the next new question
+            question_sums[question_number]['total_points'] += entry['points']
+            question_sums[question_number]['current_key'] = key  # Update current key to the end of the current question
+
+        # Compute sum for each question part and store the previous cell number (key)
+        part_sums = {}
+        prev_part = 0  # Initialize previous cell number as 0
+
+        for key, entry in question_dict.items():
+            question = entry['question']
+            part = entry['question_part']
+            if part is None:
+                continue
+            if question not in part_sums:
+                part_sums[question] = {}
+            if part not in part_sums[question]:
+                part_sums[question][part] = {'total_points': 0, 'previous_key': prev_part, 'current_key': key, 'question_number': entry['question_number'], 'question_part_number': entry['question_part']}
+                prev_part = key  # Update previous key for the next new question part
+            part_sums[question][part]['total_points'] += entry['points']
+
+        # Combine results into a dictionary
+        result = {
+            "question_sums": question_sums,
+            "part_sums": part_sums
+        }
+
+        # Return result dictionary
+        return result
 
     @staticmethod
     def conceal_tests(cell_source):
@@ -181,9 +282,6 @@ class FastAPINotebookBuilder:
 
         return None, None  # Return None if no such markdown cell is found
 
-    def add_total_points_to_notebook(self) -> None:
-        self.max_question_points.keys()
-
     def get_max_question_points(self, cell_dict) -> float:
         return sum(
             cell["points"]
@@ -192,7 +290,7 @@ class FastAPINotebookBuilder:
         )
 
     @staticmethod
-    def add_text_after_double_hash(markdown_source, insert_text):
+    def add_text_after_double_hash(markdown_source, insert_text, hash_prefix = "## "):
         """
         Adds insert_text immediately after the first '##' in the first line that starts with '##'.
 
@@ -207,10 +305,10 @@ class FastAPINotebookBuilder:
         inserted = False
 
         for line in markdown_source:
-            if not inserted and line.startswith("## "):
+            if not inserted and line.startswith(hash_prefix):
                 modified_source.append(
-                    f"## {insert_text} {line[3:]}"
-                )  # Insert text after '##'
+                    f"{hash_prefix}{insert_text} {line[len(hash_prefix):]}"
+                )  # Insert text after hash_prefix
                 inserted = True  # Ensure it only happens once
             else:
                 modified_source.append(line)
@@ -750,3 +848,7 @@ class FastAPINotebookBuilder:
         with open(notebook_path, "r", encoding="utf-8") as f:
             notebook = json.load(f)
         return notebook
+    
+    def get_cell_source(self, notebook_path, cell_index):
+        notebook = self.read_notebook(notebook_path)
+        return notebook["cells"][cell_index]["source"]
