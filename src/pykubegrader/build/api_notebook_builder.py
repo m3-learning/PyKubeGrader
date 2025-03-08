@@ -76,7 +76,7 @@ class FastAPINotebookBuilder:
                 source = self.get_cell_source(self.temp_notebook, index)
                 modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
                     source,
-                    f"Question {points['question_number']} Part {points['question_part_number']} (Points: {points['total_points']}):", '###',
+                    f"Question {points['question_number']}-Part {points['question_part_number']} (Points: {points['total_points']}):", '### ',
                 )
                 self.replace_cell_source(index, modified_source)
     
