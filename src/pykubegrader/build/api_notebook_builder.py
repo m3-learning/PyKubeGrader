@@ -184,16 +184,16 @@ class FastAPINotebookBuilder:
 
     def add_api_code(self) -> None:
         self.compute_max_points_free_response()
-        for i, question in enumerate(self.max_question_points.keys()):
-            index, source = self.find_question_description(question)
-            try:
-                modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
-                    source,
-                    f"Question {i + 1} (Points: {self.max_question_points[question]}):",
-                )
-                self.replace_cell_source(index, modified_source)
-            except Exception:
-                pass
+        # for i, question in enumerate(self.max_question_points.keys()):
+        #     index, source = self.find_question_description(question)
+        #     try:
+        #         modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
+        #             source,
+        #             f"Question {i + 1} (Points: {self.max_question_points[question]}):",
+        #         )
+        #         self.replace_cell_source(index, modified_source)
+        #     except Exception:
+        #         pass
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
             if self.verbose:
@@ -253,7 +253,7 @@ class FastAPINotebookBuilder:
             
             # code to reset matplotlib
             updated_cell_source.extend(
-                ["matplotlib.pyplot.close('all')\n"]
+                ["_ = matplotlib.pyplot.close('all')\n"]
             )
             
             
