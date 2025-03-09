@@ -251,10 +251,10 @@ class FastAPINotebookBuilder:
                 FastAPINotebookBuilder.construct_update_responses(cell_dict)
             )
             
-            # code to reset matplotlib
-            updated_cell_source.extend(
-                ["_ = matplotlib.pyplot.close('all')\n"]
-            )
+            # # code to reset matplotlib
+            # updated_cell_source.extend(
+            #     ["_ = matplotlib.pyplot.close('all')\n"]
+            # )
             
             
             
