@@ -79,10 +79,10 @@ class ClassGradeReport:
         with students as index labels.
         """
         self.all_student_grades_df = pd.DataFrame(
-            np.nan,
+            0.0,
             dtype=float,
             index=self.student_list,
-            columns=[a.name for a in assignment_type_list] + ["Weighted Average Grade"],
+            columns=[a.name for a in assignment_type_list] + ["Weighted Average Grade w Final", "Weighted Average Grade"],
         )
 
     def update_student_grade(self, student):
