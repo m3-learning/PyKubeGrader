@@ -3,7 +3,7 @@
 from datetime import datetime
 from itertools import product
 
-import numpy as np
+import numpy as np 
 import pandas as pd
 from IPython.display import display
 
