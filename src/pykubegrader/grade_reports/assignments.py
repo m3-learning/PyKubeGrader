@@ -167,6 +167,11 @@ class Assignment(assignment_type):
         """
         score = submission["raw_score"]
         entry_date = parser.parse(submission["timestamp"])
+        
+        # TODO: fix once we record bonus points this is the mns fix.
+        if score > self.max_score*2:
+            print(f"A Cheater has been detected with a score of {score} for {self.name}. You have been reported to the instructor.")
+            return 0
 
         if self.grade_adjustment_func:
             return self.grade_adjustment_func(score)
