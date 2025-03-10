@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+g4bcc670 documentation</title>
+    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+gb35b902 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=54c5e6fc"></script>
+    <script src="../_static/documentation_options.js?v=a1d94d10"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader.build package" href="pykubegrader.build.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g4bcc670" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+gb35b902" />
     <meta name="docbuild:last-update" content="Mar 10, 2025"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g4bcc670 documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g4bcc670 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gb35b902 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gb35b902 documentation - Home"/>
   
   
 </a></div>
@@ -644,7 +644,7 @@ Initializes an instance of the assignment_type class.</p>
 <span id="pykubegrader-grade-reports-class-grade-report-module"></span><h2>pykubegrader.grade_reports.class_grade_report module<a class="headerlink" href="#module-pykubegrader.grade_reports.class_grade_report" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.class_grade_report.</span></span><span class="sig-name descname"><span class="pre">ClassGradeReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pykubegrader.grade_reports.class_grade_report.</span></span><span class="sig-name descname"><span class="pre">ClassGradeReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Generates and manages a class-wide grade report.</p>
 <p>This class retrieves a list of students, initializes a structured grade report,
@@ -704,6 +704,17 @@ and storing each student’s weighted average grades.</p>
 <span class="sig-name descname"><span class="pre">get_class_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.get_class_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.get_class_stats" title="Link to this definition">#</a></dt>
 <dd><p>Calculates and stores descriptive statistics for the class-wide grade report.
 Requires filling class grades first</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pykubegrader.grade_reports.class_grade_report.ClassGradeReport.make_report">
+<span class="sig-name descname"><span class="pre">make_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/class_grade_report.html#ClassGradeReport.make_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.make_report" title="Link to this definition">#</a></dt>
+<dd><p>Makes the class grade report.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Additional keyword arguments.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -979,6 +990,7 @@ pd.io.formats.style.Styler: Styled DataFrame with NaNs highlighted.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.fill_class_grades"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.fill_class_grades()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.fill_class_grades()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.get_class_stats"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.get_class_stats()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.make_report"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.make_report()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.setup_class_grades()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.update_student_grade()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.grade_reports.class_grade_report.ClassGradeReport.write_excel_spreadsheet"><code class="docutils literal notranslate"><span class="pre">ClassGradeReport.write_excel_spreadsheet()</span></code></a></li>
