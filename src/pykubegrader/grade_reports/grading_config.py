@@ -92,7 +92,7 @@ optional_drop_week = [1]
 # Optional drop assignments, a list of tuples of assignment types and weeks where the lowest score will be dropped
 optional_drop_assignments = [("lab", 7), ("homework", 7)]
 
-# Excluded from running average, a list of assignment types that will be excluded from the running average calculation
+# Excluded from running average, a list of assignment types that will be excluded from the running average calculation, These assignments are not included as exempt when the due date is in the future
 exclude_from_running_avg = ["final", "practicefinal"]
 
 max_week = 9

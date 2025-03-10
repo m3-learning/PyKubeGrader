@@ -19,6 +19,7 @@ from pykubegrader.grade_reports.grading_config import (
     custom_grade_adjustments,
     dropped_assignments,
     duplicated_scores,
+    excluded_from_running_avg,
     globally_exempted_assignments,
     max_week,
     optional_drop_assignments,
@@ -48,6 +49,7 @@ class GradeReport:
         self.dropped_assignments = dropped_assignments
         self.optional_drop_week = optional_drop_week
         self.optional_drop_assignments = optional_drop_assignments
+        self.excluded_from_running_avg = excluded_from_running_avg
 
         # assignments that have been dropped for a given students.
         self.student_assignments_dropped = []
@@ -106,7 +108,7 @@ class GradeReport:
         Updates the score of assignments that are not due yet to NaN.
         """
         for assignment in self.graded_assignments:
-            if assignment.due_date:
+            if assignment.due_date and assignment.name not in self.excluded_from_running_avg:
                 # Convert due date to datetime object
                 due_date = datetime.fromisoformat(
                     assignment.due_date.replace("Z", "+00:00")
