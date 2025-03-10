@@ -55,7 +55,7 @@ class ClassGradeReport:
             Iterates through all students to populate the class-wide grade report.
     """
 
-    def __init__(self, user, password):
+    def __init__(self, user, password, **kwargs):
         """Initializes the class grade report.
 
         Retrieves the student list using authentication, sorts it, and sets up
@@ -71,6 +71,24 @@ class ClassGradeReport:
         self.setup_class_grades()
         self.fill_class_grades()
         self.get_class_stats()
+        self.make_report(**kwargs)
+        
+    def make_report(self, **kwargs):
+        """Makes the class grade report.
+
+        Args:
+            **kwargs: Additional keyword arguments.
+        """
+        try:
+            title = kwargs.get("title", "Grade Report")
+            filename = kwargs.get("filename", "Grade_report.html")
+            import numpy as np
+            import pandas as pd
+            from ydata_profiling import ProfileReport
+            profile = ProfileReport(self.all_student_grades_df, title=title)
+            profile.to_file(filename)
+        except:
+            Warning("ydata_profiling not installed, cannot make report")
 
     def setup_class_grades(self):
         """Creates an empty DataFrame to store grades for all students.
