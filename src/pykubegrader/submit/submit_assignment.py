@@ -35,6 +35,10 @@ def call_score_assignment(
     base_url = os.getenv("DB_URL")
     if not base_url:
         raise ValueError("Environment variable 'DB_URL' not set")
+    
+    if not base_url:
+        raise ValueError("Environment variable 'DB_URL' not set")
+
 
     url = base_url.rstrip("/") + "/score-assignment"
 
@@ -58,7 +62,7 @@ def call_score_assignment(
                 files={"log_file": file},
             )
             res.raise_for_status()
-
+            
             return res.json()
 
     except FileNotFoundError:
@@ -85,6 +89,45 @@ def submit_assignment(
     response = call_score_assignment(assignment_title, notebook_title, file_path)
 
     print("Server Response:", response.get("message", "No message in response"))
+
+def mark_student_complete(assignment_title: str, notebook_title: str) -> None:
+    """
+    Mark a student as complete for an assignment
+    """
+
+    base_url = os.getenv("DB_URL")
+    if not base_url: raise ValueError("Environment variable 'DB_URL' not set")
+    
+    url = base_url.rstrip("/") + "/students/completed-assignments"
+
+    params = {
+        "assignment_title": assignment_title,
+        "notebook_title": notebook_title,
+    }
+
+    token = os.getenv("TOKEN")
+    if token:
+        params["key_used"] = token
+
+    username, password = get_credentials().values()
+    
+
+    try:
+        res = requests.post(
+                url=url,
+                auth=HTTPBasicAuth(username, password),
+                params=params
+            )
+        res.raise_for_status()
+
+        return res.json()
+
+    except requests.RequestException as err:
+        raise RuntimeError(f"An error occurred while requesting {url}: {err}")
+    except Exception as err:
+        raise RuntimeError(f"An unexpected error occurred: {err}")
+    
+
 
 
 # Example usage (remove this section if only the function needs to be importable):
