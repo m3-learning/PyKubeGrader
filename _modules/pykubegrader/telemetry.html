@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.telemetry &#8212; PyKubeGrader 0.0.post1.dev1+g1edf284 documentation</title>
+    <title>pykubegrader.telemetry &#8212; PyKubeGrader 0.0.post1.dev1+g502d768 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=3c712890"></script>
+    <script src="../../_static/documentation_options.js?v=b8adf107"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g1edf284" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g502d768" />
     <meta name="docbuild:last-update" content="Mar 11, 2025"/>
   </head>
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g1edf284 documentation - Home"/>
-    <img src="../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g1edf284 documentation - Home"/>
+    <img src="../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g502d768 documentation - Home"/>
+    <img src="../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g502d768 documentation - Home"/>
   
   
 </a></div>
@@ -796,188 +796,170 @@
 
 
 
-<div class="viewcode-block" id="setup_grades_df">
-<a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.setup_grades_df">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">setup_grades_df</span><span class="p">(</span><span class="n">assignments</span><span class="p">):</span>
-    <span class="n">assignment_types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assignments</span><span class="p">]))</span>
+<span class="c1"># def setup_grades_df(assignments):</span>
+<span class="c1">#     assignment_types = list(set([a[&quot;assignment_type&quot;] for a in assignments]))</span>
 
-    <span class="n">inds</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Running Avg&quot;</span><span class="p">]</span>
-    <span class="n">restruct_grades</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inds</span><span class="p">))]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">assignment_types</span><span class="p">}</span>
-    <span class="n">new_weekly_grades</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">restruct_grades</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">new_weekly_grades</span><span class="p">[</span><span class="s2">&quot;inds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inds</span>
-    <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;inds&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">new_weekly_grades</span></div>
+<span class="c1">#     inds = [f&quot;week{i + 1}&quot; for i in range(11)] + [&quot;Running Avg&quot;]</span>
+<span class="c1">#     restruct_grades = {k: [0 for i in range(len(inds))] for k in assignment_types}</span>
+<span class="c1">#     new_weekly_grades = pd.DataFrame(restruct_grades, dtype=float)</span>
+<span class="c1">#     new_weekly_grades[&quot;inds&quot;] = inds</span>
+<span class="c1">#     new_weekly_grades.set_index(&quot;inds&quot;, inplace=True)</span>
+<span class="c1">#     return new_weekly_grades</span>
 
 
-
-<div class="viewcode-block" id="skipped_assignment_mask">
-<a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.skipped_assignment_mask">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">skipped_assignment_mask</span><span class="p">(</span><span class="n">assignments</span><span class="p">):</span>
-    <span class="n">existing_assignment_mask</span> <span class="o">=</span> <span class="n">setup_grades_df</span><span class="p">(</span><span class="n">assignments</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="n">assignments</span><span class="p">:</span>
-        <span class="c1"># existing_assignment_mask[assignment[&quot;assignment_type&quot;]].iloc[assignment[&quot;week_number&quot;]-1] = True</span>
-        <span class="n">existing_assignment_mask</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="p">[</span><span class="s1">&#39;week_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="n">existing_assignment_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span></div>
+<span class="c1"># def skipped_assignment_mask(assignments):</span>
+<span class="c1">#     existing_assignment_mask = setup_grades_df(assignments).astype(bool)</span>
+<span class="c1">#     for assignment in assignments:</span>
+<span class="c1">#         # existing_assignment_mask[assignment[&quot;assignment_type&quot;]].iloc[assignment[&quot;week_number&quot;]-1] = True</span>
+<span class="c1">#         existing_assignment_mask.loc[</span>
+<span class="c1">#             f&quot;week{assignment[&#39;week_number&#39;]}&quot;, assignment[&quot;assignment_type&quot;]</span>
+<span class="c1">#         ] = True</span>
+<span class="c1">#     return existing_assignment_mask.astype(bool)</span>
 
 
+<span class="c1"># def fill_grades_df(new_weekly_grades, assignments, student_subs) -&gt; pd.DataFrame:</span>
+<span class="c1">#     for assignment in assignments:</span>
+<span class="c1">#         # get the assignment from all submissions</span>
+<span class="c1">#         subs = [</span>
+<span class="c1">#             sub</span>
+<span class="c1">#             for sub in student_subs</span>
+<span class="c1">#             if (sub[&quot;assignment_type&quot;] == assignment[&quot;assignment_type&quot;])</span>
+<span class="c1">#             and (sub[&quot;week_number&quot;] == assignment[&quot;week_number&quot;])</span>
+<span class="c1">#         ]</span>
+<span class="c1">#         # print(assignment, subs)</span>
+<span class="c1">#         # print(assignment)</span>
+<span class="c1">#         # print(student_subs[:5])</span>
+<span class="c1">#         if assignment[&quot;assignment_type&quot;] == &quot;lecture&quot;:</span>
+<span class="c1">#             if (</span>
+<span class="c1">#                 sum([sub[&quot;raw_score&quot;] for sub in subs]) &gt; 0</span>
+<span class="c1">#             ):  # TODO: good way to check for completion?</span>
+<span class="c1">#                 new_weekly_grades.loc[f&quot;week{assignment[&#39;week_number&#39;]}&quot;, &quot;lecture&quot;] = (</span>
+<span class="c1">#                     1.0</span>
+<span class="c1">#                 )</span>
+<span class="c1">#         if assignment[&quot;assignment_type&quot;] == &quot;final&quot;:</span>
+<span class="c1">#             continue</span>
+<span class="c1">#         if assignment[&quot;assignment_type&quot;] == &quot;midterm&quot;:</span>
+<span class="c1">#             continue</span>
+<span class="c1">#         if len(subs) == 0:</span>
+<span class="c1">#             # print(assignment[&#39;title&#39;], 0, assignment[&#39;max_score&#39;])</span>
+<span class="c1">#             continue</span>
+<span class="c1">#         elif len(subs) == 1:</span>
+<span class="c1">#             grade = subs[0][&quot;raw_score&quot;] / assignment[&quot;max_score&quot;]</span>
+<span class="c1">#             new_weekly_grades.loc[</span>
+<span class="c1">#                 f&quot;week{assignment[&#39;week_number&#39;]}&quot;, assignment[&quot;assignment_type&quot;]</span>
+<span class="c1">#             ] = grade</span>
+<span class="c1">#             # print(assignment[&#39;title&#39;], sub[&#39;raw_score&#39;], assignment[&#39;max_score&#39;])</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             # get due date from assignment</span>
+<span class="c1">#             due_date = parser.parse(assignment[&quot;due_date&quot;])</span>
+<span class="c1">#             grades = []</span>
+<span class="c1">#             for sub in subs:</span>
+<span class="c1">#                 entry_date = parser.parse(sub[&quot;timestamp&quot;])</span>
+<span class="c1">#                 if entry_date &lt;= due_date:</span>
+<span class="c1">#                     grades.append(sub[&quot;raw_score&quot;])</span>
+<span class="c1">#                 else:</span>
+<span class="c1">#                     grades.append(</span>
+<span class="c1">#                         calculate_late_submission(</span>
+<span class="c1">#                             due_date.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;),</span>
+<span class="c1">#                             entry_date.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;),</span>
+<span class="c1">#                         )</span>
+<span class="c1">#                     )</span>
+<span class="c1">#             # print(assignment[&#39;title&#39;], grades, assignment[&#39;max_score&#39;])</span>
+<span class="c1">#             grade = max(grades) / assignment[&quot;max_score&quot;]</span>
+<span class="c1">#             new_weekly_grades.loc[</span>
+<span class="c1">#                 f&quot;week{assignment[&#39;week_number&#39;]}&quot;, assignment[&quot;assignment_type&quot;]</span>
+<span class="c1">#             ] = grade</span>
 
-<div class="viewcode-block" id="fill_grades_df">
-<a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.fill_grades_df">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">fill_grades_df</span><span class="p">(</span><span class="n">new_weekly_grades</span><span class="p">,</span> <span class="n">assignments</span><span class="p">,</span> <span class="n">student_subs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="n">assignments</span><span class="p">:</span>
-        <span class="c1"># get the assignment from all submissions</span>
-        <span class="n">subs</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">sub</span>
-            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">student_subs</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">])</span>
-            <span class="ow">and</span> <span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;week_number&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;week_number&quot;</span><span class="p">])</span>
-        <span class="p">]</span>
-        <span class="c1"># print(assignment, subs)</span>
-        <span class="c1"># print(assignment)</span>
-        <span class="c1"># print(student_subs[:5])</span>
-        <span class="k">if</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;lecture&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="nb">sum</span><span class="p">([</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;raw_score&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="p">):</span>  <span class="c1"># TODO: good way to check for completion?</span>
-                <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="p">[</span><span class="s1">&#39;week_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;lecture&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="mf">1.0</span>
-                <span class="p">)</span>
-        <span class="k">if</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;final&quot;</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="k">if</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;midterm&quot;</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># print(assignment[&#39;title&#39;], 0, assignment[&#39;max_score&#39;])</span>
-            <span class="k">continue</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">grade</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;raw_score&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;max_score&quot;</span><span class="p">]</span>
-            <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                <span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="p">[</span><span class="s1">&#39;week_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span>
-            <span class="p">]</span> <span class="o">=</span> <span class="n">grade</span>
-            <span class="c1"># print(assignment[&#39;title&#39;], sub[&#39;raw_score&#39;], assignment[&#39;max_score&#39;])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># get due date from assignment</span>
-            <span class="n">due_date</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">])</span>
-            <span class="n">grades</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">:</span>
-                <span class="n">entry_date</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">entry_date</span> <span class="o">&lt;=</span> <span class="n">due_date</span><span class="p">:</span>
-                    <span class="n">grades</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;raw_score&quot;</span><span class="p">])</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">grades</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">calculate_late_submission</span><span class="p">(</span>
-                            <span class="n">due_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">),</span>
-                            <span class="n">entry_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">),</span>
-                        <span class="p">)</span>
-                    <span class="p">)</span>
-            <span class="c1"># print(assignment[&#39;title&#39;], grades, assignment[&#39;max_score&#39;])</span>
-            <span class="n">grade</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">grades</span><span class="p">)</span> <span class="o">/</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;max_score&quot;</span><span class="p">]</span>
-            <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                <span class="sa">f</span><span class="s2">&quot;week</span><span class="si">{</span><span class="n">assignment</span><span class="p">[</span><span class="s1">&#39;week_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;assignment_type&quot;</span><span class="p">]</span>
-            <span class="p">]</span> <span class="o">=</span> <span class="n">grade</span>
+<span class="c1">#     # Merge different names</span>
+<span class="c1">#     new_weekly_grades[&quot;attend&quot;] = new_weekly_grades[[&quot;attend&quot;, &quot;attendance&quot;]].max(</span>
+<span class="c1">#         axis=1</span>
+<span class="c1">#     )</span>
+<span class="c1">#     new_weekly_grades[&quot;practicequiz&quot;] = new_weekly_grades[</span>
+<span class="c1">#         [&quot;practicequiz&quot;, &quot;practice-quiz&quot;]</span>
+<span class="c1">#     ].max(axis=1)</span>
+<span class="c1">#     new_weekly_grades[&quot;practicemidterm&quot;] = new_weekly_grades[</span>
+<span class="c1">#         [&quot;practicemidterm&quot;, &quot;PracticeMidterm&quot;]</span>
+<span class="c1">#     ].max(axis=1)</span>
+<span class="c1">#     new_weekly_grades.drop(</span>
+<span class="c1">#         [&quot;attendance&quot;, &quot;practice-quiz&quot;, &quot;test&quot;, &quot;PracticeMidterm&quot;],</span>
+<span class="c1">#         axis=1,</span>
+<span class="c1">#         inplace=True,</span>
+<span class="c1">#         errors=&quot;ignore&quot;,</span>
+<span class="c1">#     )</span>
 
-    <span class="c1"># Merge different names</span>
-    <span class="n">new_weekly_grades</span><span class="p">[</span><span class="s2">&quot;attend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="p">[[</span><span class="s2">&quot;attend&quot;</span><span class="p">,</span> <span class="s2">&quot;attendance&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
-        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
-    <span class="p">)</span>
-    <span class="n">new_weekly_grades</span><span class="p">[</span><span class="s2">&quot;practicequiz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="p">[</span>
-        <span class="p">[</span><span class="s2">&quot;practicequiz&quot;</span><span class="p">,</span> <span class="s2">&quot;practice-quiz&quot;</span><span class="p">]</span>
-    <span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">new_weekly_grades</span><span class="p">[</span><span class="s2">&quot;practicemidterm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="p">[</span>
-        <span class="p">[</span><span class="s2">&quot;practicemidterm&quot;</span><span class="p">,</span> <span class="s2">&quot;PracticeMidterm&quot;</span><span class="p">]</span>
-    <span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
-        <span class="p">[</span><span class="s2">&quot;attendance&quot;</span><span class="p">,</span> <span class="s2">&quot;practice-quiz&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;PracticeMidterm&quot;</span><span class="p">],</span>
-        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">new_weekly_grades</span></div>
+<span class="c1">#     return new_weekly_grades</span>
 
 
-
-<div class="viewcode-block" id="get_current_week">
-<a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.get_current_week">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_current_week</span><span class="p">(</span><span class="n">start_date</span><span class="p">):</span>
-    <span class="c1"># Calculate the current week (1-based indexing)</span>
-    <span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-    <span class="n">days_since_start</span> <span class="o">=</span> <span class="p">(</span><span class="n">today</span> <span class="o">-</span> <span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
-    <span class="k">return</span> <span class="n">days_since_start</span> <span class="o">//</span> <span class="mi">7</span> <span class="o">+</span> <span class="mi">1</span></div>
+<span class="c1"># def get_current_week(start_date):</span>
+<span class="c1">#     # Calculate the current week (1-based indexing)</span>
+<span class="c1">#     start_date = datetime.datetime.strptime(start_date, &quot;%Y-%m-%d&quot;)</span>
+<span class="c1">#     today = datetime.datetime.now()</span>
+<span class="c1">#     days_since_start = (today - start_date).days</span>
+<span class="c1">#     return days_since_start // 7 + 1</span>
 
 
+<span class="c1"># def get_average_weighted_grade(assignments, new_weekly_grades, weights):</span>
+<span class="c1">#     # Get average until current week</span>
+<span class="c1">#     skip_weeks = skipped_assignment_mask(assignments)</span>
+<span class="c1">#     for col in new_weekly_grades.columns:</span>
+<span class="c1">#         new_weekly_grades.loc[&quot;Running Avg&quot;, col] = new_weekly_grades.loc[</span>
+<span class="c1">#             skip_weeks[col], col</span>
+<span class="c1">#         ].mean()</span>
+<span class="c1">#     # for col in new_weekly_grades.columns:</span>
+<span class="c1">#     #     skip_weeks = skipped_assignment_mask(assignments)</span>
+<span class="c1">#     #     skip_weeks_series = pd.Series(skip_weeks)</span>
+<span class="c1">#     #     # new_weekly_grades.iloc[-1,col] = new_weekly_grades.iloc[skip_weeks_series[col],-1].mean()</span>
+<span class="c1">#     #     new_weekly_grades</span>
 
-<div class="viewcode-block" id="get_average_weighted_grade">
-<a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.get_average_weighted_grade">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_average_weighted_grade</span><span class="p">(</span><span class="n">assignments</span><span class="p">,</span> <span class="n">new_weekly_grades</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
-    <span class="c1"># Get average until current week</span>
-    <span class="n">skip_weeks</span> <span class="o">=</span> <span class="n">skipped_assignment_mask</span><span class="p">(</span><span class="n">assignments</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;Running Avg&quot;</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-            <span class="n">skip_weeks</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">col</span>
-        <span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="c1"># for col in new_weekly_grades.columns:</span>
-    <span class="c1">#     skip_weeks = skipped_assignment_mask(assignments)</span>
-    <span class="c1">#     skip_weeks_series = pd.Series(skip_weeks)</span>
-    <span class="c1">#     # new_weekly_grades.iloc[-1,col] = new_weekly_grades.iloc[skip_weeks_series[col],-1].mean()</span>
-    <span class="c1">#     new_weekly_grades</span>
+<span class="c1">#     # make new dataframe with the midterm, final, and running average</span>
+<span class="c1">#     total = 0</span>
+<span class="c1">#     avg_grades_dict = {}</span>
+<span class="c1">#     for k, v in weights.items():</span>
+<span class="c1">#         grade = new_weekly_grades.get(k, pd.Series([0])).iloc[-1]</span>
+<span class="c1">#         total += grade * v</span>
+<span class="c1">#         avg_grades_dict[k] = grade</span>
+<span class="c1">#     avg_grades_dict[&quot;Total&quot;] = total  # excluded midterm and final</span>
 
-    <span class="c1"># make new dataframe with the midterm, final, and running average</span>
-    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">avg_grades_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">grade</span> <span class="o">=</span> <span class="n">new_weekly_grades</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">total</span> <span class="o">+=</span> <span class="n">grade</span> <span class="o">*</span> <span class="n">v</span>
-        <span class="n">avg_grades_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">grade</span>
-    <span class="n">avg_grades_dict</span><span class="p">[</span><span class="s2">&quot;Total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total</span>  <span class="c1"># excluded midterm and final</span>
-
-    <span class="k">return</span> <span class="n">avg_grades_dict</span></div>
+<span class="c1">#     return avg_grades_dict</span>
 
 
+<span class="c1"># # This function currently has many undefined variables and other problems!</span>
+<span class="c1"># def get_my_grades_testing(start_date=&quot;2025-01-06&quot;, verbose=True):</span>
+<span class="c1">#     &quot;&quot;&quot;takes in json.</span>
+<span class="c1">#     reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.</span>
+<span class="c1">#     fills in 0 for missing assignments</span>
+<span class="c1">#     calculate running average of each category&quot;&quot;&quot;</span>
 
-<span class="c1"># This function currently has many undefined variables and other problems!</span>
-<div class="viewcode-block" id="get_my_grades_testing">
-<a class="viewcode-back" href="../../api/pykubegrader.html#pykubegrader.telemetry.get_my_grades_testing">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_my_grades_testing</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2025-01-06&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;takes in json.</span>
-<span class="sd">    reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.</span>
-<span class="sd">    fills in 0 for missing assignments</span>
-<span class="sd">    calculate running average of each category&quot;&quot;&quot;</span>
+<span class="c1">#     # set up new df format</span>
+<span class="c1">#     weights = {</span>
+<span class="c1">#         &quot;homework&quot;: 0.15,</span>
+<span class="c1">#         &quot;lab&quot;: 0.15,</span>
+<span class="c1">#         &quot;lecture&quot;: 0.15,</span>
+<span class="c1">#         &quot;quiz&quot;: 0.15,</span>
+<span class="c1">#         &quot;readings&quot;: 0.15,</span>
+<span class="c1">#         # &#39;midterm&#39;:0.15, &#39;final&#39;:0.2</span>
+<span class="c1">#         &quot;labattendance&quot;: 0.05,</span>
+<span class="c1">#         &quot;practicequiz&quot;: 0.05,</span>
+<span class="c1">#     }</span>
 
-    <span class="c1"># set up new df format</span>
-    <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;homework&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
-        <span class="s2">&quot;lab&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
-        <span class="s2">&quot;lecture&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
-        <span class="s2">&quot;quiz&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
-        <span class="s2">&quot;readings&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
-        <span class="c1"># &#39;midterm&#39;:0.15, &#39;final&#39;:0.2</span>
-        <span class="s2">&quot;labattendance&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
-        <span class="s2">&quot;practicequiz&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
-    <span class="p">}</span>
+<span class="c1">#     assignments, student_subs = get_assignments_submissions()</span>
 
-    <span class="n">assignments</span><span class="p">,</span> <span class="n">student_subs</span> <span class="o">=</span> <span class="n">get_assignments_submissions</span><span class="p">()</span>
+<span class="c1">#     new_grades_df = setup_grades_df(assignments)</span>
 
-    <span class="n">new_grades_df</span> <span class="o">=</span> <span class="n">setup_grades_df</span><span class="p">(</span><span class="n">assignments</span><span class="p">)</span>
+<span class="c1">#     new_weekly_grades = fill_grades_df(new_grades_df, assignments, student_subs)</span>
 
-    <span class="n">new_weekly_grades</span> <span class="o">=</span> <span class="n">fill_grades_df</span><span class="p">(</span><span class="n">new_grades_df</span><span class="p">,</span> <span class="n">assignments</span><span class="p">,</span> <span class="n">student_subs</span><span class="p">)</span>
+<span class="c1">#     # current_week = get_current_week(start_date)</span>
 
-    <span class="c1"># current_week = get_current_week(start_date)</span>
+<span class="c1">#     avg_grades_dict = get_average_weighted_grade(</span>
+<span class="c1">#         assignments, new_weekly_grades, weights</span>
+<span class="c1">#     )</span>
 
-    <span class="n">avg_grades_dict</span> <span class="o">=</span> <span class="n">get_average_weighted_grade</span><span class="p">(</span>
-        <span class="n">assignments</span><span class="p">,</span> <span class="n">new_weekly_grades</span><span class="p">,</span> <span class="n">weights</span>
-    <span class="p">)</span>
+<span class="c1">#     if verbose:</span>
+<span class="c1">#         max_key_length = max(len(k) for k in weights.keys())</span>
+<span class="c1">#         for k, v in avg_grades_dict.items():</span>
+<span class="c1">#             print(f&quot;{k:&lt;{max_key_length}}:\t {v:.2f}&quot;)</span>
 
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="n">max_key_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">avg_grades_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">max_key_length</span><span class="si">}}</span><span class="s2">:</span><span class="se">\t</span><span class="s2"> </span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">new_weekly_grades</span>  <span class="c1"># get rid of test and running avg columns</span></div>
-
+<span class="c1">#     return new_weekly_grades  # get rid of test and running avg columns</span>
 </pre></div>
 
                 </article>

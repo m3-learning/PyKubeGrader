@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader package &#8212; PyKubeGrader 0.0.post1.dev1+g1edf284 documentation</title>
+    <title>pykubegrader package &#8212; PyKubeGrader 0.0.post1.dev1+g502d768 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=3c712890"></script>
+    <script src="../_static/documentation_options.js?v=b8adf107"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader" href="modules.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g1edf284" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g502d768" />
     <meta name="docbuild:last-update" content="Mar 11, 2025"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g1edf284 documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g1edf284 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g502d768 documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g502d768 documentation - Home"/>
   
   
 </a></div>
@@ -602,6 +602,7 @@
 <li class="toctree-l2"><a class="reference internal" href="pykubegrader.submit.html#module-pykubegrader.submit.submit_assignment">pykubegrader.submit.submit_assignment module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pykubegrader.submit.html#pykubegrader.submit.submit_assignment.call_score_assignment"><code class="docutils literal notranslate"><span class="pre">call_score_assignment()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pykubegrader.submit.html#pykubegrader.submit.submit_assignment.get_credentials"><code class="docutils literal notranslate"><span class="pre">get_credentials()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pykubegrader.submit.html#pykubegrader.submit.submit_assignment.mark_student_complete"><code class="docutils literal notranslate"><span class="pre">mark_student_complete()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pykubegrader.submit.html#pykubegrader.submit.submit_assignment.submit_assignment"><code class="docutils literal notranslate"><span class="pre">submit_assignment()</span></code></a></li>
 </ul>
 </li>
@@ -775,11 +776,6 @@
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.telemetry.fill_grades_df">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">fill_grades_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_weekly_grades</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assignments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">student_subs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><span class="pre">DataFrame</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#fill_grades_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.fill_grades_df" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pykubegrader.telemetry.get_all_students">
 <span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">get_all_students</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#get_all_students"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.get_all_students" title="Link to this definition">#</a></dt>
 <dd><p>Fetches a list of all students from the API and returns their usernames.</p>
@@ -827,28 +823,9 @@ It requires certain environment variables to be set and validates the JupyterHub
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.telemetry.get_average_weighted_grade">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">get_average_weighted_grade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assignments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_weekly_grades</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#get_average_weighted_grade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.get_average_weighted_grade" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.telemetry.get_current_week">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">get_current_week</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#get_current_week"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.get_current_week" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pykubegrader.telemetry.get_my_grades">
 <span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">get_my_grades</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><span class="pre">DataFrame</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#get_my_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.get_my_grades" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.telemetry.get_my_grades_testing">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">get_my_grades_testing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2025-01-06'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#get_my_grades_testing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.get_my_grades_testing" title="Link to this definition">#</a></dt>
-<dd><p>takes in json.
-reshapes columns into reading, lecture, practicequiz, quiz, lab, attendance, homework, exam, final.
-fills in 0 for missing assignments
-calculate running average of each category</p>
-</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pykubegrader.telemetry.log_encrypted">
@@ -875,16 +852,6 @@ calculate running average of each category</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pykubegrader.telemetry.score_question">
 <span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">score_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'winter_2025'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#score_question"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.score_question" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.telemetry.setup_grades_df">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">setup_grades_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assignments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#setup_grades_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.setup_grades_df" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pykubegrader.telemetry.skipped_assignment_mask">
-<span class="sig-prename descclassname"><span class="pre">pykubegrader.telemetry.</span></span><span class="sig-name descname"><span class="pre">skipped_assignment_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assignments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/telemetry.html#skipped_assignment_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.telemetry.skipped_assignment_mask" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1061,18 +1028,12 @@ We annotate options as list[Any] just to keep Mypy happy.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pykubegrader.telemetry">pykubegrader.telemetry module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.encrypt_to_b64"><code class="docutils literal notranslate"><span class="pre">encrypt_to_b64()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.ensure_responses"><code class="docutils literal notranslate"><span class="pre">ensure_responses()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.fill_grades_df"><code class="docutils literal notranslate"><span class="pre">fill_grades_df()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.get_all_students"><code class="docutils literal notranslate"><span class="pre">get_all_students()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.get_assignments_submissions"><code class="docutils literal notranslate"><span class="pre">get_assignments_submissions()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.get_average_weighted_grade"><code class="docutils literal notranslate"><span class="pre">get_average_weighted_grade()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.get_current_week"><code class="docutils literal notranslate"><span class="pre">get_current_week()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.get_my_grades"><code class="docutils literal notranslate"><span class="pre">get_my_grades()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.get_my_grades_testing"><code class="docutils literal notranslate"><span class="pre">get_my_grades_testing()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.log_encrypted"><code class="docutils literal notranslate"><span class="pre">log_encrypted()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.log_variable"><code class="docutils literal notranslate"><span class="pre">log_variable()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.score_question"><code class="docutils literal notranslate"><span class="pre">score_question()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.setup_grades_df"><code class="docutils literal notranslate"><span class="pre">setup_grades_df()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.skipped_assignment_mask"><code class="docutils literal notranslate"><span class="pre">skipped_assignment_mask()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.submit_question"><code class="docutils literal notranslate"><span class="pre">submit_question()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.telemetry"><code class="docutils literal notranslate"><span class="pre">telemetry()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pykubegrader.telemetry.update_responses"><code class="docutils literal notranslate"><span class="pre">update_responses()</span></code></a></li>

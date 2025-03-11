@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.submit.submit_assignment &#8212; PyKubeGrader 0.0.post1.dev1+g1edf284 documentation</title>
+    <title>pykubegrader.submit.submit_assignment &#8212; PyKubeGrader 0.0.post1.dev1+g502d768 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=3c712890"></script>
+    <script src="../../../_static/documentation_options.js?v=b8adf107"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g1edf284" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g502d768" />
     <meta name="docbuild:last-update" content="Mar 11, 2025"/>
   </head>
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g1edf284 documentation - Home"/>
-    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g1edf284 documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g502d768 documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g502d768 documentation - Home"/>
   
   
 </a></div>
@@ -446,6 +446,10 @@
     <span class="n">base_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DB_URL&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">base_url</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Environment variable &#39;DB_URL&#39; not set&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">base_url</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Environment variable &#39;DB_URL&#39; not set&quot;</span><span class="p">)</span>
+
 
     <span class="n">url</span> <span class="o">=</span> <span class="n">base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/score-assignment&quot;</span>
 
@@ -469,7 +473,7 @@
                 <span class="n">files</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;log_file&quot;</span><span class="p">:</span> <span class="n">file</span><span class="p">},</span>
             <span class="p">)</span>
             <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-
+            
             <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
@@ -499,6 +503,48 @@
     <span class="n">response</span> <span class="o">=</span> <span class="n">call_score_assignment</span><span class="p">(</span><span class="n">assignment_title</span><span class="p">,</span> <span class="n">notebook_title</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Server Response:&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;No message in response&quot;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="mark_student_complete">
+<a class="viewcode-back" href="../../../api/pykubegrader.submit.html#pykubegrader.submit.submit_assignment.mark_student_complete">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mark_student_complete</span><span class="p">(</span><span class="n">assignment_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">notebook_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mark a student as complete for an assignment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">base_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DB_URL&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">base_url</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Environment variable &#39;DB_URL&#39; not set&quot;</span><span class="p">)</span>
+    
+    <span class="n">url</span> <span class="o">=</span> <span class="n">base_url</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/students/completed-assignments&quot;</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;assignment_title&quot;</span><span class="p">:</span> <span class="n">assignment_title</span><span class="p">,</span>
+        <span class="s2">&quot;notebook_title&quot;</span><span class="p">:</span> <span class="n">notebook_title</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">token</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;TOKEN&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">token</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;key_used&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+
+    <span class="n">username</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="n">get_credentials</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">),</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">params</span>
+            <span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred while requesting </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An unexpected error occurred: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    
 
 
 
