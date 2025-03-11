@@ -23,6 +23,7 @@ from pykubegrader.grade_reports.grading_config import (
     max_week,
     optional_drop_assignments,
     optional_drop_week,
+    grade_ranges
 )
 from pykubegrader.telemetry import get_assignments_submissions
 
@@ -173,12 +174,22 @@ class GradeReport:
                     {"Running Avg": [self.final_grade_final]},
                     index=["Weighted Average Grade w Final"],
                 ),
+                pd.DataFrame(
+                    {"Running Avg": [self._get_letter_grade(self.final_grade_final)]},
+                    index=["Letter Grade"],
+                ),
             ]
         )
 
     def update_weekly_table(self):
         self._update_weekly_table_nan()
         self._update_weekly_table_scores()
+
+    def _get_letter_grade(self, score):
+        for low, high, grade in grade_ranges:
+            if low <= score <= high:
+                return grade
+        return "Invalid Score"
 
     # TODO: populate with average scores calculated from the exempted
     def _update_weekly_table_scores(self):
