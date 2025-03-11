@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+g0cc2ffa documentation</title>
+    <title>pykubegrader.grade_reports namespace &#8212; PyKubeGrader 0.0.post1.dev1+g533bfcc documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=89bee6cf"></script>
+    <script src="../_static/documentation_options.js?v=542752ea"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="pykubegrader.build package" href="pykubegrader.build.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g0cc2ffa" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g533bfcc" />
     <meta name="docbuild:last-update" content="Mar 10, 2025"/>
   </head>
   
@@ -118,8 +118,8 @@
       
     
     
-    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g0cc2ffa documentation - Home"/>
-    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g0cc2ffa documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g533bfcc documentation - Home"/>
+    <img src="../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g533bfcc documentation - Home"/>
   
   
 </a></div>
@@ -561,12 +561,12 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pykubegrader.grade_reports.assignments.Assignment.check_cheater">
-<span class="sig-name descname"><span class="pre">check_cheater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.check_cheater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.check_cheater" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">check_cheater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.check_cheater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pykubegrader.grade_reports.assignments.Assignment.check_cheater" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">grade_adjustment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submission</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.grade_adjustment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">grade_adjustment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submission</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.grade_adjustment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
 <dd><p>Applies adjustments to the submission score based on grading policies.</p>
 <p>This method applies any provided grade adjustment function to the raw score.
 If no custom function is given, it determines the final score by considering
@@ -592,7 +592,7 @@ lateness penalties based on the submission timestamp and due date.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">update_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.update_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">update_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pykubegrader/grade_reports/assignments.html#Assignment.update_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
 <dd><p>Updates the assignment score based on the given submission.</p>
 <p>This method adjusts the score using the <cite>grade_adjustment</cite> function if a submission
 is provided. If the submission results in a higher score than the current score,
