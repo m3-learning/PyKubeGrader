@@ -6,6 +6,7 @@ from itertools import product
 import numpy as np 
 import pandas as pd
 from IPython.display import display
+import os
 
 from pykubegrader.grade_reports.assignments import (
     Assignment,
@@ -41,7 +42,12 @@ class GradeReport:
         """
         
         self.assignments, self.student_subs = get_assignments_submissions(params=params)
-        self.student_name = params.get("username", None)
+        try:
+            self.student_name = params.get("username", None)
+        except:
+            self.student_name = os.environ.get("JUPYTERHUB_USER", None)
+        
+        
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
         self.verbose = verbose
