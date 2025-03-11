@@ -61,7 +61,7 @@ class ClassGradeReport:
         self.student_list = list(set(self.student_list) - set(skipped_users))
         
         # Only include students in the students_to_include list
-        self.student_list =  students_to_include #[s for s in students_to_include if s in self.student_list]
+        self.student_list = [s for s in students_to_include if s in self.student_list]
         
         # Sort the student list
         self.student_list.sort()
