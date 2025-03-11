@@ -14,20 +14,11 @@ from pykubegrader.grade_reports.grade_report import GradeReport
 from pykubegrader.grade_reports.grading_config import (
     assignment_type_list,
     skipped_users,
+    students_to_include,
 )
 
-# from ..build.passwords import password, user
 from pykubegrader.telemetry import get_all_students
 
-# user = user()
-# password = password()
-
-# Set the environment variables for the database
-# os.environ["JUPYTERHUB_USER"] = "jca92"
-# os.environ["TOKEN"] = "token"
-# os.environ["DB_URL"] = "https://engr-131-api.eastus.cloudapp.azure.com/"
-# os.environ["keys_student"] = "capture"
-# os.environ["user_name_student"] = "student"
 
 api_base_url = os.getenv("DB_URL")
 student_user = os.getenv("user_name_student")
@@ -65,7 +56,14 @@ class ClassGradeReport:
         self.password = password
 
         self.student_list = get_all_students(self.user, self.password)
+        
+        # Remove skipped users
         self.student_list = list(set(self.student_list) - set(skipped_users))
+        
+        # Only include students in the students_to_include list
+        self.student_list = [s for s in self.student_list if s in students_to_include]
+        
+        # Sort the student list
         self.student_list.sort()
 
         self.setup_class_grades()
