@@ -45,6 +45,8 @@ globally_exempted_assignments = [
     ("homework", 10),
     ("lab", 10),
     ("quiz", 10),
+    ("practicequiz", 10),
+    ("readings", 10),
 ]
 
 # Common Assignment Aliases, these are other names used for the same assignment category
