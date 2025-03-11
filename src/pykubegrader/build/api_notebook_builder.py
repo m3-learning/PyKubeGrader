@@ -38,10 +38,111 @@ class FastAPINotebookBuilder:
             self.temp_notebook = self.notebook_path
 
         self.assertion_tests_dict = self.question_dict()
+        self.question_points = self.question_points_by_part = self.get_question_points_by_part(self.assertion_tests_dict)
+        self.add_points_to_notebook()
         self.add_api_code()
 
-        # add the point total to the end of the notebook
-        self.add_total_points_to_notebook()
+
+    def add_points_to_notebook(self) -> None:
+        self.add_question_points_to_notebook()
+        self.add_question_part_points_to_notebook()
+
+    def add_question_points_to_notebook(self) -> None:
+        for question, points in self.question_points['question_sums'].items():
+            index, source = self.find_first_markdown_cell_with(points['current_key'], points['previous_key'], f"## ")
+            
+            # if the question is not found, skip it
+            if index is None:
+                continue
+            
+            # add the question points to the question description
+            source = self.get_cell_source(self.temp_notebook, index)
+            modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
+                source,
+                f"Question {points['question_number']} (Points: {points['total_points']}):",
+            )
+            self.replace_cell_source(index, modified_source)
+            
+    def add_question_part_points_to_notebook(self) -> None:
+        for question, points in self.question_points['part_sums'].items():
+            for part, points in points.items():
+                index, source = self.find_first_markdown_cell_with(points['current_key'], points['previous_key'], f"### ")
+                
+                # if the question part is not found, skip it
+                if index is None:
+                    continue
+                
+                # add the question part points to the question part description
+                source = self.get_cell_source(self.temp_notebook, index)
+                modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
+                    source,
+                    f"Question {points['question_number']}-Part {points['question_part_number']} (Points: {points['total_points']}):", '### ',
+                )
+                self.replace_cell_source(index, modified_source)
+    
+    def find_first_markdown_cell_with(self, start_index: int, end_index: int = 0, code_to_find: str = "## "):
+        """
+        Finds the first markdown cell going backwards from the given start_index
+        to the given end_index where the first line starts with '##'.
+
+        Args:
+        - start_index (int): The index to start searching from.
+        - end_index (int): The index to stop searching at.
+
+        Returns:
+        - tuple: The index of the found markdown cell and its source content.
+        """
+        with open(self.temp_notebook, "r", encoding="utf-8") as f:
+            nb_data = json.load(f)
+
+        for idx in range(start_index, end_index - 1, -1):
+            cell = nb_data.get("cells", [])[idx]
+            if cell["cell_type"] == "markdown" and cell.get("source", [])[0].startswith(code_to_find):
+                return idx, cell.get("source", [])
+
+        return None, None  # Return None if no such markdown cell is found
+        
+    @staticmethod
+    def get_question_points_by_part(question_dict: dict) -> dict:
+        """
+        Get the points for each part of a question.
+        """
+        # Compute sum for each question and store the previous cell number (key)
+        question_sums = {}
+        prev_question = 0  # Initialize previous cell number as 0
+
+        for key, entry in question_dict.items():
+            question_number = entry['question_number']
+            if question_number not in question_sums:
+                question_sums[question_number] = {'total_points': 0, 'previous_key': prev_question, 'current_key': None, 'question_number': question_number}
+                prev_question = key  # Update previous key for the next new question
+            question_sums[question_number]['total_points'] += entry['points']
+            question_sums[question_number]['current_key'] = key  # Update current key to the end of the current question
+
+        # Compute sum for each question part and store the previous cell number (key)
+        part_sums = {}
+        prev_part = 0  # Initialize previous cell number as 0
+
+        for key, entry in question_dict.items():
+            question = entry['question']
+            part = entry['question_part']
+            if part is None:
+                continue
+            if question not in part_sums:
+                part_sums[question] = {}
+            if part not in part_sums[question]:
+                part_sums[question][part] = {'total_points': 0, 'previous_key': prev_part, 'current_key': key, 'question_number': entry['question_number'], 'question_part_number': entry['question_part']}
+                prev_part = key  # Update previous key for the next new question part
+            part_sums[question][part]['total_points'] += entry['points']
+
+        # Combine results into a dictionary
+        result = {
+            "question_sums": question_sums,
+            "part_sums": part_sums
+        }
+
+        # Return result dictionary
+        return result
 
     @staticmethod
     def conceal_tests(cell_source):
@@ -83,16 +184,16 @@ class FastAPINotebookBuilder:
 
     def add_api_code(self) -> None:
         self.compute_max_points_free_response()
-        for i, question in enumerate(self.max_question_points.keys()):
-            index, source = self.find_question_description(question)
-            try:
-                modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
-                    source,
-                    f"Question {i + 1} (Points: {self.max_question_points[question]}):",
-                )
-                self.replace_cell_source(index, modified_source)
-            except Exception:
-                pass
+        # for i, question in enumerate(self.max_question_points.keys()):
+        #     index, source = self.find_question_description(question)
+        #     try:
+        #         modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
+        #             source,
+        #             f"Question {i + 1} (Points: {self.max_question_points[question]}):",
+        #         )
+        #         self.replace_cell_source(index, modified_source)
+        #     except Exception:
+        #         pass
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
             if self.verbose:
@@ -123,10 +224,10 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_question_info(cell_dict)
             )
-
+            
             updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
             updated_cell_source.extend(["\n"])
-
+            
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_graders(cell_dict)
             )
@@ -149,6 +250,15 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_update_responses(cell_dict)
             )
+            
+            # # code to reset matplotlib
+            # updated_cell_source.extend(
+            #     ["_ = matplotlib.pyplot.close('all')\n"]
+            # )
+            
+            
+            
+            
 
             self.replace_cell_source(cell_index, updated_cell_source)
 
@@ -172,9 +282,6 @@ class FastAPINotebookBuilder:
 
         return None, None  # Return None if no such markdown cell is found
 
-    def add_total_points_to_notebook(self) -> None:
-        self.max_question_points.keys()
-
     def get_max_question_points(self, cell_dict) -> float:
         return sum(
             cell["points"]
@@ -183,7 +290,7 @@ class FastAPINotebookBuilder:
         )
 
     @staticmethod
-    def add_text_after_double_hash(markdown_source, insert_text):
+    def add_text_after_double_hash(markdown_source, insert_text, hash_prefix = "## "):
         """
         Adds insert_text immediately after the first '##' in the first line that starts with '##'.
 
@@ -198,10 +305,10 @@ class FastAPINotebookBuilder:
         inserted = False
 
         for line in markdown_source:
-            if not inserted and line.startswith("## "):
+            if not inserted and line.startswith(hash_prefix):
                 modified_source.append(
-                    f"## {insert_text} {line[3:]}"
-                )  # Insert text after '##'
+                    f"{hash_prefix}{insert_text} {line[len(hash_prefix):]}"
+                )  # Insert text after hash_prefix
                 inserted = True  # Ensure it only happens once
             else:
                 modified_source.append(line)
@@ -365,12 +472,16 @@ class FastAPINotebookBuilder:
             ")\n",
             "import os\n",
             "import base64\n",
+            "import matplotlib\n",
         ]
 
         if require_key:
             imports.append(
                 f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment='{assignment_tag}')\n"
             )
+            
+        imports.append("import matplotlib\n")
+        imports.append("matplotlib.use('Agg')\n")
 
         for i, line in enumerate(cell_source):
             if end_test_config_line in line:
@@ -479,7 +590,15 @@ class FastAPINotebookBuilder:
 
     @staticmethod
     def extract_log_variables(cell: dict) -> list[str]:
-        """Extracts log variables from the first cell."""
+        """
+        Extracts log variables from the first cell.
+
+        Args:
+            cell (dict): A dictionary representing a notebook cell.
+
+        Returns:
+            list[str]: A list of log variable names extracted from the cell.
+        """
         if "source" in cell:
             for line in cell["source"]:
                 # Look for the log_variables pattern
@@ -536,17 +655,54 @@ class FastAPINotebookBuilder:
                 test_number += 1
 
         return cells_dict
+    
+    @staticmethod
+    def extract_question_information(source: str) -> tuple[str, str, str]:
+        """
+        Extracts question information from the given source string.
+
+        Args:
+            source (str): The source string containing question information.
+
+        Returns:
+            tuple[str, str, str]: A tuple containing the question name, question number, and question part.
+        """
+        name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
+        question_name = name_match.group(1).strip() if name_match else None
+        question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
+        question_number = (
+            question_number.group(1).strip() if question_number else None
+        )
+        question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
+        question_part = (
+            question_part.group(1).strip() if question_part else None
+        )
+       
+        return question_name, question_number, question_part
 
     def question_dict(self) -> dict:
+        """
+        Builds a dictionary of question information from the notebook.
+
+        Returns:
+            dict: A dictionary containing question information.
+        """
+        
+        # Check if the temporary notebook file path is provided
         if not self.temp_notebook:
             raise ValueError("No temporary notebook file path provided")
+        
+        # Check if the file exists
         notebook_path = Path(self.temp_notebook)
+        
+        # Check if the file exists
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
+        
+        # Read the notebook
+        notebook = self.read_notebook(notebook_path)
 
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = json.load(f)
-
+        # Initialize the results dictionary
         results_dict = {}
         question_name = None  # At least define the variable up front
 
@@ -554,110 +710,22 @@ class FastAPINotebookBuilder:
             if cell.get("cell_type") == "raw":
                 source = "".join(cell.get("source", ""))
                 if source.strip().startswith("# BEGIN QUESTION"):
-                    name_match = re.search(r"name:\s*(.*)", source)
-                    question_name = name_match.group(1).strip() if name_match else None
+                    question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_information(source)
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
-
                 if source.strip().startswith('""" # BEGIN TEST CONFIG'):
-                    logging_variables = FastAPINotebookBuilder.extract_log_variables(
-                        cell
-                    )
-
-                    # Extract assert statements using a more robust approach
-                    assertions = []
-                    comments = []
-
-                    # Split the source into lines for processing
-                    lines = source.split("\n")
-                    i = 0
-                    while i < len(lines):
-                        line = lines[i].strip()
-                        if line.startswith("assert"):
-                            # Initialize assertion collection
-                            assertion_lines = []
-                            comment = None
-
-                            # Handle the first line
-                            first_line = line[6:].strip()  # Remove 'assert' keyword
-                            assertion_lines.append(first_line)
-
-                            # Stack to track parentheses
-                            paren_stack = []
-                            for char in first_line:
-                                if char == "(":
-                                    paren_stack.append(char)
-                                elif char == ")":
-                                    if paren_stack:
-                                        paren_stack.pop()
-
-                            # Continue collecting lines while we have unclosed parentheses
-                            current_line = i + 1
-                            while paren_stack and current_line < len(lines):
-                                next_line = lines[current_line].strip()
-                                assertion_lines.append(next_line)
-
-                                for char in next_line:
-                                    if char == "(":
-                                        paren_stack.append(char)
-                                    elif char == ")":
-                                        if paren_stack:
-                                            paren_stack.pop()
-
-                                current_line += 1
-
-                            # Join the assertion lines and clean up
-                            full_assertion = " ".join(assertion_lines)
-
-                            # Extract the comment if it exists (handling both f-strings and regular strings)
-                            comment_match = re.search(
-                                r',\s*(?:f?["\'])(.*?)(?:["\'])\s*(?:\)|$)',
-                                full_assertion,
-                            )
-                            if comment_match:
-                                comment = comment_match.group(1).strip()
-                                # Remove the comment from the assertion
-                                full_assertion = full_assertion[
-                                    : comment_match.start()
-                                ].strip()
-
-                            # Ensure proper parentheses closure
-                            open_count = full_assertion.count("(")
-                            close_count = full_assertion.count(")")
-                            if open_count > close_count:
-                                full_assertion += ")" * (open_count - close_count)
-
-                            # Clean up the assertion
-                            if full_assertion.startswith(
-                                "("
-                            ) and not full_assertion.endswith(")"):
-                                full_assertion += ")"
-
-                            assertions.append(full_assertion)
-                            comments.append(comment)
-
-                            # Update the line counter
-                            i = current_line
-                        else:
-                            i += 1
-
-                    # Extract points value
-                    points_line = next(
-                        (line for line in source.split("\n") if "points:" in line), None
-                    )
-                    points_value = None
-                    if points_line:
-                        try:
-                            points_value = float(points_line.split(":")[-1].strip())
-                        except ValueError:
-                            points_value = None
+                    
+                    # Extract the assertion test source
+                    logging_variables, assertions, comments, points_value = self.extract_assertion_test_source(cell, source)
 
                     # Add to results dictionary
                     results_dict[cell_index] = {
                         "assertions": assertions,
                         "comments": comments,
                         "question": question_name,
+                        "question_number": question_number,
+                        "question_part": question_part,
                         "points": points_value,
                         "logging_variables": logging_variables,
                     }
@@ -665,3 +733,122 @@ class FastAPINotebookBuilder:
                     results_dict = FastAPINotebookBuilder.tag_questions(results_dict)
 
         return results_dict
+
+    def extract_assertion_test_source(self, cell, source):
+        """
+        Extracts assertion test information from a given code cell source.
+
+        This method processes the source code of a Jupyter notebook cell to extract
+        logging variables, assertions, comments, and point values associated with
+        test configurations. It identifies and processes assertion statements,
+        ensuring proper handling of multi-line assertions and comments.
+
+        Args:
+            cell (dict): A dictionary representing a Jupyter notebook cell.
+            source (str): The source code of the cell as a string.
+
+        Returns:
+            tuple: A tuple containing:
+                - logging_variables (list): A list of variables used for logging.
+                - assertions (list): A list of assertion statements extracted from the source.
+                - comments (list): A list of comments associated with the assertions.
+                - points_value (float or None): The point value extracted from the source, or None if not found.
+
+        Raises:
+            ValueError: If the points value cannot be converted to a float.
+        """
+        logging_variables = FastAPINotebookBuilder.extract_log_variables(cell)
+
+        # Extract assert statements using a more robust approach
+        assertions = []
+        comments = []
+
+        # Split the source into lines for processing
+        lines = source.split("\n")
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            if line.startswith("assert"):
+                # Initialize assertion collection
+                assertion_lines = []
+                comment = None
+
+                # Handle the first line
+                first_line = line[6:].strip()  # Remove 'assert' keyword
+                assertion_lines.append(first_line)
+
+                # Stack to track parentheses
+                paren_stack = []
+                for char in first_line:
+                    if char == "(":
+                        paren_stack.append(char)
+                    elif char == ")":
+                        if paren_stack:
+                            paren_stack.pop()
+
+                # Continue collecting lines while we have unclosed parentheses
+                current_line = i + 1
+                while paren_stack and current_line < len(lines):
+                    next_line = lines[current_line].strip()
+                    assertion_lines.append(next_line)
+
+                    for char in next_line:
+                        if char == "(":
+                            paren_stack.append(char)
+                        elif char == ")":
+                            if paren_stack:
+                                paren_stack.pop()
+
+                    current_line += 1
+
+                # Join the assertion lines and clean up
+                full_assertion = " ".join(assertion_lines)
+
+                # Extract the comment if it exists (handling both f-strings and regular strings)
+                comment_match = re.search(
+                    r',\s*(?:f?["\'])(.*?)(?:["\'])\s*(?:\)|$)',
+                    full_assertion,
+                )
+                if comment_match:
+                    comment = comment_match.group(1).strip()
+                    # Remove the comment from the assertion
+                    full_assertion = full_assertion[: comment_match.start()].strip()
+
+                # Ensure proper parentheses closure
+                open_count = full_assertion.count("(")
+                close_count = full_assertion.count(")")
+                if open_count > close_count:
+                    full_assertion += ")" * (open_count - close_count)
+
+                # Clean up the assertion
+                if full_assertion.startswith("(") and not full_assertion.endswith(")"):
+                    full_assertion += ")"
+
+                assertions.append(full_assertion)
+                comments.append(comment)
+
+                # Update the line counter
+                i = current_line
+            else:
+                i += 1
+
+        # Extract points value
+        points_line = next(
+            (line for line in source.split("\n") if "points:" in line), None
+        )
+        points_value = None
+        if points_line:
+            try:
+                points_value = float(points_line.split(":")[-1].strip())
+            except ValueError:
+                points_value = None
+        return logging_variables, assertions, comments, points_value
+
+    def read_notebook(self, notebook_path):
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            notebook = json.load(f)
+        return notebook
+    
+    def get_cell_source(self, notebook_path, cell_index):
+        notebook = self.read_notebook(notebook_path)
+        return notebook["cells"][cell_index]["source"]

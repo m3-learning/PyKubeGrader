@@ -3,9 +3,10 @@
 from datetime import datetime
 from itertools import product
 
-import numpy as np
+import numpy as np 
 import pandas as pd
 from IPython.display import display
+import os
 
 from pykubegrader.grade_reports.assignments import (
     Assignment,
@@ -19,6 +20,7 @@ from pykubegrader.grade_reports.grading_config import (
     custom_grade_adjustments,
     dropped_assignments,
     duplicated_scores,
+    exclude_from_running_avg,
     globally_exempted_assignments,
     max_week,
     optional_drop_assignments,
@@ -39,7 +41,13 @@ class GradeReport:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
         """
+        
         self.assignments, self.student_subs = get_assignments_submissions(params=params)
+        try:
+            self.student_name = params.get("username", None)
+        except:
+            self.student_name = os.environ.get("JUPYTERHUB_USER", None)
+        
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
         self.verbose = verbose
@@ -49,6 +57,7 @@ class GradeReport:
         self.dropped_assignments = dropped_assignments
         self.optional_drop_week = optional_drop_week
         self.optional_drop_assignments = optional_drop_assignments
+        self.excluded_from_running_avg = exclude_from_running_avg
 
         # assignments that have been dropped for a given students.
         self.student_assignments_dropped = []
@@ -107,7 +116,7 @@ class GradeReport:
         Updates the score of assignments that are not due yet to NaN.
         """
         for assignment in self.graded_assignments:
-            if assignment.due_date:
+            if assignment.due_date and assignment.name not in self.excluded_from_running_avg:
                 # Convert due date to datetime object
                 due_date = datetime.fromisoformat(
                     assignment.due_date.replace("Z", "+00:00")
@@ -270,11 +279,11 @@ class GradeReport:
 
             if filtered_submission:
                 for submission in filtered_submission:
-                    assignment.update_score(submission)
+                    assignment.update_score(submission, student_name=self.student_name)
 
             # runs if there are no filtered submissions
             else:
-                assignment.update_score()
+                assignment.update_score(student_name=self.student_name)
 
     def compute_final_average(self):
         """

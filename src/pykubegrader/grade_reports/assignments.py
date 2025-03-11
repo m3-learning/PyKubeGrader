@@ -99,7 +99,7 @@ class Assignment(assignment_type):
         """
         self.students_exempted.extend(students)
 
-    def update_score(self, submission=None):
+    def update_score(self, submission=None, **kwargs):
         """Updates the assignment score based on the given submission.
 
         This method adjusts the score using the `grade_adjustment` function if a submission
@@ -126,7 +126,7 @@ class Assignment(assignment_type):
             # Saves a table with the score of the exempted assignment still recorded.
             try:
                 # Adjust the score based on submission
-                score_ = self.grade_adjustment(submission)
+                score_ = self.grade_adjustment(submission, **kwargs)
                 if score_ > self._score:
                     self._score = score_
             except Exception:
@@ -135,7 +135,7 @@ class Assignment(assignment_type):
 
         elif submission is not None:
             # Adjust the score based on submission
-            score_ = self.grade_adjustment(submission)
+            score_ = self.grade_adjustment(submission, **kwargs)
 
             # Update the score only if the new score is higher
             if score_ > self.score:
@@ -149,7 +149,7 @@ class Assignment(assignment_type):
             self._score = 0
             return self.score
 
-    def grade_adjustment(self, submission):
+    def grade_adjustment(self, submission, **kwargs):
         """Applies adjustments to the submission score based on grading policies.
 
         This method applies any provided grade adjustment function to the raw score.
@@ -169,7 +169,9 @@ class Assignment(assignment_type):
         entry_date = parser.parse(submission["timestamp"])
 
         if self.grade_adjustment_func:
-            return self.grade_adjustment_func(score)
+            score = self.grade_adjustment_func(score)
+            score = self.check_cheater(score, **kwargs)
+            return score
         else:
             if self.late_adjustment:
                 # Convert due date to datetime object
@@ -181,11 +183,23 @@ class Assignment(assignment_type):
                 )
 
                 # Apply late modifier and normalize score
-                return (score / self.max_score) * late_modifier
+                score = (score / self.max_score) * late_modifier
+                score = self.check_cheater(score, **kwargs)
+                return score
             else:
                 # Return normalized score if on time
                 if entry_date < self.due_date:
-                    return score / self.max_score
+                    score = score / self.max_score
+                    score = self.check_cheater(score, **kwargs)
+                    return score
                 # Assign zero score for late submissions without a late adjustment policy
                 else:
                     return 0
+                
+    def check_cheater(self, score, **kwargs):
+        # TODO: fix once we record bonus points this is the mns fix.
+        if score > 161:
+            print(f"A Cheater has been detected with a score of {score} for {self.name}. {kwargs.get('student_name', 'You')} have been reported to the instructor.")
+            return 0
+        else:
+            return score
