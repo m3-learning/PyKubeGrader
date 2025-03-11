@@ -47,7 +47,6 @@ class GradeReport:
         except:
             self.student_name = os.environ.get("JUPYTERHUB_USER", None)
         
-        
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
         self.verbose = verbose
