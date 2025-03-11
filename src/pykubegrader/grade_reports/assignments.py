@@ -167,14 +167,11 @@ class Assignment(assignment_type):
         """
         score = submission["raw_score"]
         entry_date = parser.parse(submission["timestamp"])
-        
-        # TODO: fix once we record bonus points this is the mns fix.
-        if score > self.max_score*1.5:
-            print(f"A Cheater has been detected with a score of {score} for {self.name}. You have been reported to the instructor.")
-            return 0
 
         if self.grade_adjustment_func:
-            return self.grade_adjustment_func(score)
+            score = self.grade_adjustment_func(score)
+            score = self.check_cheater(score)
+            return score
         else:
             if self.late_adjustment:
                 # Convert due date to datetime object
@@ -190,7 +187,17 @@ class Assignment(assignment_type):
             else:
                 # Return normalized score if on time
                 if entry_date < self.due_date:
-                    return score / self.max_score
+                    score = score / self.max_score
+                    score = self.check_cheater(score)
+                    return score
                 # Assign zero score for late submissions without a late adjustment policy
                 else:
                     return 0
+                
+    def check_cheater(self, score):
+        # TODO: fix once we record bonus points this is the mns fix.
+        if score > self.max_score*1.5:
+            print(f"A Cheater has been detected with a score of {score} for {self.name}. You have been reported to the instructor.")
+            return 0
+        else:
+            return score
