@@ -39,6 +39,11 @@ class GradeReport:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
         """
+        if params and "username" in params:
+            self.student_name = params.get("username")
+        else:
+            raise ValueError("No student username provided in parameters.")
+        
         self.assignments, self.student_subs = get_assignments_submissions(params=params)
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
