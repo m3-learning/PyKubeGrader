@@ -42,6 +42,9 @@ globally_exempted_assignments = [
     ("homework", 5),
     ("lab", 5),
     ("labattendance", 5),
+    ("homework", 10),
+    ("lab", 10),
+    ("quiz", 10),
 ]
 
 # Common Assignment Aliases, these are other names used for the same assignment category
@@ -95,4 +98,4 @@ optional_drop_assignments = [("lab", 7), ("homework", 7)]
 # Excluded from running average, a list of assignment types that will be excluded from the running average calculation, These assignments are not included as exempt when the due date is in the future
 exclude_from_running_avg = ["final", "practicefinal"]
 
-max_week = 9
+max_week = 10
