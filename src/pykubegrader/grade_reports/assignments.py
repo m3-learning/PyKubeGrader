@@ -198,7 +198,7 @@ class Assignment(assignment_type):
                 
     def check_cheater(self, score, **kwargs):
         # TODO: fix once we record bonus points this is the mns fix.
-        if score > self.max_score*1.5:
+        if score > 175:
             print(f"A Cheater has been detected with a score of {score} for {self.name}. {kwargs.get('student_name', 'You')} have been reported to the instructor.")
             return 0
         else:
