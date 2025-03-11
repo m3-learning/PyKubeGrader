@@ -261,11 +261,11 @@ class GradeReport:
 
             if filtered_submission:
                 for submission in filtered_submission:
-                    assignment.update_score(submission)
+                    assignment.update_score(submission, student_name=self.student_name)
 
             # runs if there are no filtered submissions
             else:
-                assignment.update_score()
+                assignment.update_score(student_name=self.student_name)
 
     def compute_final_average(self):
         """
