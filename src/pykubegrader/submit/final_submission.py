@@ -28,6 +28,8 @@ def mark_student_complete(assignment: str, assignment_type: str, token: str, wee
                                        token=token, 
                                        week_number=week_number)
     
+    print(params)
+    
     try:
         res = requests.post(
                 url=url,
