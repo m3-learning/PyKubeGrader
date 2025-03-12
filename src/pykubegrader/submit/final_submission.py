@@ -34,7 +34,7 @@ def mark_student_complete(assignment: str, assignment_type: str, token: str, wee
         res = requests.post(
                 url=url,
                 auth=HTTPBasicAuth(username, password),
-                params=params
+                json=params
             )
         res.raise_for_status()
 
