@@ -89,7 +89,7 @@ def final_submission_payload(assignment: str, assignment_type: str, token: str, 
         "assignment": assignment,
         "week_number": week_number,
         "assignment_type": assignment_type,
-        "timestamp": datetime.now(),  # Assuming current time for timestamp
+        "timestamp": datetime.now().isoformat(),  # Assuming current time for timestamp
         "student_seed": 0, # Not Implemented
         "key_used": token,
     }
