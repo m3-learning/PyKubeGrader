@@ -6,6 +6,14 @@ pykubegrader.submit namespace
 Submodules
 ----------
 
+pykubegrader.submit.final\_submission module
+--------------------------------------------
+
+.. automodule:: pykubegrader.submit.final_submission
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pykubegrader.submit.submit\_assignment module
 ---------------------------------------------
 
