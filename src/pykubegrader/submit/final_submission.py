@@ -15,7 +15,7 @@ def mark_student_complete(assignment: str, assignment_type: str, token: str, wee
     base_url = os.getenv("DB_URL")
     if not base_url: raise ValueError("Environment variable 'DB_URL' not set")
     
-    url = base_url.rstrip("/") + "/students/completed-assignments"
+    url = base_url.rstrip("/") + "/completed-assignments"
 
     token = os.getenv("TOKEN")
     if token:
