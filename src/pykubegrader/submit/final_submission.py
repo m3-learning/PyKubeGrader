@@ -84,7 +84,7 @@ def final_submission_payload(assignment: str, assignment_type: str, token: str, 
     student_email = jhub_user
     
     payload = {
-        "id": None,  # Assuming id is auto-generated
+        "id": student_email,  # Assuming id is auto-generated
         "student_email": student_email,
         "assignment": assignment,
         "week_number": week_number,
