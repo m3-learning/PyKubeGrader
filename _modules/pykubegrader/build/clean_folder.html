@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.widgets.true_false &#8212; PyKubeGrader 0.0.post1.dev1+g513af7b documentation</title>
+    <title>pykubegrader.build.clean_folder &#8212; PyKubeGrader 0.0.post1.dev1+g513af7b documentation</title>
   
   
   
@@ -43,7 +43,7 @@
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/widgets/true_false';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pykubegrader/build/clean_folder';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -386,7 +386,7 @@
     
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.widgets.true_false</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pykubegrader.build.clean_folder</span></li>
   </ul>
 </nav>
 </div>
@@ -403,108 +403,61 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pykubegrader.widgets.true_false</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">panel</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pn</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">..widgets_base.select</span><span class="w"> </span><span class="kn">import</span> <span class="n">SelectQuestion</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.style</span><span class="w"> </span><span class="kn">import</span> <span class="n">drexel_colors</span><span class="p">,</span> <span class="n">raw_css</span>
-
-<span class="c1"># Pass the custom CSS to Panel</span>
-<span class="n">pn</span><span class="o">.</span><span class="n">extension</span><span class="p">(</span><span class="n">design</span><span class="o">=</span><span class="s2">&quot;material&quot;</span><span class="p">,</span> <span class="n">global_css</span><span class="o">=</span><span class="p">[</span><span class="n">drexel_colors</span><span class="p">],</span> <span class="n">raw_css</span><span class="o">=</span><span class="p">[</span><span class="n">raw_css</span><span class="p">])</span>
-
-<span class="c1">#</span>
-<span class="c1"># Style function</span>
-<span class="c1">#</span>
+  <h1>Source code for pykubegrader.build.clean_folder</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 
-<div class="viewcode-block" id="TFStyle">
-<a class="viewcode-back" href="../../../api/pykubegrader.widgets.html#pykubegrader.widgets.true_false.TFStyle">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">TFStyle</span><span class="p">(</span>
-    <span class="n">descriptions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">options</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-    <span class="n">initial_vals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">pn</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">HTML</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">RadioBoxGroup</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a styled True/False question layout with descriptions and radio buttons.</span>
+<div class="viewcode-block" id="FolderCleaner">
+<a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.clean_folder.FolderCleaner">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FolderCleaner</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the FolderCleaner with the root folder to clean.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        descriptions (List[str]): List of question descriptions.</span>
-<span class="sd">        options (List[str] or List[List[str]]): List of options, either as a single list or list of lists.</span>
-<span class="sd">        initial_vals (List[str]): Initial selected values for each question.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            root_folder (str): Path to the root folder to start cleaning.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_folder</span> <span class="o">=</span> <span class="n">root_folder</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        Tuple[List[pn.pane.HTML], List[pn.widgets.RadioBoxGroup]]: Styled description panes and radio button groups.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">desc_width</span> <span class="o">=</span> <span class="s2">&quot;100%&quot;</span>  <span class="c1"># Responsive width for descriptions</span>
-    <span class="c1"># button_width = &quot;100%&quot;  # Responsive width for radio buttons</span>
-
-    <span class="c1"># Create description widgets</span>
-    <span class="n">desc_widgets</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">pane</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            &lt;div style=&quot;text-align: left; width: </span><span class="si">{</span><span class="n">desc_width</span><span class="si">}</span><span class="s2">; padding: 10px 0;&quot;&gt;</span>
-<span class="s2">                &lt;b&gt;</span><span class="si">{</span><span class="n">desc</span><span class="si">}</span><span class="s2">&lt;/b&gt;</span>
-<span class="s2">            &lt;/div&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
-            <span class="n">sizing_mode</span><span class="o">=</span><span class="s2">&quot;stretch_width&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">descriptions</span>
-    <span class="p">]</span>
-
-    <span class="c1"># Create radio button groups</span>
-    <span class="n">radio_buttons</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">pn</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">RadioBoxGroup</span><span class="p">(</span>
-            <span class="n">options</span><span class="o">=</span><span class="n">option</span><span class="p">,</span>
-            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
-            <span class="n">width_policy</span><span class="o">=</span><span class="s2">&quot;max&quot;</span><span class="p">,</span>  <span class="c1"># Automatically scales to fit content</span>
-            <span class="n">sizing_mode</span><span class="o">=</span><span class="s2">&quot;stretch_width&quot;</span><span class="p">,</span>  <span class="c1"># Make width responsive</span>
-        <span class="p">)</span>
-        <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">option</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-            <span class="n">initial_vals</span><span class="p">,</span>
-            <span class="n">options</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">initial_vals</span><span class="p">),</span>
-        <span class="p">)</span>
-    <span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">desc_widgets</span><span class="p">,</span> <span class="n">radio_buttons</span></div>
+<div class="viewcode-block" id="FolderCleaner.delete_dist_folders">
+<a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.clean_folder.FolderCleaner.delete_dist_folders">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_dist_folders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursively deletes all folders named &#39;dist&#39; starting from the root folder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_folder</span><span class="p">,</span> <span class="n">topdown</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;dist&quot;</span> <span class="ow">in</span> <span class="n">dirnames</span><span class="p">:</span>
+                <span class="n">dist_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="s2">&quot;dist&quot;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">dist_path</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deleted: </span><span class="si">{</span><span class="n">dist_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to delete </span><span class="si">{</span><span class="n">dist_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
 
 
 
-<span class="c1">#</span>
-<span class="c1"># Question class</span>
-<span class="c1">#</span>
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.clean_folder.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Recursively delete all folders named &#39;dist&#39; starting from a specified root folder.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;root_folder&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the root folder to process&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">cleaner</span> <span class="o">=</span> <span class="n">FolderCleaner</span><span class="p">(</span><span class="n">root_folder</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">root_folder</span><span class="p">)</span>
+    <span class="n">cleaner</span><span class="o">.</span><span class="n">delete_dist_folders</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="TFQuestion">
-<a class="viewcode-back" href="../../../api/pykubegrader.widgets.html#pykubegrader.widgets.true_false.TFQuestion">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TFQuestion</span><span class="p">(</span><span class="n">SelectQuestion</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Select if the statement is True or False&quot;</span><span class="p">,</span>
-        <span class="n">style</span><span class="o">=</span><span class="n">TFStyle</span><span class="p">,</span>
-        <span class="n">question_number</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MC1&quot;</span><span class="p">,</span> <span class="s2">&quot;MC2&quot;</span><span class="p">,</span> <span class="s2">&quot;MC3&quot;</span><span class="p">,</span> <span class="s2">&quot;MC4&quot;</span><span class="p">],</span>
-        <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">descriptions</span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">&quot;Which of the following stores key:value pairs?&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;The following condition returns to the next iteration of the loop&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Which operator is used for exponentiation in Python?&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Which method is used to add an element to the end of a list in Python?&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
-        <span class="n">points</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
-            <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span>
-            <span class="n">question_number</span><span class="o">=</span><span class="n">question_number</span><span class="p">,</span>
-            <span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span>
-            <span class="n">options</span><span class="o">=</span><span class="p">[[</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">))],</span>
-            <span class="n">descriptions</span><span class="o">=</span><span class="n">descriptions</span><span class="p">,</span>
-            <span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span>
-            <span class="n">shuffle_answers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span></div>
 
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </pre></div>
 
                 </article>
