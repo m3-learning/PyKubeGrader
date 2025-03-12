@@ -19,8 +19,8 @@ from requests.exceptions import RequestException
 from pykubegrader.graders.late_assignments import calculate_late_submission
 from pykubegrader.utils import api_base_url, student_pw, student_user
 
-# try with decorator for log variables
 import inspect
+import os
 
 def is_called_directly_from_notebook():
     try:
@@ -31,18 +31,23 @@ def is_called_directly_from_notebook():
     except:
         return False
 
-    # Get the current call stack
     stack = inspect.stack()
 
-    # Skip current function and decorator
+    # Detect Otter Grader (heuristics)
+    for frame_info in stack:
+        if "otter" in frame_info.filename.lower():
+            return False
+        if "__otter__" in frame_info.frame.f_globals:
+            return False
+
+    if os.environ.get("OTTER_GRADER_RUNNING") == "1":
+        return False
+
+    # Check for direct call
     if len(stack) < 3:
         return False
 
-    # The caller is the function that invoked this one
     caller_frame = stack[2].frame
-
-    # Heuristic: if the caller's global namespace is __main__, and __file__ is missing,
-    # it's likely an interactive cell in Jupyter
     return caller_frame.f_globals.get("__name__") == "__main__" and "__file__" not in caller_frame.f_globals
 
 def block_direct_notebook_calls(func):
