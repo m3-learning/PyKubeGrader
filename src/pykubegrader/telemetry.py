@@ -20,24 +20,38 @@ from pykubegrader.graders.late_assignments import calculate_late_submission
 from pykubegrader.utils import api_base_url, student_pw, student_user
 
 # try with decorator for log variables
-import sys
+import inspect
 
-# # check if we are in a notebook
-# def is_notebook():
-#     try:
-#         from IPython import get_ipython
-#         shell = get_ipython().__class__.__name__
-#         return shell in ["ZMQInteractiveShell"]  # Jupyter Notebook or JupyterLab
-#     except:
-#         return False
+def is_called_directly_from_notebook():
+    try:
+        from IPython import get_ipython
+        shell = get_ipython().__class__.__name__
+        if shell != "ZMQInteractiveShell":
+            return False
+    except:
+        return False
 
-# # decorator to disallow logging in a notebook
-# def disallow_in_notebook(func):
-#     def wrapper(*args, **kwargs):
-#         if is_notebook():
-#             raise RuntimeError(f"Function {func.__name__} is not allowed in a Jupyter Notebook.")
-#         return func(*args, **kwargs)
-#     return wrapper
+    # Get the current call stack
+    stack = inspect.stack()
+
+    # Skip current function and decorator
+    if len(stack) < 3:
+        return False
+
+    # The caller is the function that invoked this one
+    caller_frame = stack[2].frame
+
+    # Heuristic: if the caller's global namespace is __main__, and __file__ is missing,
+    # it's likely an interactive cell in Jupyter
+    return caller_frame.f_globals.get("__name__") == "__main__" and "__file__" not in caller_frame.f_globals
+
+def block_direct_notebook_calls(func):
+    def wrapper(*args, **kwargs):
+        if is_called_directly_from_notebook():
+            raise RuntimeError(f"Direct calls to `{func.__name__}` are not allowed in a Jupyter Notebook.")
+        return func(*args, **kwargs)
+    return wrapper
+
 
 #
 # Logging setup
@@ -110,7 +124,7 @@ def log_encrypted(logger: logging.Logger, message: str) -> None:
     encrypted_b64 = encrypt_to_b64(message)
     logger.info(f"Encrypted Output: {encrypted_b64}")
 
-# @disallow_in_notebook
+@block_direct_notebook_calls
 def log_variable(assignment_name, value, info_type) -> None:
     timestamp = datetime.datetime.now(datetime.UTC).isoformat(
         sep=" ", timespec="seconds"
