@@ -195,11 +195,13 @@ class Assignment(assignment_type):
                 # Assign zero score for late submissions without a late adjustment policy
                 else:
                     return 0
-                
+
     def check_cheater(self, score, **kwargs):
         # TODO: fix once we record bonus points this is the mns fix.
         if score > 161:
-            print(f"A Cheater has been detected with a score of {score} for {self.name}. {kwargs.get('student_name', 'You')} have been reported to the instructor.")
+            print(
+                f"A Cheater has been detected with a score of {score} for {self.name}. {kwargs.get('student_name', 'You')} have been reported to the instructor."
+            )
             return 0
         else:
             return score

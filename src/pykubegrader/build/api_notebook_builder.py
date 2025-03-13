@@ -38,23 +38,26 @@ class FastAPINotebookBuilder:
             self.temp_notebook = self.notebook_path
 
         self.assertion_tests_dict = self.question_dict()
-        self.question_points = self.question_points_by_part = self.get_question_points_by_part(self.assertion_tests_dict)
+        self.question_points = self.question_points_by_part = (
+            self.get_question_points_by_part(self.assertion_tests_dict)
+        )
         self.add_points_to_notebook()
         self.add_api_code()
-
 
     def add_points_to_notebook(self) -> None:
         self.add_question_points_to_notebook()
         self.add_question_part_points_to_notebook()
 
     def add_question_points_to_notebook(self) -> None:
-        for question, points in self.question_points['question_sums'].items():
-            index, source = self.find_first_markdown_cell_with(points['current_key'], points['previous_key'], f"## ")
-            
+        for question, points in self.question_points["question_sums"].items():
+            index, source = self.find_first_markdown_cell_with(
+                points["current_key"], points["previous_key"], "## "
+            )
+
             # if the question is not found, skip it
             if index is None:
                 continue
-            
+
             # add the question points to the question description
             source = self.get_cell_source(self.temp_notebook, index)
             modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
@@ -62,25 +65,30 @@ class FastAPINotebookBuilder:
                 f"Question {points['question_number']} (Points: {points['total_points']}):",
             )
             self.replace_cell_source(index, modified_source)
-            
+
     def add_question_part_points_to_notebook(self) -> None:
-        for question, points in self.question_points['part_sums'].items():
+        for question, points in self.question_points["part_sums"].items():
             for part, points in points.items():
-                index, source = self.find_first_markdown_cell_with(points['current_key'], points['previous_key'], f"### ")
-                
+                index, source = self.find_first_markdown_cell_with(
+                    points["current_key"], points["previous_key"], "### "
+                )
+
                 # if the question part is not found, skip it
                 if index is None:
                     continue
-                
+
                 # add the question part points to the question part description
                 source = self.get_cell_source(self.temp_notebook, index)
                 modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
                     source,
-                    f"Question {points['question_number']}-Part {points['question_part_number']} (Points: {points['total_points']}):", '### ',
+                    f"Question {points['question_number']}-Part {points['question_part_number']} (Points: {points['total_points']}):",
+                    "### ",
                 )
                 self.replace_cell_source(index, modified_source)
-    
-    def find_first_markdown_cell_with(self, start_index: int, end_index: int = 0, code_to_find: str = "## "):
+
+    def find_first_markdown_cell_with(
+        self, start_index: int, end_index: int = 0, code_to_find: str = "## "
+    ):
         """
         Finds the first markdown cell going backwards from the given start_index
         to the given end_index where the first line starts with '##'.
@@ -97,11 +105,13 @@ class FastAPINotebookBuilder:
 
         for idx in range(start_index, end_index - 1, -1):
             cell = nb_data.get("cells", [])[idx]
-            if cell["cell_type"] == "markdown" and cell.get("source", [])[0].startswith(code_to_find):
+            if cell["cell_type"] == "markdown" and cell.get("source", [])[0].startswith(
+                code_to_find
+            ):
                 return idx, cell.get("source", [])
 
         return None, None  # Return None if no such markdown cell is found
-        
+
     @staticmethod
     def get_question_points_by_part(question_dict: dict) -> dict:
         """
@@ -112,34 +122,44 @@ class FastAPINotebookBuilder:
         prev_question = 0  # Initialize previous cell number as 0
 
         for key, entry in question_dict.items():
-            question_number = entry['question_number']
+            question_number = entry["question_number"]
             if question_number not in question_sums:
-                question_sums[question_number] = {'total_points': 0, 'previous_key': prev_question, 'current_key': None, 'question_number': question_number}
+                question_sums[question_number] = {
+                    "total_points": 0,
+                    "previous_key": prev_question,
+                    "current_key": None,
+                    "question_number": question_number,
+                }
                 prev_question = key  # Update previous key for the next new question
-            question_sums[question_number]['total_points'] += entry['points']
-            question_sums[question_number]['current_key'] = key  # Update current key to the end of the current question
+            question_sums[question_number]["total_points"] += entry["points"]
+            question_sums[question_number]["current_key"] = (
+                key  # Update current key to the end of the current question
+            )
 
         # Compute sum for each question part and store the previous cell number (key)
         part_sums = {}
         prev_part = 0  # Initialize previous cell number as 0
 
         for key, entry in question_dict.items():
-            question = entry['question']
-            part = entry['question_part']
+            question = entry["question"]
+            part = entry["question_part"]
             if part is None:
                 continue
             if question not in part_sums:
                 part_sums[question] = {}
             if part not in part_sums[question]:
-                part_sums[question][part] = {'total_points': 0, 'previous_key': prev_part, 'current_key': key, 'question_number': entry['question_number'], 'question_part_number': entry['question_part']}
+                part_sums[question][part] = {
+                    "total_points": 0,
+                    "previous_key": prev_part,
+                    "current_key": key,
+                    "question_number": entry["question_number"],
+                    "question_part_number": entry["question_part"],
+                }
                 prev_part = key  # Update previous key for the next new question part
-            part_sums[question][part]['total_points'] += entry['points']
+            part_sums[question][part]["total_points"] += entry["points"]
 
         # Combine results into a dictionary
-        result = {
-            "question_sums": question_sums,
-            "part_sums": part_sums
-        }
+        result = {"question_sums": question_sums, "part_sums": part_sums}
 
         # Return result dictionary
         return result
@@ -224,10 +244,10 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_question_info(cell_dict)
             )
-            
+
             updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
             updated_cell_source.extend(["\n"])
-            
+
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_graders(cell_dict)
             )
@@ -250,15 +270,11 @@ class FastAPINotebookBuilder:
             updated_cell_source.extend(
                 FastAPINotebookBuilder.construct_update_responses(cell_dict)
             )
-            
+
             # # code to reset matplotlib
             # updated_cell_source.extend(
             #     ["_ = matplotlib.pyplot.close('all')\n"]
             # )
-            
-            
-            
-            
 
             self.replace_cell_source(cell_index, updated_cell_source)
 
@@ -290,7 +306,7 @@ class FastAPINotebookBuilder:
         )
 
     @staticmethod
-    def add_text_after_double_hash(markdown_source, insert_text, hash_prefix = "## "):
+    def add_text_after_double_hash(markdown_source, insert_text, hash_prefix="## "):
         """
         Adds insert_text immediately after the first '##' in the first line that starts with '##'.
 
@@ -307,7 +323,7 @@ class FastAPINotebookBuilder:
         for line in markdown_source:
             if not inserted and line.startswith(hash_prefix):
                 modified_source.append(
-                    f"{hash_prefix}{insert_text} {line[len(hash_prefix):]}"
+                    f"{hash_prefix}{insert_text} {line[len(hash_prefix) :]}"
                 )  # Insert text after hash_prefix
                 inserted = True  # Ensure it only happens once
             else:
@@ -479,7 +495,7 @@ class FastAPINotebookBuilder:
             imports.append(
                 f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment='{assignment_tag}')\n"
             )
-            
+
         imports.append("import matplotlib\n")
         imports.append("matplotlib.use('Agg')\n")
 
@@ -655,7 +671,7 @@ class FastAPINotebookBuilder:
                 test_number += 1
 
         return cells_dict
-    
+
     @staticmethod
     def extract_question_information(source: str) -> tuple[str, str, str]:
         """
@@ -670,14 +686,10 @@ class FastAPINotebookBuilder:
         name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
         question_name = name_match.group(1).strip() if name_match else None
         question_number = re.search(r"question:\s*(\d+)", source, re.MULTILINE)
-        question_number = (
-            question_number.group(1).strip() if question_number else None
-        )
+        question_number = question_number.group(1).strip() if question_number else None
         question_part = re.search(r"part:\s*(.*)", source, re.MULTILINE)
-        question_part = (
-            question_part.group(1).strip() if question_part else None
-        )
-       
+        question_part = question_part.group(1).strip() if question_part else None
+
         return question_name, question_number, question_part
 
     def question_dict(self) -> dict:
@@ -687,18 +699,18 @@ class FastAPINotebookBuilder:
         Returns:
             dict: A dictionary containing question information.
         """
-        
+
         # Check if the temporary notebook file path is provided
         if not self.temp_notebook:
             raise ValueError("No temporary notebook file path provided")
-        
+
         # Check if the file exists
         notebook_path = Path(self.temp_notebook)
-        
+
         # Check if the file exists
         if not notebook_path.exists():
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
-        
+
         # Read the notebook
         notebook = self.read_notebook(notebook_path)
 
@@ -710,14 +722,17 @@ class FastAPINotebookBuilder:
             if cell.get("cell_type") == "raw":
                 source = "".join(cell.get("source", ""))
                 if source.strip().startswith("# BEGIN QUESTION"):
-                    question_name, question_number, question_part = FastAPINotebookBuilder.extract_question_information(source)
+                    question_name, question_number, question_part = (
+                        FastAPINotebookBuilder.extract_question_information(source)
+                    )
 
             elif cell.get("cell_type") == "code":
                 source = "".join(cell.get("source", ""))
                 if source.strip().startswith('""" # BEGIN TEST CONFIG'):
-                    
                     # Extract the assertion test source
-                    logging_variables, assertions, comments, points_value = self.extract_assertion_test_source(cell, source)
+                    logging_variables, assertions, comments, points_value = (
+                        self.extract_assertion_test_source(cell, source)
+                    )
 
                     # Add to results dictionary
                     results_dict[cell_index] = {
@@ -848,7 +863,7 @@ class FastAPINotebookBuilder:
         with open(notebook_path, "r", encoding="utf-8") as f:
             notebook = json.load(f)
         return notebook
-    
+
     def get_cell_source(self, notebook_path, cell_index):
         notebook = self.read_notebook(notebook_path)
         return notebook["cells"][cell_index]["source"]
