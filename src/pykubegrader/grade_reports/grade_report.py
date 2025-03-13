@@ -91,7 +91,7 @@ class GradeReport:
         Checks if the optional drop assignments are valid.
         """
         for assignment in self.graded_assignments:
-            if assignment.name in self.optional_drop_assignments:
+            if (assignment.name, assignment.week) in self.optional_drop_assignments:
                 if self.weekly_grades_df_display.loc["Running Avg", assignment.name] > assignment.score:
                     assignment.exempted = True
 
