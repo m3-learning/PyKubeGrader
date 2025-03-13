@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.submit.final_submission &#8212; PyKubeGrader 0.0.post1.dev1+gad627bd documentation</title>
+    <title>pykubegrader.submit.final_submission &#8212; PyKubeGrader 0.0.post1.dev1+g0367124 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=6e0e4802"></script>
+    <script src="../../../_static/documentation_options.js?v=12bb2523"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+gad627bd" />
+  <meta name="docsearch:version" content="0.0.post1.dev1+g0367124" />
     <meta name="docbuild:last-update" content="Mar 12, 2025"/>
   </head>
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gad627bd documentation - Home"/>
-    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gad627bd documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g0367124 documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g0367124 documentation - Home"/>
   
   
 </a></div>
@@ -436,8 +436,6 @@
                                        <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> 
                                        <span class="n">week_number</span><span class="o">=</span><span class="n">week_number</span><span class="p">)</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-    
     <span class="k">try</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
                 <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
@@ -495,12 +493,10 @@
     <span class="n">student_email</span> <span class="o">=</span> <span class="n">jhub_user</span>
     
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">student_email</span><span class="p">,</span>  <span class="c1"># Assuming id is auto-generated</span>
         <span class="s2">&quot;student_email&quot;</span><span class="p">:</span> <span class="n">student_email</span><span class="p">,</span>
         <span class="s2">&quot;assignment&quot;</span><span class="p">:</span> <span class="n">assignment</span><span class="p">,</span>
         <span class="s2">&quot;week_number&quot;</span><span class="p">:</span> <span class="n">week_number</span><span class="p">,</span>
         <span class="s2">&quot;assignment_type&quot;</span><span class="p">:</span> <span class="n">assignment_type</span><span class="p">,</span>
-        <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>  <span class="c1"># Assuming current time for timestamp</span>
         <span class="s2">&quot;student_seed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="c1"># Not Implemented</span>
         <span class="s2">&quot;key_used&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span>
     <span class="p">}</span>
