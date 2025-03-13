@@ -44,6 +44,7 @@ globally_exempted_assignments = [
     ("labattendance", 5),
     ("homework", 10),
     ("lab", 10),
+    ("quiz", 9),
     ("quiz", 10),
     ("practicequiz", 10),
     ("readings", 10),
