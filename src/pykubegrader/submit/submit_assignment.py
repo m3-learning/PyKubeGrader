@@ -1,4 +1,6 @@
 import os
+import json
+from typing import Dict
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -18,10 +20,12 @@ def get_credentials():
 
 
 def call_score_assignment(
-    assignment_title: str, notebook_title: str, file_path: str = ".output_reduced.log"
-) -> dict[str, str]:
+    assignment_title: str,
+    notebook_title: str,
+    file_path: str = ".output_reduced.log"
+) -> Dict[str, str]:
     """
-    Submit an assignment to the scoring endpoint
+    Submit an assignment to the scoring endpoint.
 
     Args:
         assignment_title (str): Title of the assignment
@@ -30,12 +34,13 @@ def call_score_assignment(
 
     Returns:
         dict: JSON response from the server
+
+    Raises:
+        RuntimeError: If server returns a client or server error
+        FileNotFoundError: If the log file doesn't exist
     """
 
     base_url = os.getenv("DB_URL")
-    if not base_url:
-        raise ValueError("Environment variable 'DB_URL' not set")
-
     if not base_url:
         raise ValueError("Environment variable 'DB_URL' not set")
 
@@ -60,16 +65,26 @@ def call_score_assignment(
                 auth=HTTPBasicAuth(username, password),
                 files={"log_file": file},
             )
-            res.raise_for_status()
+
+            if res.status_code != 200:
+                # Try to extract a meaningful error message
+                try:
+                    err_detail = res.json().get("detail", "No detail provided")
+                except json.JSONDecodeError:
+                    err_detail = res.text  # fallback to raw text
+
+                raise RuntimeError(f"Server returned {res.status_code}: {err_detail}")
 
             return res.json()
 
     except FileNotFoundError:
         raise FileNotFoundError(f"File {file_path} does not exist")
+
     except requests.RequestException as err:
-        raise RuntimeError(f"An error occurred while requesting {url}: {err}")
+        raise RuntimeError(f"Request failed to {url}: {err}")
+
     except Exception as err:
-        raise RuntimeError(f"An unexpected error occurred: {err}")
+        raise RuntimeError(f"Unexpected error: {err}")
 
 
 def submit_assignment(
