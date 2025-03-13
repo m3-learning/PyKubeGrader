@@ -28,8 +28,6 @@ def mark_student_complete(assignment: str, assignment_type: str, token: str, wee
                                        token=token, 
                                        week_number=week_number)
     
-    print(params)
-    
     try:
         res = requests.post(
                 url=url,
@@ -84,12 +82,10 @@ def final_submission_payload(assignment: str, assignment_type: str, token: str, 
     student_email = jhub_user
     
     payload = {
-        "id": student_email,  # Assuming id is auto-generated
         "student_email": student_email,
         "assignment": assignment,
         "week_number": week_number,
         "assignment_type": assignment_type,
-        "timestamp": datetime.now().isoformat(),  # Assuming current time for timestamp
         "student_seed": 0, # Not Implemented
         "key_used": token,
     }
