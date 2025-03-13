@@ -74,6 +74,9 @@ class GradeReport:
         self.duplicate_scores()
         self.update_weekly_table()
         self._build_running_avg()
+        self.check_optional_drop_assignments()
+        self.update_weekly_table()
+        self._build_running_avg()
         self._calculate_final_average()
         df = self.highlight_nans(self.weekly_grades_df, self.weekly_grades_df_display)
         if display_:
@@ -82,6 +85,15 @@ class GradeReport:
                 display(self.weighted_average_grades)
             except:  # noqa: E722
                 pass
+            
+    def check_optional_drop_assignments(self):
+        """
+        Checks if the optional drop assignments are valid.
+        """
+        for assignment in self.graded_assignments:
+            if assignment.name in self.optional_drop_assignments:
+                if self.weekly_grades_df_display.loc["Running Avg", assignment.name] > assignment.score:
+                    assignment.exempted = True
 
     @staticmethod
     def highlight_nans(nan_df, display_df, color="red"):
