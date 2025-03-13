@@ -14,7 +14,7 @@ import requests
 from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
-from requests.exceptions import RequestException
+from requests.exceptions import RequestException 
 
 from pykubegrader.utils import api_base_url, student_pw, student_user
 
