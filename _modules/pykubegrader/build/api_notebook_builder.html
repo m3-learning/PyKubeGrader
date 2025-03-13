@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pykubegrader.build.api_notebook_builder &#8212; PyKubeGrader 0.0.post1.dev1+g0367124 documentation</title>
+    <title>pykubegrader.build.api_notebook_builder &#8212; PyKubeGrader 0.0.post1.dev1+gc7eabab documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=12bb2523"></script>
+    <script src="../../../_static/documentation_options.js?v=2aa33e80"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,8 +48,8 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.0.post1.dev1+g0367124" />
-    <meta name="docbuild:last-update" content="Mar 12, 2025"/>
+  <meta name="docsearch:version" content="0.0.post1.dev1+gc7eabab" />
+    <meta name="docbuild:last-update" content="Mar 13, 2025"/>
   </head>
   
   
@@ -115,8 +115,8 @@
       
     
     
-    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+g0367124 documentation - Home"/>
-    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+g0367124 documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Light.png" class="logo__image only-light" alt="PyKubeGrader 0.0.post1.dev1+gc7eabab documentation - Home"/>
+    <img src="../../../_static/Drexel_blue_Logo_square_Dark.png" class="logo__image only-dark pst-js-only" alt="PyKubeGrader 0.0.post1.dev1+gc7eabab documentation - Home"/>
   
   
 </a></div>
@@ -448,10 +448,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">temp_notebook</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">notebook_path</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">assertion_tests_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">question_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_points_by_part</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_question_points_by_part</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assertion_tests_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">question_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_points_by_part</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_question_points_by_part</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assertion_tests_dict</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_points_to_notebook</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_api_code</span><span class="p">()</span></div>
-
 
 
 <div class="viewcode-block" id="FastAPINotebookBuilder.add_points_to_notebook">
@@ -464,13 +465,15 @@
 <div class="viewcode-block" id="FastAPINotebookBuilder.add_question_points_to_notebook">
 <a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.add_question_points_to_notebook">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_question_points_to_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">question</span><span class="p">,</span> <span class="n">points</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_points</span><span class="p">[</span><span class="s1">&#39;question_sums&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">index</span><span class="p">,</span> <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_first_markdown_cell_with</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;current_key&#39;</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="s1">&#39;previous_key&#39;</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;## &quot;</span><span class="p">)</span>
-            
+        <span class="k">for</span> <span class="n">question</span><span class="p">,</span> <span class="n">points</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_points</span><span class="p">[</span><span class="s2">&quot;question_sums&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_first_markdown_cell_with</span><span class="p">(</span>
+                <span class="n">points</span><span class="p">[</span><span class="s2">&quot;current_key&quot;</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="s2">&quot;previous_key&quot;</span><span class="p">],</span> <span class="s2">&quot;## &quot;</span>
+            <span class="p">)</span>
+
             <span class="c1"># if the question is not found, skip it</span>
             <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
-            
+
             <span class="c1"># add the question points to the question description</span>
             <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cell_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_notebook</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
             <span class="n">modified_source</span> <span class="o">=</span> <span class="n">FastAPINotebookBuilder</span><span class="o">.</span><span class="n">add_text_after_double_hash</span><span class="p">(</span>
@@ -479,30 +482,35 @@
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">replace_cell_source</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">modified_source</span><span class="p">)</span></div>
 
-            
+
 <div class="viewcode-block" id="FastAPINotebookBuilder.add_question_part_points_to_notebook">
 <a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.add_question_part_points_to_notebook">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_question_part_points_to_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">question</span><span class="p">,</span> <span class="n">points</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_points</span><span class="p">[</span><span class="s1">&#39;part_sums&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">question</span><span class="p">,</span> <span class="n">points</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">question_points</span><span class="p">[</span><span class="s2">&quot;part_sums&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">part</span><span class="p">,</span> <span class="n">points</span> <span class="ow">in</span> <span class="n">points</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">index</span><span class="p">,</span> <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_first_markdown_cell_with</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;current_key&#39;</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="s1">&#39;previous_key&#39;</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;### &quot;</span><span class="p">)</span>
-                
+                <span class="n">index</span><span class="p">,</span> <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_first_markdown_cell_with</span><span class="p">(</span>
+                    <span class="n">points</span><span class="p">[</span><span class="s2">&quot;current_key&quot;</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="s2">&quot;previous_key&quot;</span><span class="p">],</span> <span class="s2">&quot;### &quot;</span>
+                <span class="p">)</span>
+
                 <span class="c1"># if the question part is not found, skip it</span>
                 <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">continue</span>
-                
+
                 <span class="c1"># add the question part points to the question part description</span>
                 <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cell_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_notebook</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
                 <span class="n">modified_source</span> <span class="o">=</span> <span class="n">FastAPINotebookBuilder</span><span class="o">.</span><span class="n">add_text_after_double_hash</span><span class="p">(</span>
                     <span class="n">source</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">&quot;Question </span><span class="si">{</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;question_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">-Part </span><span class="si">{</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;question_part_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (Points: </span><span class="si">{</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;total_points&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">,</span> <span class="s1">&#39;### &#39;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;Question </span><span class="si">{</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;question_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">-Part </span><span class="si">{</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;question_part_number&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (Points: </span><span class="si">{</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;total_points&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;### &quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">replace_cell_source</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">modified_source</span><span class="p">)</span></div>
 
-    
+
 <div class="viewcode-block" id="FastAPINotebookBuilder.find_first_markdown_cell_with">
 <a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.find_first_markdown_cell_with">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">find_first_markdown_cell_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">code_to_find</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;## &quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_first_markdown_cell_with</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">code_to_find</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;## &quot;</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Finds the first markdown cell going backwards from the given start_index</span>
 <span class="sd">        to the given end_index where the first line starts with &#39;##&#39;.</span>
@@ -519,12 +527,14 @@
 
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_index</span><span class="p">,</span> <span class="n">end_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">cell</span> <span class="o">=</span> <span class="n">nb_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cells&quot;</span><span class="p">,</span> <span class="p">[])[</span><span class="n">idx</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">cell</span><span class="p">[</span><span class="s2">&quot;cell_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;markdown&quot;</span> <span class="ow">and</span> <span class="n">cell</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="p">[])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">code_to_find</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">cell</span><span class="p">[</span><span class="s2">&quot;cell_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;markdown&quot;</span> <span class="ow">and</span> <span class="n">cell</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="p">[])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="n">code_to_find</span>
+            <span class="p">):</span>
                 <span class="k">return</span> <span class="n">idx</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>  <span class="c1"># Return None if no such markdown cell is found</span></div>
 
-        
+
 <div class="viewcode-block" id="FastAPINotebookBuilder.get_question_points_by_part">
 <a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.get_question_points_by_part">[docs]</a>
     <span class="nd">@staticmethod</span>
@@ -537,34 +547,44 @@
         <span class="n">prev_question</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Initialize previous cell number as 0</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">question_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">question_number</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;question_number&#39;</span><span class="p">]</span>
+            <span class="n">question_number</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;question_number&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">question_number</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">question_sums</span><span class="p">:</span>
-                <span class="n">question_sums</span><span class="p">[</span><span class="n">question_number</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;total_points&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;previous_key&#39;</span><span class="p">:</span> <span class="n">prev_question</span><span class="p">,</span> <span class="s1">&#39;current_key&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;question_number&#39;</span><span class="p">:</span> <span class="n">question_number</span><span class="p">}</span>
+                <span class="n">question_sums</span><span class="p">[</span><span class="n">question_number</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;total_points&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;previous_key&quot;</span><span class="p">:</span> <span class="n">prev_question</span><span class="p">,</span>
+                    <span class="s2">&quot;current_key&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">&quot;question_number&quot;</span><span class="p">:</span> <span class="n">question_number</span><span class="p">,</span>
+                <span class="p">}</span>
                 <span class="n">prev_question</span> <span class="o">=</span> <span class="n">key</span>  <span class="c1"># Update previous key for the next new question</span>
-            <span class="n">question_sums</span><span class="p">[</span><span class="n">question_number</span><span class="p">][</span><span class="s1">&#39;total_points&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">]</span>
-            <span class="n">question_sums</span><span class="p">[</span><span class="n">question_number</span><span class="p">][</span><span class="s1">&#39;current_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>  <span class="c1"># Update current key to the end of the current question</span>
+            <span class="n">question_sums</span><span class="p">[</span><span class="n">question_number</span><span class="p">][</span><span class="s2">&quot;total_points&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span>
+            <span class="n">question_sums</span><span class="p">[</span><span class="n">question_number</span><span class="p">][</span><span class="s2">&quot;current_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">key</span>  <span class="c1"># Update current key to the end of the current question</span>
+            <span class="p">)</span>
 
         <span class="c1"># Compute sum for each question part and store the previous cell number (key)</span>
         <span class="n">part_sums</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">prev_part</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Initialize previous cell number as 0</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">question_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">question</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;question&#39;</span><span class="p">]</span>
-            <span class="n">part</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;question_part&#39;</span><span class="p">]</span>
+            <span class="n">question</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]</span>
+            <span class="n">part</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;question_part&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">part</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">question</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">part_sums</span><span class="p">:</span>
                 <span class="n">part_sums</span><span class="p">[</span><span class="n">question</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">if</span> <span class="n">part</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">part_sums</span><span class="p">[</span><span class="n">question</span><span class="p">]:</span>
-                <span class="n">part_sums</span><span class="p">[</span><span class="n">question</span><span class="p">][</span><span class="n">part</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;total_points&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;previous_key&#39;</span><span class="p">:</span> <span class="n">prev_part</span><span class="p">,</span> <span class="s1">&#39;current_key&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s1">&#39;question_number&#39;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;question_number&#39;</span><span class="p">],</span> <span class="s1">&#39;question_part_number&#39;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;question_part&#39;</span><span class="p">]}</span>
+                <span class="n">part_sums</span><span class="p">[</span><span class="n">question</span><span class="p">][</span><span class="n">part</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;total_points&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;previous_key&quot;</span><span class="p">:</span> <span class="n">prev_part</span><span class="p">,</span>
+                    <span class="s2">&quot;current_key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                    <span class="s2">&quot;question_number&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;question_number&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;question_part_number&quot;</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;question_part&quot;</span><span class="p">],</span>
+                <span class="p">}</span>
                 <span class="n">prev_part</span> <span class="o">=</span> <span class="n">key</span>  <span class="c1"># Update previous key for the next new question part</span>
-            <span class="n">part_sums</span><span class="p">[</span><span class="n">question</span><span class="p">][</span><span class="n">part</span><span class="p">][</span><span class="s1">&#39;total_points&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">]</span>
+            <span class="n">part_sums</span><span class="p">[</span><span class="n">question</span><span class="p">][</span><span class="n">part</span><span class="p">][</span><span class="s2">&quot;total_points&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span>
 
         <span class="c1"># Combine results into a dictionary</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;question_sums&quot;</span><span class="p">:</span> <span class="n">question_sums</span><span class="p">,</span>
-            <span class="s2">&quot;part_sums&quot;</span><span class="p">:</span> <span class="n">part_sums</span>
-        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;question_sums&quot;</span><span class="p">:</span> <span class="n">question_sums</span><span class="p">,</span> <span class="s2">&quot;part_sums&quot;</span><span class="p">:</span> <span class="n">part_sums</span><span class="p">}</span>
 
         <span class="c1"># Return result dictionary</span>
         <span class="k">return</span> <span class="n">result</span></div>
@@ -655,10 +675,10 @@
             <span class="n">updated_cell_source</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
                 <span class="n">FastAPINotebookBuilder</span><span class="o">.</span><span class="n">construct_question_info</span><span class="p">(</span><span class="n">cell_dict</span><span class="p">)</span>
             <span class="p">)</span>
-            
+
             <span class="n">updated_cell_source</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cell_source</span><span class="p">[</span><span class="n">last_import_line_ind</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:])</span>
             <span class="n">updated_cell_source</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">])</span>
-            
+
             <span class="n">updated_cell_source</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
                 <span class="n">FastAPINotebookBuilder</span><span class="o">.</span><span class="n">construct_graders</span><span class="p">(</span><span class="n">cell_dict</span><span class="p">)</span>
             <span class="p">)</span>
@@ -681,15 +701,11 @@
             <span class="n">updated_cell_source</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
                 <span class="n">FastAPINotebookBuilder</span><span class="o">.</span><span class="n">construct_update_responses</span><span class="p">(</span><span class="n">cell_dict</span><span class="p">)</span>
             <span class="p">)</span>
-            
+
             <span class="c1"># # code to reset matplotlib</span>
             <span class="c1"># updated_cell_source.extend(</span>
             <span class="c1">#     [&quot;_ = matplotlib.pyplot.close(&#39;all&#39;)\n&quot;]</span>
             <span class="c1"># )</span>
-            
-            
-            
-            
 
             <span class="bp">self</span><span class="o">.</span><span class="n">replace_cell_source</span><span class="p">(</span><span class="n">cell_index</span><span class="p">,</span> <span class="n">updated_cell_source</span><span class="p">)</span></div>
 
@@ -730,7 +746,7 @@
 <div class="viewcode-block" id="FastAPINotebookBuilder.add_text_after_double_hash">
 <a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.add_text_after_double_hash">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_text_after_double_hash</span><span class="p">(</span><span class="n">markdown_source</span><span class="p">,</span> <span class="n">insert_text</span><span class="p">,</span> <span class="n">hash_prefix</span> <span class="o">=</span> <span class="s2">&quot;## &quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_text_after_double_hash</span><span class="p">(</span><span class="n">markdown_source</span><span class="p">,</span> <span class="n">insert_text</span><span class="p">,</span> <span class="n">hash_prefix</span><span class="o">=</span><span class="s2">&quot;## &quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds insert_text immediately after the first &#39;##&#39; in the first line that starts with &#39;##&#39;.</span>
 
@@ -747,7 +763,7 @@
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">markdown_source</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">inserted</span> <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">hash_prefix</span><span class="p">):</span>
                 <span class="n">modified_source</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hash_prefix</span><span class="si">}{</span><span class="n">insert_text</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">hash_prefix</span><span class="p">):]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hash_prefix</span><span class="si">}{</span><span class="n">insert_text</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">hash_prefix</span><span class="p">)</span><span class="w"> </span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>  <span class="c1"># Insert text after hash_prefix</span>
                 <span class="n">inserted</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Ensure it only happens once</span>
             <span class="k">else</span><span class="p">:</span>
@@ -943,7 +959,7 @@
             <span class="n">imports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;from pykubegrader.tokens.validate_token import validate_token</span><span class="se">\n</span><span class="s2">validate_token(assignment=&#39;</span><span class="si">{</span><span class="n">assignment_tag</span><span class="si">}</span><span class="s2">&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-            
+
         <span class="n">imports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;import matplotlib</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">imports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;matplotlib.use(&#39;Agg&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -1141,7 +1157,7 @@
 
         <span class="k">return</span> <span class="n">cells_dict</span></div>
 
-    
+
 <div class="viewcode-block" id="FastAPINotebookBuilder.extract_question_information">
 <a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.extract_question_information">[docs]</a>
     <span class="nd">@staticmethod</span>
@@ -1158,14 +1174,10 @@
         <span class="n">name_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;name:\s*(.*)&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
         <span class="n">question_name</span> <span class="o">=</span> <span class="n">name_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">name_match</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">question_number</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;question:\s*(\d+)&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
-        <span class="n">question_number</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">question_number</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">question_number</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="p">)</span>
+        <span class="n">question_number</span> <span class="o">=</span> <span class="n">question_number</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">question_number</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">question_part</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;part:\s*(.*)&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
-        <span class="n">question_part</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">question_part</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">question_part</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="p">)</span>
-       
+        <span class="n">question_part</span> <span class="o">=</span> <span class="n">question_part</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">question_part</span> <span class="k">else</span> <span class="kc">None</span>
+
         <span class="k">return</span> <span class="n">question_name</span><span class="p">,</span> <span class="n">question_number</span><span class="p">,</span> <span class="n">question_part</span></div>
 
 
@@ -1178,18 +1190,18 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: A dictionary containing question information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="c1"># Check if the temporary notebook file path is provided</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_notebook</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No temporary notebook file path provided&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># Check if the file exists</span>
         <span class="n">notebook_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_notebook</span><span class="p">)</span>
-        
+
         <span class="c1"># Check if the file exists</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">notebook_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The file </span><span class="si">{</span><span class="n">notebook_path</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># Read the notebook</span>
         <span class="n">notebook</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_notebook</span><span class="p">(</span><span class="n">notebook_path</span><span class="p">)</span>
 
@@ -1201,14 +1213,17 @@
             <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cell_type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;raw&quot;</span><span class="p">:</span>
                 <span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;# BEGIN QUESTION&quot;</span><span class="p">):</span>
-                    <span class="n">question_name</span><span class="p">,</span> <span class="n">question_number</span><span class="p">,</span> <span class="n">question_part</span> <span class="o">=</span> <span class="n">FastAPINotebookBuilder</span><span class="o">.</span><span class="n">extract_question_information</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+                    <span class="n">question_name</span><span class="p">,</span> <span class="n">question_number</span><span class="p">,</span> <span class="n">question_part</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">FastAPINotebookBuilder</span><span class="o">.</span><span class="n">extract_question_information</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+                    <span class="p">)</span>
 
             <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cell_type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;code&quot;</span><span class="p">:</span>
                 <span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&quot;&quot; # BEGIN TEST CONFIG&#39;</span><span class="p">):</span>
-                    
                     <span class="c1"># Extract the assertion test source</span>
-                    <span class="n">logging_variables</span><span class="p">,</span> <span class="n">assertions</span><span class="p">,</span> <span class="n">comments</span><span class="p">,</span> <span class="n">points_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_assertion_test_source</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+                    <span class="n">logging_variables</span><span class="p">,</span> <span class="n">assertions</span><span class="p">,</span> <span class="n">comments</span><span class="p">,</span> <span class="n">points_value</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">extract_assertion_test_source</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+                    <span class="p">)</span>
 
                     <span class="c1"># Add to results dictionary</span>
                     <span class="n">results_dict</span><span class="p">[</span><span class="n">cell_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -1346,7 +1361,7 @@
             <span class="n">notebook</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">notebook</span></div>
 
-    
+
 <div class="viewcode-block" id="FastAPINotebookBuilder.get_cell_source">
 <a class="viewcode-back" href="../../../api/pykubegrader.build.html#pykubegrader.build.api_notebook_builder.FastAPINotebookBuilder.get_cell_source">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_cell_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notebook_path</span><span class="p">,</span> <span class="n">cell_index</span><span class="p">):</span>
