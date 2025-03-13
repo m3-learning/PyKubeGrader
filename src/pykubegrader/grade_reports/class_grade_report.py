@@ -6,7 +6,6 @@
 
 import os
 
-import numpy as np
 import pandas as pd
 import tqdm
 
@@ -16,9 +15,7 @@ from pykubegrader.grade_reports.grading_config import (
     skipped_users,
     students_to_include,
 )
-
 from pykubegrader.telemetry import get_all_students
-
 
 api_base_url = os.getenv("DB_URL")
 student_user = os.getenv("user_name_student")
@@ -56,13 +53,13 @@ class ClassGradeReport:
         self.password = password
 
         self.student_list = get_all_students(self.user, self.password)
-        
+
         # Remove skipped users
         self.student_list = list(set(self.student_list) - set(skipped_users))
-        
+
         # Only include students in the students_to_include list
         self.student_list = [s for s in students_to_include if s in self.student_list]
-        
+
         # Sort the student list
         self.student_list.sort()
 
@@ -70,7 +67,7 @@ class ClassGradeReport:
         self.fill_class_grades()
         self.get_class_stats()
         self.make_report(**kwargs)
-        
+
     def make_report(self, **kwargs):
         """Makes the class grade report.
 
@@ -80,12 +77,11 @@ class ClassGradeReport:
         try:
             title = kwargs.get("title", "Grade Report")
             filename = kwargs.get("filename", "Grade_report.html")
-            import numpy as np
-            import pandas as pd
             from ydata_profiling import ProfileReport
+
             profile = ProfileReport(self.all_student_grades_df, title=title)
             profile.to_file(filename)
-        except:
+        except Exception:
             Warning("ydata_profiling not installed, cannot make report")
 
     def setup_class_grades(self):
@@ -98,7 +94,8 @@ class ClassGradeReport:
             0.0,
             dtype=float,
             index=self.student_list,
-            columns=[a.name for a in assignment_type_list] + ["Weighted Average Grade w Final", "Weighted Average Grade"],
+            columns=[a.name for a in assignment_type_list]
+            + ["Weighted Average Grade w Final", "Weighted Average Grade"],
         )
 
     def update_student_grade(self, student):

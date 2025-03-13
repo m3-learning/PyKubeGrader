@@ -1,6 +1,7 @@
 import base64
 import datetime
 import gzip
+import inspect
 import json
 import logging
 import os
@@ -10,25 +11,22 @@ from typing import Any, Optional
 import nacl.public
 import pandas as pd
 import requests
-from dateutil import parser
 from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import RequestException
 
-from pykubegrader.graders.late_assignments import calculate_late_submission
 from pykubegrader.utils import api_base_url, student_pw, student_user
 
-import inspect
-import os
 
 def is_called_directly_from_notebook():
     try:
-        from IPython import get_ipython
+        from IPython.core.getipython import get_ipython
+
         shell = get_ipython().__class__.__name__
         if shell != "ZMQInteractiveShell":
             return False
-    except:
+    except Exception:
         return False
 
     stack = inspect.stack()
@@ -48,13 +46,20 @@ def is_called_directly_from_notebook():
         return False
 
     caller_frame = stack[2].frame
-    return caller_frame.f_globals.get("__name__") == "__main__" and "__file__" not in caller_frame.f_globals
+    return (
+        caller_frame.f_globals.get("__name__") == "__main__"
+        and "__file__" not in caller_frame.f_globals
+    )
+
 
 def block_direct_notebook_calls(func):
     def wrapper(*args, **kwargs):
         if is_called_directly_from_notebook():
-            raise RuntimeError(f"Direct calls to `{func.__name__}` are not allowed in a Jupyter Notebook.")
+            raise RuntimeError(
+                f"Direct calls to `{func.__name__}` are not allowed in a Jupyter Notebook."
+            )
         return func(*args, **kwargs)
+
     return wrapper
 
 
@@ -128,6 +133,7 @@ def log_encrypted(logger: logging.Logger, message: str) -> None:
     """
     encrypted_b64 = encrypt_to_b64(message)
     logger.info(f"Encrypted Output: {encrypted_b64}")
+
 
 @block_direct_notebook_calls
 def log_variable(assignment_name, value, info_type) -> None:
@@ -344,6 +350,9 @@ def get_all_students(user, password):
     Raises:
         requests.exceptions.HTTPError: If the HTTP request returned an unsuccessful status code.
     """
+    if not api_base_url:
+        raise ValueError("Necessary environment variables not set")
+
     res = requests.get(
         url=api_base_url.rstrip("/") + "/students",
         auth=HTTPBasicAuth(user, password),

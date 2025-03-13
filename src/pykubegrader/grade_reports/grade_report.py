@@ -1,12 +1,12 @@
 # TODO: if not due yet and score is 0, make NAN, fix the rendering
 
+import os
 from datetime import datetime
 from itertools import product
 
-import numpy as np 
+import numpy as np
 import pandas as pd
 from IPython.display import display
-import os
 
 from pykubegrader.grade_reports.assignments import (
     Assignment,
@@ -22,10 +22,10 @@ from pykubegrader.grade_reports.grading_config import (
     duplicated_scores,
     exclude_from_running_avg,
     globally_exempted_assignments,
+    grade_ranges,
     max_week,
     optional_drop_assignments,
     optional_drop_week,
-    grade_ranges
 )
 from pykubegrader.telemetry import get_assignments_submissions
 
@@ -41,13 +41,13 @@ class GradeReport:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
         """
-        
+
         self.assignments, self.student_subs = get_assignments_submissions(params=params)
         try:
             self.student_name = params.get("username", None)
-        except:
+        except Exception:
             self.student_name = os.environ.get("JUPYTERHUB_USER", None)
-        
+
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
         self.verbose = verbose
@@ -86,14 +86,17 @@ class GradeReport:
                 display(self.weighted_average_grades)
             except:  # noqa: E722
                 pass
-            
+
     def check_optional_drop_assignments(self):
         """
         Checks if the optional drop assignments are valid.
         """
         for assignment in self.graded_assignments:
             if (assignment.name, assignment.week) in self.optional_drop_assignments:
-                if self.weekly_grades_df_display.loc["Running Avg", assignment.name] > assignment.score:
+                if (
+                    self.weekly_grades_df_display.loc["Running Avg", assignment.name]
+                    > assignment.score
+                ):
                     assignment.exempted = True
 
     @staticmethod
@@ -129,7 +132,10 @@ class GradeReport:
         Updates the score of assignments that are not due yet to NaN.
         """
         for assignment in self.graded_assignments:
-            if assignment.due_date and assignment.name not in self.excluded_from_running_avg:
+            if (
+                assignment.due_date
+                and assignment.name not in self.excluded_from_running_avg
+            ):
                 # Convert due date to datetime object
                 due_date = datetime.fromisoformat(
                     assignment.due_date.replace("Z", "+00:00")
