@@ -286,24 +286,7 @@ def get_my_grades() -> pd.DataFrame:
 
     return sorted_vertical_df
 
-
-def delete_completed_assignment(assignment_title: str, notebook_title: str) -> None:
-    if not student_user or not student_pw or not api_base_url:
-        raise ValueError("Necessary environment variables not set")
-
-    url = api_base_url.rstrip("/") + "/completed-assignments"   
-    params = {
-        "assignment_title": assignment_title,
-        "notebook_title": notebook_title
-    }   
-    
-    res = requests.delete(url, params=params, auth=HTTPBasicAuth(student_user, student_pw))
-    res.raise_for_status()
-    
-    return res.json()
-    
-    
-    
+   
     
 
 #

@@ -96,3 +96,35 @@ def final_submission_payload(
     }
 
     return payload
+
+
+def delete_completed_assignment(assignment: str, assignment_type: str, token: str, week_number: int, 
+                                admin_user: str, admin_pw: str) -> None:
+    base_url = os.getenv("DB_URL")
+    if not base_url:
+        raise ValueError("Environment variable 'DB_URL' not set")
+
+    url = base_url.rstrip("/") + "/completed-assignments"
+
+    params = final_submission_payload(
+        assignment=assignment,
+        assignment_type=assignment_type,
+        token=token,
+        week_number=week_number,
+    )
+
+    env_token = os.getenv("TOKEN")
+    if env_token:
+        params["key_used"] = token
+
+    try:
+        res = requests.delete(url, params=params, auth=HTTPBasicAuth(admin_user, admin_pw))
+        res.raise_for_status()
+        return res.json()
+
+    except requests.RequestException as err:
+        raise RuntimeError(f"An error occurred while requesting {url}: {err}")
+    except Exception as err:
+        raise RuntimeError(f"An unexpected error occurred: {err}")    
+    
+ 
