@@ -76,6 +76,7 @@ class GradeReport:
         self._build_running_avg()
         self.check_optional_drop_assignments()
         self.calculate_grades()
+        self.duplicate_scores()
         self.update_weekly_table()
         self._build_running_avg()
         self._calculate_final_average()
