@@ -98,8 +98,11 @@ def final_submission_payload(
     return payload
 
 
-def delete_completed_assignment(assignment: str, assignment_type: str, token: str, week_number: int, 
-                                admin_user: str, admin_pw: str) -> None:
+def delete_completed_assignment(assignment: str, 
+                                assignment_type: str, 
+                                token: str, week_number: int, 
+                                admin_user: str, 
+                                admin_pw: str) -> None:
     base_url = os.getenv("DB_URL")
     if not base_url:
         raise ValueError("Environment variable 'DB_URL' not set")
