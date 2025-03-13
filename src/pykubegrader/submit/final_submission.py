@@ -115,7 +115,7 @@ def delete_completed_assignment(assignment: str,
         token=token,
         week_number=week_number,
     )
-
+    
     env_token = os.getenv("TOKEN")
     if env_token:
         params["key_used"] = token
