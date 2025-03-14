@@ -81,6 +81,7 @@ class NotebookProcessor:
                 self.assignment_type = assignment.get("assignment_type")
                 self.bonus_points = assignment.get("bonus_points", 0)
                 self.require_key = assignment.get("require_key", False)
+                self.final_submission = assignment.get("final_submission", False)
                 self.assignment_tag = assignment.get(
                     "assignment_tag",
                     f"week{assignment.get('week')}-{self.assignment_type}",
@@ -525,6 +526,7 @@ class NotebookProcessor:
 
         student_file_path = os.path.join(self.root_folder, notebook_name + ".ipynb")
         self.add_submission_cells(student_file_path, student_file_path)
+        self.add_final_submission_cells(student_file_path, student_file_path)
         NotebookProcessor.remove_empty_cells(student_file_path)
 
     @staticmethod
@@ -592,6 +594,47 @@ class NotebookProcessor:
                 "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
                 f'submit_assignment("{self.assignment_tag}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
             )
+
+        # Make the code cell non-editable and non-deletable
+        code_cell.metadata = {"editable": True, "deletable": False}
+        code_cell.metadata["tags"] = ["skip-execution"]
+
+        # Add the cells to the notebook
+        notebook.cells.append(markdown_cell)
+        notebook.cells.append(code_cell)
+
+        # Save the modified notebook
+        with open(output_path, "w", encoding="utf-8") as f:
+            nbformat.write(notebook, f)
+            
+    def add_final_submission_cells(self, notebook_path: str, output_path: str) -> None:
+        """
+        Adds final submission cells to the end of a Jupyter notebook.
+
+        Args:
+            notebook_path (str): Path to the input notebook.
+            output_path (str): Path to save the modified notebook.
+        """
+        # If the assignment is not a final submission, do not add the cells
+        if not self.final_submission:
+            return
+
+        # Load the notebook
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            notebook = nbformat.read(f, as_version=4)
+
+        # Define the Markdown cell
+        markdown_cell = nbformat.v4.new_markdown_cell(
+            "## Submitting Final Assignment\n\n"
+            "Please run this cell with the provided token to identify your submission as final. Once your submission is final, you will not be able to make any changes to your assignment. "
+        )
+
+
+        # Define the Code cell
+        code_cell = nbformat.v4.new_code_cell(
+            "from pykubegrader.submit.final_submission import final_submission\n\n"
+            f"final_submission(assignment='{self.assignment_tag}', assignment_type={self.assignment_type}, token='replace your token here', week_number = {self.week_number})"
+        )
 
         # Make the code cell non-editable and non-deletable
         code_cell.metadata = {"editable": True, "deletable": False}

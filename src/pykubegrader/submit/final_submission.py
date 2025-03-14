@@ -6,7 +6,7 @@ from requests.auth import HTTPBasicAuth
 from ..submit.submit_assignment import get_credentials
 
 
-def mark_student_complete(
+def final_submission(
     assignment: str, assignment_type: str, token: str, week_number=None
 ) -> None:
     """
@@ -44,37 +44,6 @@ def mark_student_complete(
         raise RuntimeError(f"An error occurred while requesting {url}: {err}")
     except Exception as err:
         raise RuntimeError(f"An unexpected error occurred: {err}")
-
-
-# def add_final_submission(assignment: str, assignment_type: str, token: str, week_number = None) -> None:
-#     """
-#     Sends a POST request to mint a token
-#     """
-
-#     if not api_base_url:
-#         raise ValueError("Environment variable for API URL not set")
-#     url = api_base_url.rstrip("/") + "/students/completed-assignments"
-
-#     payload = final_submission_payload(assignment=assignment,
-#                                        assignment_type=assignment_type,
-#                                        token=token,
-#                                        week_number=week_number)
-
-#     # Dummy credentials for HTTP Basic Auth
-#     auth = HTTPBasicAuth("user", "password")
-
-#     # Add a custom header, for potential use in authorization
-#     headers = {"x-jhub-user": payload["requester"]}
-
-#     response = requests.post(url=url, json=payload, headers=headers, auth=auth)
-
-#     # Print response
-#     print(f"Status code: {response.status_code}")
-
-#     try:
-#         print(f"Response: {response.json()}")
-#     except ValueError:
-#         print(f"Response: {response.text}")
 
 
 def final_submission_payload(
