@@ -1,0 +1,27 @@
+instance:
+  admin_users: ["dak329", "jca92", "tb3367", "xz498"]
+  oauth_callback_url: https://engr-131-jhub.eastus.cloudapp.azure.com/hub/oauth_callback
+  globus:
+    client_id: "your-client-id"
+    client_secret: "your-client-secret"
+
+  hosts:
+    - "engr-131-jhub.eastus.cloudapp.azure.com"
+
+  azure_dns_label: "engr-131-jhub"
+  letsencrypt_email: "theo.beers@drexel.edu"
+
+  tolerations:
+    - key: "kubernetes.azure.com/scalesetpriority"
+      operator: "Equal"
+      value: "spot"
+      effect: "NoSchedule"
+
+  singleuser_image:
+    name: katomyomachia/engr-131-jhub
+    tag: latest
+
+  extra_env:
+    user_name_student: "student"
+    keys_student: "capture"
+    DB_URL: "https://engr-131-api.eastus.cloudapp.azure.com/"

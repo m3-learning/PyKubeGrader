@@ -1,0 +1,41 @@
+hub:
+  config:
+    JupyterHub:
+      authenticator_class: "oauthenticator.globus.GlobusOAuthenticator"
+    Authenticator:
+      allow_all: true
+      admin_users: {{ .Values.instance.admin_users }}
+    GlobusOAuthenticator:
+      oauth_callback_url: {{ .Values.instance.oauth_callback_url }}
+      client_id: {{ .Values.instance.globus.client_id }}
+      client_secret: {{ .Values.instance.globus.client_secret }}
+
+ingress:
+  enabled: true
+  hosts: {{ .Values.instance.hosts }}
+  tls:
+    - hosts: {{ .Values.instance.hosts }}
+
+proxy:
+  service:
+    annotations:
+      service.beta.kubernetes.io/azure-dns-label-name: {{ .Values.instance.azure_dns_label }}
+  https:
+    enabled: true
+    hosts: {{ .Values.instance.hosts }}
+    letsencrypt:
+      contactEmail: {{ .Values.instance.letsencrypt_email }}
+
+scheduling:
+  userPods:
+    tolerations: {{ .Values.instance.tolerations }}
+
+singleuser:
+  image:
+    name: {{ .Values.instance.singleuser_image.name }}
+    tag: {{ .Values.instance.singleuser_image.tag }}
+  networkPolicy:
+    egressAllowRules:
+      privateIPs: true
+  extraEnv: {{ .Values.instance.extra_env }}
+  extraTolerations: {{ .Values.instance.tolerations }}

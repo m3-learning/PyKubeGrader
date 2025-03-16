@@ -1,0 +1,27 @@
+instance:
+  admin_users: ["abc123"] # list of admin users
+  oauth_callback_url: https://example.com/hub/oauth_callback # url to redirect to after login
+  globus:
+    client_id: {{ .Values.secrets.globus.client_id }} # client id for globus auth, should be stored in a secret
+    client_secret: {{ .Values.secrets.globus.client_secret }} # client secret for globus auth, should be stored in a secret
+
+  hosts:
+    - "abc123.azure.com" # list of hosts to use for the jupyterhub
+
+  azure_dns_label: "abc123" # label for the azure dns
+  letsencrypt_email: "abc123@example.com" # email for letsencrypt
+
+  tolerations: # tolerations for scheduling user pods
+    - key: "kubernetes.azure.com/scalesetpriority" # key for the toleration
+      operator: "Equal" # operator for the toleration
+      value: "spot" # value for the toleration
+      effect: "NoSchedule" # effect of the toleration
+
+  singleuser_image:
+    name: abc123/jhub # name of the image to use for the jupyterhub
+    tag: latest # tag of the image to use for the jupyterhub
+
+  extra_env:
+    user_name_student: {{ .Values.secrets.user_name_student }} # name of the student use, this is used to identify the student user in the database
+    keys_student: {{ .Values.secrets.keys_student }} # keys for the student user, this is used to identify the student user in the database
+    DB_URL: "https://abc123.azure.com/" # url of the database, this is used to identify the database in the database
