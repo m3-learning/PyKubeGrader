@@ -6,10 +6,7 @@ instance:
     client_secret: "your-client-secret"
 
   hosts:
-    - "engr-131-jhub.eastus.cloudapp.azure.com"
-
-  azure_dns_label: "engr-131-jhub"
-  letsencrypt_email: "theo.beers@drexel.edu"
+    - "engr-131-jhub"
 
   tolerations:
     - key: "kubernetes.azure.com/scalesetpriority"

@@ -1,15 +1,12 @@
 instance:
   admin_users: ["abc123"] # list of admin users
-  oauth_callback_url: https://example.com/hub/oauth_callback # url to redirect to after login
+  oauth_callback_url: "https://example.com/hub/oauth_callback" # url to redirect to after login
   globus:
-    client_id: {{ .Values.secrets.globus.client_id }} # client id for globus auth, should be stored in a secret
-    client_secret: {{ .Values.secrets.globus.client_secret }} # client secret for globus auth, should be stored in a secret
+    client_id: "{{ .Values.secrets.globus.client_id }}" # client id for globus auth, should be stored in a secret
+    client_secret: "{{ .Values.secrets.globus.client_secret }}" # client secret for globus auth, should be stored in a secret
 
   hosts:
-    - "abc123.azure.com" # list of hosts to use for the jupyterhub
-
-  azure_dns_label: "abc123" # label for the azure dns
-  letsencrypt_email: "abc123@example.com" # email for letsencrypt
+    - "abc123" # list of hosts to use for the jupyterhub
 
   tolerations: # tolerations for scheduling user pods
     - key: "kubernetes.azure.com/scalesetpriority" # key for the toleration
@@ -18,10 +15,90 @@ instance:
       effect: "NoSchedule" # effect of the toleration
 
   singleuser_image:
-    name: abc123/jhub # name of the image to use for the jupyterhub
-    tag: latest # tag of the image to use for the jupyterhub
+    name: "abc123/jhub" # name of the image to use for the jupyterhub
+    tag: "latest" # tag of the image to use for the jupyterhub
 
   extra_env:
-    user_name_student: {{ .Values.secrets.user_name_student }} # name of the student use, this is used to identify the student user in the database
-    keys_student: {{ .Values.secrets.keys_student }} # keys for the student user, this is used to identify the student user in the database
+    user_name_student: "{{ .Values.secrets.user_name_student }}" # name of the student use, this is used to identify the student user in the database
+    keys_student: "{{ .Values.secrets.keys_student }}" # keys for the student user, this is used to identify the student user in the database
     DB_URL: "https://abc123.azure.com/" # url of the database, this is used to identify the database in the database
+
+  service:
+    type: ClusterIP
+    annotations: {}
+    ports:
+      nodePort: null
+    loadBalancerIP: null
+  deploymentStrategy:
+    type: Recreate
+  db:
+    type: sqlite-pvc
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+      storage: 1Gi
+      storageClassName: rook-ceph-block
+  resources:
+    limits:
+      cpu: "2"
+      memory: "1Gi"
+    requests:
+      cpu: "100m"
+      memory: "512Mi"
+  networkPolicy:
+    enabled: false
+proxy:
+  secretToken: "secret_token"
+  service:
+    type: ClusterIP
+  chp:
+    resources:
+      limits:
+        cpu: "6"
+        memory: "10Gi"
+      requests:
+        cpu: "1"
+        memory: "512Mi"
+singleuser:
+  uid: 0
+  fsGid: 100
+  extraEnv:
+    GRANT_SUDO: "yes"
+  extraPodConfig:
+    securityContext:
+        fsGroupChangePolicy: "OnRootMismatch"
+        fsGroup: 100
+  extraNodeAffinity:
+    required:
+      - matchExpressions:
+        - key: "topology.kubernetes.io/region"
+          operator: "In"
+          values: ["us-west"]
+  cloudMetadata:
+    blockWithIptables: false
+  networkPolicy:
+    enabled: false
+  storage:
+    type: dynamic
+    extraLabels: {}
+    extraVolumes: []
+    extraVolumeMounts: []
+    capacity: "5Gi"
+    homeMountPath: "/home/jovyan"
+    dynamic:
+      storageClass: "rook-ceph-block"
+      pvcNameTemplate: "claim-{username}{servername}"
+      volumeNameTemplate: "volume-{username}{servername}"
+      storageAccessModes: ["ReadWriteOnce"]
+  startTimeout: 600
+  cpu:
+    limit: 3
+    guarantee: 3
+  memory:
+    limit: "10G"
+    guarantee: "10G"
+  extraResource:
+    limits: {}
+    guarantees: {}
+  cmd: null
+  defaultUrl: "/lab"

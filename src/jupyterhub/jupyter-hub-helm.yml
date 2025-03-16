@@ -9,12 +9,98 @@ hub:
       oauth_callback_url: {{ .Values.instance.oauth_callback_url }}
       client_id: {{ .Values.instance.globus.client_id }}
       client_secret: {{ .Values.instance.globus.client_secret }}
+  service:
+    type: ClusterIP
+    annotations: {}
+    ports:
+      nodePort: {{ .Values.service.nodePort }}
+    loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  deploymentStrategy:
+    type: Recreate
+  db:
+    type: sqlite-pvc
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+      storage: {{ .Values.db.storage }}
+      storageClassName: {{ .Values.db.storageClassName }}
+  resources:
+    limits:
+      cpu: {{ .Values.resources.limits.cpu }}
+      memory: {{ .Values.resources.limits.memory }}
+    requests:
+      cpu: {{ .Values.resources.requests.cpu }}
+      memory: {{ .Values.resources.requests.memory }}
+  networkPolicy:
+    enabled: {{ .Values.networkPolicy.enabled }}
+proxy:
+  secretToken: {{ .Values.proxy.secretToken }}
+  service:
+    type: ClusterIP
+  chp:
+    resources:
+      limits:
+        cpu: {{ .Values.proxy.chp.resources.limits.cpu }}
+        memory: {{ .Values.proxy.chp.resources.limits.memory }}
+      requests:
+        cpu: {{ .Values.proxy.chp.resources.requests.cpu }}
+        memory: {{ .Values.proxy.chp.resources.requests.memory }}
+singleuser:
+  uid: {{ .Values.singleuser.uid }}
+  fsGid: {{ .Values.singleuser.fsGid }}
+  extraEnv:
+    GRANT_SUDO: {{ .Values.singleuser.extraEnv.GRANT_SUDO }}
+  extraPodConfig:
+    securityContext:
+        fsGroupChangePolicy: {{ .Values.singleuser.extraPodConfig.securityContext.fsGroupChangePolicy }}
+        fsGroup: {{ .Values.singleuser.extraPodConfig.securityContext.fsGroup }}
+  extraNodeAffinity:
+    required:
+      - matchExpressions:
+        - 'key': 'topology.kubernetes.io/region'
+          'operator': 'In'
+          'values': {{ .Values.singleuser.extraNodeAffinity.required[0].matchExpressions[0].values }}
+  cloudMetadata:
+    blockWithIptables: {{ .Values.singleuser.cloudMetadata.blockWithIptables }}
+  networkPolicy:
+    enabled: {{ .Values.singleuser.networkPolicy.enabled }}
+  storage:
+    type: dynamic
+    extraLabels: {}
+    extraVolumes: []
+    extraVolumeMounts: []
+    capacity: {{ .Values.singleuser.storage.capacity }}
+    homeMountPath: {{ .Values.singleuser.storage.homeMountPath }}
+    dynamic:
+      storageClass: {{ .Values.singleuser.storage.dynamic.storageClass }}
+      pvcNameTemplate: {{ .Values.singleuser.storage.dynamic.pvcNameTemplate }}
+      volumeNameTemplate: {{ .Values.singleuser.storage.dynamic.volumeNameTemplate }}
+      storageAccessModes: {{ .Values.singleuser.storage.dynamic.storageAccessModes }}
+  image:
+    name: {{ .Values.singleuser.image.name }}
+    tag: {{ .Values.singleuser.image.tag }}
+  startTimeout: {{ .Values.singleuser.startTimeout }}
+  cpu:
+    limit: {{ .Values.singleuser.cpu.limit }}
+    guarantee: {{ .Values.singleuser.cpu.guarantee }}
+  memory:
+    limit: {{ .Values.singleuser.memory.limit }}
+    guarantee: {{ .Values.singleuser.memory.guarantee }}
+  extraResource:
+    limits: {{ .Values.singleuser.extraResource.limits }}
+    guarantees: {{ .Values.singleuser.extraResource.guarantees }}
+  cmd: {{ .Values.singleuser.cmd }}
+  defaultUrl: {{ .Values.singleuser.defaultUrl }}
 
 ingress:
   enabled: true
-  hosts: {{ .Values.instance.hosts }}
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+  hosts: ["{{.Values.instance.hosts}}.nrp-nautilus.io"]
+  pathSuffix: ''
   tls:
-    - hosts: {{ .Values.instance.hosts }}
+    - hosts:
+      - {{.Values.instance.hosts}}.nrp-nautilus.io
 
 proxy:
   service:
@@ -27,8 +113,15 @@ proxy:
       contactEmail: {{ .Values.instance.letsencrypt_email }}
 
 scheduling:
-  userPods:
-    tolerations: {{ .Values.instance.tolerations }}
+  userScheduler:
+    enabled: false
+  userPlaceholder:
+    enabled: false
+prePuller:
+  hook:
+    enabled: false
+  continuous:
+    enabled: false
 
 singleuser:
   image:
@@ -39,3 +132,12 @@ singleuser:
       privateIPs: true
   extraEnv: {{ .Values.instance.extra_env }}
   extraTolerations: {{ .Values.instance.tolerations }}
+
+  cull:
+    enabled: {{ .Values.instance.cull.enabled }}
+    users: {{ .Values.instance.cull.users }}
+    removeNamedServers: {{ .Values.instance.cull.removeNamedServers }}
+    timeout: {{ .Values.instance.cull.timeout }}
+    every: {{ .Values.instance.cull.every }}
+    concurrency: {{ .Values.instance.cull.concurrency }}
+    maxAge: {{ .Values.instance.cull.maxAge }}
