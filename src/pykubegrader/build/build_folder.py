@@ -633,7 +633,7 @@ class NotebookProcessor:
         # Define the Code cell
         code_cell = nbformat.v4.new_code_cell(
             "from pykubegrader.submit.final_submission import final_submission\n\n"
-            f"final_submission(assignment='{self.assignment_tag}', assignment_type={self.assignment_type}, token='replace your token here', week_number = {self.week_number})"
+            f"final_submission(assignment='{self.assignment_tag}', assignment_type='{self.assignment_type}', token='replace your token here', week_number = {self.week_num})"
         )
 
         # Make the code cell non-editable and non-deletable
