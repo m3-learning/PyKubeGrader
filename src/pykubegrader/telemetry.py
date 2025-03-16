@@ -18,8 +18,16 @@ from requests.exceptions import RequestException
 
 from pykubegrader.utils import api_base_url, student_pw, student_user
 
-
+#TODO: refactor this to other function
 def is_called_directly_from_notebook():
+    """
+    Checks if the current code is being executed directly from a Jupyter Notebook.
+
+    Returns:
+        bool: True if the code is being executed from a Jupyter Notebook, False otherwise.
+    """
+    
+    # Check if the code is being executed from a Jupyter Notebook
     try:
         from IPython.core.getipython import get_ipython
 
@@ -29,6 +37,7 @@ def is_called_directly_from_notebook():
     except Exception:
         return False
 
+    # Get the stack trace
     stack = inspect.stack()
 
     # Detect Otter Grader (heuristics)
@@ -38,6 +47,7 @@ def is_called_directly_from_notebook():
         if "__otter__" in frame_info.frame.f_globals:
             return False
 
+    # Check if Otter Grader is running, if so, allow the call
     if os.environ.get("OTTER_GRADER_RUNNING") == "1":
         return False
 
@@ -53,11 +63,22 @@ def is_called_directly_from_notebook():
 
 
 def block_direct_notebook_calls(func):
+    """
+    Decorator to block direct calls to functions from Jupyter Notebooks.
+
+    This decorator checks if the current code is being executed directly from a Jupyter Notebook
+    and raises an error if it is. This is useful to prevent accidental execution of grading functions
+    from within the notebook environment.
+    """
+    # Define the wrapper function
     def wrapper(*args, **kwargs):
+        # Check if the code is being executed from a Jupyter Notebook
         if is_called_directly_from_notebook():
+            # Raise an error if the code is being executed from a Jupyter Notebook
             raise RuntimeError(
                 f"Direct calls to `{func.__name__}` are not allowed in a Jupyter Notebook."
             )
+        # Call the original function
         return func(*args, **kwargs)
 
     return wrapper
@@ -89,18 +110,40 @@ logger_reduced.addHandler(file_handler_reduced)
 
 
 def encrypt_to_b64(message: str) -> str:
+    """
+    Encrypts a message using the server's public key and the client's private key.
+
+    Args:
+        message (str): The message to be encrypted.
+
+    Returns:
+        str: The encrypted message in base64 encoding.
+    """
+    
+    # Read the server's public key
     with open(".server_public_key.bin", "rb") as f:
         server_pub_key_bytes = f.read()
+        
+    # Convert the server's public key to a public key object
     server_pub_key = nacl.public.PublicKey(server_pub_key_bytes)
 
+    # Read the client's private key
     with open(".client_private_key.bin", "rb") as f:
         client_private_key_bytes = f.read()
+        
+    # Convert the client's private key to a private key object
     client_priv_key = nacl.public.PrivateKey(client_private_key_bytes)
-
+    
+    # Create a box object using the client's private key and the server's public key
     box = nacl.public.Box(client_priv_key, server_pub_key)
+    
+    # Encrypt the message
     encrypted = box.encrypt(message.encode())
+    
+    # Encode the encrypted message to base64
     encrypted_b64 = base64.b64encode(encrypted).decode("utf-8")
-
+    
+    # Return the encrypted message in base64 encoding
     return encrypted_b64
 
 
