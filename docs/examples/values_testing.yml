@@ -1,24 +1,156 @@
-instance:
-  admin_users: ["dak329", "jca92", "tb3367", "xz498"]
-  oauth_callback_url: https://engr-131-jhub.eastus.cloudapp.azure.com/hub/oauth_callback
-  globus:
-    client_id: "your-client-id"
-    client_secret: "your-client-secret"
+###### JupyterHub Config ######
 
-  hosts:
-    - "engr-131-jhub"
+hub:
+  config:
+    JupyterHub:
+      authenticator_class: "oauthenticator.globus.GlobusOAuthenticator"
+    Authenticator:
+      allow_all: true
+      admin_users:
+        - jca92
+    GlobusOAuthenticator:
+      oauth_callback_url: "https://engr-131-jhub.eastus.cloudapp.azure.com/hub/oauth_callback"
+      client_id: "YOUR-GLOBUS-CLIENT-ID"
+      client_secret: "YOUR-GLOBUS-CLIENT-SECRET"
+  service:
+    type: ClusterIP
+    annotations: {}
+    ports:
+      nodePort: 30036
+    loadBalancerIP: ""
+  deploymentStrategy:
+    type: Recreate
+  db:
+    type: sqlite-pvc
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+      storage: 10Gi
+      storageClassName: default
+  resources:
+    limits:
+      cpu: "1"
+      memory: 2Gi
+    requests:
+      cpu: "0.5"
+      memory: 1Gi
+  networkPolicy:
+    enabled: true
 
-  tolerations:
+###### Proxy Config ######
+
+proxy:
+  secretToken: "REPLACE_WITH_SECURE_RANDOM_TOKEN"
+  service:
+    type: ClusterIP
+    annotations:
+      service.beta.kubernetes.io/azure-dns-label-name: engr-131-jhub
+  chp:
+    resources:
+      limits:
+        cpu: "1"
+        memory: 512Mi
+      requests:
+        cpu: "0.5"
+        memory: 256Mi
+  https:
+    enabled: true
+    hosts:
+      - engr-131-jhub.eastus.cloudapp.azure.com
+    letsencrypt:
+      contactEmail: theo.beers@drexel.edu
+
+###### Singleuser Config #####  
+singleuser:
+  uid: 1000
+  fsGid: 100
+  extraEnv:
+    GRANT_SUDO: "no"
+  extraPodConfig:
+    securityContext:
+      fsGroupChangePolicy: "OnRootMismatch"
+      fsGroup: 100
+  extraNodeAffinity:
+    required:
+      - matchExpressions:
+          - key: 'topology.kubernetes.io/region'
+            operator: 'In'
+            values:
+              - eastus
+  cloudMetadata:
+    blockWithIptables: true
+  networkPolicy:
+    enabled: true
+    egressAllowRules:
+      privateIPs: true
+  storage:
+    type: dynamic
+    extraLabels: {}
+    extraVolumes: []
+    extraVolumeMounts: []
+    capacity: 10Gi
+    homeMountPath: /home/jovyan
+    dynamic:
+      storageClass: default
+      pvcNameTemplate: claim-{username}
+      volumeNameTemplate: volume-{username}
+      storageAccessModes:
+        - ReadWriteOnce
+  image:
+    name: katomyomachia/engr-131-jhub
+    tag: latest
+  startTimeout: 60
+  cpu:
+    limit: 1
+    guarantee: 0.5
+  memory:
+    limit: 2Gi
+    guarantee: 1Gi
+  extraResource:
+    limits: {}
+    guarantees: {}
+  cmd: null
+  defaultUrl: "/lab"
+  extraTolerations:
     - key: "kubernetes.azure.com/scalesetpriority"
       operator: "Equal"
       value: "spot"
       effect: "NoSchedule"
 
-  singleuser_image:
-    name: katomyomachia/engr-131-jhub
-    tag: latest
+###### Cull Config ######
+  cull:
+    enabled: true
+    users: false
+    removeNamedServers: true
+    timeout: 3600
+    every: 600
+    concurrency: 10
+    maxAge: 0
 
-  extra_env:
-    user_name_student: "student"
-    keys_student: "capture"
-    DB_URL: "https://engr-131-api.eastus.cloudapp.azure.com/"
+###### JupyterHub Ingress Config ######
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+  hosts:
+    - "engr-131-jhub.eastus.cloudapp.azure.com.nrp-nautilus.io"
+  pathSuffix: ''
+  tls:
+    - hosts:
+        - "engr-131-jhub.eastus.cloudapp.azure.com.nrp-nautilus.io"
+
+###### JupyterHub Scheduling Config ######
+
+scheduling:
+  userScheduler:
+    enabled: false
+  userPlaceholder:
+    enabled: false
+
+###### JupyterHub PrePuller Config ######
+prePuller:
+  hook:
+    enabled: false
+  continuous:
+    enabled: false
