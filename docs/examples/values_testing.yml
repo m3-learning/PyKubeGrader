@@ -1,3 +1,5 @@
+domain-base-name: "pykubegrader"
+
 ###### JupyterHub Config ######
 
 hub:
@@ -9,7 +11,7 @@ hub:
       admin_users:
         - jca92
     GlobusOAuthenticator:
-      oauth_callback_url: "https://engr-131-jhub.eastus.cloudapp.azure.com/hub/oauth_callback"
+      oauth_callback_url: "https://{{domain-base-name}}.eastus.cloudapp.azure.com/hub/oauth_callback"
       client_id: "YOUR-GLOBUS-CLIENT-ID"
       client_secret: "YOUR-GLOBUS-CLIENT-SECRET"
   service:
@@ -44,7 +46,7 @@ proxy:
   service:
     type: ClusterIP
     annotations:
-      service.beta.kubernetes.io/azure-dns-label-name: engr-131-jhub
+      service.beta.kubernetes.io/azure-dns-label-name: {{domain-base-name}}
   chp:
     resources:
       limits:
@@ -56,9 +58,9 @@ proxy:
   https:
     enabled: true
     hosts:
-      - engr-131-jhub.eastus.cloudapp.azure.com
-    letsencrypt:
-      contactEmail: theo.beers@drexel.edu
+      - {{domain-base-name}}.eastus.cloudapp.azure.com
+    # letsencrypt:
+    #   contactEmail: theo.beers@drexel.edu
 
 ###### Singleuser Config #####  
 singleuser:
@@ -134,11 +136,11 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: haproxy
   hosts:
-    - "engr-131-jhub.eastus.cloudapp.azure.com.nrp-nautilus.io"
+    - "{{domain-base-name}}.nrp-nautilus.io"
   pathSuffix: ''
   tls:
     - hosts:
-        - "engr-131-jhub.eastus.cloudapp.azure.com.nrp-nautilus.io"
+        - "{{domain-base-name}}.nrp-nautilus.io"
 
 ###### JupyterHub Scheduling Config ######
 
