@@ -59,6 +59,7 @@ aliases = {
         "practice_quiz",
         "practicequiz",
     ],
+    "final": ["finalexam"],
     "labattendance": ["labattendance", "attendance", "attend"],
 }
 
