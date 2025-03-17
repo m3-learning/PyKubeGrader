@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 name: jupyterhub-custom
 description: Wrapper around jupyterhub/jupyterhub chart
 version: 0.1.0

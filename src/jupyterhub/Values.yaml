@@ -1,8 +1,0 @@
-JHUB:
-  subdomain_name: "testing-agar-jhub"
-  domain_name: "nrp-nautilus.io"
-  admin_users: ["jca92"]
-  globus:
-    client_id: "3d282aef-5ee7-40c9-88f0-c89cb5582e41"
-    client_secret: "3d282aef-5ee7-40c9-88f0-c89cb5582e41@clients.auth.globus.org"
-  image_spec: quay.io/jupyter/scipy-notebook:2024-04-22

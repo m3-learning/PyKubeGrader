@@ -1,0 +1,9 @@
+JHUB:
+  cilogon:
+    subdomain_name: "engr131"
+    domain_name: "nrp-nautilus.io"
+    client_id: cilogon:/client_id/37fc855bffdeb424d5eac406c9de554a
+    client_secret: Hoii2pOlVra6D7Ggy-gGu8mo7rlLA-6lwQ8QMjxojmagVTtkmF5ns3dBk0had7qOobJVCmE4AXijHcqwYWrF6w
+  jupyterhub:
+    admin_users: ["jca92@drexel.edu"]
+    image_spec: quay.io/jupyter/scipy-notebook:2024-04-22
