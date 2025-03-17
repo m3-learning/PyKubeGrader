@@ -1,8 +1,7 @@
-.nrp.nautilius.io/hub/oauth_callback
-
-subdomain-name: "testing-agar-jhub"
-domain-name: nrp-nautilius.io
-client_id: "3d282aef-5ee7-40c9-88f0-c89cb5582e41"
+Values:
+  subdomain-name: "testing-agar-jhub"
+  domain-name: nrp-nautilius.io
+  client_id: "3d282aef-5ee7-40c9-88f0-c89cb5582e41"
 client_secret: "3d282aef-5ee7-40c9-88f0-c89cb5582e41@clients.auth.globus.org"
 secret_token: "abcdefghijklmnopqrstuvwxyz"
 
@@ -18,8 +17,8 @@ hub:
         - jca92
     GlobusOAuthenticator:
       oauth_callback_url: "https://{{subdomain-name}}.{{domain-name}}/hub/oauth_callback"
-      client_id: "{{client_id}}"
-      client_secret: "{{client_secret}}"
+      client_id: "{{Values.client_id}}"
+      client_secret: "{{Values.client_secret}}"
   service:
     type: ClusterIP
     annotations: {}
@@ -48,11 +47,11 @@ hub:
 ###### Proxy Config ######
 
 proxy:
-  secretToken: "{{secret_token}}"
+  secretToken: "{{Values.secret_token}}"
   service:
     type: ClusterIP
     annotations:
-      service.beta.kubernetes.io/azure-dns-label-name: {{subdomain-name}}
+      service.beta.kubernetes.io/azure-dns-label-name: {{Values.subdomain-name}}
   chp:
     resources:
       limits:
@@ -64,9 +63,7 @@ proxy:
   https:
     enabled: true
     hosts:
-      - {{subdomain-name}}.{{domain-name}}
-    # letsencrypt:
-    #   contactEmail: theo.beers@drexel.edu
+      - "{{Values.subdomain-name}}.{{Values.domain-name}}"
 
 ###### Singleuser Config #####  
 singleuser:
@@ -142,11 +139,11 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: haproxy
   hosts:
-    - "{{subdomain-name}}.{{domain-name}}"
+    - "{{Values.subdomain-name}}.{{Values.domain-name}}"
   pathSuffix: ''
   tls:
     - hosts:
-        - "{{subdomain-name}}.{{domain-name}}"
+        - "{{Values.subdomain-name}}.{{Values.domain-name}}"
 
 ###### JupyterHub Scheduling Config ######
 
