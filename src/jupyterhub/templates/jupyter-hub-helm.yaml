@@ -1,14 +1,15 @@
+apiVersion: v1
 hub:
   config:
     JupyterHub:
       authenticator_class: "oauthenticator.globus.GlobusOAuthenticator"
     Authenticator:
       allow_all: true
-      admin_users: {{ .Values.instance.admin_users }}
+      admin_users: ["jca92"]
     GlobusOAuthenticator:
-      oauth_callback_url: "https://{{.Values.JHUB.subdomain-name}}.{{.Values.JHUB.domain-name}}/hub/oauth_callback"
-      client_id: {{ .Values.JHUB.globus.client_id }}
-      client_secret: {{ .Values.JHUB.globus.client_secret }}
+      oauth_callback_url: "https://{{.Values.JHUB.subdomain_name}}.{{.Values.JHUB.domain_name}}/hub/oauth_callback"
+      client_id: {{.Values.JHUB.globus.client_id}}
+      client_secret: {{ .Values.JHUB.globus.client_secret}}
   service:
     type: ClusterIP
     annotations: {}
@@ -34,7 +35,7 @@ hub:
   networkPolicy:
     enabled: false
 proxy:
-  secretToken: 'secret_token'
+  secretToken: "secret_token"
   service:
     type: ClusterIP
   chp:
@@ -52,14 +53,14 @@ singleuser:
     GRANT_SUDO: "yes"
   extraPodConfig:
     securityContext:
-        fsGroupChangePolicy: "OnRootMismatch"
-        fsGroup: 100
+      fsGroupChangePolicy: "OnRootMismatch"
+      fsGroup: 100
   extraNodeAffinity:
     required:
       - matchExpressions:
-        - 'key': 'topology.kubernetes.io/region'
-          'operator': 'In'
-          'values': ["us-west"]
+          - "key": "topology.kubernetes.io/region"
+            "operator": "In"
+            "values": ["us-west"]
   cloudMetadata:
     blockWithIptables: false
   networkPolicy:
@@ -92,10 +93,10 @@ singleuser:
   cmd: null
   defaultUrl: "/lab"
   profileList:
-  - display_name: Course
-    kubespawner_override:
-      image_spec: {{.Values.image_spec}}
-    default: True
+    - display_name: Course
+      kubespawner_override:
+        image_spec: {{ .Values.image_spec }}
+      default: True
 
 scheduling:
   userScheduler:
@@ -114,11 +115,11 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: haproxy
-  hosts: ["{{.Values.JHUB.subdomain-name}}.{{.Values.JHUB.domain-name}}"]
-  pathSuffix: ''
+  hosts: ["{{.Values.JHUB.subdomain_name}}.{{.Values.JHUB.domain_name}}"]
+  pathSuffix: ""
   tls:
     - hosts:
-      - "{{.Values.JHUB.subdomain-name}}.{{.Values.JHUB.domain-name}}"
+        - "{{.Values.JHUB.subdomain_name}}.{{.Values.JHUB.domain_name}}"
 
 cull:
   enabled: true
