@@ -1,9 +1,19 @@
 Values:
+  
+  client_id: 
+client_secret: 
+secret_token: "abcdefghijklmnopqrstuvwxyz"
+
+JHUB:
   subdomain-name: "testing-agar-jhub"
   domain-name: nrp-nautilius.io
-  client_id: "3d282aef-5ee7-40c9-88f0-c89cb5582e41"
-client_secret: "3d282aef-5ee7-40c9-88f0-c89cb5582e41@clients.auth.globus.org"
-secret_token: "abcdefghijklmnopqrstuvwxyz"
+  admin_users:
+    - jca92
+  oauth_callback_url: https://your_name.nrp-nautilus.io/hub/oauth_callback
+  globus:
+    client_id: "3d282aef-5ee7-40c9-88f0-c89cb5582e41"
+    client_secret: "3d282aef-5ee7-40c9-88f0-c89cb5582e41@clients.auth.globus.org"
+  image_spec: quay.io/jupyter/scipy-notebook:2024-04-22
 
 ###### JupyterHub Config ######
 
@@ -16,7 +26,7 @@ hub:
       admin_users:
         - jca92
     GlobusOAuthenticator:
-      oauth_callback_url: "https://{{subdomain-name}}.{{domain-name}}/hub/oauth_callback"
+      oauth_callback_url: 
       client_id: "{{Values.client_id}}"
       client_secret: "{{Values.client_secret}}"
   service:

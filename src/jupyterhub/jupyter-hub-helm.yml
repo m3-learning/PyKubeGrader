@@ -1,22 +1,14 @@
 hub:
   config:
-    CILogonOAuthenticator:
-      client_id: <OIDC client>
-      client_secret: <OIDC secret>
-      oauth_callback_url: https://your_name.nrp-nautilus.io/hub/oauth_callback
-      admin_users:
-      - admin_email@domain.com
-      # IDP Lookup: https://cilogon.org/idplist/
-      allowed_idps:
-        https://shib.unl.edu/idp/shibboleth:
-          allowed_domains:
-          - yourdomain.edu
-          username_derivation:
-            username_claim: email
     JupyterHub:
-      admin_access: true
-      admin_users: ["admin_email@domain.com"]
-      authenticator_class: cilogon
+      authenticator_class: "oauthenticator.globus.GlobusOAuthenticator"
+    Authenticator:
+      allow_all: true
+      admin_users: {{ .Values.instance.admin_users }}
+    GlobusOAuthenticator:
+      oauth_callback_url: "https://{{.Values.JHUB.subdomain-name}}.{{.Values.JHUB.domain-name}}/hub/oauth_callback"
+      client_id: {{ .Values.JHUB.globus.client_id }}
+      client_secret: {{ .Values.JHUB.globus.client_secret }}
   service:
     type: ClusterIP
     annotations: {}
@@ -100,58 +92,17 @@ singleuser:
   cmd: null
   defaultUrl: "/lab"
   profileList:
-  - display_name: Scipy
+  - display_name: Course
     kubespawner_override:
-      image_spec: quay.io/jupyter/scipy-notebook:2024-04-22
+      image_spec: {{.Values.image_spec}}
     default: True
-  - display_name: R
-    kubespawner_override:
-      image_spec: quay.io/jupyter/r-notebook:2024-04-22
-  - display_name: Julia
-    kubespawner_override:
-      image_spec: quay.io/jupyter/julia-notebook:2024-04-22
-  - display_name: Tensorflow
-    kubespawner_override:
-      image_spec: quay.io/jupyter/tensorflow-notebook:cuda-2024-04-22
-  - display_name: Pytorch
-    kubespawner_override:
-      image_spec: quay.io/jupyter/pytorch-notebook:cuda12-2024-04-22
-  - display_name: Datascience (scipy, Julia, R)
-    kubespawner_override:
-      image_spec: quay.io/jupyter/datascience-notebook:2024-04-22
-  - display_name: Pyspark
-    kubespawner_override:
-      image_spec: quay.io/jupyter/pyspark-notebook:2024-04-22
-  - display_name: All Spark
-    kubespawner_override:
-      image_spec: quay.io/jupyter/all-spark-notebook:2024-04-22
-  - display_name: B-Data python scipy
-    kubespawner_override:
-      image_spec: glcr.b-data.ch/jupyterlab/cuda/python/scipy:3
-  - display_name: B-Data Julia
-    kubespawner_override:
-      image_spec: glcr.b-data.ch/jupyterlab/cuda/julia/base:1
-  - display_name: B-Data R
-    kubespawner_override:
-      image_spec: glcr.b-data.ch/jupyterlab/cuda/r/base:4
-  - display_name: B-Data R tidyverse
-    kubespawner_override:
-      image_spec: glcr.b-data.ch/jupyterlab/cuda/r/tidyverse:4
-  - display_name: B-Data R verse
-    kubespawner_override:
-      image_spec: glcr.b-data.ch/jupyterlab/cuda/r/verse:4
-  - display_name: B-Data R geospatial
-    kubespawner_override:
-      image_spec: glcr.b-data.ch/jupyterlab/cuda/r/geospatial:4
-  - display_name: B-Data R qgisprocess
-    kubespawner_override:
-      image_spec: glcr.b-data.ch/jupyterlab/cuda/r/qgisprocess:4
 
 scheduling:
   userScheduler:
     enabled: false
   userPlaceholder:
     enabled: false
+
 # prePuller relates to the hook|continuous-image-puller DaemonsSets
 prePuller:
   hook:
@@ -163,11 +114,11 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: haproxy
-  hosts: ["your_name.nrp-nautilus.io"]
+  hosts: ["{{.Values.JHUB.subdomain-name}}.{{.Values.JHUB.domain-name}}"]
   pathSuffix: ''
   tls:
     - hosts:
-      - your_name.nrp-nautilus.io
+      - "{{.Values.JHUB.subdomain-name}}.{{.Values.JHUB.domain-name}}"
 
 cull:
   enabled: true
@@ -177,148 +128,3 @@ cull:
   every: 600
   concurrency: 10
   maxAge: 0
-
-
-hub:
-  config:
-    JupyterHub:
-      authenticator_class: "oauthenticator.globus.GlobusOAuthenticator"
-    Authenticator:
-      allow_all: true
-      admin_users: {{ .Values.instance.admin_users }}
-    GlobusOAuthenticator:
-      oauth_callback_url: {{ .Values.instance.oauth_callback_url }}
-      client_id: {{ .Values.instance.globus.client_id }}
-      client_secret: {{ .Values.instance.globus.client_secret }}
-  service:
-    type: ClusterIP
-    annotations: {}
-    ports:
-      nodePort: {{ .Values.service.nodePort }}
-    loadBalancerIP: {{ .Values.service.loadBalancerIP }}
-  deploymentStrategy:
-    type: Recreate
-  db:
-    type: sqlite-pvc
-    pvc:
-      accessModes:
-        - ReadWriteOnce
-      storage: {{ .Values.db.storage }}
-      storageClassName: {{ .Values.db.storageClassName }}
-  resources:
-    limits:
-      cpu: {{ .Values.resources.limits.cpu }}
-      memory: {{ .Values.resources.limits.memory }}
-    requests:
-      cpu: {{ .Values.resources.requests.cpu }}
-      memory: {{ .Values.resources.requests.memory }}
-  networkPolicy:
-    enabled: {{ .Values.networkPolicy.enabled }}
-proxy:
-  secretToken: {{ .Values.proxy.secretToken }}
-  service:
-    type: ClusterIP
-  chp:
-    resources:
-      limits:
-        cpu: {{ .Values.proxy.chp.resources.limits.cpu }}
-        memory: {{ .Values.proxy.chp.resources.limits.memory }}
-      requests:
-        cpu: {{ .Values.proxy.chp.resources.requests.cpu }}
-        memory: {{ .Values.proxy.chp.resources.requests.memory }}
-singleuser:
-  uid: {{ .Values.singleuser.uid }}
-  fsGid: {{ .Values.singleuser.fsGid }}
-  extraEnv:
-    GRANT_SUDO: {{ .Values.singleuser.extraEnv.GRANT_SUDO }}
-  extraPodConfig:
-    securityContext:
-        fsGroupChangePolicy: {{ .Values.singleuser.extraPodConfig.securityContext.fsGroupChangePolicy }}
-        fsGroup: {{ .Values.singleuser.extraPodConfig.securityContext.fsGroup }}
-  extraNodeAffinity:
-    required:
-      - matchExpressions:
-        - 'key': 'topology.kubernetes.io/region'
-          'operator': 'In'
-          'values': {{ .Values.singleuser.extraNodeAffinity.required[0].matchExpressions[0].values }}
-  cloudMetadata:
-    blockWithIptables: {{ .Values.singleuser.cloudMetadata.blockWithIptables }}
-  networkPolicy:
-    enabled: {{ .Values.singleuser.networkPolicy.enabled }}
-  storage:
-    type: dynamic
-    extraLabels: {}
-    extraVolumes: []
-    extraVolumeMounts: []
-    capacity: {{ .Values.singleuser.storage.capacity }}
-    homeMountPath: {{ .Values.singleuser.storage.homeMountPath }}
-    dynamic:
-      storageClass: {{ .Values.singleuser.storage.dynamic.storageClass }}
-      pvcNameTemplate: {{ .Values.singleuser.storage.dynamic.pvcNameTemplate }}
-      volumeNameTemplate: {{ .Values.singleuser.storage.dynamic.volumeNameTemplate }}
-      storageAccessModes: {{ .Values.singleuser.storage.dynamic.storageAccessModes }}
-  image:
-    name: {{ .Values.singleuser.image.name }}
-    tag: {{ .Values.singleuser.image.tag }}
-  startTimeout: {{ .Values.singleuser.startTimeout }}
-  cpu:
-    limit: {{ .Values.singleuser.cpu.limit }}
-    guarantee: {{ .Values.singleuser.cpu.guarantee }}
-  memory:
-    limit: {{ .Values.singleuser.memory.limit }}
-    guarantee: {{ .Values.singleuser.memory.guarantee }}
-  extraResource:
-    limits: {{ .Values.singleuser.extraResource.limits }}
-    guarantees: {{ .Values.singleuser.extraResource.guarantees }}
-  cmd: {{ .Values.singleuser.cmd }}
-  defaultUrl: {{ .Values.singleuser.defaultUrl }}
-
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: haproxy
-  hosts: ["{{.Values.instance.hosts}}.nrp-nautilus.io"]
-  pathSuffix: ''
-  tls:
-    - hosts:
-      - {{.Values.instance.hosts}}.nrp-nautilus.io
-
-proxy:
-  service:
-    annotations:
-      service.beta.kubernetes.io/azure-dns-label-name: {{ .Values.instance.azure_dns_label }}
-  https:
-    enabled: true
-    hosts: {{ .Values.instance.hosts }}
-    letsencrypt:
-      contactEmail: {{ .Values.instance.letsencrypt_email }}
-
-scheduling:
-  userScheduler:
-    enabled: false
-  userPlaceholder:
-    enabled: false
-prePuller:
-  hook:
-    enabled: false
-  continuous:
-    enabled: false
-
-singleuser:
-  image:
-    name: {{ .Values.instance.singleuser_image.name }}
-    tag: {{ .Values.instance.singleuser_image.tag }}
-  networkPolicy:
-    egressAllowRules:
-      privateIPs: true
-  extraEnv: {{ .Values.instance.extra_env }}
-  extraTolerations: {{ .Values.instance.tolerations }}
-
-  cull:
-    enabled: {{ .Values.instance.cull.enabled }}
-    users: {{ .Values.instance.cull.users }}
-    removeNamedServers: {{ .Values.instance.cull.removeNamedServers }}
-    timeout: {{ .Values.instance.cull.timeout }}
-    every: {{ .Values.instance.cull.every }}
-    concurrency: {{ .Values.instance.cull.concurrency }}
-    maxAge: {{ .Values.instance.cull.maxAge }}
