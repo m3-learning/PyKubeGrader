@@ -36,6 +36,10 @@ Contents
    Changelog <changelog>
    Module Reference <api/modules>
 
+   JHUB/0_Setting_Up_Nautilius.md
+   JHUB/1_BuildingJupyterEnv.md
+   JHUB/2_Deploying_Jupyterhub.md
+
 
 Indices and tables
 ==================
