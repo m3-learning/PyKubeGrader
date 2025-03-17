@@ -1,0 +1,9 @@
+releases:
+  - name: jupyterhub
+    namespace: diatoms
+    createNamespace: false
+    chart: jupyterhub/jupyterhub
+    version: 3.2.1
+    values:
+      - values/common.yaml
+      - values/profiles/{{ requiredEnv "SUBDOMAIN" }}.yaml.gotmpl

@@ -1,0 +1,17 @@
+hub:
+  config:
+    CILogonOAuthenticator:
+      client_id: {{ requiredEnv "CLIENT_ID" | quote }}
+      client_secret: {{ requiredEnv "CLIENT_SECRET" | quote }}
+      oauth_callback_url: {{ requiredEnv "OAUTH_CALLBACK_URL" | quote }}
+
+    JupyterHub:
+      admin_users:
+        - {{ requiredEnv "EMAIL" | quote }}
+
+ingress:
+  hosts:
+    - "{{ requiredEnv "SUBDOMAIN" }}.{{ requiredEnv "DOMAIN" }}"
+  tls:
+    - hosts:
+        - "{{ requiredEnv "SUBDOMAIN" }}.{{ requiredEnv "DOMAIN" }}"
