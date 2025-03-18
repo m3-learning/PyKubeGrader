@@ -390,8 +390,9 @@ class GradeReport:
             key=lambda x: datetime.fromisoformat(x["due_date"].replace("Z", "+00:00")),
         )
         
-        if self.check_global_extensions():
-            max_due["due_date"] = max_due["due_date"] + timedelta(minutes=self.check_global_extensions())
+        extension_minutes = self.check_global_extensions()
+        if extension_minutes:
+            max_due["due_date"] = (datetime.fromisoformat(max_due["due_date"].replace("Z", "+00:00")) + timedelta(minutes=extension_minutes)).isoformat()
 
         return max_due["due_date"]  # Return the max due date as a string
         
