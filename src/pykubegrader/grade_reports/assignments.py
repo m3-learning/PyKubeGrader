@@ -107,8 +107,8 @@ class Assignment(assignment_type):
 
         This method adjusts the score using the `grade_adjustment` function if a submission
         is provided. If the submission results in a higher score than the current score,
-        the assignment score is updated. If no submission is provided and the student is
-        not exempted, the score is set to zero. If the student is exempted, the score
+        the assignment score is updated. If no submission is provided and the assignment
+        is not exempted, the score is set to zero. If the assignment is exempted, the score
         is set to NaN.
 
         Args:
@@ -186,19 +186,38 @@ class Assignment(assignment_type):
                 )
 
                 # Apply late modifier and normalize score
-                score = (score / self.max_score) * late_modifier
-                score = self.check_cheater(score, **kwargs)
+                score = self._calculate_score(score, late_modifier, **kwargs)
                 return score
             else:
                 # Return normalized score if on time
                 if entry_date < self.due_date:
-                    score = score / self.max_score
-                    score = self.check_cheater(score, **kwargs)
+                    score = self._calculate_score(score, **kwargs)
                     return score
+                
+                # TODO: Consider adding a hard cuttoff for late submissions without a late adjustment policy
                 # Assign zero score for late submissions without a late adjustment policy
                 else:
                     return 0
+                
+    def _calculate_score(self, score, late_modifier=1, **kwargs):
+        """
+        Calculate the final score after applying the late modifier and checking for cheating.
 
+        This method normalizes the score based on the maximum score, applies any late submission
+        modifier, and then checks for any cheating behavior.
+
+        Args:
+            score (float): The initial score before adjustments.
+            late_modifier (float, optional): The modifier to apply for late submissions. Defaults to 1.
+            **kwargs: Additional keyword arguments that may be used for cheating checks.
+
+        Returns:
+            float: The final adjusted score after applying the late modifier and checking for cheating.
+        """
+        score = (score / self.max_score) * late_modifier
+        score = self.check_cheater(score, **kwargs)
+        return score
+    
     def check_cheater(self, score, **kwargs):
         # TODO: fix once we record bonus points this is the mns fix.
         if score > 161:
