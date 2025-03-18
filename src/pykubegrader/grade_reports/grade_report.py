@@ -69,6 +69,7 @@ class GradeReport:
             student_assignments_dropped (list): List of assignments dropped for a specific student.
 
         """
+        
         self.assignments, self.student_subs = get_assignments_submissions(params=params)
         try:
             self.student_name = params.get("username", None)
@@ -80,18 +81,34 @@ class GradeReport:
         self.verbose = verbose
         self.assignment_type_list = assignment_type_list
         self.aliases = aliases
+        
+        # Assignments that are globally exempted from grading.
         self.globally_exempted_assignments = globally_exempted_assignments
+
+        # Assignments that have been dropped from the grade calculation.
         self.dropped_assignments = dropped_assignments
+
+        # The week number where optional drops are allowed.
         self.optional_drop_week = optional_drop_week
+
+        # Assignments that can be optionally dropped.
         self.optional_drop_assignments = optional_drop_assignments
+
+        # Assignments that are excluded from the running average.
         self.excluded_from_running_avg = exclude_from_running_avg
 
         # assignments that have been dropped for a given students.
         self.student_assignments_dropped = []
 
+        # Initialize the weekly grades DataFrame.
         self.setup_grades_df()
+
+        # Build the list of assignments.
         self.build_assignments()
+
+        # Update the global exempted assignments.
         self.update_global_exempted_assignments()
+        
         self.calculate_grades()
         self.update_assignments_not_due_yet()
         self.calculate_grades()
@@ -439,6 +456,20 @@ class GradeReport:
         return max_week_number
 
     def setup_grades_df(self):
+        """
+        Sets up the DataFrame for weekly grades and initializes it with zeros.
+
+        This method creates a DataFrame to store the weekly grades for each assignment type.
+        It also initializes a copy of this DataFrame for display purposes, with all values
+        converted to strings.
+
+        The DataFrame index consists of week labels (e.g., "week1", "week2", ...) and a "Running Avg" row.
+        Each column corresponds to an assignment type, and the initial values are set to zero.
+
+        Attributes:
+            weekly_grades_df (pd.DataFrame): DataFrame to store the weekly grades.
+            weekly_grades_df_display (pd.DataFrame): Copy of the weekly grades DataFrame for display purposes.
+        """
         weekly_assignments = self.get_weekly_assignments()
         inds = [f"week{i + 1}" for i in range(self.max_week)] + ["Running Avg"]
         restruct_grades = {
@@ -447,7 +478,10 @@ class GradeReport:
         new_weekly_grades = pd.DataFrame(restruct_grades, dtype=float)
         new_weekly_grades["inds"] = inds
         new_weekly_grades.set_index("inds", inplace=True)
+        
+        # This is the dataframe that will be used for calculations
         self.weekly_grades_df = new_weekly_grades
+        # this is the dataframe that will be displayed in the notebook
         self.weekly_grades_df_display = new_weekly_grades.copy().astype(str)
 
     def _build_running_avg(self):
