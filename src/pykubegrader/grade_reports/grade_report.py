@@ -162,6 +162,15 @@ class GradeReport:
 
         # Function to apply the highlight conditionally
         def apply_highlight(row):
+            """
+            Applies background color to NaN values in the row.
+
+            Parameters:
+            row (pd.Series): A row from the DataFrame.
+
+            Returns:
+            list: A list of CSS styles for each cell in the row.
+            """
             return [
                 f"background-color: {color}" if nan_mask.loc[row.name, col] else ""
                 for col in row.index
