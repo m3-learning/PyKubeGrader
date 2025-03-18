@@ -403,6 +403,7 @@ class GradeReport:
             int or None: The number of minutes of extension if available, otherwise None.
         """
         if self.student_name in global_extensions_AVL:
+            print(f"Student {self.student_name} has a global extension of {global_extensions_AVL[self.student_name]} minutes")
             return global_extensions_AVL[self.student_name]
         else:
             return None
