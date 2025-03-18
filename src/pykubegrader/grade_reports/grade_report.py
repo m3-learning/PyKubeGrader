@@ -34,14 +34,41 @@ class GradeReport:
     """Class to generate a grade report for a course and perform grade calculations for each student."""
 
     def __init__(
-        self, start_date="2025-01-06", verbose=True, params=None, display_=True
+        self, start_date="2025-01-06", verbose=True, params=None, display_=True, **kwargs
     ):
         """Initializes an instance of the GradeReport class.
+
+        This constructor sets up the initial state of the GradeReport object, including
+        loading assignments and student submissions, setting course parameters, and
+        performing initial grade calculations.
+
         Args:
             start_date (str, optional): The start date of the course. Defaults to "2025-01-06".
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
-        """
+            params (dict, optional): A dictionary of parameters that may include user-specific
+                information such as 'username'. Defaults to None.
+            display_ (bool, optional): Determines if the grade report should be displayed
+                immediately upon initialization. Defaults to True.
+            **kwargs: Additional keyword arguments that can be used to extend the functionality
+                or configuration of the GradeReport class.
 
+        Attributes:
+            assignments (list): A list of assignments for the course.
+            student_subs (list): A list of student submissions.
+            student_name (str): The name of the student, extracted from params or environment.
+            max_week (int): The maximum number of weeks in the course.
+            start_date (str): The start date of the course.
+            verbose (bool): Flag to control verbose output.
+            assignment_type_list (list): List of assignment types.
+            aliases (dict): Dictionary of aliases for assignment names.
+            globally_exempted_assignments (list): List of assignments globally exempted from grading.
+            dropped_assignments (list): List of assignments that have been dropped.
+            optional_drop_week (int): The week number where optional drops are allowed.
+            optional_drop_assignments (list): List of assignments that can be optionally dropped.
+            excluded_from_running_avg (list): List of assignments excluded from the running average.
+            student_assignments_dropped (list): List of assignments dropped for a specific student.
+
+        """
         self.assignments, self.student_subs = get_assignments_submissions(params=params)
         try:
             self.student_name = params.get("username", None)
