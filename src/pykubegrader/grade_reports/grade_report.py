@@ -42,11 +42,12 @@ class GradeReport:
             verbose (bool, optional): Indicates if verbose output should be displayed. Defaults to True.
         """
 
-        self.assignments, self.student_subs = get_assignments_submissions(params=params)
         try:
             self.student_name = params.get("username", None)
         except Exception:
             self.student_name = os.environ.get("JUPYTERHUB_USER", None)
+            
+        self.assignments, self.student_subs = get_assignments_submissions(params={'username': self.student_name})
 
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
