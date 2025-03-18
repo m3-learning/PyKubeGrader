@@ -290,7 +290,14 @@ class GradeReport:
                 pass
 
     def build_assignments(self):
-        """Generates a list of Assignment objects for each week, applying custom adjustments where needed."""
+        """
+        Generates a list of Assignment objects for each week and non-weekly assignments, 
+        applying custom adjustments where needed.
+
+        This method initializes the graded_assignments list and populates it with Assignment 
+        objects for each week based on the weekly assignments. It also handles non-weekly 
+        assignments by creating Assignment objects for them as well.
+        """
         self.graded_assignments = []
         weekly_assignments = self.get_weekly_assignments()
 
@@ -444,7 +451,14 @@ class GradeReport:
         return non_weekly_assignments
 
     def get_weekly_assignments(self):
-        """Get all weekly assignments from the assignment list configuration"""
+        """
+        Retrieves all weekly assignments from the assignment list configuration.
+
+        This method filters the assignment_type_list to extract assignments that are marked as weekly.
+
+        Returns:
+            list: A list of weekly assignments.
+        """
         weekly_assignments = [
             assignment for assignment in self.assignment_type_list if assignment.weekly
         ]
