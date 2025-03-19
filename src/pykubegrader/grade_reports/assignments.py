@@ -108,6 +108,16 @@ class Assignment(assignment_type):
         self.grade_adjustment_func = grade_adjustment_func
 
     @property
+    def late_adjustment(self):
+        return self._late_adjustment
+    
+    @late_adjustment.setter
+    def late_adjustment(self, late_adjustment):
+        if not isinstance(late_adjustment, bool):
+            raise ValueError("late_adjustment must be a boolean")
+        self._late_adjustment = late_adjustment
+
+    @property
     def exempted(self):
         return self._exempted
     
