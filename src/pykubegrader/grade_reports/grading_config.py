@@ -18,6 +18,8 @@ assignment_type_list = [
     assignment_type("final", False, (0.2, 0.4)),
 ]
 
+global_extensions_AVL = {"ld895": 48*60, "te348": 48*60}
+
 # Custom grade adjustments, key is a tuple of assignment type and week, value is a lambda function that takes the score and returns the adjusted score
 custom_grade_adjustments = {
     ("lecture", 3): lambda score: 100.0 if score > 0 else 0.0,
