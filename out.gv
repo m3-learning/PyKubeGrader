@@ -1,0 +1,97 @@
+digraph G {
+concentrate=true;
+splines="ortho";
+rankdir="LR";
+subgraph legend{
+    rank = min;
+    label = "legend";
+    Legend [shape=none, margin=0, label = <
+        <table cellspacing="0" cellpadding="0" border="1"><tr><td>Code2flow Legend</td></tr><tr><td>
+        <table cellspacing="0">
+        <tr><td>Regular function</td><td width="50px" bgcolor='#cccccc'></td></tr>
+        <tr><td>Trunk function (nothing calls this)</td><td bgcolor='#966F33'></td></tr>
+        <tr><td>Leaf function (this calls nothing else)</td><td bgcolor='#6db33f'></td></tr>
+        <tr><td>Function call</td><td><font color='black'>&#8594;</font></td></tr>
+        </table></td></tr></table>
+        >];
+}node_1d202fa3 [label="37: __init__()" name="grade_report::GradeReport.__init__" shape="rect" style="rounded,filled" fillcolor="#966F33" ];
+node_7829b1fe [label="444: _build_running_avg()" name="grade_report::GradeReport._build_running_avg" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_29eab543 [label="166: _calculate_final_average()" name="grade_report::GradeReport._calculate_final_average" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_eea65c1c [label="219: _get_letter_grade()" name="grade_report::GradeReport._get_letter_grade" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_7c8d8449 [label="233: _update_weekly_table_nan()" name="grade_report::GradeReport._update_weekly_table_nan" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_c8692939 [label="226: _update_weekly_table_scores()" name="grade_report::GradeReport._update_weekly_table_scores" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_8a21dfdc [label="250: build_assignments()" name="grade_report::GradeReport.build_assignments" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_45491c67 [label="291: calculate_grades()" name="grade_report::GradeReport.calculate_grades" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_d5b30d9d [label="399: check_global_extensions()" name="grade_report::GradeReport.check_global_extensions" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_6c478294 [label="93: check_optional_drop_assignments()" name="grade_report::GradeReport.check_optional_drop_assignments" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_ad6f3081 [label="151: color_cells()" name="grade_report::GradeReport.color_cells" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_8f591a2c [label="310: compute_final_average()" name="grade_report::GradeReport.compute_final_average" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_43830921 [label="383: determine_due_date()" name="grade_report::GradeReport.determine_due_date" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_b8e79dc1 [label="456: drop_lowest_n_for_types()" name="grade_report::GradeReport.drop_lowest_n_for_types" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_e37d6bf1 [label="510: duplicate_scores()" name="grade_report::GradeReport.duplicate_scores" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_904a7069 [label="325: filter_submissions()" name="grade_report::GradeReport.filter_submissions" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_91429a08 [label="351: get_assignment()" name="grade_report::GradeReport.get_assignment" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_705a51c1 [label="367: get_graded_assignment()" name="grade_report::GradeReport.get_graded_assignment" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_17102068 [label="377: get_max_score()" name="grade_report::GradeReport.get_max_score" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_2d126788 [label="411: get_non_weekly_assignments()" name="grade_report::GradeReport.get_non_weekly_assignments" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_252cca6a [label="427: get_num_weeks()" name="grade_report::GradeReport.get_num_weeks" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_0626c4fa [label="420: get_weekly_assignments()" name="grade_report::GradeReport.get_weekly_assignments" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_d38aa4da [label="264: graded_assignment_constructor()" name="grade_report::GradeReport.graded_assignment_constructor" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_427a38bf [label="106: highlight_nans()" name="grade_report::GradeReport.highlight_nans" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_86d21937 [label="432: setup_grades_df()" name="grade_report::GradeReport.setup_grades_df" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_131c3571 [label="133: update_assignments_not_due_yet()" name="grade_report::GradeReport.update_assignments_not_due_yet" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_6e212280 [label="241: update_global_exempted_assignments()" name="grade_report::GradeReport.update_global_exempted_assignments" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_b8aadb51 [label="215: update_weekly_table()" name="grade_report::GradeReport.update_weekly_table" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_1d202fa3 -> node_7829b1fe [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_7829b1fe [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_29eab543 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_8a21dfdc [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_45491c67 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_45491c67 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_45491c67 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_45491c67 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_6c478294 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_b8e79dc1 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_e37d6bf1 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_e37d6bf1 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_e37d6bf1 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_252cca6a [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_427a38bf [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_86d21937 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_131c3571 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_6e212280 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_b8aadb51 [color="#009E73" penwidth="2"];
+node_1d202fa3 -> node_b8aadb51 [color="#009E73" penwidth="2"];
+node_29eab543 -> node_eea65c1c [color="#009E73" penwidth="2"];
+node_29eab543 -> node_8f591a2c [color="#009E73" penwidth="2"];
+node_8a21dfdc -> node_2d126788 [color="#F0E442" penwidth="2"];
+node_8a21dfdc -> node_0626c4fa [color="#F0E442" penwidth="2"];
+node_8a21dfdc -> node_d38aa4da [color="#F0E442" penwidth="2"];
+node_8a21dfdc -> node_d38aa4da [color="#F0E442" penwidth="2"];
+node_45491c67 -> node_904a7069 [color="#CC79A7" penwidth="2"];
+node_ad6f3081 -> node_ad6f3081 [color="#E69F00" penwidth="2"];
+node_43830921 -> node_d5b30d9d [color="#E69F00" penwidth="2"];
+node_e37d6bf1 -> node_705a51c1 [color="#E69F00" penwidth="2"];
+node_e37d6bf1 -> node_705a51c1 [color="#E69F00" penwidth="2"];
+node_d38aa4da -> node_43830921 [color="#56B4E9" penwidth="2"];
+node_d38aa4da -> node_91429a08 [color="#56B4E9" penwidth="2"];
+node_d38aa4da -> node_17102068 [color="#56B4E9" penwidth="2"];
+node_86d21937 -> node_0626c4fa [color="#CC79A7" penwidth="2"];
+node_6e212280 -> node_705a51c1 [color="#000000" penwidth="2"];
+node_6e212280 -> node_705a51c1 [color="#000000" penwidth="2"];
+node_b8aadb51 -> node_7c8d8449 [color="#E69F00" penwidth="2"];
+node_b8aadb51 -> node_c8692939 [color="#E69F00" penwidth="2"];
+subgraph cluster_d900bd77 {
+    label="File: grade_report";
+    name="grade_report";
+    style="filled";
+    graph[style=dotted];
+    subgraph cluster_350fa950 {
+        node_1d202fa3 node_6c478294 node_427a38bf node_131c3571 node_ad6f3081 node_29eab543 node_b8aadb51 node_eea65c1c node_c8692939 node_7c8d8449 node_6e212280 node_8a21dfdc node_d38aa4da node_45491c67 node_8f591a2c node_904a7069 node_91429a08 node_705a51c1 node_17102068 node_43830921 node_d5b30d9d node_2d126788 node_0626c4fa node_252cca6a node_86d21937 node_7829b1fe node_b8e79dc1 node_e37d6bf1;
+        label="Class: GradeReport";
+        name="GradeReport";
+        style="filled";
+        graph[style=dotted];
+    };
+};
+}

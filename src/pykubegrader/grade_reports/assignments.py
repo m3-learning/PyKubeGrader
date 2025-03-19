@@ -1,29 +1,33 @@
 from datetime import datetime
-
 import numpy as np
 from dateutil import parser
-
-from pykubegrader.graders.late_assignments import calculate_late_submission
-
+from ..graders.late_assignments import calculate_late_submission
 
 class assignment_type:
     """
     Base class for assignment types.
 
     Attributes:
-        weight (float): The weight of the assignment in the overall grade.
+        name (str): The name of the assignment.
+        weekly (bool): Indicates if the assignment is weekly.
+        weight (float | tuple[float, float]): The weight of the assignment in the overall grade. 
+            If a tuple is provided, it represents a range of possible weights.
 
     Methods:
-        __init__(name: str, weekly: bool, weight: float):
+        __init__(name: str, weekly: bool, weight: float | tuple[float, float]):
             Initializes an instance of the assignment_type class.
     """
 
     def __init__(self, name: str, weekly: bool, weight: float | tuple[float, float]):
-        """Initializes an instance of the assignment_type class.
+        """
+        Initializes an instance of the assignment_type class.
+
         Args:
             name (str): The name of the assignment.
             weekly (bool): Indicates if the assignment is weekly.
-            weight (float): The weight of the assignment in the overall grade."""
+            weight (float | tuple[float, float]): The weight of the assignment in the overall grade. 
+                If a tuple is provided, it represents a range of possible weights.
+        """
         self.name = name
         self.weekly = weekly
         self.weight = weight
@@ -31,27 +35,27 @@ class assignment_type:
 
 class Assignment(assignment_type):
     """
-    Class for storing and updating assignment scores.
+    Represents an assignment with functionality to store and update scores.
 
     Attributes:
-        week (int, optional): The week number of the assignment.
-        exempted (bool): Indicates if the assignment is exempted.
-        graded (bool): Indicates if the assignment has been graded.
-        late_adjustment (bool): Indicates if late submissions are allowed.
-        students_exempted (list): List of student IDs exempted from the assignment.
-        due_date (datetime, optional): The due date of the assignment.
-        max_score (float, optional): The maximum score possible for the assignment.
-        grade_adjustment_func (callable, optional): Function to adjust the grade for late or exempted submissions.
+        week (int, optional): The week number associated with the assignment.
+        exempted (bool): Flag indicating if the assignment is exempted for a student.
+        graded (bool): Flag indicating if the assignment has been graded.
+        late_adjustment (bool): Flag indicating if late submissions are subject to adjustment.
+        students_exempted (list): A list of student IDs who are exempted from the assignment.
+        due_date (datetime, optional): The due date for the assignment submission.
+        max_score (float, optional): The maximum achievable score for the assignment.
+        grade_adjustment_func (callable, optional): A function to adjust grades for late or exempted submissions.
 
     Methods:
         add_exempted_students(students):
-            Add students to the exempted list.
+            Adds a list of students to the exempted list.
 
         update_score(submission=None):
-            Update the score of the assignment based on the submission.
+            Updates the assignment score based on the provided submission.
 
         grade_adjustment(submission):
-            Apply the adjustment function if provided.
+            Applies the grade adjustment function if it is provided.
     """
 
     def __init__(
@@ -66,16 +70,22 @@ class Assignment(assignment_type):
         """
         Initializes an instance of the Assignment class.
 
-        weekly (bool): Indicates if the assignment is weekly.
-        grade_adjustment_func (callable, optional): Used to calculate the grade in the case of late or exempted submissions. Defaults to None.
-        **kwargs: Additional keyword arguments.
-            week (int, optional): The week number of the assignment. Defaults to None.
-            exempted (bool, optional): Indicates if the assignment is exempted. Defaults to False.
-            graded (bool, optional): Indicates if the assignment is graded. Defaults to False.
-            late_adjustment (bool, optional): Indicates if late adjustment is applied. Defaults to True.
-            students_exempted (list, optional): List of students exempted from the assignment. Defaults to an empty list.
-            due_date (datetime, optional): The due date of the assignment. Defaults to None.
-            max_score (float, optional): The maximum score possible for the assignment. Defaults to None.
+        Args:
+            name (str): The name of the assignment.
+            weekly (bool): Indicates if the assignment is weekly.
+            weight (float): The weight of the assignment in the overall grade.
+            score (float): The initial score of the assignment.
+            grade_adjustment_func (callable, optional): A function to adjust grades for late or exempted submissions. Defaults to None.
+            **kwargs: Additional keyword arguments.
+                week (int, optional): The week number of the assignment. Defaults to None.
+                exempted (bool, optional): Indicates if the assignment is exempted. Defaults to False.
+                graded (bool, optional): Indicates if the assignment is graded. Defaults to False.
+                late_adjustment (bool, optional): Indicates if late adjustment is applied. Defaults to True.
+                students_exempted (list, optional): List of students exempted from the assignment. Defaults to an empty list.
+                due_date (datetime, optional): The due date of the assignment. Defaults to None.
+                max_score (float, optional): The maximum score possible for the assignment. Defaults to None.
+                bonus_points (float, optional): The bonus points for the assignment. Defaults to 0.
+                student_with_extension (tuple, optional): A tuple containing the student ID and the extension time as a timedelta object. Defaults to (None, None).
         """
         super().__init__(name, weekly, weight)
         self.score = score
@@ -87,17 +97,32 @@ class Assignment(assignment_type):
         self.students_exempted = kwargs.get("students_exempted", [])
         self.due_date = kwargs.get("due_date", None)
         self.max_score = kwargs.get("max_score", None)
+        self.bonus_points = kwargs.get("bonus_points", 0)
+        # TODO: this is not implemented yet
+        self.student_with_extension = kwargs.get("student_with_extension", (None, None))
 
-        # Store the function for later use
+        # Stores the grade adjustment function which is used to calculate the grade in the case of late or exempted submissions.
         self.grade_adjustment_func = grade_adjustment_func
 
-    def add_exempted_students(self, students):
+    @property
+    def students_exempted(self):
         """
-        Add students to the exempted list.
+        Gets the list of students exempted from the assignment.
+
+        Returns:
+            list: A list of student IDs who are exempted from the assignment.
+        """
+        return self._students_exempted
+
+    @students_exempted.setter
+    def students_exempted(self, students):
+        """
+        Sets the exempted students list for the assignment.
+
         Args:
-            students (list): List of student IDs to exempt from the assignment.
+            students (list): A list of student IDs to exempt from the assignment.
         """
-        self.students_exempted.extend(students)
+        self._students_exempted = students
 
     def update_score(self, submission=None, **kwargs):
         """Updates the assignment score based on the given submission.
