@@ -88,8 +88,11 @@ class Assignment(assignment_type):
                 student_with_extension (tuple, optional): A tuple containing the student ID and the extension time as a timedelta object. Defaults to (None, None).
         """
         super().__init__(name, weekly, weight)
+        # visible score
         self.score_ = score
+        # hidden score
         self._score = score
+        
         self.week = kwargs.get("week", None)
         self.exempted = kwargs.get("exempted", False)
         self.graded = kwargs.get("graded", False)
@@ -103,6 +106,25 @@ class Assignment(assignment_type):
 
         # Stores the grade adjustment function which is used to calculate the grade in the case of late or exempted submissions.
         self.grade_adjustment_func = grade_adjustment_func
+
+    # visible score
+    @property
+    def score_(self):
+        return self._score_
+    
+    @score_.setter
+    def score_(self, score):
+        self._score_ = score
+
+    # TODO: Come back to this for error handling
+    # hidden score
+    @property
+    def _score(self):
+        return self.__score
+    
+    @_score.setter
+    def _score(self, score):
+        self.__score = score
 
     @property
     def students_exempted(self):
