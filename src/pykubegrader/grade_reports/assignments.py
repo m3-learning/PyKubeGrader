@@ -122,7 +122,12 @@ class Assignment(assignment_type):
         Args:
             students (list): A list of student IDs to exempt from the assignment.
         """
-        self._students_exempted = students
+        if isinstance(students, str):
+            self._students_exempted = [students]
+        elif isinstance(students, list):
+            self._students_exempted = students
+        else:
+            raise ValueError("students must be a list or a string")
 
     def update_score(self, submission=None, **kwargs):
         """Updates the assignment score based on the given submission.
