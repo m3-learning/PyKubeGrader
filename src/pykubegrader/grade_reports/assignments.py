@@ -108,6 +108,19 @@ class Assignment(assignment_type):
         self.grade_adjustment_func = grade_adjustment_func
 
     @property
+    def max_score(self):
+        return self._max_score
+    
+    @max_score.setter
+    def max_score(self, max_score):
+        if not isinstance(max_score, float) and not isinstance(max_score, int) or max_score is None:
+            raise ValueError("max_score must be a float or an integer")
+        self._max_score = max_score
+        
+    #TODO: add setter for due_date with error handling
+
+
+    @property
     def late_adjustment(self):
         return self._late_adjustment
     
