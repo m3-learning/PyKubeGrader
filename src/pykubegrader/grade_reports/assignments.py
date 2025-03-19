@@ -88,7 +88,7 @@ class Assignment(assignment_type):
                 student_with_extension (tuple, optional): A tuple containing the student ID and the extension time as a timedelta object. Defaults to (None, None).
         """
         super().__init__(name, weekly, weight)
-        self.score = score
+        self.score_ = score
         self._score = score
         self.week = kwargs.get("week", None)
         self.exempted = kwargs.get("exempted", False)
@@ -147,11 +147,11 @@ class Assignment(assignment_type):
                 is provided, returns 0.
         """
         if self.exempted:
-            self.score = np.nan
+            self.score_ = np.nan
 
             # If the score is "---", return the score as is, this is an assignment that does not exist.
             if self._score == "---":
-                return self.score
+                return self.score_
 
             # Saves a table with the score of the exempted assignment still recorded.
             try:
@@ -161,23 +161,23 @@ class Assignment(assignment_type):
                     self._score = score_
             except Exception:
                 pass
-            return self.score
+            return self.score_
 
         elif submission is not None:
             # Adjust the score based on submission
             score_ = self.grade_adjustment(submission, **kwargs)
 
             # Update the score only if the new score is higher
-            if score_ > self.score:
-                self.score = score_
+            if score_ > self.score_:
+                self.score_ = score_
                 self._score = score_
 
-            return self.score
+            return self.score_
         else:
             # Set the score to zero if not exempted and no submission
-            self.score = 0
+            self.score_ = 0
             self._score = 0
-            return self.score
+            return self.score_
 
     def grade_adjustment(self, submission, **kwargs):
         """Applies adjustments to the submission score based on grading policies.
