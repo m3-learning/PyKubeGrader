@@ -245,6 +245,8 @@ class Assignment(assignment_type):
         Args:
             score (float): The visible score to be set for the assignment.
         """
+        if not isinstance(score, (float, int)) or score is None:
+            raise ValueError("score must be a float or an integer and cannot be None")
         self._score_ = score
 
     # TODO: Come back to this for error handling
@@ -267,6 +269,8 @@ class Assignment(assignment_type):
         Args:
             score (float): The hidden score to be set for the assignment.
         """
+        if not isinstance(score, (float, int)) and score != "---":
+            raise ValueError("score must be a float, an integer, or '---'")
         self.__score = score
 
     @property
@@ -293,6 +297,67 @@ class Assignment(assignment_type):
             self._students_exempted = students
         else:
             raise ValueError("students must be a list or a string")
+        
+    def mark_exempted(self, submission=None, **kwargs):
+        """
+        Marks the assignment as exempted and adjusts the score if necessary.
+
+        This method sets the assignment score to NaN to indicate exemption. If the
+        assignment score is "---", it returns NaN as the assignment does not exist.
+        Otherwise, it attempts to adjust the score based on the provided submission
+        and updates the score if the adjusted score is higher.
+
+        Args:
+            submission (dict, optional): The submission data, expected to contain relevant
+                details for grading. Defaults to None.
+            **kwargs: Additional keyword arguments for grade adjustment.
+
+        Returns:
+            float: The score of the exempted assignment, NaN if exempted, or the adjusted
+            score if applicable.
+        """
+        
+        self.score_ = np.nan
+
+        # If the score is "---", return the score as is, this is an assignment that does not exist.
+        if self._score == "---":
+            return self.score_
+
+        # Saves a table with the score of the exempted assignment still recorded.
+        try:
+            # Adjust the score based on submission
+            score_ = self.grade_adjustment(submission, **kwargs)
+            if score_ > self._score:
+                self._score = score_
+        except Exception:
+            pass
+        return self.score_
+    
+    def write_score(self, submission=None, **kwargs):
+        """
+        Writes the score for the assignment.
+
+        This method adjusts the score using the `grade_adjustment` function if a submission
+        is provided. If the adjusted score is higher than the current score, the assignment
+        score is updated.
+
+        Args:
+            submission (dict, optional): The submission data, expected to contain relevant
+                details for grading. Defaults to None.
+            **kwargs: Additional keyword arguments for grade adjustment.
+
+        Returns:
+            float: The updated assignment score.
+        """
+        # Adjust the score based on submission
+        score_ = self.grade_adjustment(submission, **kwargs)
+
+        # Update the score only if the new score is higher
+        if score_ > self.score_:
+            self.score_ = score_
+            self._score = score_
+
+        return self.score_
 
     def update_score(self, submission=None, **kwargs):
         """Updates the assignment score based on the given submission.
@@ -312,32 +377,10 @@ class Assignment(assignment_type):
                 is provided, returns 0.
         """
         if self.exempted:
-            self.score_ = np.nan
-
-            # If the score is "---", return the score as is, this is an assignment that does not exist.
-            if self._score == "---":
-                return self.score_
-
-            # Saves a table with the score of the exempted assignment still recorded.
-            try:
-                # Adjust the score based on submission
-                score_ = self.grade_adjustment(submission, **kwargs)
-                if score_ > self._score:
-                    self._score = score_
-            except Exception:
-                pass
-            return self.score_
+            return self.mark_exempted(submission, **kwargs)
 
         elif submission is not None:
-            # Adjust the score based on submission
-            score_ = self.grade_adjustment(submission, **kwargs)
-
-            # Update the score only if the new score is higher
-            if score_ > self.score_:
-                self.score_ = score_
-                self._score = score_
-
-            return self.score_
+            return self.write_score(submission, **kwargs)
         else:
             # Set the score to zero if not exempted and no submission
             self.score_ = 0
