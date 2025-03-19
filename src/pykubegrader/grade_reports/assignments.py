@@ -92,7 +92,7 @@ class Assignment(assignment_type):
         self.score_ = score
         # hidden score
         self._score = score
-        
+
         self.week = kwargs.get("week", None)
         self.exempted = kwargs.get("exempted", False)
         self.graded = kwargs.get("graded", False)
@@ -116,7 +116,7 @@ class Assignment(assignment_type):
             float: The bonus points for the assignment.
         """
         return self._bonus_points
-    
+
     @bonus_points.setter
     def bonus_points(self, bonus_points):
         """
@@ -141,7 +141,7 @@ class Assignment(assignment_type):
             float: The maximum score for the assignment.
         """
         return self._max_score
-    
+
     @max_score.setter
     def max_score(self, max_score):
         """
@@ -156,8 +156,8 @@ class Assignment(assignment_type):
         if not isinstance(max_score, float) and not isinstance(max_score, int) or max_score is None:
             raise ValueError("max_score must be a float or an integer")
         self._max_score = max_score
-        
-    #TODO: add setter for due_date with error handling
+
+    # TODO: add setter for due_date with error handling
 
     @property
     def late_adjustment(self):
@@ -168,7 +168,7 @@ class Assignment(assignment_type):
             bool: The late adjustment flag for the assignment.
         """
         return self._late_adjustment
-    
+
     @late_adjustment.setter
     def late_adjustment(self, late_adjustment):
         """
@@ -191,7 +191,7 @@ class Assignment(assignment_type):
             bool: The exempted flag for the assignment.
         """
         return self._exempted
-    
+
     @exempted.setter
     def exempted(self, exempted):
         """
@@ -213,7 +213,7 @@ class Assignment(assignment_type):
             int: The week number for the assignment.
         """
         return self._week
-    
+
     @week.setter
     def week(self, week):
         """
@@ -236,7 +236,7 @@ class Assignment(assignment_type):
             float: The visible score for the assignment.
         """
         return self._score_
-    
+
     @score_.setter
     def score_(self, score):
         """
@@ -260,7 +260,7 @@ class Assignment(assignment_type):
             float: The hidden score for the assignment.
         """
         return self.__score
-    
+
     @_score.setter
     def _score(self, score):
         """
@@ -297,7 +297,7 @@ class Assignment(assignment_type):
             self._students_exempted = students
         else:
             raise ValueError("students must be a list or a string")
-        
+
     def mark_exempted(self, submission=None, **kwargs):
         """
         Marks the assignment as exempted and adjusts the score if necessary.
@@ -316,7 +316,7 @@ class Assignment(assignment_type):
             float: The score of the exempted assignment, NaN if exempted, or the adjusted
             score if applicable.
         """
-        
+
         self.score_ = np.nan
 
         # If the score is "---", return the score as is, this is an assignment that does not exist.
@@ -332,7 +332,7 @@ class Assignment(assignment_type):
         except Exception:
             pass
         return self.score_
-    
+
     def write_score(self, submission=None, **kwargs):
         """
         Writes the score for the assignment.
@@ -412,18 +412,7 @@ class Assignment(assignment_type):
             return score
         else:
             if self.late_adjustment:
-                # Convert due date to datetime object
-                due_date = datetime.fromisoformat(self.due_date.replace("Z", "+00:00"))
-
-                late_modifier = calculate_late_submission(
-                    due_date.strftime("%Y-%m-%d %H:%M:%S"),
-                    entry_date.strftime("%Y-%m-%d %H:%M:%S"),
-                )
-
-                # Apply late modifier and normalize score
-                score = (score / self.max_score) * late_modifier
-                score = self.check_cheater(score, **kwargs)
-                return score
+                return self._late_adjustment(score, entry_date, **kwargs)
             else:
                 # Return normalized score if on time
                 if entry_date < self.due_date:
@@ -433,6 +422,34 @@ class Assignment(assignment_type):
                 # Assign zero score for late submissions without a late adjustment policy
                 else:
                     return 0
+                
+    def _late_adjustment(self, score, entry_date, **kwargs):
+        """
+        Adjusts the score for late submissions based on the due date and entry date.
+
+        This method calculates a late modifier based on the difference between the due date
+        and the submission date. It then applies this modifier to the score and normalizes it.
+
+        Args:
+            score (float): The initial unadjusted score.
+            entry_date (datetime): The submission timestamp as a datetime object.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            float: The adjusted score after applying the late modifier and normalization.
+        """
+        # Convert due date to datetime object
+        due_date = datetime.fromisoformat(self.due_date.replace("Z", "+00:00"))
+
+        late_modifier = calculate_late_submission(
+            due_date.strftime("%Y-%m-%d %H:%M:%S"),
+            entry_date.strftime("%Y-%m-%d %H:%M:%S"),
+        )
+
+        # Apply late modifier and normalize score
+        score = (score / self.max_score) * late_modifier
+        score = self.check_cheater(score, **kwargs)
+        return score
 
     def check_cheater(self, score, **kwargs):
         # TODO: fix once we record bonus points this is the mns fix.
