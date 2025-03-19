@@ -107,6 +107,16 @@ class Assignment(assignment_type):
         # Stores the grade adjustment function which is used to calculate the grade in the case of late or exempted submissions.
         self.grade_adjustment_func = grade_adjustment_func
 
+    @property
+    def week(self):
+        return self._week
+    
+    @week.setter
+    def week(self, week):
+        if not isinstance(week, int):
+            raise ValueError("week must be an integer")
+        self._week = week
+
     # visible score
     @property
     def score_(self):
