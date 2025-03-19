@@ -108,6 +108,16 @@ class Assignment(assignment_type):
         self.grade_adjustment_func = grade_adjustment_func
 
     @property
+    def exempted(self):
+        return self._exempted
+    
+    @exempted.setter
+    def exempted(self, exempted):
+        if not isinstance(exempted, bool):
+            raise ValueError("exempted must be a boolean")
+        self._exempted = exempted
+
+    @property
     def week(self):
         return self._week
     
