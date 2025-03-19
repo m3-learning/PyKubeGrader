@@ -109,20 +109,50 @@ class Assignment(assignment_type):
 
     @property
     def bonus_points(self):
+        """
+        Gets the bonus points for the assignment.
+
+        Returns:
+            float: The bonus points for the assignment.
+        """
         return self._bonus_points
     
     @bonus_points.setter
     def bonus_points(self, bonus_points):
+        """
+        Sets the bonus points for the assignment.
+
+        Args:
+            bonus_points (float | int): The bonus points to be set for the assignment.
+
+        Raises:
+            ValueError: If bonus_points is not a float or an integer.
+        """
         if not isinstance(bonus_points, float) and not isinstance(bonus_points, int) or bonus_points is None:
             raise ValueError("bonus_points must be a float or an integer")
         self._bonus_points = bonus_points
 
     @property
     def max_score(self):
+        """
+        Gets the maximum score for the assignment.
+
+        Returns:
+            float: The maximum score for the assignment.
+        """
         return self._max_score
     
     @max_score.setter
     def max_score(self, max_score):
+        """
+        Sets the maximum score for the assignment.
+
+        Args:
+            max_score (float | int): The maximum score to be set for the assignment.
+
+        Raises:
+            ValueError: If max_score is not a float or an integer.
+        """
         if not isinstance(max_score, float) and not isinstance(max_score, int) or max_score is None:
             raise ValueError("max_score must be a float or an integer")
         self._max_score = max_score
@@ -131,30 +161,67 @@ class Assignment(assignment_type):
 
     @property
     def late_adjustment(self):
+        """
+        Gets the late adjustment flag for the assignment.
+
+        Returns:
+            bool: The late adjustment flag for the assignment.
+        """
         return self._late_adjustment
     
     @late_adjustment.setter
     def late_adjustment(self, late_adjustment):
-        if not isinstance(late_adjustment, bool):
-            raise ValueError("late_adjustment must be a boolean")
+        """
+        Sets the late adjustment flag for the assignment.
+
+        Args:
+            late_adjustment (bool): The late adjustment flag to be set for the assignment.
+
+        Raises:
+            ValueError: If late_adjustment is not a boolean.
+        """
         self._late_adjustment = late_adjustment
 
     @property
     def exempted(self):
+        """
+        Gets the exempted flag for the assignment.
+
+        Returns:
+            bool: The exempted flag for the assignment.
+        """
         return self._exempted
     
     @exempted.setter
     def exempted(self, exempted):
+        """
+        Sets the exempted flag for the assignment.
+
+        Args:
+            exempted (bool): The exempted flag to be set for the assignment.
+        """
         if not isinstance(exempted, bool):
             raise ValueError("exempted must be a boolean")
         self._exempted = exempted
 
     @property
     def week(self):
+        """
+        Gets the week number for the assignment.
+
+        Returns:
+            int: The week number for the assignment.
+        """
         return self._week
     
     @week.setter
     def week(self, week):
+        """
+        Sets the week number for the assignment.
+
+        Args:
+            week (int): The week number to be set for the assignment.
+        """
         if not isinstance(week, int):
             raise ValueError("week must be an integer")
         self._week = week
@@ -162,20 +229,44 @@ class Assignment(assignment_type):
     # visible score
     @property
     def score_(self):
+        """
+        Gets the visible score for the assignment.
+
+        Returns:
+            float: The visible score for the assignment.
+        """
         return self._score_
     
     @score_.setter
     def score_(self, score):
+        """
+        Sets the visible score for the assignment.
+
+        Args:
+            score (float): The visible score to be set for the assignment.
+        """
         self._score_ = score
 
     # TODO: Come back to this for error handling
     # hidden score
     @property
     def _score(self):
+        """
+        Gets the hidden score for the assignment.
+
+        Returns:
+            float: The hidden score for the assignment.
+        """
         return self.__score
     
     @_score.setter
     def _score(self, score):
+        """
+        Sets the hidden score for the assignment.
+
+        Args:
+            score (float): The hidden score to be set for the assignment.
+        """
         self.__score = score
 
     @property
