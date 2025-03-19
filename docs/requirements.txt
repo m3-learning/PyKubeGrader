@@ -5,4 +5,5 @@ sphinx>=3.2.1
 nbsphinx
 pydata-sphinx-theme
 myst-nb
+openpxl
 # sphinx_rtd_theme

@@ -1,7 +1,7 @@
 # TODO: if not due yet and score is 0, make NAN, fix the rendering
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from itertools import product
 
 import numpy as np
@@ -26,6 +26,7 @@ from pykubegrader.grade_reports.grading_config import (
     max_week,
     optional_drop_assignments,
     optional_drop_week,
+    global_extensions_AVL,
 )
 from pykubegrader.telemetry import get_assignments_submissions
 
@@ -69,12 +70,13 @@ class GradeReport:
             student_assignments_dropped (list): List of assignments dropped for a specific student.
 
         """
-        
-        self.assignments, self.student_subs = get_assignments_submissions(params=params)
+
         try:
             self.student_name = params.get("username", None)
         except Exception:
             self.student_name = os.environ.get("JUPYTERHUB_USER", None)
+            
+        self.assignments, self.student_subs = get_assignments_submissions(params={'username': self.student_name})
 
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
@@ -447,8 +449,24 @@ class GradeReport:
             filtered_assignments,
             key=lambda x: datetime.fromisoformat(x["due_date"].replace("Z", "+00:00")),
         )
+        
+        extension_minutes = self.check_global_extensions()
+        if extension_minutes:
+            max_due["due_date"] = (datetime.fromisoformat(max_due["due_date"].replace("Z", "+00:00")) + timedelta(minutes=extension_minutes)).isoformat()
 
         return max_due["due_date"]  # Return the max due date as a string
+        
+    def check_global_extensions(self):
+        """
+        Check if the student has a global extension available.
+
+        Returns:
+            int or None: The number of minutes of extension if available, otherwise None.
+        """
+        if self.student_name in global_extensions_AVL:
+            return global_extensions_AVL[self.student_name]
+        else:
+            return None
 
     def get_non_weekly_assignments(self):
         """Get all weekly assignments from the assignment list configuration"""
