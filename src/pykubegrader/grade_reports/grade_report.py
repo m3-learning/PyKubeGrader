@@ -376,7 +376,7 @@ class GradeReport:
 
     def get_max_score(self, filtered_assignments):
         if not filtered_assignments:
-            return None
+            return 0
 
         return max(filtered_assignments, key=lambda x: x["id"])["max_score"]
 
