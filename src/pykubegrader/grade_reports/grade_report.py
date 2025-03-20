@@ -902,9 +902,28 @@ class GradeReport:
 
     def _build_running_avg(self):
         """
-        Subfunction to compute and update the Running Avg row, handling NaNs.
-        """
+        Computes and updates the running average row in the grade DataFrames.
 
+        This method calculates the mean score for each assignment type, excluding the
+        "Running Avg" row itself, and updates both the calculation DataFrame 
+        (weekly_grades_df) and display DataFrame (weekly_grades_df_display) with these
+        averages.
+
+        The calculation:
+        - Drops the "Running Avg" row to avoid including it in the mean
+        - Computes mean along axis=0 (down columns) 
+        - Skips NaN values using skipna=True
+        - Updates both DataFrames with the calculated averages
+
+        Example:
+            >>> grade_report = GradeReport()
+            >>> grade_report._build_running_avg()
+            >>> grade_report.weekly_grades_df.loc["Running Avg", "Lab"]
+            85.5  # Average of all Lab scores, excluding NaNs
+
+        Returns:
+            None
+        """
         self.weekly_grades_df.loc["Running Avg"] = self.weekly_grades_df.drop(
             "Running Avg", errors="ignore"
         ).mean(axis=0, skipna=True)
