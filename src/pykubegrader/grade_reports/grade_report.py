@@ -284,22 +284,53 @@ class GradeReport:
             return styler
 
     def _calculate_final_average(self):
+        """Calculates final grade averages considering optional weighted assignments.
+
+        This method computes both a regular weighted average grade and a final weighted average 
+        that accounts for optional assignment weights. It handles assignments that can have 
+        variable weights (specified as tuples) by calculating all possible weight combinations
+        and selecting the most favorable outcome for the student.
+
+        The method performs the following steps:
+        1. Separates assignments into regular and optional weighted categories
+        2. Calculates base score from regular weighted assignments
+        3. Computes all possible combinations of optional assignment weights
+        4. Determines the maximum possible final grade
+        5. Updates the grade report with running averages and letter grade
+
+        Attributes modified:
+            final_grade (float): Regular weighted average without optional weights
+            final_grade_final (float): Maximum weighted average considering optional weights
+            weighted_average_grades (pd.DataFrame): DataFrame containing all grade calculations
+
+        Note:
+            Assignment weights specified as tuples indicate optional weighting schemes.
+            The final grade uses the weight combination that maximizes the student's grade.
+        """
+        
+        # percentage of the total score -- this is 100%
         total_percentage = 1
         df_ = self.compute_final_average()
         score_earned = 0
-
         optional_weighted_assignments = []
         final_weights = {}
+        
+        # Iterate through all assignments to identify optional weighted assignments, this is when multiple weights are specified
         for assignment_type in self.assignment_type_list:
             if isinstance(assignment_type.weight, tuple):
+                # subtract the weight from the total percentage
                 total_percentage -= assignment_type.weight[0]
+                # add the assignment to the list of optional weighted assignments
                 optional_weighted_assignments.append(assignment_type)
+                # add the weights to the final weights dictionary
                 final_weights[assignment_type.name] = list(assignment_type.weight)
-
             else:
+                # add the score earned to the score earned variable
                 score_earned += assignment_type.weight * df_[assignment_type.name]
 
+        # calculate the non optional score
         non_optional_score = score_earned / total_percentage
+        # calculate all possible combinations of optional assignment weights
         combinations = list(product(*final_weights.values()))
         final_scores_list = []
         for weight_combo in combinations:
@@ -308,12 +339,16 @@ class GradeReport:
             for i, assignment_type in enumerate(optional_weighted_assignments):
                 score += weight_combo[i] * df_[assignment_type.name]
 
+            # calculate the final score
             final_scores_list.append(
                 non_optional_score * (1 - sum(weight_combo)) + score
             )
 
+        # update the final grade and final grade final
         self.final_grade = score_earned / total_percentage
         self.final_grade_final = max(*final_scores_list)
+        
+        # update the weighted average grades
         self.weighted_average_grades = pd.concat(
             [
                 pd.DataFrame(self.final_grades),
