@@ -998,7 +998,21 @@ class GradeReport:
                 index += 1
 
     def duplicate_scores(self):
-        """Duplicate scores from one assignment to another"""
+        """Duplicate scores from one assignment to another.
+
+        This method copies scores between assignments based on the duplicated_scores configuration.
+        For each pair of assignments specified in duplicated_scores, it:
+        - Gets the source assignment based on week and assignment type
+        - Gets the target assignment to duplicate to
+        - Copies the score, raw score, and exemption status from source to target
+
+        The duplicated_scores configuration should be a list of tuples, where each tuple contains:
+        - Source assignment: (week number, assignment type)
+        - Target assignment: (week number, assignment type)
+
+        This is useful for cases where the same work is counted for multiple assignments
+        or when scores need to be propagated between related assignments.
+        """
 
         for (week, assignment_type), (
             duplicate_week,
