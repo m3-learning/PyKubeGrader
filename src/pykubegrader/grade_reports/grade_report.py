@@ -98,7 +98,7 @@ class GradeReport:
             if (assignment.name, assignment.week) in self.optional_drop_assignments:
                 if (
                     self.weekly_grades_df_display.loc["Running Avg", assignment.name]
-                    > assignment.score
+                    > assignment.score_
                 ):
                     assignment.exempted = True
 
@@ -144,7 +144,7 @@ class GradeReport:
                     assignment.due_date.replace("Z", "+00:00")
                 )
                 if due_date > datetime.now(due_date.tzinfo) and assignment.score == 0:
-                    assignment.score = np.nan
+                    assignment.score_ = np.nan
                     assignment._score = "---"
                     assignment.exempted = True
 
@@ -235,7 +235,7 @@ class GradeReport:
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
-                    assignment.score
+                    assignment.score_
                 )
 
     def update_global_exempted_assignments(self):
@@ -318,7 +318,7 @@ class GradeReport:
 
         for assignment in self.graded_assignments:
             if not assignment.weekly:
-                self.final_grades[f"{assignment.name}"] = assignment.score
+                self.final_grades[f"{assignment.name}"] = assignment.score_
 
         return self.final_grades
 
@@ -481,10 +481,10 @@ class GradeReport:
         # Iterate over each specified assignment type and drop the lowest n scores
         for name, assignments in assignment_groups.items():
             # Filter assignments that are not already exempted (NaN scores should not count)
-            valid_assignments = [a for a in assignments if not np.isnan(a.score)]
+            valid_assignments = [a for a in assignments if not np.isnan(a.score_)]
 
             # Sort assignments by score in ascending order
-            valid_assignments.sort(key=lambda a: a.score)
+            valid_assignments.sort(key=lambda a: a.score_)
 
             # Exempt the lowest `n` assignments
             dropped = []
