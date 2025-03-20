@@ -99,7 +99,7 @@ class Assignment(assignment_type):
         self.late_adjustment = kwargs.get("late_adjustment", True)
         self.students_exempted = kwargs.get("students_exempted", [])
         self.due_date = kwargs.get("due_date", None)
-        self.max_score = kwargs.get("max_score", None)
+        self.max_score = kwargs.get("max_score", 0)
         self.bonus_points = kwargs.get("bonus_points", 0)
         # TODO: this is not implemented yet
         self.student_with_extension = kwargs.get("student_with_extension", (None, None))
