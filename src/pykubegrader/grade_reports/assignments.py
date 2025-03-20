@@ -99,7 +99,7 @@ class Assignment(assignment_type):
         self.late_adjustment = kwargs.get("late_adjustment", True)
         self.students_exempted = kwargs.get("students_exempted", [])
         self.due_date = kwargs.get("due_date", None)
-        self.max_score = kwargs.get("max_score", None)
+        self.max_score = kwargs.get("max_score", 0)
         self.bonus_points = kwargs.get("bonus_points", 0)
         # TODO: this is not implemented yet
         self.student_with_extension = kwargs.get("student_with_extension", (None, None))
@@ -222,7 +222,7 @@ class Assignment(assignment_type):
         Args:
             week (int): The week number to be set for the assignment.
         """
-        if not isinstance(week, int):
+        if not isinstance(week, int) and self.weekly:
             raise ValueError("week must be an integer")
         self._week = week
 
@@ -411,8 +411,8 @@ class Assignment(assignment_type):
             score = self.check_cheater(score, **kwargs)
             return score
         else:
-            if self.late_adjustment:
-                return self._late_adjustment(score, entry_date, **kwargs)
+            if self._late_adjustment:
+                return self._calculate_late_adjustment(score, entry_date, **kwargs)
             else:
                 # Return normalized score if on time
                 if entry_date < self.due_date:
@@ -422,9 +422,9 @@ class Assignment(assignment_type):
                 # TODO: Consider adding a hard cuttoff for late submissions without a late adjustment policy
                 # Assign zero score for late submissions without a late adjustment policy
                 else:
-                    return 0
+                    return 0.
                 
-    def _late_adjustment(self, score, entry_date, **kwargs):
+    def _calculate_late_adjustment(self, score, entry_date, **kwargs):
         """
         Adjusts the score for late submissions based on the due date and entry date.
 
@@ -473,6 +473,6 @@ class Assignment(assignment_type):
             print(
                 f"A Cheater has been detected with a score of {score} for {self.name}. {kwargs.get('student_name', 'You')} have been reported to the instructor."
             )
-            return 0
+            return 0.
         else:
             return score
