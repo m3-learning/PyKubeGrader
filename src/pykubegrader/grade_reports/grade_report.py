@@ -933,11 +933,23 @@ class GradeReport:
 
     def drop_lowest_n_for_types(self, n, assignments_=None):
         """
-        Exempts the lowest n assignments for each specified assignment type.
-        If the lowest dropped score is from week 1, an additional lowest score is dropped.
+        Exempts the lowest n assignments for each specified assignment type, with special handling for optional drops.
 
-        :param assignments_: List of assignment types (names) to process.
-        :param n: Number of lowest scores to exempt per type.
+        This method processes assignments and drops the lowest scoring ones based on certain rules:
+        1. For each assignment type, finds the n lowest scoring assignments
+        2. Skips assignments that are in optional_drop_week 
+        3. Skips assignments that are in optional_drop_assignments
+        4. Marks dropped assignments as exempted and tracks them in student_assignments_dropped
+
+        Args:
+            n (int): Number of lowest scores to exempt per assignment type
+            assignments_ (list, optional): List of assignment types (names) to process. 
+                If None, processes assignments in self.dropped_assignments. Defaults to None.
+
+        Example:
+            >>> grade_report = GradeReport()
+            >>> grade_report.drop_lowest_n_for_types(1) # Drop lowest score for each type
+            >>> grade_report.drop_lowest_n_for_types(2, ['Lab']) # Drop 2 lowest Lab scores
         """
         from collections import defaultdict
 
@@ -966,24 +978,24 @@ class GradeReport:
 
             # Exempt the lowest `n` assignments
             dropped = []
-            i = 0
-            j = 0
-            while i < n:
-                valid_assignments[i + j].exempted = True
-                if valid_assignments[i + j].week in self.optional_drop_week:
-                    j += 1
+            index = 0
+            num_dropped = 0
+            while index < n:
+                valid_assignments[index + num_dropped].exempted = True
+                if valid_assignments[index + num_dropped].week in self.optional_drop_week:
+                    num_dropped += 1
                     continue
 
                 if (
                     name,
-                    valid_assignments[i + j].week,
+                    valid_assignments[index + num_dropped].week,
                 ) in self.optional_drop_assignments:
-                    j += 1
+                    num_dropped += 1    
                     continue
 
-                dropped.append(valid_assignments[i + j])
-                self.student_assignments_dropped.append(valid_assignments[i + j])
-                i += 1
+                dropped.append(valid_assignments[index + num_dropped])
+                self.student_assignments_dropped.append(valid_assignments[index + num_dropped])
+                index += 1
 
     def duplicate_scores(self):
         """Duplicate scores from one assignment to another"""
