@@ -421,7 +421,7 @@ class Assignment(assignment_type):
                     return score
                 # Assign zero score for late submissions without a late adjustment policy
                 else:
-                    return 0
+                    return 0.
                 
     def _late_adjustment(self, score, entry_date, **kwargs):
         """
@@ -457,6 +457,6 @@ class Assignment(assignment_type):
             print(
                 f"A Cheater has been detected with a score of {score} for {self.name}. {kwargs.get('student_name', 'You')} have been reported to the instructor."
             )
-            return 0
+            return 0.
         else:
             return score
