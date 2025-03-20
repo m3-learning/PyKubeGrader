@@ -377,7 +377,8 @@ class GradeReport:
         self._update_weekly_table_nan()
         self._update_weekly_table_scores()
 
-    def _get_letter_grade(self, score: float) -> str:
+    @staticmethod
+    def _get_letter_grade(score: float) -> str:
         """Gets the letter grade corresponding to a numeric score.
 
         Args:
