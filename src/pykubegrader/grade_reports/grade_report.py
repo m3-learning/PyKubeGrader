@@ -377,7 +377,17 @@ class GradeReport:
         self._update_weekly_table_nan()
         self._update_weekly_table_scores()
 
-    def _get_letter_grade(self, score):
+    def _get_letter_grade(self, score: float) -> str:
+        """Gets the letter grade corresponding to a numeric score.
+
+        Args:
+            score (float): The numeric score to convert to a letter grade.
+
+        Returns:
+            str: The letter grade (e.g. 'A', 'B', etc.) corresponding to the score based on
+                the grade ranges defined in the grading config. Returns 'Invalid Score' if
+                the score does not fall within any defined range.
+        """
         for low, high, grade in grade_ranges:
             if low <= score <= high:
                 return grade
