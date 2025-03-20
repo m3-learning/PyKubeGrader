@@ -394,8 +394,13 @@ class GradeReport:
                 return grade
         return "Invalid Score"
 
-    # TODO: populate with average scores calculated from the exempted
     def _update_weekly_table_scores(self):
+        """Updates the display weekly grades table with formatted scores.
+
+        Iterates through all graded assignments and updates the display table 
+        (weekly_grades_df_display) with the formatted scores (_score) for weekly 
+        assignments. The scores are indexed by week number and assignment name.
+        """
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df_display.loc[
