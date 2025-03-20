@@ -164,15 +164,29 @@ class GradeReport:
     @staticmethod
     def highlight_nans(nan_df, display_df, color="red"):
         """
-        Highlights NaN values from nan_df on display_df.
+        Highlights NaN values from one DataFrame on another DataFrame by applying background colors.
 
-        Parameters:
-        nan_df (pd.DataFrame): DataFrame containing NaNs to be highlighted.
-        display_df (pd.DataFrame): DataFrame to be recolored.
-        color (str): Background color for NaNs. Default is 'red'.
+        This static method takes two DataFrames - one containing NaN values to highlight and another
+        to apply the highlighting to. It creates a styled version of the display DataFrame where cells
+        corresponding to NaN values in the first DataFrame are highlighted with the specified color.
+
+        Args:
+            nan_df (pd.DataFrame): The DataFrame containing NaN values that should be highlighted.
+                This DataFrame's NaN locations will determine which cells get colored.
+            display_df (pd.DataFrame): The DataFrame that will have the highlighting applied to it.
+                This DataFrame's values will be displayed with the highlighting.
+            color (str, optional): The background color to use for highlighting NaN cells.
+                Can be any valid CSS color value. Defaults to "red".
 
         Returns:
-        pd.io.formats.style.Styler: Styled DataFrame with NaNs highlighted.
+            pd.io.formats.style.Styler: A styled version of display_df with NaN cells highlighted
+                according to nan_df's NaN locations.
+
+        Example:
+            >>> grades_df = pd.DataFrame({'A': [1, np.nan], 'B': [np.nan, 2]})
+            >>> display_df = pd.DataFrame({'A': [1, '---'], 'B': ['---', 2]})
+            >>> styled = GradeReport.highlight_nans(grades_df, display_df, color='yellow')
+            >>> styled  # Will show display_df with yellow highlighting where grades_df has NaNs
         """
         # Ensure both DataFrames have the same index and columns
         nan_mask = nan_df.isna().reindex_like(display_df)
@@ -182,11 +196,12 @@ class GradeReport:
             """
             Applies background color to NaN values in the row.
 
-            Parameters:
-            row (pd.Series): A row from the DataFrame.
+            Args:
+                row (pd.Series): A row from the DataFrame.
 
             Returns:
-            list: A list of CSS styles for each cell in the row.
+                list: A list of CSS styles for each cell in the row, with background-color
+                    set for cells corresponding to NaN values.
             """
             return [
                 f"background-color: {color}" if nan_mask.loc[row.name, col] else ""
@@ -201,6 +216,20 @@ class GradeReport:
     def update_assignments_not_due_yet(self):
         """
         Updates the score of assignments that are not due yet to NaN.
+
+        This method iterates through all graded assignments and checks their due dates.
+        For assignments that are not yet due and have a score of 0, it:
+        - Sets the numeric score to NaN
+        - Sets the display score to "---" 
+        - Marks the assignment as exempted
+
+        The assignment must:
+        - Have a due date set
+        - Not be in the excluded_from_running_avg list
+        - Have a due date in the future
+        - Currently have a score of 0
+
+        This prevents assignments that aren't due yet from negatively impacting grades.
         """
         for assignment in self.graded_assignments:
             if (
