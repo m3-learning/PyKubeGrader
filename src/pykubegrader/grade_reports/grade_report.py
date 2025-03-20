@@ -231,7 +231,9 @@ class GradeReport:
 
         This prevents assignments that aren't due yet from negatively impacting grades.
         """
+        # Iterate through all graded assignments
         for assignment in self.graded_assignments:
+            # Check if the assignment has a due date and is not excluded from running avg
             if (
                 assignment.due_date
                 and assignment.name not in self.excluded_from_running_avg
@@ -240,12 +242,33 @@ class GradeReport:
                 due_date = datetime.fromisoformat(
                     assignment.due_date.replace("Z", "+00:00")
                 )
+                # Check if the due date is in the future and the score is 0
                 if due_date > datetime.now(due_date.tzinfo) and assignment.score == 0:
                     assignment.score_ = np.nan
                     assignment._score = "---"
                     assignment.exempted = True
 
     def color_cells(self, styler, week_list, assignment_list):
+        """Recursively colors cells in a pandas styler object based on week and assignment lists.
+
+        This method takes a pandas styler object and recursively applies yellow background 
+        coloring to cells specified by corresponding week and assignment pairs. It processes
+        the lists from right to left using pop().
+
+        Args:
+            styler (pandas.io.formats.style.Styler): The pandas styler object to modify
+            week_list (list): List of week identifiers corresponding to row indices
+            assignment_list (list): List of assignment names corresponding to column names
+
+        Returns:
+            pandas.io.formats.style.Styler: The modified styler object with colored cells
+
+        Note:
+            The week_list and assignment_list must be of equal length.
+            The method modifies the input lists by popping elements.
+        """
+        
+        # Base case: if either list is empty, return the styler unchanged
         if week_list:
             week = week_list.pop()
             assignment = assignment_list.pop()
