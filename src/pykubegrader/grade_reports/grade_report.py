@@ -824,19 +824,25 @@ class GradeReport:
         ]
         return non_weekly_assignments
 
-    def get_weekly_assignments(self):
+    @property
+    def weekly_assignments(self):
         """
-        Retrieves all weekly assignments from the assignment list configuration.
+        A list of weekly assignments from the assignment list configuration.
 
-        This method filters the assignment_type_list to extract assignments that are marked as weekly.
+        This property filters the assignment_type_list to extract assignments that are marked as weekly.
 
         Returns:
             list: A list of weekly assignments.
+
+        Example:
+            >>> grade_report = GradeReport()
+            >>> weekly = grade_report.weekly_assignments
+            >>> len(weekly)
+            3  # Returns number of weekly assignments found
         """
-        weekly_assignments = [
+        return [
             assignment for assignment in self.assignment_type_list if assignment.weekly
         ]
-        return weekly_assignments
 
     def get_num_weeks(self):
         """Get the number of weeks in the course"""
