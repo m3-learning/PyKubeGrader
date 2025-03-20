@@ -692,6 +692,24 @@ class GradeReport:
         return filtered
 
     def get_graded_assignment(self, week_number, assignment_type):
+        """Retrieves graded assignments matching the specified week number and assignment type.
+
+        This method filters the list of graded assignments (self.graded_assignments) to find those
+        that match the specified week number and assignment type.
+
+        Args:
+            week_number (int, optional): The week number to filter by. If None, only filters by
+                assignment type.
+            assignment_type (str): The type of assignment to filter for.
+
+        Returns:
+            list: A filtered list of Assignment objects that match the specified week number
+                (if provided) and assignment type.
+
+        Example:
+            >>> grade_report.get_graded_assignment(1, "lab")
+            [<Assignment week=1 name='lab' ...>, ...]
+        """
         return list(
             filter(
                 lambda a: isinstance(a, Assignment)
@@ -702,12 +720,51 @@ class GradeReport:
         )
 
     def get_max_score(self, filtered_assignments):
+        """Gets the maximum score possible for a set of filtered assignments.
+
+        This method determines the maximum score possible by finding the assignment
+        with the highest ID in the filtered assignments list and returning its max_score.
+
+        Args:
+            filtered_assignments (list): A list of assignment dictionaries containing
+                at least 'id' and 'max_score' keys.
+
+        Returns:
+            int: The maximum score possible. Returns 0 if the filtered_assignments list
+                is empty.
+
+        Example:
+            >>> assignments = [{'id': 1, 'max_score': 10}, {'id': 2, 'max_score': 20}]
+            >>> grade_report.get_max_score(assignments)
+            20
+        """
         if not filtered_assignments:
             return 0
 
         return max(filtered_assignments, key=lambda x: x["id"])["max_score"]
 
     def determine_due_date(self, filtered_assignments):
+        """Determines the latest due date for a set of filtered assignments.
+
+        This method finds the assignment with the latest due date from the filtered assignments
+        and applies any global extensions the student may have.
+
+        Args:
+            filtered_assignments (list): A list of assignment dictionaries containing at least
+                a 'due_date' key with an ISO format datetime string.
+
+        Returns:
+            str or None: The latest due date as an ISO format string, with any applicable
+                extensions added. Returns None if filtered_assignments is empty.
+
+        Example:
+            >>> assignments = [
+            ...     {'due_date': '2024-01-01T23:59:59Z'},
+            ...     {'due_date': '2024-01-02T23:59:59Z'}
+            ... ]
+            >>> grade_report.determine_due_date(assignments)
+            '2024-01-02T23:59:59+00:00'
+        """
         if not filtered_assignments:
             return None  # Return None if the list is empty
 
@@ -724,11 +781,22 @@ class GradeReport:
         return max_due["due_date"]  # Return the max due date as a string
         
     def check_global_extensions(self):
-        """
-        Check if the student has a global extension available.
+        """Check if the student has a global extension available.
+
+        This method checks if the current student has been granted a global extension
+        by looking up their name in the global_extensions_AVL dictionary.
 
         Returns:
-            int or None: The number of minutes of extension if available, otherwise None.
+            int or None: The number of minutes of extension if the student has one available,
+                otherwise None.
+
+        Example:
+            >>> grade_report = GradeReport(params={'username': 'student1'})
+            >>> grade_report.check_global_extensions()
+            60  # Returns 60 if student1 has a 60 minute extension
+            >>> grade_report = GradeReport(params={'username': 'student2'}) 
+            >>> grade_report.check_global_extensions()
+            None  # Returns None if student2 has no extension
         """
         if self.student_name in global_extensions_AVL:
             return global_extensions_AVL[self.student_name]
