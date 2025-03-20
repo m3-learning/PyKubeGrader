@@ -411,8 +411,8 @@ class Assignment(assignment_type):
             score = self.check_cheater(score, **kwargs)
             return score
         else:
-            if self.late_adjustment:
-                return self._late_adjustment(score, entry_date, **kwargs)
+            if self._late_adjustment:
+                return self._calculate_late_adjustment(score, entry_date, **kwargs)
             else:
                 # Return normalized score if on time
                 if entry_date < self.due_date:
@@ -423,7 +423,7 @@ class Assignment(assignment_type):
                 else:
                     return 0.
                 
-    def _late_adjustment(self, score, entry_date, **kwargs):
+    def _calculate_late_adjustment(self, score, entry_date, **kwargs):
         """
         Adjusts the score for late submissions based on the due date and entry date.
 
