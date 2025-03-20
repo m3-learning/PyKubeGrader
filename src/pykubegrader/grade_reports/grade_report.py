@@ -518,6 +518,6 @@ class GradeReport:
             duplicate_assignment = self.get_graded_assignment(
                 duplicate_week, duplicate_assignment_type
             )[0]
-            duplicate_assignment.score = assignment.score
+            duplicate_assignment.score_ = assignment.score_
             duplicate_assignment._score = assignment._score
             duplicate_assignment.exempted = assignment.exempted
