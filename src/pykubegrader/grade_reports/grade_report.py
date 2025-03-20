@@ -136,14 +136,29 @@ class GradeReport:
 
     def check_optional_drop_assignments(self):
         """
-        Checks if the optional drop assignments are valid.
+        Checks if optional assignments should be dropped based on running average.
+
+        For each assignment that is marked as optionally droppable, compares the student's
+        running average at that point to their score on the assignment. If the running
+        average is higher than their assignment score, the assignment is exempted from
+        grade calculations.
+
+        This allows students to drop assignments that would lower their overall grade,
+        up to the maximum number of optional drops allowed.
+
+        The optional drops are specified in self.optional_drop_assignments as tuples of
+        (assignment_name, week_number).
         """
+        # Iterate through all assignments in the course
         for assignment in self.graded_assignments:
+            # Check if the assignment is in the list of optional drop assignments
             if (assignment.name, assignment.week) in self.optional_drop_assignments:
+                # Compare the running average to the assignment score
                 if (
                     self.weekly_grades_df_display.loc["Running Avg", assignment.name]
                     > assignment.score_
                 ):
+                    # If the running average is higher, exempt the assignment
                     assignment.exempted = True
 
     @staticmethod
