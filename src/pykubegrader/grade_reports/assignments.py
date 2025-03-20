@@ -222,7 +222,7 @@ class Assignment(assignment_type):
         Args:
             week (int): The week number to be set for the assignment.
         """
-        if not isinstance(week, int) and self.weekly is not None:
+        if not isinstance(week, int) and self.weekly:
             raise ValueError("week must be an integer")
         self._week = week
 
