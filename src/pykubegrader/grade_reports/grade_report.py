@@ -52,6 +52,8 @@ class GradeReport:
                 immediately upon initialization. Defaults to True.
             **kwargs: Additional keyword arguments that can be used to extend the functionality
                 or configuration of the GradeReport class.
+                start_week (int): The week number to start creating assignments from. Defaults to 1.
+                max_week (int): The maximum week number to create assignments for. Defaults to None.
 
         Attributes:
             assignments (list): A list of assignments for the course.
@@ -70,6 +72,8 @@ class GradeReport:
             student_assignments_dropped (list): List of assignments dropped for a specific student.
 
         """
+        # Get the max week from kwargs
+        max_week = kwargs.get("max_week", None)
 
         try:
             self.student_name = params.get("username", None)
@@ -106,7 +110,7 @@ class GradeReport:
         self.setup_grades_df()
 
         # Build the list of assignments.
-        self.build_assignments()
+        self.build_assignments(**kwargs)
 
         # Update the global exempted assignments.
         self.update_global_exempted_assignments()
@@ -446,20 +450,45 @@ class GradeReport:
             except:  # noqa: E722
                 pass
 
-    def build_assignments(self):
-        """
-        Generates a list of Assignment objects for each week and non-weekly assignments, 
-        applying custom adjustments where needed.
+    def build_assignments(self, **kwargs):
+        """Builds the list of graded assignments for the course.
 
-        This method initializes the graded_assignments list and populates it with Assignment 
-        objects for each week based on the weekly assignments. It also handles non-weekly 
-        assignments by creating Assignment objects for them as well.
+        This method initializes and populates the graded_assignments list with Assignment
+        objects for both weekly and non-weekly assignments.
+
+        Args:
+            **kwargs: Keyword arguments
+                start_week (int): The week number to start creating assignments from. Defaults to 1.
+
+        The method works in two steps:
+        1. Creates Assignment objects for weekly assignments (e.g. labs, quizzes) for each week
+           from start_week up to max_week
+        2. Creates Assignment objects for non-weekly assignments (e.g. midterm, final)
+
+        Each Assignment object is constructed using graded_assignment_constructor() which handles:
+        - Setting the assignment name, type and weight
+        - Applying any custom grade adjustments from the grading config
+        - Setting the due date based on filtered submissions
+        - Setting the max score from filtered assignments
+        - For weekly assignments, also sets the week number
+
+        The constructed Assignment objects are stored in self.graded_assignments for later
+        grade calculations.
+
+        Note:
+            Weekly assignments are created for each week in the range [start_week, max_week].
+            Non-weekly assignments like midterms and finals are created once per type.
         """
+        start_week = kwargs.get("start_week", 1)
+        
+        # Initialize the list of graded assignments
         self.graded_assignments = []
+        # Get the weekly assignments
         weekly_assignments = self.get_weekly_assignments()
-
+        
+        # Create Assignment objects for weekly assignments
         for assignment_type in weekly_assignments:
-            for week in range(1, self.max_week + 1):  # Weeks start at 1
+            for week in range(start_week, self.max_week + 1):  # Weeks start at 1
                 self.graded_assignment_constructor(assignment_type, week=week)
 
         non_weekly_assignments = self.get_non_weekly_assignments()
