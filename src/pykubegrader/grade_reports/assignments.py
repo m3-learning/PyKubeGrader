@@ -418,13 +418,10 @@ class Assignment(assignment_type):
                 if entry_date < self.due_date:
                     score = self._calculate_score(score, **kwargs)
                     return score
-                
-                # TODO: Consider adding a hard cuttoff for late submissions without a late adjustment policy
-                # Assign zero score for late submissions without a late adjustment policy
                 else:
                     return 0.
                 
-    def _calculate_late_adjustment(self, score, entry_date, **kwargs):
+    def _late_adjustment(self, score, entry_date, **kwargs):
         """
         Adjusts the score for late submissions based on the due date and entry date.
 
@@ -452,21 +449,6 @@ class Assignment(assignment_type):
         score = self.check_cheater(score, **kwargs)
         return score
 
-        This method normalizes the score based on the maximum score, applies any late submission
-        modifier, and then checks for any cheating behavior.
-
-        Args:
-            score (float): The initial score before adjustments.
-            late_modifier (float, optional): The modifier to apply for late submissions. Defaults to 1.
-            **kwargs: Additional keyword arguments that may be used for cheating checks.
-
-        Returns:
-            float: The final adjusted score after applying the late modifier and checking for cheating.
-        """
-        score = (score / self.max_score) * late_modifier
-        score = self.check_cheater(score, **kwargs)
-        return score
-    
     def check_cheater(self, score, **kwargs):
         # TODO: fix once we record bonus points this is the mns fix.
         if score > 161:
