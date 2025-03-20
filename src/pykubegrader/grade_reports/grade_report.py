@@ -844,8 +844,19 @@ class GradeReport:
             assignment for assignment in self.assignment_type_list if assignment.weekly
         ]
 
-    def get_num_weeks(self):
-        """Get the number of weeks in the course"""
+    @property
+    def num_weeks(self):
+        """
+        Gets the total number of weeks in the course based on assignment data.
+
+        Returns:
+            int: The maximum week number found in the course assignments.
+
+        Example:
+            >>> grade_report = GradeReport()
+            >>> grade_report.num_weeks
+            15  # Returns total number of weeks in the course
+        """
         max_week_number = max(item["week_number"] for item in self.assignments)
         return max_week_number
 
