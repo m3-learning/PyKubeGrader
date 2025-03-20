@@ -499,8 +499,28 @@ class GradeReport:
     def graded_assignment_constructor(self, assignment_type: AssignmentType, **kwargs):
         """Constructs a graded assignment object and appends it to the graded_assignments list.
 
+        This method creates a new Assignment object with the specified type and parameters,
+        and adds it to the list of graded assignments for the course.
+
         Args:
-            assignment_type (str): Type of assignment. Options: readings, lecture, practicequiz, quiz, homework, lab, labattendance, practicemidterm, midterm, practicefinal, final.
+            assignment_type (AssignmentType): The type of assignment to create. Contains:
+                - name (str): Name of the assignment type (e.g. readings, quiz, lab)
+                - weekly (bool): Whether this is a weekly assignment
+                - weight (float): Weight of this assignment type in grade calculations
+            **kwargs: Additional keyword arguments:
+                week (int, optional): Week number for weekly assignments
+                
+        The method:
+        1. Looks up any custom grade adjustment function for this assignment type/week
+        2. Gets filtered assignments matching the type/week
+        3. Creates new Assignment with:
+            - Basic properties (name, weekly status, weight) from assignment_type
+            - Score initialized to 0
+            - Custom grade adjustment function if specified
+            - Due date determined from filtered assignments
+            - Max score determined from filtered assignments
+            - Any additional kwargs passed through
+        4. Adds the new Assignment to self.graded_assignments list
         """
         custom_func = custom_grade_adjustments.get(
             (assignment_type.name, kwargs.get("week", None)), None
@@ -512,11 +532,10 @@ class GradeReport:
 
         new_assignment = Assignment(
             name=assignment_type.name,
-            weekly=assignment_type.weekly,
+            weekly=assignment_type.weekly, 
             weight=assignment_type.weight,
             score=0,
             grade_adjustment_func=custom_func,
-            # filters the submissions for an assignment and gets the last due date
             due_date=self.determine_due_date(filtered_assignments),
             max_score=self.get_max_score(filtered_assignments),
             **kwargs,
@@ -525,10 +544,31 @@ class GradeReport:
 
     def calculate_grades(self):
         """Calculates the grades for each student based on the graded assignments.
-        If there are filtered assignments, the score is updated based on the submission.
-        Otherwise,
-        """
 
+        This method iterates through all graded assignments and updates their scores based on
+        student submissions. For each assignment:
+
+        1. Gets any matching submissions for that assignment week/type
+        2. If submissions exist:
+           - Updates the assignment score using each submission
+        3. If no submissions exist:
+           - Updates the assignment score with default values
+
+        The score updates take into account:
+        - Raw submission scores
+        - Any grade adjustment functions defined for that assignment
+        - Student-specific exemptions or adjustments
+        - Maximum possible points
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Side Effects:
+            - Updates the score attributes of all Assignment objects in self.graded_assignments
+        """
         for assignment in self.graded_assignments:
             filtered_submission = self.filter_submissions(
                 assignment.week, assignment.name
@@ -543,11 +583,23 @@ class GradeReport:
                 assignment.update_score(student_name=self.student_name)
 
     def compute_final_average(self):
-        """
-        Computes the final average by combining the running average from weekly assignments
-        and the midterm/final exam scores.
-        """
+        """Computes the final average by combining running average and non-weekly scores.
 
+        This method calculates the final grade by:
+        1. Taking the running average from weekly assignments stored in weekly_grades_df
+        2. Adding scores from non-weekly assignments like midterms/finals
+        
+        The running average comes from the "Running Avg" row of weekly_grades_df.
+        Non-weekly assignment scores are taken directly from their Assignment objects.
+
+        Returns:
+            pandas.Series: A series containing the final grades, including both the
+                running average from weekly assignments and individual scores from
+                non-weekly assignments like exams.
+
+        Side Effects:
+            - Sets self.final_grades to the computed final grade series
+        """
         # Extract running average from the weekly table
         self.final_grades = self.weekly_grades_df.loc["Running Avg"]
 
@@ -558,6 +610,26 @@ class GradeReport:
         return self.final_grades
 
     def filter_submissions(self, week_number, assignment_type):
+        """Filters student submissions based on week number and assignment type.
+
+        This method filters the list of student submissions (self.student_subs) to find
+        submissions matching the specified week number and assignment type. The assignment
+        type is normalized using aliases to handle different naming variations.
+
+        Args:
+            week_number (int): The week number to filter by. If None, only filters by
+                assignment type.
+            assignment_type (str): The type of assignment to filter for. Will be normalized
+                using the aliases dictionary.
+
+        Returns:
+            list: A filtered list of submission dictionaries that match the specified
+                week number (if provided) and normalized assignment type.
+
+        Example:
+            >>> grade_report.filter_submissions(1, "lab")
+            [{'week_number': 1, 'assignment_type': 'lab', ...}, ...]
+        """
         # Normalize the assignment type using aliases
         normalized_type = self.aliases.get(
             assignment_type.lower(), [assignment_type.lower()]
@@ -584,6 +656,26 @@ class GradeReport:
         return filtered
 
     def get_assignment(self, week_number, assignment_type):
+        """Retrieves assignments matching the specified week number and assignment type.
+
+        This method filters the list of assignments (self.assignments) to find those that match
+        the specified week number and assignment type. The assignment type is normalized using
+        aliases to handle different naming variations.
+
+        Args:
+            week_number (int, optional): The week number to filter by. If None, only filters by
+                assignment type.
+            assignment_type (str): The type of assignment to filter for. Will be normalized
+                using the aliases dictionary.
+
+        Returns:
+            list: A filtered list of assignment dictionaries that match the specified
+                week number (if provided) and normalized assignment type.
+
+        Example:
+            >>> grade_report.get_assignment(1, "lab")
+            [{'week_number': 1, 'assignment_type': 'lab', ...}, ...]
+        """
         # Normalize the assignment type using aliases
         normalized_type = self.aliases.get(
             assignment_type.lower(), [assignment_type.lower()]
