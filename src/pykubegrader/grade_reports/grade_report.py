@@ -407,7 +407,7 @@ class GradeReport:
                     f"week{assignment.week}", assignment.name
                 ] = assignment._score
 
-    def z(self):
+    def _update_weekly_table_nan(self):
         """Updates the weekly grades table with the calculated scores.
 
         This method iterates through all graded assignments and updates the internal 
@@ -425,7 +425,20 @@ class GradeReport:
                 )
 
     def update_global_exempted_assignments(self):
-        """Updates the graded assignments with the globally exempted assignments. If assignment doesn't exist, pass."""
+        """Updates the graded assignments with globally exempted assignments.
+
+        This method iterates through the globally exempted assignments list and marks
+        matching assignments as exempted. For each exempted assignment, it:
+        1. Sets the exempted flag to True
+        2. Updates the display score to "---" 
+        
+        The method silently skips any assignments that don't exist in the graded
+        assignments list.
+
+        Note:
+            The globally_exempted_assignments list contains tuples of 
+            (assignment_type, week) pairs.
+        """
         for assignment_type, week in self.globally_exempted_assignments:
             try:
                 self.get_graded_assignment(week, assignment_type)[0].exempted = True
