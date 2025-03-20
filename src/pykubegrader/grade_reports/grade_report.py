@@ -407,8 +407,17 @@ class GradeReport:
                     f"week{assignment.week}", assignment.name
                 ] = assignment._score
 
-    def _update_weekly_table_nan(self):
-        """Updates the weekly grades table with the calculated scores."""
+    def z(self):
+        """Updates the weekly grades table with the calculated scores.
+
+        This method iterates through all graded assignments and updates the internal 
+        weekly grades table (weekly_grades_df) with the calculated scores (score_) 
+        for weekly assignments. The scores are indexed by week number and assignment name.
+
+        The method only processes weekly assignments, skipping any non-weekly ones.
+        The scores are stored in their raw numerical form, not formatted for display.
+        """
+        
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
