@@ -864,16 +864,27 @@ class GradeReport:
         """
         Sets up the DataFrame for weekly grades and initializes it with zeros.
 
-        This method creates a DataFrame to store the weekly grades for each assignment type.
-        It also initializes a copy of this DataFrame for display purposes, with all values
-        converted to strings.
+        This method creates two DataFrames:
+        - weekly_grades_df: For storing and calculating weekly grades
+        - weekly_grades_df_display: A string copy for display purposes
 
-        The DataFrame index consists of week labels (e.g., "week1", "week2", ...) and a "Running Avg" row.
-        Each column corresponds to an assignment type, and the initial values are set to zero.
+        The DataFrames have:
+        - Rows for each week ("week1", "week2", etc) plus a "Running Avg" row
+        - Columns for each weekly assignment type
+        - All values initialized to 0
 
-        Attributes:
-            weekly_grades_df (pd.DataFrame): DataFrame to store the weekly grades.
-            weekly_grades_df_display (pd.DataFrame): Copy of the weekly grades DataFrame for display purposes.
+        Example:
+            >>> grade_report = GradeReport() 
+            >>> grade_report.setup_grades_df()
+            >>> grade_report.weekly_grades_df.shape
+            (16, 3)  # 15 weeks + Running Avg row, 3 assignment types
+            >>> grade_report.weekly_grades_df.index[0]
+            'week1'
+            >>> grade_report.weekly_grades_df_display.dtypes[0]
+            dtype('O')  # String type for display
+
+        Returns:
+            None
         """
         weekly_assignments = self.get_weekly_assignments()
         inds = [f"week{i + 1}" for i in range(self.max_week)] + ["Running Avg"]
