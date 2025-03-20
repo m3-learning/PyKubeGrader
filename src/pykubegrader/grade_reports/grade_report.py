@@ -804,7 +804,19 @@ class GradeReport:
             return None
 
     def get_non_weekly_assignments(self):
-        """Get all weekly assignments from the assignment list configuration"""
+        """Get all non-weekly assignments from the assignment list configuration.
+
+        This method filters the assignment_type_list to extract assignments that are not marked as weekly.
+
+        Returns:
+            list: A list of non-weekly assignments.
+
+        Example:
+            >>> grade_report = GradeReport()
+            >>> non_weekly = grade_report.get_non_weekly_assignments()
+            >>> len(non_weekly)
+            2  # Returns number of non-weekly assignments found
+        """
         non_weekly_assignments = [
             assignment
             for assignment in self.assignment_type_list
