@@ -368,6 +368,12 @@ class GradeReport:
         )
 
     def update_weekly_table(self):
+        """Updates both the display and internal weekly grades tables.
+
+        This method updates two tables:
+        1. The internal weekly grades table with calculated scores via _update_weekly_table_nan()
+        2. The display weekly grades table with formatted scores via _update_weekly_table_scores()
+        """
         self._update_weekly_table_nan()
         self._update_weekly_table_scores()
 
