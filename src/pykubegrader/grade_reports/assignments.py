@@ -435,11 +435,13 @@ class Assignment(assignment_type):
         score = submission["raw_score"]
         entry_date = parser.parse(submission["timestamp"])
 
+        # If a custom grade adjustment function is provided, use it
         if self.grade_adjustment_func:
             score = self.grade_adjustment_func(score)
             score = self.check_cheater(score, **kwargs)
             return score
         else:
+            # If no custom grade adjustment function is provided, apply the late adjustment
             if self._late_adjustment:
                 return self._calculate_late_adjustment(score, entry_date, **kwargs)
             else:
