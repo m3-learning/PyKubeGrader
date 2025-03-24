@@ -56,7 +56,7 @@ class ClassGradeReport:
     def __init__(self, user, password, **kwargs):
         """Initializes the class grade report.
 
-        Retrieves the student list using authentication, filters it based on inclusion/exclusion 
+        Retrieves the student list using authentication, filters it based on inclusion/exclusion
         rules, and sets up the class-wide grade report by initializing and populating a DataFrame.
 
         Args:
@@ -127,7 +127,7 @@ class ClassGradeReport:
         weighted average grades.
 
         The DataFrame structure is:
-        - Index: Student usernames from self.student_list 
+        - Index: Student usernames from self.student_list
         - Columns:
             - One column per assignment type from assignment_type_list (e.g. readings, labs)
             - "Weighted Average Grade w Final": Final weighted average including final exam
@@ -183,7 +183,7 @@ class ClassGradeReport:
         1. Iterates through self.student_list with a progress bar
         2. For each student, calls update_student_grade() to:
             - Create their individual GradeReport
-            - Extract their weighted averages 
+            - Extract their weighted averages
             - Update their row in all_student_grades_df
 
         Note:
@@ -227,7 +227,7 @@ class ClassGradeReport:
         """Exports the class-wide grade report to an Excel spreadsheet.
 
         This method writes the grade report data to an Excel file with multiple sheets:
-        - 'all_student_grades': Contains the full grade report DataFrame with individual 
+        - 'all_student_grades': Contains the full grade report DataFrame with individual
           student grades for all assignments and weighted averages
         - 'performance_statistics': Contains summary statistics like mean, median, std dev
           for each graded component
@@ -264,6 +264,7 @@ def main():
     """
     class_grades = ClassGradeReport()
     print(class_grades.all_student_grades_df)
+
 
 if __name__ == "__main__":
     """Script entry point.
