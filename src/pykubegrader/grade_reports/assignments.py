@@ -166,7 +166,6 @@ class Assignment(assignment_type):
             raise ValueError("max_score must be a float or an integer")
         self._max_score = max_score
 
-    # TODO: add setter for due_date with error handling
     @property
     def due_date(self):
         """
