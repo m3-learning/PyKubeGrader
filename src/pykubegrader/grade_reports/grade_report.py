@@ -121,8 +121,6 @@ class GradeReport:
             student_assignments_dropped (list): List of assignments dropped for a specific student.
 
         """
-        # Get the max week from kwargs
-        max_week = kwargs.get("max_week", None)
 
         # Get the username from the params
         self.set_username(params)
@@ -131,7 +129,12 @@ class GradeReport:
             params={"username": self.student_name}
         )
 
-        self.max_week = max_week if max_week else self.get_num_weeks()
+        # Get the max week from kwargs
+        max_week = kwargs.get("max_week", None)
+
+        # Get the number of weeks
+        self.max_week = max_week if max_week else self.num_weeks
+
         self.start_date = start_date
         self.verbose = verbose
         self.assignment_type_list = assignment_type_list
@@ -186,6 +189,286 @@ class GradeReport:
                 display(self.weighted_average_grades)
             except:  # noqa: E722
                 pass
+    
+    ### Properties ###
+    
+    @property
+    def student_assignments_dropped(self):
+        """
+        Gets the assignments which have been dropped for a given student.
+        """
+        return self._student_assignments_dropped
+    
+    @student_assignments_dropped.setter
+    def student_assignments_dropped(self, value):
+        """
+        Sets the assignments which have been dropped for a given student.
+        """
+        if not isinstance(value, list):
+            raise ValueError("student_assignments_dropped must be a list")
+        #TODO improved error 
+        self._student_assignments_dropped = value
+    
+    @property
+    def excluded_from_running_avg(self):
+        """
+        Gets the assignments which are excluded from the running average.
+        """
+        return self._excluded_from_running_avg
+    
+    @excluded_from_running_avg.setter
+    def excluded_from_running_avg(self, value):
+        """
+        Sets the assignments which are excluded from the running average.
+        """
+        if not isinstance(value, list):
+            raise ValueError("excluded_from_running_avg must be a list")
+        if not all(isinstance(item, str) for item in value):
+            raise ValueError("excluded_from_running_avg must be a list of strings")
+        self._excluded_from_running_avg = value
+    
+    @property
+    def optional_drop_assignments(self):
+        """
+        Gest the assignments which are dropped if they do not improve the running average.
+        
+        Returns:
+            list: The optional drop assignments.
+        """
+        return self._optional_drop_assignments
+    
+    @optional_drop_assignments.setter
+    def optional_drop_assignments(self, value):
+        """
+        Sets the optional drop assignments. The optional drop assignments are the assignments which are dropped if they do not improve the running average.
+
+        Args:
+            value (list): A list of tuples, where each tuple contains a string and an integer or None.
+
+        Raises:
+            ValueError: If the provided value is not a list.
+            ValueError: If any item in the list is not a tuple of a string and an integer or None.
+        """
+        if not isinstance(value, list):
+            raise ValueError("optional_drop_assignments must be a list")
+        if not all(isinstance(item, tuple) and len(item) == 2 and isinstance(item[0], str) and (isinstance(item[1], int) or item[1] is None) for item in value):
+            raise ValueError("optional_drop_assignments must be a list of tuples, where each tuple contains a string and an integer or None")
+        self._optional_drop_assignments = value
+    
+
+    @property
+    def optional_drop_week(self):
+        """
+        Gets the optional drop week. These are the weeks which can be dropped if they do not improve the running average.
+        """
+        return self._optional_drop_week 
+    
+    @optional_drop_week.setter
+    def optional_drop_week(self, value):
+        """
+        Sets the optional drop week. These are the weeks which can be dropped if they do not improve the running average.
+
+        Args:
+            value (list): A list of integers representing the weeks which can be dropped.
+
+        Raises:
+            ValueError: If the provided value is not a list.
+            ValueError: If any item in the list is not an integer.
+        """
+        if not isinstance(value, list):
+            raise ValueError("optional_drop_week must be a list")
+        if not all(isinstance(item, int) for item in value):
+            raise ValueError("optional_drop_week must be a list of integers")
+        self._optional_drop_week = value
+    
+    @property
+    def dropped_assignments(self):
+        """
+        Gets the dropped assignments.
+        """
+        return self._dropped_assignments
+    
+    @dropped_assignments.setter
+    def dropped_assignments(self, value):
+        """
+        Sets the dropped assignments.
+
+        Args:
+            value (list): A list of strings representing the dropped assignments.
+
+        Raises:
+            ValueError: If the provided value is not a list.
+            ValueError: If any item in the list is not a string.
+        """
+        if not isinstance(value, list):
+            raise ValueError("dropped_assignments must be a list")
+        if not all(isinstance(item, str) for item in value):
+            raise ValueError("dropped_assignments must be a list of strings")
+        self._dropped_assignments = value
+
+    @property
+    def globally_exempted_assignments(self):
+        """
+        Gets the globally exempted assignments.
+        """
+        return self._globally_exempted_assignments
+    
+    @globally_exempted_assignments.setter
+    def globally_exempted_assignments(self, value):
+        """
+        Sets the globally exempted assignments.
+
+        Args:
+            value (list): A list of tuples, where each tuple contains:
+                - A string representing the assignment type.
+                - An integer or None representing the week number.
+
+        Raises:
+            ValueError: If the provided value is not a list of tuples.
+            ValueError: If any tuple does not contain exactly two elements.
+            ValueError: If the first element of any tuple is not a string.
+            ValueError: If the second element of any tuple is not an integer or None.
+        """
+        if not isinstance(value, list):
+            raise ValueError("globally_exempted_assignments must be a list of tuples")
+        if not all(isinstance(item, tuple) for item in value):
+            raise ValueError("globally_exempted_assignments must be a list of tuples")
+        if not all(len(item) == 2 for item in value):
+            raise ValueError("globally_exempted_assignments must be a list of tuples with two elements")
+        if not all(isinstance(item[0], str) for item in value):
+            raise ValueError("globally_exempted_assignments must be a list of tuples with a string as the first element")
+        if not all(isinstance(item[1], (int, type(None))) for item in value):
+            raise ValueError("globally_exempted_assignments must be a list of tuples with an integer or None as the second element")
+        self._globally_exempted_assignments = value
+    
+    @property
+    def student_name(self):
+        """
+        Gets the student name.
+        """
+        return self._student_name
+    @property
+    def aliases(self):
+        """
+        Gets the aliases for the course.
+        """
+        return self._aliases
+    
+    @aliases.setter
+    def aliases(self, value):
+        """
+        Sets the aliases for the course.
+
+        Args:
+            value (dict): A dictionary of aliases for the course.
+
+        Raises:
+            ValueError: If the provided value is not a dictionary.
+        """
+        if not isinstance(value, dict):
+            raise ValueError("aliases must be a dictionary")
+        self._aliases = value
+    
+    
+    @property
+    def assignment_type_list(self):
+        """
+        Gets the assignment type list.
+        """
+        return self._assignment_type_list
+    
+    @assignment_type_list.setter
+    def assignment_type_list(self, value):
+        """
+        Sets the assignment type list.
+
+        Args:
+            value (list): A list of AssignmentType objects to set as the assignment type list.
+
+        Raises:
+            ValueError: If the provided value is not a list.
+            ValueError: If the list contains items that are not AssignmentType objects.
+        """
+        if not isinstance(value, list):
+            raise ValueError("assignment_type_list must be a list")
+        if not all(isinstance(item, AssignmentType) for item in value):
+            raise ValueError("assignment_type_list must contain only AssignmentType objects")
+        self._assignment_type_list = value
+    
+    @property
+    def student_name(self):
+    @property
+    def verbose(self):
+        """
+        Gets the verbose flag.
+        """
+        return self._verbose
+    
+    @verbose.setter
+    def verbose(self, value):
+        """
+        Sets the verbose flag.
+        """
+        if not isinstance(value, bool):
+            raise ValueError("verbose must be a boolean")
+        self._verbose = value
+    
+    @property
+    def start_date(self):
+        """
+        Gets the start date for the course.
+        """
+        return self._start_date
+    
+    @start_date.setter
+    def start_date(self, value):
+        """
+        Sets the start date for the course.
+        """
+        if not isinstance(value, datetime):
+            raise ValueError("start_date must be a datetime object")
+        self._start_date = value
+    
+    @property
+    def num_weeks(self):
+        """
+        Gets the number of weeks in the course.
+        """
+        return self._num_weeks
+    @property
+    def max_week(self):
+        """
+        Gets the maximum week number for the course.
+
+        Returns:
+            int: The maximum week number.
+        """
+        return self._max_week
+    
+    @max_week.setter
+    def max_week(self, value):
+        """
+        Sets the maximum week number for the course.
+
+        This method sets the maximum week number for the course. The value must be an integer.
+        If the provided value is not an integer, a ValueError is raised.
+
+        Args:
+            value (int): The maximum week number to set.
+
+        Raises:
+            ValueError: If the provided value is not an integer.
+
+        Example:
+            >>> grade_report = GradeReport()
+            >>> grade_report.max_week = 15
+            >>> print(grade_report.max_week)
+            15
+        """
+        if not isinstance(value, int):
+            raise ValueError("max_week must be an integer")
+        
+        self._max_week = value
 
     def set_username(self, params):
         """
