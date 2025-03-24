@@ -3,6 +3,7 @@ import numpy as np
 from dateutil import parser
 from ..graders.late_assignments import calculate_late_submission
 
+
 class assignment_type:
     """
     Base class for assignment types.
@@ -10,7 +11,7 @@ class assignment_type:
     Attributes:
         name (str): The name of the assignment.
         weekly (bool): Indicates if the assignment is weekly.
-        weight (float | tuple[float, float]): The weight of the assignment in the overall grade. 
+        weight (float | tuple[float, float]): The weight of the assignment in the overall grade.
             If a tuple is provided, it represents a range of possible weights.
 
     Methods:
@@ -25,7 +26,7 @@ class assignment_type:
         Args:
             name (str): The name of the assignment.
             weekly (bool): Indicates if the assignment is weekly.
-            weight (float | tuple[float, float]): The weight of the assignment in the overall grade. 
+            weight (float | tuple[float, float]): The weight of the assignment in the overall grade.
                 If a tuple is provided, it represents a range of possible weights.
         """
         self.name = name
@@ -128,7 +129,11 @@ class Assignment(assignment_type):
         Raises:
             ValueError: If bonus_points is not a float or an integer.
         """
-        if not isinstance(bonus_points, float) and not isinstance(bonus_points, int) or bonus_points is None:
+        if (
+            not isinstance(bonus_points, float)
+            and not isinstance(bonus_points, int)
+            or bonus_points is None
+        ):
             raise ValueError("bonus_points must be a float or an integer")
         self._bonus_points = bonus_points
 
@@ -153,7 +158,11 @@ class Assignment(assignment_type):
         Raises:
             ValueError: If max_score is not a float or an integer.
         """
-        if not isinstance(max_score, float) and not isinstance(max_score, int) or max_score is None:
+        if (
+            not isinstance(max_score, float)
+            and not isinstance(max_score, int)
+            or max_score is None
+        ):
             raise ValueError("max_score must be a float or an integer")
         self._max_score = max_score
 
@@ -419,8 +428,8 @@ class Assignment(assignment_type):
                     score = self._calculate_score(score, **kwargs)
                     return score
                 else:
-                    return 0.
-                
+                    return 0.0
+
     def _late_adjustment(self, score, entry_date, **kwargs):
         """
         Adjusts the score for late submissions based on the due date and entry date.
@@ -455,6 +464,6 @@ class Assignment(assignment_type):
             print(
                 f"A Cheater has been detected with a score of {score} for {self.name}. {kwargs.get('student_name', 'You')} have been reported to the instructor."
             )
-            return 0.
+            return 0.0
         else:
             return score
