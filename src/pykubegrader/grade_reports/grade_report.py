@@ -35,7 +35,12 @@ class GradeReport:
     """Class to generate a grade report for a course and perform grade calculations for each student."""
 
     def __init__(
-        self, start_date="2025-01-06", verbose=True, params=None, display_=True, **kwargs
+        self,
+        start_date="2025-01-06",
+        verbose=True,
+        params=None,
+        display_=True,
+        **kwargs,
     ):
         """Initializes an instance of the GradeReport class.
 
@@ -79,15 +84,17 @@ class GradeReport:
             self.student_name = params.get("username", None)
         except Exception:
             self.student_name = os.environ.get("JUPYTERHUB_USER", None)
-            
-        self.assignments, self.student_subs = get_assignments_submissions(params={'username': self.student_name})
+
+        self.assignments, self.student_subs = get_assignments_submissions(
+            params={"username": self.student_name}
+        )
 
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
         self.verbose = verbose
         self.assignment_type_list = assignment_type_list
         self.aliases = aliases
-        
+
         # Assignments that are globally exempted from grading.
         self.globally_exempted_assignments = globally_exempted_assignments
 
@@ -114,7 +121,7 @@ class GradeReport:
 
         # Update the global exempted assignments.
         self.update_global_exempted_assignments()
-        
+
         self.calculate_grades()
         self.update_assignments_not_due_yet()
         self.calculate_grades()
@@ -224,7 +231,7 @@ class GradeReport:
         This method iterates through all graded assignments and checks their due dates.
         For assignments that are not yet due and have a score of 0, it:
         - Sets the numeric score to NaN
-        - Sets the display score to "---" 
+        - Sets the display score to "---"
         - Marks the assignment as exempted
 
         The assignment must:
@@ -255,7 +262,7 @@ class GradeReport:
     def color_cells(self, styler, week_list, assignment_list):
         """Recursively colors cells in a pandas styler object based on week and assignment lists.
 
-        This method takes a pandas styler object and recursively applies yellow background 
+        This method takes a pandas styler object and recursively applies yellow background
         coloring to cells specified by corresponding week and assignment pairs. It processes
         the lists from right to left using pop().
 
@@ -271,7 +278,7 @@ class GradeReport:
             The week_list and assignment_list must be of equal length.
             The method modifies the input lists by popping elements.
         """
-        
+
         # Base case: if either list is empty, return the styler unchanged
         if week_list:
             week = week_list.pop()
@@ -290,8 +297,8 @@ class GradeReport:
     def _calculate_final_average(self):
         """Calculates final grade averages considering optional weighted assignments.
 
-        This method computes both a regular weighted average grade and a final weighted average 
-        that accounts for optional assignment weights. It handles assignments that can have 
+        This method computes both a regular weighted average grade and a final weighted average
+        that accounts for optional assignment weights. It handles assignments that can have
         variable weights (specified as tuples) by calculating all possible weight combinations
         and selecting the most favorable outcome for the student.
 
@@ -311,14 +318,14 @@ class GradeReport:
             Assignment weights specified as tuples indicate optional weighting schemes.
             The final grade uses the weight combination that maximizes the student's grade.
         """
-        
+
         # percentage of the total score -- this is 100%
         total_percentage = 1
         df_ = self.compute_final_average()
         score_earned = 0
         optional_weighted_assignments = []
         final_weights = {}
-        
+
         # Iterate through all assignments to identify optional weighted assignments, this is when multiple weights are specified
         for assignment_type in self.assignment_type_list:
             if isinstance(assignment_type.weight, tuple):
@@ -351,7 +358,7 @@ class GradeReport:
         # update the final grade and final grade final
         self.final_grade = score_earned / total_percentage
         self.final_grade_final = max(*final_scores_list)
-        
+
         # update the weighted average grades
         self.weighted_average_grades = pd.concat(
             [
@@ -401,8 +408,8 @@ class GradeReport:
     def _update_weekly_table_scores(self):
         """Updates the display weekly grades table with formatted scores.
 
-        Iterates through all graded assignments and updates the display table 
-        (weekly_grades_df_display) with the formatted scores (_score) for weekly 
+        Iterates through all graded assignments and updates the display table
+        (weekly_grades_df_display) with the formatted scores (_score) for weekly
         assignments. The scores are indexed by week number and assignment name.
         """
         for assignment in self.graded_assignments:
@@ -414,14 +421,14 @@ class GradeReport:
     def _update_weekly_table_nan(self):
         """Updates the weekly grades table with the calculated scores.
 
-        This method iterates through all graded assignments and updates the internal 
-        weekly grades table (weekly_grades_df) with the calculated scores (score_) 
+        This method iterates through all graded assignments and updates the internal
+        weekly grades table (weekly_grades_df) with the calculated scores (score_)
         for weekly assignments. The scores are indexed by week number and assignment name.
 
         The method only processes weekly assignments, skipping any non-weekly ones.
         The scores are stored in their raw numerical form, not formatted for display.
         """
-        
+
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df.loc[f"week{assignment.week}", assignment.name] = (
@@ -434,13 +441,13 @@ class GradeReport:
         This method iterates through the globally exempted assignments list and marks
         matching assignments as exempted. For each exempted assignment, it:
         1. Sets the exempted flag to True
-        2. Updates the display score to "---" 
-        
+        2. Updates the display score to "---"
+
         The method silently skips any assignments that don't exist in the graded
         assignments list.
 
         Note:
-            The globally_exempted_assignments list contains tuples of 
+            The globally_exempted_assignments list contains tuples of
             (assignment_type, week) pairs.
         """
         for assignment_type, week in self.globally_exempted_assignments:
@@ -480,12 +487,12 @@ class GradeReport:
             Non-weekly assignments like midterms and finals are created once per type.
         """
         start_week = kwargs.get("start_week", 1)
-        
+
         # Initialize the list of graded assignments
         self.graded_assignments = []
         # Get the weekly assignments
         weekly_assignments = self.get_weekly_assignments()
-        
+
         # Create Assignment objects for weekly assignments
         for assignment_type in weekly_assignments:
             for week in range(start_week, self.max_week + 1):  # Weeks start at 1
@@ -509,7 +516,7 @@ class GradeReport:
                 - weight (float): Weight of this assignment type in grade calculations
             **kwargs: Additional keyword arguments:
                 week (int, optional): Week number for weekly assignments
-                
+
         The method:
         1. Looks up any custom grade adjustment function for this assignment type/week
         2. Gets filtered assignments matching the type/week
@@ -532,7 +539,7 @@ class GradeReport:
 
         new_assignment = Assignment(
             name=assignment_type.name,
-            weekly=assignment_type.weekly, 
+            weekly=assignment_type.weekly,
             weight=assignment_type.weight,
             score=0,
             grade_adjustment_func=custom_func,
@@ -588,7 +595,7 @@ class GradeReport:
         This method calculates the final grade by:
         1. Taking the running average from weekly assignments stored in weekly_grades_df
         2. Adding scores from non-weekly assignments like midterms/finals
-        
+
         The running average comes from the "Running Avg" row of weekly_grades_df.
         Non-weekly assignment scores are taken directly from their Assignment objects.
 
@@ -773,13 +780,16 @@ class GradeReport:
             filtered_assignments,
             key=lambda x: datetime.fromisoformat(x["due_date"].replace("Z", "+00:00")),
         )
-        
+
         extension_minutes = self.check_global_extensions()
         if extension_minutes:
-            max_due["due_date"] = (datetime.fromisoformat(max_due["due_date"].replace("Z", "+00:00")) + timedelta(minutes=extension_minutes)).isoformat()
+            max_due["due_date"] = (
+                datetime.fromisoformat(max_due["due_date"].replace("Z", "+00:00"))
+                + timedelta(minutes=extension_minutes)
+            ).isoformat()
 
         return max_due["due_date"]  # Return the max due date as a string
-        
+
     def check_global_extensions(self):
         """Check if the student has a global extension available.
 
@@ -794,7 +804,7 @@ class GradeReport:
             >>> grade_report = GradeReport(params={'username': 'student1'})
             >>> grade_report.check_global_extensions()
             60  # Returns 60 if student1 has a 60 minute extension
-            >>> grade_report = GradeReport(params={'username': 'student2'}) 
+            >>> grade_report = GradeReport(params={'username': 'student2'})
             >>> grade_report.check_global_extensions()
             None  # Returns None if student2 has no extension
         """
@@ -874,7 +884,7 @@ class GradeReport:
         - All values initialized to 0
 
         Example:
-            >>> grade_report = GradeReport() 
+            >>> grade_report = GradeReport()
             >>> grade_report.setup_grades_df()
             >>> grade_report.weekly_grades_df.shape
             (16, 3)  # 15 weeks + Running Avg row, 3 assignment types
@@ -894,7 +904,7 @@ class GradeReport:
         new_weekly_grades = pd.DataFrame(restruct_grades, dtype=float)
         new_weekly_grades["inds"] = inds
         new_weekly_grades.set_index("inds", inplace=True)
-        
+
         # This is the dataframe that will be used for calculations
         self.weekly_grades_df = new_weekly_grades
         # this is the dataframe that will be displayed in the notebook
@@ -905,13 +915,13 @@ class GradeReport:
         Computes and updates the running average row in the grade DataFrames.
 
         This method calculates the mean score for each assignment type, excluding the
-        "Running Avg" row itself, and updates both the calculation DataFrame 
+        "Running Avg" row itself, and updates both the calculation DataFrame
         (weekly_grades_df) and display DataFrame (weekly_grades_df_display) with these
         averages.
 
         The calculation:
         - Drops the "Running Avg" row to avoid including it in the mean
-        - Computes mean along axis=0 (down columns) 
+        - Computes mean along axis=0 (down columns)
         - Skips NaN values using skipna=True
         - Updates both DataFrames with the calculated averages
 
@@ -937,13 +947,13 @@ class GradeReport:
 
         This method processes assignments and drops the lowest scoring ones based on certain rules:
         1. For each assignment type, finds the n lowest scoring assignments
-        2. Skips assignments that are in optional_drop_week 
+        2. Skips assignments that are in optional_drop_week
         3. Skips assignments that are in optional_drop_assignments
         4. Marks dropped assignments as exempted and tracks them in student_assignments_dropped
 
         Args:
             n (int): Number of lowest scores to exempt per assignment type
-            assignments_ (list, optional): List of assignment types (names) to process. 
+            assignments_ (list, optional): List of assignment types (names) to process.
                 If None, processes assignments in self.dropped_assignments. Defaults to None.
 
         Example:
@@ -982,7 +992,10 @@ class GradeReport:
             num_dropped = 0
             while index < n:
                 valid_assignments[index + num_dropped].exempted = True
-                if valid_assignments[index + num_dropped].week in self.optional_drop_week:
+                if (
+                    valid_assignments[index + num_dropped].week
+                    in self.optional_drop_week
+                ):
                     num_dropped += 1
                     continue
 
@@ -990,11 +1003,13 @@ class GradeReport:
                     name,
                     valid_assignments[index + num_dropped].week,
                 ) in self.optional_drop_assignments:
-                    num_dropped += 1    
+                    num_dropped += 1
                     continue
 
                 dropped.append(valid_assignments[index + num_dropped])
-                self.student_assignments_dropped.append(valid_assignments[index + num_dropped])
+                self.student_assignments_dropped.append(
+                    valid_assignments[index + num_dropped]
+                )
                 index += 1
 
     def duplicate_scores(self):
