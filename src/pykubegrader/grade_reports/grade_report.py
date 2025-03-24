@@ -32,7 +32,51 @@ from pykubegrader.telemetry import get_assignments_submissions
 
 
 class GradeReport:
-    """Class to generate a grade report for a course and perform grade calculations for each student."""
+    """Class to generate a grade report for a course and perform grade calculations for each student.
+
+    Methods:
+        __init__(start_date="2025-01-06", verbose=True, params=None, display_=True, **kwargs):
+            Initializes an instance of the GradeReport class.
+
+        load_assignments():
+            Loads assignments for the course.
+
+        load_student_submissions():
+            Loads student submissions for the assignments.
+
+        calculate_grades():
+            Calculates grades for each student based on their submissions.
+
+        generate_report():
+            Generates a grade report for the course.
+
+        display_report():
+            Displays the grade report.
+
+        save_report(filename):
+            Saves the grade report to a file.
+
+        update_grades(student):
+            Updates the grades for a specific student.
+
+        drop_lowest_scores(n):
+            Drops the lowest `n` scores for each student.
+
+        duplicate_scores():
+            Duplicates scores from one assignment to another based on configuration.
+
+        apply_global_exemptions():
+            Applies global exemptions to assignments.
+
+        apply_optional_drops():
+            Applies optional drops to assignments.
+
+        calculate_statistics():
+            Calculates statistics for the class grades.
+
+        export_to_excel(out_name='output.xlsx'):
+            Exports the grade report to an Excel file.
+    """
 
     def __init__(
         self,
@@ -80,10 +124,8 @@ class GradeReport:
         # Get the max week from kwargs
         max_week = kwargs.get("max_week", None)
 
-        try:
-            self.student_name = params.get("username", None)
-        except Exception:
-            self.student_name = os.environ.get("JUPYTERHUB_USER", None)
+        # Get the username from the params
+        self.set_username(params)
 
         self.assignments, self.student_subs = get_assignments_submissions(
             params={"username": self.student_name}
@@ -144,6 +186,28 @@ class GradeReport:
                 display(self.weighted_average_grades)
             except:  # noqa: E722
                 pass
+
+    def set_username(self, params):
+        """
+        Sets the username for the student.
+
+        This method attempts to set the student's username from the provided parameters.
+        If the username is not found in the parameters, it falls back to using the
+        JUPYTERHUB_USER environment variable.
+
+        Args:
+            params (dict): A dictionary containing the parameters, expected to have a key "username".
+
+        Example:
+            >>> grade_report = GradeReport()
+            >>> grade_report.set_username({"username": "student123"})
+            >>> print(grade_report.student_name)
+            student123
+        """
+        try:
+            self.student_name = params.get("username", None)
+        except Exception:
+            self.student_name = os.environ.get("JUPYTERHUB_USER", None)
 
     def check_optional_drop_assignments(self):
         """
