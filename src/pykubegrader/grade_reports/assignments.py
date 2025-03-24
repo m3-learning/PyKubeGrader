@@ -167,6 +167,27 @@ class Assignment(assignment_type):
         self._max_score = max_score
 
     # TODO: add setter for due_date with error handling
+    @property
+    def due_date(self):
+        """
+        Gets the due date for the assignment.
+
+        Returns:
+            datetime: The due date for the assignment.
+        """
+        return self._due_date
+
+    @due_date.setter
+    def due_date(self, due_date):
+        """
+        Sets the due date for the assignment.
+
+        Args:
+            due_date (datetime): The due date to be set for the assignment.
+        """
+        if not isinstance(due_date, datetime) and due_date is not None:
+            raise ValueError("due_date must be a datetime object")
+        self._due_date = due_date
 
     @property
     def late_adjustment(self):
