@@ -3,6 +3,7 @@
 import os
 from datetime import datetime, timedelta
 from itertools import product
+from collections import defaultdict
 
 import numpy as np
 import pandas as pd
@@ -130,10 +131,10 @@ class GradeReport:
         )
 
         # Get the max week from kwargs
-        max_week = kwargs.get("max_week", None)
+        max_week_ = kwargs.get("max_week", None)
 
         # Get the number of weeks
-        self.max_week = max_week if max_week else self.num_weeks
+        self.max_week = max_week_ if max_week_ else self.calculated_num_weeks
 
         self.start_date = start_date
         self.verbose = verbose
@@ -467,6 +468,22 @@ class GradeReport:
         Gets the number of weeks in the course.
         """
         return self._num_weeks
+    
+    @property
+    def calculated_num_weeks(self):
+        """
+        Gets the total number of weeks in the course based on assignment data.
+
+        Returns:
+            int: The maximum week number found in the course assignments.
+
+        Example:
+            >>> grade_report = GradeReport()
+            >>> grade_report.num_weeks
+            15  # Returns total number of weeks in the course
+        """
+        max_week_number = max(item["week_number"] for item in self.assignments)
+        return max_week_number
     
     @property
     def max_week(self):
@@ -1276,22 +1293,6 @@ class GradeReport:
             assignment for assignment in self.assignment_type_list if assignment.weekly
         ]
 
-    @property
-    def num_weeks(self):
-        """
-        Gets the total number of weeks in the course based on assignment data.
-
-        Returns:
-            int: The maximum week number found in the course assignments.
-
-        Example:
-            >>> grade_report = GradeReport()
-            >>> grade_report.num_weeks
-            15  # Returns total number of weeks in the course
-        """
-        max_week_number = max(item["week_number"] for item in self.assignments)
-        return max_week_number
-
     def setup_grades_df(self):
         """
         Sets up the DataFrame for weekly grades and initializes it with zeros.
@@ -1383,10 +1384,8 @@ class GradeReport:
             >>> grade_report.drop_lowest_n_for_types(1) # Drop lowest score for each type
             >>> grade_report.drop_lowest_n_for_types(2, ['Lab']) # Drop 2 lowest Lab scores
         """
-        from collections import defaultdict
-
-        import numpy as np
-
+        
+        
         # Group assignments by name
         assignment_groups = defaultdict(list)
         for assignment in self.graded_assignments:
