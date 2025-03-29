@@ -48,34 +48,34 @@ class GradeReport:
             Calculates grades for each student based on their submissions.
 
         generate_report():
-            Generates a grade report for the course.
+            Generates a comprehensive grade report for the course.
 
         display_report():
-            Displays the grade report.
+            Displays the generated grade report.
 
         save_report(filename):
-            Saves the grade report to a file.
+            Saves the generated grade report to a specified file.
 
         update_grades(student):
-            Updates the grades for a specific student.
+            Updates the grades for a specified student.
 
         drop_lowest_scores(n):
-            Drops the lowest `n` scores for each student.
+            Drops the lowest `n` scores for each student to improve their overall grade.
 
         duplicate_scores():
-            Duplicates scores from one assignment to another based on configuration.
+            Duplicates scores from one assignment to another based on predefined configuration.
 
         apply_global_exemptions():
-            Applies global exemptions to assignments.
+            Applies global exemptions to specified assignments.
 
         apply_optional_drops():
-            Applies optional drops to assignments.
+            Applies optional drops to specified assignments.
 
         calculate_statistics():
-            Calculates statistics for the class grades.
+            Calculates and returns statistics for the class grades.
 
         export_to_excel(out_name='output.xlsx'):
-            Exports the grade report to an Excel file.
+            Exports the generated grade report to an Excel file with the specified name.
     """
 
     def __init__(
@@ -167,22 +167,55 @@ class GradeReport:
         # Update the global exempted assignments.
         self.update_global_exempted_assignments()
 
+        # Calculate the grades.
         self.calculate_grades()
+
+        # Update the assignments that are not due yet.
         self.update_assignments_not_due_yet()
+
+        # Calculate the grades.
         self.calculate_grades()
+
+        # Duplicate the scores.
         self.duplicate_scores()
+
+        # Drop the lowest `n` scores for each assignment type.
         self.drop_lowest_n_for_types(1)
+
+        # Calculate the grades.
         self.calculate_grades()
+
+        # Duplicate the scores.
         self.duplicate_scores()
+        
+        # Update the weekly table.
         self.update_weekly_table()
+
+        # Build the running average.
         self._build_running_avg()
+
+        # Check if optional drop assignments should be dropped.
         self.check_optional_drop_assignments()
+
+        # Calculate the grades.
         self.calculate_grades()
+
+        # Duplicate the scores.
         self.duplicate_scores()
+
+        # Update the weekly table.
         self.update_weekly_table()
+
+        # Build the running average.
         self._build_running_avg()
+
+        # Calculate the final average.
         self._calculate_final_average()
+
+        # Highlight the NaNs.
         df = self.highlight_nans(self.weekly_grades_df, self.weekly_grades_df_display)
+
+        # Display the grade report.
         if display_:
             try:
                 display(df)
@@ -347,6 +380,7 @@ class GradeReport:
         Gets the student name.
         """
         return self._student_name
+    
     @property
     def aliases(self):
         """
@@ -396,8 +430,6 @@ class GradeReport:
         self._assignment_type_list = value
     
     @property
-    def student_name(self):
-    @property
     def verbose(self):
         """
         Gets the verbose flag.
@@ -435,6 +467,7 @@ class GradeReport:
         Gets the number of weeks in the course.
         """
         return self._num_weeks
+    
     @property
     def max_week(self):
         """
@@ -546,6 +579,7 @@ class GradeReport:
             >>> styled = GradeReport.highlight_nans(grades_df, display_df, color='yellow')
             >>> styled  # Will show display_df with yellow highlighting where grades_df has NaNs
         """
+        
         # Ensure both DataFrames have the same index and columns
         nan_mask = nan_df.isna().reindex_like(display_df)
 
@@ -602,9 +636,25 @@ class GradeReport:
                 )
                 # Check if the due date is in the future and the score is 0
                 if due_date > datetime.now(due_date.tzinfo) and assignment.score == 0:
-                    assignment.score_ = np.nan
-                    assignment._score = "---"
-                    assignment.exempted = True
+                    self.future_non_existing_assignment(assignment)
+
+    def future_non_existing_assignment(self, assignment):
+        """
+        Marks an assignment as not due yet by setting its score to NaN and marking it as exempted.
+
+        This method updates the given assignment's score to NaN, sets the display score to "---",
+        and marks the assignment as exempted. This is used for assignments that are not yet due
+        to prevent them from negatively impacting the student's grade.
+
+        Args:
+            assignment (Assignment): The assignment object to update.
+
+        Returns:
+            None
+        """
+        assignment.score_ = np.nan
+        assignment._score = "---"
+        assignment.exempted = True
 
     def color_cells(self, styler, week_list, assignment_list):
         """Recursively colors cells in a pandas styler object based on week and assignment lists.
@@ -747,9 +797,13 @@ class GradeReport:
                 the grade ranges defined in the grading config. Returns 'Invalid Score' if
                 the score does not fall within any defined range.
         """
+        # Iterate through the grade ranges
         for low, high, grade in grade_ranges:
-            if low <= score <= high:
+            # Check if the score falls within the current range
+            if low <= score <= high or (high is None and score >= low):
+                # Return the corresponding letter grade
                 return grade
+        # Return "Invalid Score" if the score doesn't fall within any defined range
         return "Invalid Score"
 
     def _update_weekly_table_scores(self):
@@ -759,6 +813,7 @@ class GradeReport:
         (weekly_grades_df_display) with the formatted scores (_score) for weekly
         assignments. The scores are indexed by week number and assignment name.
         """
+        
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df_display.loc[
@@ -799,8 +854,9 @@ class GradeReport:
         """
         for assignment_type, week in self.globally_exempted_assignments:
             try:
-                self.get_graded_assignment(week, assignment_type)[0].exempted = True
-                self.get_graded_assignment(week, assignment_type)[0]._score = "---"
+                self.future_non_existing_assignment(
+                    self.get_graded_assignment(week, assignment_type)[0]
+                )
             except:  # noqa: E722
                 pass
 
@@ -833,21 +889,28 @@ class GradeReport:
             Weekly assignments are created for each week in the range [start_week, max_week].
             Non-weekly assignments like midterms and finals are created once per type.
         """
+        # Get the start week from kwargs
         start_week = kwargs.get("start_week", 1)
 
         # Initialize the list of graded assignments
         self.graded_assignments = []
+        
         # Get the weekly assignments
         weekly_assignments = self.get_weekly_assignments()
 
         # Create Assignment objects for weekly assignments
         for assignment_type in weekly_assignments:
+            # Create Assignment objects for each week
             for week in range(start_week, self.max_week + 1):  # Weeks start at 1
+                # Create the Assignment object
                 self.graded_assignment_constructor(assignment_type, week=week)
 
+        # Get the non-weekly assignments
         non_weekly_assignments = self.get_non_weekly_assignments()
 
+        # Create Assignment objects for non-weekly assignments
         for assignment_type in non_weekly_assignments:
+            # Create the Assignment object
             self.graded_assignment_constructor(assignment_type)
 
     def graded_assignment_constructor(self, assignment_type: AssignmentType, **kwargs):
@@ -876,14 +939,17 @@ class GradeReport:
             - Any additional kwargs passed through
         4. Adds the new Assignment to self.graded_assignments list
         """
+        # Get the custom grade adjustment function
         custom_func = custom_grade_adjustments.get(
             (assignment_type.name, kwargs.get("week", None)), None
         )
 
+        # Get the filtered assignments
         filtered_assignments = self.get_assignment(
             kwargs.get("week", None), assignment_type.name
         )
 
+        # Create the new Assignment object
         new_assignment = Assignment(
             name=assignment_type.name,
             weekly=assignment_type.weekly,
@@ -923,17 +989,23 @@ class GradeReport:
         Side Effects:
             - Updates the score attributes of all Assignment objects in self.graded_assignments
         """
+        # Iterate through all graded assignments
         for assignment in self.graded_assignments:
+            # Filter the submissions for the current assignment
             filtered_submission = self.filter_submissions(
                 assignment.week, assignment.name
             )
 
+            # If there are filtered submissions, update the score
             if filtered_submission:
+                # Iterate through all filtered submissions
                 for submission in filtered_submission:
+                    # Update the score
                     assignment.update_score(submission, student_name=self.student_name)
 
-            # runs if there are no filtered submissions
+            # Runs if there are no filtered submissions
             else:
+                # Update the score
                 assignment.update_score(student_name=self.student_name)
 
     def compute_final_average(self):
@@ -957,8 +1029,11 @@ class GradeReport:
         # Extract running average from the weekly table
         self.final_grades = self.weekly_grades_df.loc["Running Avg"]
 
+        # Iterate through all graded assignments
         for assignment in self.graded_assignments:
+            # If the assignment is not weekly, add its score to the final grades
             if not assignment.weekly:
+                # Add the score to the final grades
                 self.final_grades[f"{assignment.name}"] = assignment.score_
 
         return self.final_grades
