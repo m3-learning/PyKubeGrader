@@ -4,7 +4,7 @@ from dateutil import parser
 from ..graders.late_assignments import calculate_late_submission
 
 
-class assignment_type:
+class AssignmentType:
     """
     Base class for assignment types.
 
@@ -34,7 +34,7 @@ class assignment_type:
         self.weight = weight
 
 
-class Assignment(assignment_type):
+class Assignment(AssignmentType):
     """
     Represents an assignment with functionality to store and update scores.
 

@@ -13,7 +13,7 @@ from pykubegrader.grade_reports.assignments import (
     Assignment,
 )
 from pykubegrader.grade_reports.assignments import (
-    assignment_type as AssignmentType,
+    AssignmentType as AssignmentType,
 )
 from pykubegrader.grade_reports.grading_config import (
     aliases,
@@ -188,7 +188,7 @@ class GradeReport:
 
         # Duplicate the scores.
         self.duplicate_scores()
-        
+
         # Update the weekly table.
         self.update_weekly_table()
 
@@ -223,16 +223,16 @@ class GradeReport:
                 display(self.weighted_average_grades)
             except:  # noqa: E722
                 pass
-    
+
     ### Properties ###
-    
+
     @property
     def student_assignments_dropped(self):
         """
         Gets the assignments which have been dropped for a given student.
         """
         return self._student_assignments_dropped
-    
+
     @student_assignments_dropped.setter
     def student_assignments_dropped(self, value):
         """
@@ -240,16 +240,16 @@ class GradeReport:
         """
         if not isinstance(value, list):
             raise ValueError("student_assignments_dropped must be a list")
-        #TODO improved error 
+        # TODO improved error
         self._student_assignments_dropped = value
-    
+
     @property
     def excluded_from_running_avg(self):
         """
         Gets the assignments which are excluded from the running average.
         """
         return self._excluded_from_running_avg
-    
+
     @excluded_from_running_avg.setter
     def excluded_from_running_avg(self, value):
         """
@@ -260,17 +260,17 @@ class GradeReport:
         if not all(isinstance(item, str) for item in value):
             raise ValueError("excluded_from_running_avg must be a list of strings")
         self._excluded_from_running_avg = value
-    
+
     @property
     def optional_drop_assignments(self):
         """
         Gest the assignments which are dropped if they do not improve the running average.
-        
+
         Returns:
             list: The optional drop assignments.
         """
         return self._optional_drop_assignments
-    
+
     @optional_drop_assignments.setter
     def optional_drop_assignments(self, value):
         """
@@ -285,18 +285,25 @@ class GradeReport:
         """
         if not isinstance(value, list):
             raise ValueError("optional_drop_assignments must be a list")
-        if not all(isinstance(item, tuple) and len(item) == 2 and isinstance(item[0], str) and (isinstance(item[1], int) or item[1] is None) for item in value):
-            raise ValueError("optional_drop_assignments must be a list of tuples, where each tuple contains a string and an integer or None")
+        if not all(
+            isinstance(item, tuple)
+            and len(item) == 2
+            and isinstance(item[0], str)
+            and (isinstance(item[1], int) or item[1] is None)
+            for item in value
+        ):
+            raise ValueError(
+                "optional_drop_assignments must be a list of tuples, where each tuple contains a string and an integer or None"
+            )
         self._optional_drop_assignments = value
-    
 
     @property
     def optional_drop_week(self):
         """
         Gets the optional drop week. These are the weeks which can be dropped if they do not improve the running average.
         """
-        return self._optional_drop_week 
-    
+        return self._optional_drop_week
+
     @optional_drop_week.setter
     def optional_drop_week(self, value):
         """
@@ -314,14 +321,14 @@ class GradeReport:
         if not all(isinstance(item, int) for item in value):
             raise ValueError("optional_drop_week must be a list of integers")
         self._optional_drop_week = value
-    
+
     @property
     def dropped_assignments(self):
         """
         Gets the dropped assignments.
         """
         return self._dropped_assignments
-    
+
     @dropped_assignments.setter
     def dropped_assignments(self, value):
         """
@@ -346,7 +353,7 @@ class GradeReport:
         Gets the globally exempted assignments.
         """
         return self._globally_exempted_assignments
-    
+
     @globally_exempted_assignments.setter
     def globally_exempted_assignments(self, value):
         """
@@ -368,27 +375,33 @@ class GradeReport:
         if not all(isinstance(item, tuple) for item in value):
             raise ValueError("globally_exempted_assignments must be a list of tuples")
         if not all(len(item) == 2 for item in value):
-            raise ValueError("globally_exempted_assignments must be a list of tuples with two elements")
+            raise ValueError(
+                "globally_exempted_assignments must be a list of tuples with two elements"
+            )
         if not all(isinstance(item[0], str) for item in value):
-            raise ValueError("globally_exempted_assignments must be a list of tuples with a string as the first element")
+            raise ValueError(
+                "globally_exempted_assignments must be a list of tuples with a string as the first element"
+            )
         if not all(isinstance(item[1], (int, type(None))) for item in value):
-            raise ValueError("globally_exempted_assignments must be a list of tuples with an integer or None as the second element")
+            raise ValueError(
+                "globally_exempted_assignments must be a list of tuples with an integer or None as the second element"
+            )
         self._globally_exempted_assignments = value
-    
+
     @property
     def student_name(self):
         """
         Gets the student name.
         """
         return self._student_name
-    
+
     @property
     def aliases(self):
         """
         Gets the aliases for the course.
         """
         return self._aliases
-    
+
     @aliases.setter
     def aliases(self, value):
         """
@@ -403,15 +416,14 @@ class GradeReport:
         if not isinstance(value, dict):
             raise ValueError("aliases must be a dictionary")
         self._aliases = value
-    
-    
+
     @property
     def assignment_type_list(self):
         """
         Gets the assignment type list.
         """
         return self._assignment_type_list
-    
+
     @assignment_type_list.setter
     def assignment_type_list(self, value):
         """
@@ -427,16 +439,18 @@ class GradeReport:
         if not isinstance(value, list):
             raise ValueError("assignment_type_list must be a list")
         if not all(isinstance(item, AssignmentType) for item in value):
-            raise ValueError("assignment_type_list must contain only AssignmentType objects")
+            raise ValueError(
+                "assignment_type_list must contain only AssignmentType objects"
+            )
         self._assignment_type_list = value
-    
+
     @property
     def verbose(self):
         """
         Gets the verbose flag.
         """
         return self._verbose
-    
+
     @verbose.setter
     def verbose(self, value):
         """
@@ -445,14 +459,14 @@ class GradeReport:
         if not isinstance(value, bool):
             raise ValueError("verbose must be a boolean")
         self._verbose = value
-    
+
     @property
     def start_date(self):
         """
         Gets the start date for the course.
         """
         return self._start_date
-    
+
     @start_date.setter
     def start_date(self, value):
         """
@@ -461,14 +475,14 @@ class GradeReport:
         if not isinstance(value, datetime):
             raise ValueError("start_date must be a datetime object")
         self._start_date = value
-    
+
     @property
     def num_weeks(self):
         """
         Gets the number of weeks in the course.
         """
         return self._num_weeks
-    
+
     @property
     def calculated_num_weeks(self):
         """
@@ -484,7 +498,7 @@ class GradeReport:
         """
         max_week_number = max(item["week_number"] for item in self.assignments)
         return max_week_number
-    
+
     @property
     def max_week(self):
         """
@@ -494,7 +508,7 @@ class GradeReport:
             int: The maximum week number.
         """
         return self._max_week
-    
+
     @max_week.setter
     def max_week(self, value):
         """
@@ -517,7 +531,7 @@ class GradeReport:
         """
         if not isinstance(value, int):
             raise ValueError("max_week must be an integer")
-        
+
         self._max_week = value
 
     def set_username(self, params):
@@ -596,7 +610,7 @@ class GradeReport:
             >>> styled = GradeReport.highlight_nans(grades_df, display_df, color='yellow')
             >>> styled  # Will show display_df with yellow highlighting where grades_df has NaNs
         """
-        
+
         # Ensure both DataFrames have the same index and columns
         nan_mask = nan_df.isna().reindex_like(display_df)
 
@@ -830,7 +844,7 @@ class GradeReport:
         (weekly_grades_df_display) with the formatted scores (_score) for weekly
         assignments. The scores are indexed by week number and assignment name.
         """
-        
+
         for assignment in self.graded_assignments:
             if assignment.weekly:
                 self.weekly_grades_df_display.loc[
@@ -911,7 +925,7 @@ class GradeReport:
 
         # Initialize the list of graded assignments
         self.graded_assignments = []
-        
+
         # Get the weekly assignments
         weekly_assignments = self.get_weekly_assignments()
 
@@ -1384,8 +1398,7 @@ class GradeReport:
             >>> grade_report.drop_lowest_n_for_types(1) # Drop lowest score for each type
             >>> grade_report.drop_lowest_n_for_types(2, ['Lab']) # Drop 2 lowest Lab scores
         """
-        
-        
+
         # Group assignments by name
         assignment_groups = defaultdict(list)
         for assignment in self.graded_assignments:
