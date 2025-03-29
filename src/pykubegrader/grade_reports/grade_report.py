@@ -29,10 +29,12 @@ from pykubegrader.grade_reports.grading_config import (
     optional_drop_week,
     global_extensions_AVL,
 )
+from pykubegrader.grade_reports.grading_config import GradeConfig
+
 from pykubegrader.telemetry import get_assignments_submissions
 
 
-class GradeReport:
+class GradeReport(GradeConfig):
     """Class to generate a grade report for a course and perform grade calculations for each student.
 
     Methods:
@@ -122,6 +124,9 @@ class GradeReport:
             student_assignments_dropped (list): List of assignments dropped for a specific student.
 
         """
+
+        # TODO: update this to use the GradeConfig class
+        super().__init__(**kwargs)
 
         # Get the username from the params
         self.set_username(params)
