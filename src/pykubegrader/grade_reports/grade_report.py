@@ -15,20 +15,6 @@ from pykubegrader.grade_reports.assignments import (
 from pykubegrader.grade_reports.assignments import (
     AssignmentType as AssignmentType,
 )
-from pykubegrader.grade_reports.grading_config import (
-    aliases,
-    assignment_type_list,
-    custom_grade_adjustments,
-    dropped_assignments,
-    duplicated_scores,
-    exclude_from_running_avg,
-    globally_exempted_assignments,
-    grade_ranges,
-    max_week,
-    optional_drop_assignments,
-    optional_drop_week,
-    global_extensions_AVL,
-)
 from pykubegrader.grade_reports.grading_config import GradeConfig
 
 from pykubegrader.telemetry import get_assignments_submissions
@@ -143,23 +129,23 @@ class GradeReport(GradeConfig):
 
         self.start_date = start_date
         self.verbose = verbose
-        self.assignment_type_list = assignment_type_list
-        self.aliases = aliases
+        # self.assignment_type_list = assignment_type_list
+        # self.aliases = aliases
 
-        # Assignments that are globally exempted from grading.
-        self.globally_exempted_assignments = globally_exempted_assignments
+        # # Assignments that are globally exempted from grading.
+        # self.globally_exempted_assignments = globally_exempted_assignments
 
-        # Assignments that have been dropped from the grade calculation.
-        self.dropped_assignments = dropped_assignments
+        # # Assignments that have been dropped from the grade calculation.
+        # self.dropped_assignments = dropped_assignments
 
-        # The week number where optional drops are allowed.
-        self.optional_drop_week = optional_drop_week
+        # # The week number where optional drops are allowed.
+        # self.optional_drop_week = optional_drop_week
 
-        # Assignments that can be optionally dropped.
-        self.optional_drop_assignments = optional_drop_assignments
+        # # Assignments that can be optionally dropped.
+        # self.optional_drop_assignments = optional_drop_assignments
 
-        # Assignments that are excluded from the running average.
-        self.excluded_from_running_avg = exclude_from_running_avg
+        # # Assignments that are excluded from the running average.
+        # self.excluded_from_running_avg = exclude_from_running_avg
 
         # assignments that have been dropped for a given students.
         self.student_assignments_dropped = []
@@ -834,7 +820,7 @@ class GradeReport(GradeConfig):
                 the score does not fall within any defined range.
         """
         # Iterate through the grade ranges
-        for low, high, grade in grade_ranges:
+        for low, high, grade in self.grade_ranges:
             # Check if the score falls within the current range
             if low <= score <= high or (high is None and score >= low):
                 # Return the corresponding letter grade
@@ -976,7 +962,7 @@ class GradeReport(GradeConfig):
         4. Adds the new Assignment to self.graded_assignments list
         """
         # Get the custom grade adjustment function
-        custom_func = custom_grade_adjustments.get(
+        custom_func = self.custom_grade_adjustments.get(
             (assignment_type.name, kwargs.get("week", None)), None
         )
 
@@ -1266,8 +1252,8 @@ class GradeReport(GradeConfig):
             >>> grade_report.check_global_extensions()
             None  # Returns None if student2 has no extension
         """
-        if self.student_name in global_extensions_AVL:
-            return global_extensions_AVL[self.student_name]
+        if self.student_name in self.global_extensions_AVL:
+            return self.global_extensions_AVL[self.student_name]
         else:
             return None
 
@@ -1471,7 +1457,7 @@ class GradeReport(GradeConfig):
         for (week, assignment_type), (
             duplicate_week,
             duplicate_assignment_type,
-        ) in duplicated_scores:
+        ) in self.duplicated_scores:
             assignment = self.get_graded_assignment(week, assignment_type)[0]
             duplicate_assignment = self.get_graded_assignment(
                 duplicate_week, duplicate_assignment_type
