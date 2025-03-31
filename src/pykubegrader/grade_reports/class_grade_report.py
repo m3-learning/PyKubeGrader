@@ -15,7 +15,7 @@ from pykubegrader.grade_reports.grading_config import (
     skipped_users,
     students_to_include,
 )
-from pykubegrader._telemetry import get_all_students
+from pykubegrader.api.get.students import get_all_students
 
 api_base_url = os.getenv("DB_URL")
 student_user = os.getenv("user_name_student")
