@@ -1,22 +1,22 @@
 import base64
-import datetime
 import gzip
-import json
 import logging
 import os
 import socket
 from typing import Any, Optional
 
-import nacl.public
 import pandas as pd
 import requests
 from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
-from requests.exceptions import RequestException 
+from requests.exceptions import RequestException
 
+from pykubegrader.telemetry.responses import ensure_responses 
+
+from pykubegrader.telemetry.responses import log_encrypted
+from pykubegrader.telemetry.responses import log_variable
 from pykubegrader.utils import api_base_url, student_pw, student_user
-from pykubegrader.utils.security.jupyter import block_direct_notebook_calls
 
 #
 # Logging setup
@@ -38,115 +38,9 @@ file_handler_reduced = logging.FileHandler(".output_reduced.log")
 file_handler_reduced.setLevel(logging.INFO)
 logger_reduced.addHandler(file_handler_reduced)
 
-#
-# Local functions
-#
-
-
-def encrypt_to_b64(message: str) -> str:
-    """
-    Encrypts a message using the server's public key and the client's private key.
-
-    Args:
-        message (str): The message to be encrypted.
-
-    Returns:
-        str: The encrypted message in base64 encoding.
-    """
-    
-    # Read the server's public key
-    with open(".server_public_key.bin", "rb") as f:
-        server_pub_key_bytes = f.read()
-        
-    # Convert the server's public key to a public key object
-    server_pub_key = nacl.public.PublicKey(server_pub_key_bytes)
-
-    # Read the client's private key
-    with open(".client_private_key.bin", "rb") as f:
-        client_private_key_bytes = f.read()
-        
-    # Convert the client's private key to a private key object
-    client_priv_key = nacl.public.PrivateKey(client_private_key_bytes)
-    
-    # Create a box object using the client's private key and the server's public key
-    box = nacl.public.Box(client_priv_key, server_pub_key)
-    
-    # Encrypt the message
-    encrypted = box.encrypt(message.encode())
-    
-    # Encode the encrypted message to base64
-    encrypted_b64 = base64.b64encode(encrypted).decode("utf-8")
-    
-    # Return the encrypted message in base64 encoding
-    return encrypted_b64
-
-
-def ensure_responses() -> dict[str, Any]:
-    with open(".responses.json", "a") as _:
-        pass
-
-    responses = {}
-
-    try:
-        with open(".responses.json", "r") as f:
-            responses = json.load(f)
-    except json.JSONDecodeError:
-        with open(".responses.json", "w") as f:
-            json.dump(responses, f)
-
-    return responses
-
-
-def log_encrypted(logger: logging.Logger, message: str) -> None:
-    """
-    Logs an encrypted version of the given message using the provided logger.
-
-    Args:
-        logger (object): The logger object used to log the encrypted message.
-        message (str): The message to be encrypted and logged.
-
-    Returns:
-        None
-    """
-    encrypted_b64 = encrypt_to_b64(message)
-    logger.info(f"Encrypted Output: {encrypted_b64}")
-
-
-@block_direct_notebook_calls
-def log_variable(assignment_name, value, info_type) -> None:
-    timestamp = datetime.datetime.now(datetime.UTC).isoformat(
-        sep=" ", timespec="seconds"
-    )
-    message = f"{assignment_name}, {info_type}, {value}, {timestamp}"
-    log_encrypted(logger_reduced, message)
-
-
 def telemetry(info: ExecutionInfo) -> None:
     cell_content = info.raw_cell
     log_encrypted(logger_code, f"code run: {cell_content}")
-
-
-def update_responses(key: str, value) -> dict:
-    data = ensure_responses()
-    data[key] = value
-
-    temp_path = ".responses.tmp"
-    orig_path = ".responses.json"
-
-    try:
-        with open(temp_path, "w") as f:
-            json.dump(data, f)
-
-        os.replace(temp_path, orig_path)
-    except (TypeError, json.JSONDecodeError) as e:
-        print(f"Failed to update responses: {e}")
-
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
-
-        raise
-
-    return data
 
 
 #

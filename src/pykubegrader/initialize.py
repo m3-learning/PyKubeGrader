@@ -8,7 +8,11 @@ import panel as pn
 import requests
 from IPython.core.getipython import get_ipython
 
-from .telemetry import ensure_responses, log_variable, telemetry, update_responses
+from .telemetry.responses import ensure_responses, update_responses
+
+from .logging.responses import log_variable
+
+from .telemetry import telemetry
 from .utils import api_base_url
 
 

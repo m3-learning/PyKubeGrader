@@ -4,7 +4,9 @@ from typing import Callable, Optional, Tuple
 import numpy as np
 import panel as pn
 
-from ..telemetry import ensure_responses, score_question, update_responses
+from ..telemetry.responses import ensure_responses, update_responses
+
+from ..telemetry import score_question
 from ..utils import shuffle_options, shuffle_questions
 from ..widgets.style import drexel_colors
 

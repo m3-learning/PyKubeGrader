@@ -3,7 +3,9 @@ from typing import Optional
 
 import panel as pn
 
-from ..telemetry import ensure_responses, score_question, update_responses
+from ..telemetry.responses import ensure_responses, update_responses
+
+from ..telemetry import score_question
 from ..utils import shuffle_options
 
 

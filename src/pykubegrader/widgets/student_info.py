@@ -5,7 +5,9 @@ import socket
 import numpy as np
 import panel as pn
 
-from ..telemetry import ensure_responses, update_responses
+from ..telemetry.responses import update_responses
+
+from ..telemetry.responses import ensure_responses
 
 #
 # Constants
