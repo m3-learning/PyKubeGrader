@@ -3,19 +3,17 @@ import gzip
 import logging
 import os
 import socket
-from typing import Any, Optional
+from typing import Optional
 
 import pandas as pd
 import requests
 from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
-from requests.exceptions import RequestException
 
 from pykubegrader.telemetry.responses import ensure_responses 
 
 from pykubegrader.telemetry.responses import log_encrypted
-from pykubegrader.telemetry.responses import log_variable
 from pykubegrader.utils import api_base_url, student_pw, student_user
 
 #
@@ -46,45 +44,6 @@ def telemetry(info: ExecutionInfo) -> None:
 #
 # API request functions
 #
-
-
-def score_question(term: str = "winter_2025") -> None:
-    if not student_user or not student_pw or not api_base_url:
-        raise ValueError("Necessary environment variables not set")
-
-    url = api_base_url.rstrip("/") + "/live-scorer"
-
-    responses = ensure_responses()
-
-    payload: dict[str, Any] = {
-        "student_email": f"{responses['jhub_user']}@drexel.edu",
-        "term": term,
-        "week": responses["week"],
-        "assignment": responses["assignment_type"],
-        "question": f"_{responses['assignment']}",
-        "responses": responses,
-    }
-
-    try:
-        res = requests.post(
-            url, json=payload, auth=HTTPBasicAuth(student_user, student_pw)
-        )
-        res.raise_for_status()
-
-        res_data: dict[str, tuple[float, float]] = res.json()
-
-        for question, (points_earned, max_points) in res_data.items():
-            log_variable(
-                assignment_name=responses["assignment"],
-                value=f"{points_earned}, {max_points}",
-                info_type=question,
-            )
-    except RequestException as e:
-        raise RuntimeError("Failed to access question-scoring endpoint") from e
-    except ValueError as e:
-        raise ValueError("Failed to parse question-scoring JSON response") from e
-    except Exception as e:
-        raise RuntimeError("Failed to score question") from e
 
 
 def submit_question(
