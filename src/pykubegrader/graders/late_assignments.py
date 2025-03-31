@@ -11,18 +11,21 @@ def calculate_late_submission(
     k: float = 6.88e-5,
 ) -> float:
     """
-    Calculate the percentage value based on an exponential decay model
-    with respect to a due date, using datetime string inputs.
+    Calculate the adjusted percentage value for a late submission using an exponential decay model.
+
+    This function computes the percentage value of a submission based on how late it is compared to the due date.
+    The calculation uses an exponential decay formula, which reduces the percentage value over time, bounded by
+    specified minimum and maximum values.
 
     Parameters:
-    - due_date_str (str): The due date as a string in the format "%Y-%m-%d %H:%M:%S".
-    - submission_date (str): The comparison date as a string in the format "%Y-%m-%d %H:%M:%S".
-    - Q0 (float): Initial value (default is 100).
-    - Q_min (float): Minimum value (default is 40).
-    - k (float): Decay constant per minute (default is 6.88e-5).
+    - due (str): The due date as a string in the format "%Y-%m-%d %H:%M:%S".
+    - submitted (str): The submission date as a string in the format "%Y-%m-%d %H:%M:%S".
+    - Q0 (int, optional): The initial percentage value before any decay is applied. Defaults to 100.
+    - Q_min (int, optional): The minimum percentage value that can be assigned, regardless of how late the submission is. Defaults to 40.
+    - k (float, optional): The decay constant that determines the rate of decay per minute. Defaults to 6.88e-5.
 
     Returns:
-    - float: The percentage value after decay, bounded between Q_min and Q0.
+    - float: The adjusted percentage value after applying the exponential decay, constrained between Q_min and Q0.
     """
 
     # Convert datetime strings to UNIX timestamps
