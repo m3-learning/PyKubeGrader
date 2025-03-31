@@ -25,6 +25,32 @@ class GradeConfig:
         max_week (int): Maximum number of weeks in the grading period.
         students_to_include (List[str]): List of student IDs to include in the report.
         grade_ranges (List[Tuple[int, int, str]]): Grade thresholds defining letter grades.
+
+    Example:
+        ```python
+        grade_config = GradeConfig(
+            assignment_types=[
+                AssignmentType("quiz", True, 0.15),
+                AssignmentType("final", False, (0.2, 0.4)),
+            ],
+            global_extensions_AVL={"student123": 2880},  # 48 hours
+            custom_grade_adjustments={
+                ("quiz", 7): lambda score: min(score / 28 * 100, 100.0),
+            },
+            globally_exempted_assignments=[("quiz", 6)],
+            aliases={"quiz": ["quiz", "test"]},
+            skipped_assignments={},
+            dropped_assignments=["quiz"],
+            duplicated_scores=[[(7, "lab"), (7, "homework")]],
+            skipped_users=["TA1", "TA2"],
+            optional_drop_week=[1],
+            optional_drop_assignments=[("homework", 7)],
+            exclude_from_running_avg=["final"],
+            max_week=10,
+            students_to_include=["student123", "student456"],
+            grade_ranges=[(90, 100, "A"), (80, 90, "B"), (0, 80, "F")],
+        )
+        ```
     """
 
     assignment_types: List[AssignmentType]
@@ -44,28 +70,5 @@ class GradeConfig:
     grade_ranges: List[Tuple[int, int, str]]
 
 
-# Example usage
-grade_config = GradeConfig(
-    assignment_types=[
-        AssignmentType("quiz", True, 0.15),
-        AssignmentType("final", False, (0.2, 0.4)),
-    ],
-    global_extensions_AVL={"student123": 2880},  # 48 hours
-    custom_grade_adjustments={
-        ("quiz", 7): lambda score: min(score / 28 * 100, 100.0),
-    },
-    globally_exempted_assignments=[("quiz", 6)],
-    aliases={"quiz": ["quiz", "test"]},
-    skipped_assignments={},
-    dropped_assignments=["quiz"],
-    duplicated_scores=[[(7, "lab"), (7, "homework")]],
-    skipped_users=["TA1", "TA2"],
-    optional_drop_week=[1],
-    optional_drop_assignments=[("homework", 7)],
-    exclude_from_running_avg=["final"],
-    max_week=10,
-    students_to_include=["student123", "student456"],
-    grade_ranges=[(90, 100, "A"), (80, 90, "B"), (0, 80, "F")],
-)
 
 
