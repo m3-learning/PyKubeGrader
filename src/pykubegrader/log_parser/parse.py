@@ -3,6 +3,17 @@ from typing import Any, Optional, TypedDict
 
 
 class LogParserResults(TypedDict):
+    """
+    A TypedDict for storing the results of parsing logs.
+
+    Attributes:
+        student_information (dict[str, str]): Information about the student.
+        week (Optional[str]): The week tag as a string, if available.
+        week_num (Optional[int]): The week number as an integer, if available.
+        assignment_type (Optional[str]): The type of the assignment, if available.
+        assignment_information (dict[str, Any]): Detailed information about the assignment.
+        assignment_scores (dict[str, Any]): Scores for the assignment.
+    """
     student_information: dict[str, str]
     week: Optional[str]
     week_num: Optional[int]

@@ -53,21 +53,21 @@ class GradeConfig:
         ```
     """
 
-    assignment_types: List[AssignmentType]
-    global_extensions_AVL: Dict[str, int]
-    custom_grade_adjustments: Dict[Tuple[str, int], Callable[[float], float]]
-    globally_exempted_assignments: List[Tuple[str, int]]
-    aliases: Dict[str, List[str]]
-    skipped_assignments: Dict[Tuple[str, int], Any]
-    dropped_assignments: List[str]
-    duplicated_scores: List[List[Tuple[int, str]]]
-    skipped_users: List[str]
-    optional_drop_week: List[int]
-    optional_drop_assignments: List[Tuple[str, int]]
-    exclude_from_running_avg: List[str]
-    max_week: int
-    students_to_include: List[str]
-    grade_ranges: List[Tuple[int, int, str]]
+    assignment_types: List[AssignmentType] = field(default_factory=list)
+    global_extensions_AVL: Dict[str, int] = field(default_factory=dict)
+    custom_grade_adjustments: Dict[Tuple[str, int], Callable[[float], float]] = field(default_factory=dict)
+    globally_exempted_assignments: List[Tuple[str, int]] = field(default_factory=list)
+    aliases: Dict[str, List[str]] = field(default_factory=dict)
+    skipped_assignments: Dict[Tuple[str, int], Any] = field(default_factory=dict)
+    dropped_assignments: List[str] = field(default_factory=list)
+    duplicated_scores: List[List[Tuple[int, str]]] = field(default_factory=list)
+    skipped_users: List[str] = field(default_factory=list)
+    optional_drop_week: List[int] = field(default_factory=list)
+    optional_drop_assignments: List[Tuple[str, int]] = field(default_factory=list)
+    exclude_from_running_avg: List[str] = field(default_factory=list)
+    max_week: int = 0
+    students_to_include: List[str] = field(default_factory=list)
+    grade_ranges: List[Tuple[int, int, str]] = field(default_factory=list)
 
 
 
