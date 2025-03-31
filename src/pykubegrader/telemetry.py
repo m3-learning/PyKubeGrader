@@ -1,7 +1,6 @@
 import base64
 import datetime
 import gzip
-import inspect
 import json
 import logging
 import os
@@ -17,72 +16,7 @@ from requests.auth import HTTPBasicAuth
 from requests.exceptions import RequestException 
 
 from pykubegrader.utils import api_base_url, student_pw, student_user
-
-#TODO: refactor this to other function
-def is_called_directly_from_notebook():
-    """
-    Checks if the current code is being executed directly from a Jupyter Notebook.
-
-    Returns:
-        bool: True if the code is being executed from a Jupyter Notebook, False otherwise.
-    """
-    
-    # Check if the code is being executed from a Jupyter Notebook
-    try:
-        from IPython.core.getipython import get_ipython
-
-        shell = get_ipython().__class__.__name__
-        if shell != "ZMQInteractiveShell":
-            return False
-    except Exception:
-        return False
-
-    # Get the stack trace
-    stack = inspect.stack()
-
-    # Detect Otter Grader (heuristics)
-    for frame_info in stack:
-        if "otter" in frame_info.filename.lower():
-            return False
-        if "__otter__" in frame_info.frame.f_globals:
-            return False
-
-    # Check if Otter Grader is running, if so, allow the call
-    if os.environ.get("OTTER_GRADER_RUNNING") == "1":
-        return False
-
-    # Check for direct call
-    if len(stack) < 3:
-        return False
-
-    caller_frame = stack[2].frame
-    return (
-        caller_frame.f_globals.get("__name__") == "__main__"
-        and "__file__" not in caller_frame.f_globals
-    )
-
-
-def block_direct_notebook_calls(func):
-    """
-    Decorator to block direct calls to functions from Jupyter Notebooks.
-
-    This decorator checks if the current code is being executed directly from a Jupyter Notebook
-    and raises an error if it is. This is useful to prevent accidental execution of grading functions
-    from within the notebook environment.
-    """
-    # Define the wrapper function
-    def wrapper(*args, **kwargs):
-        # Check if the code is being executed from a Jupyter Notebook
-        if is_called_directly_from_notebook():
-            # Raise an error if the code is being executed from a Jupyter Notebook
-            raise RuntimeError(
-                f"Direct calls to `{func.__name__}` are not allowed in a Jupyter Notebook."
-            )
-        # Call the original function
-        return func(*args, **kwargs)
-
-    return wrapper
-
+from pykubegrader.utils.security.jupyter import block_direct_notebook_calls
 
 #
 # Logging setup
