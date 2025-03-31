@@ -20,9 +20,7 @@ def get_credentials():
 
 
 def call_score_assignment(
-    assignment_title: str,
-    notebook_title: str,
-    file_path: str = ".output_reduced.log"
+    assignment_title: str, notebook_title: str, file_path: str = ".output_reduced.log"
 ) -> Dict[str, str]:
     """
     Submit an assignment to the scoring endpoint.
