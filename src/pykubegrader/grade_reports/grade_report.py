@@ -17,7 +17,7 @@ from pykubegrader.grade_reports.assignments import (
 )
 from pykubegrader.grade_reports.grading_config import GradeConfig
 
-from pykubegrader.telemetry import get_assignments_submissions
+from pykubegrader._telemetry import get_assignments_submissions
 
 
 class GradeReport(GradeConfig):

@@ -4,7 +4,7 @@ from typing import Callable, Optional, Tuple
 import numpy as np
 import panel as pn
 
-from ..telemetry.responses import ensure_responses, update_responses
+from ..telemetry.responses import ensure_responses, set_responses_json
 
 from ..telemetry import score_question
 from ..utils import shuffle_options, shuffle_questions
@@ -76,7 +76,7 @@ class SelectQuestion:
                 raise ValueError("Please answer all questions before submitting")
 
         for key, value in selections.items():
-            update_responses(key, value)
+            set_responses_json(key, value)
 
         score_question()  # Debugging; update later
 

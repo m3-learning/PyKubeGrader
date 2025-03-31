@@ -3,7 +3,7 @@ from typing import Optional
 
 import panel as pn
 
-from ..telemetry.responses import ensure_responses, update_responses
+from ..telemetry.responses import ensure_responses, set_responses_json
 
 from ..telemetry import score_question
 from ..utils import shuffle_options
@@ -160,11 +160,11 @@ class ReadingPython:
         i = 0
         for comment_val in self.output_comments:
             i += 1
-            update_responses(f"q{self.question_number}_{i}", comment_val)
+            set_responses_json(f"q{self.question_number}_{i}", comment_val)
 
         for exec_val in self.output_execution:
             i += 1
-            update_responses(f"q{self.question_number}_{i}", exec_val)
+            set_responses_json(f"q{self.question_number}_{i}", exec_val)
 
         score_question()  # Debugging; update later
 

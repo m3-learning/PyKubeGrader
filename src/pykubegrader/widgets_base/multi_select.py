@@ -4,7 +4,7 @@ from typing import Callable, Optional, Tuple
 import numpy as np
 import panel as pn
 
-from ..telemetry.responses import ensure_responses, update_responses
+from ..telemetry.responses import ensure_responses, set_responses_json
 
 from ..telemetry import score_question
 from ..utils import shuffle_options, shuffle_questions
@@ -115,11 +115,11 @@ class MultiSelectQuestion:
 
     def record_responses(self, responses_flat: list[bool]) -> None:
         for key, value in zip(self.keys, responses_flat):
-            update_responses(key, value)
+            set_responses_json(key, value)
 
         # Debugging; update later
         for k, v in zip(self.true_keys, self.names_nested):
-            update_responses(k, v)
+            set_responses_json(k, v)
 
         self.submit_button.name = "Responses Submitted"
         time.sleep(1)

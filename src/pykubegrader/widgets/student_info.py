@@ -5,7 +5,7 @@ import socket
 import numpy as np
 import panel as pn
 
-from ..telemetry.responses import update_responses
+from ..telemetry.responses import set_responses_json
 
 from ..telemetry.responses import ensure_responses
 
@@ -106,7 +106,7 @@ class StudentInfoForm:
                 )
 
             for key in KEYS:
-                update_responses(key, info[key])
+                set_responses_json(key, info[key])
 
             self.message.object = "Student info recorded successfully!"
             self.message.style = {"color": "green"}

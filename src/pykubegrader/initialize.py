@@ -8,12 +8,10 @@ import panel as pn
 import requests
 from IPython.core.getipython import get_ipython
 
-from .telemetry.responses import ensure_responses, update_responses
+from pykubegrader.telemetry.responses import ensure_responses, set_responses_json, log_variable
 
-from .logging.responses import log_variable
-
-from .telemetry import telemetry
-from .utils import api_base_url
+from pykubegrader._telemetry import telemetry
+from pykubegrader.utils import api_base_url
 
 
 # TODO: could cleanup to remove redundant imports
@@ -61,12 +59,12 @@ def initialize_assignment(
 
     try:
         seed = username_to_seed(jhub_user) % 1000
-        update_responses(key="seed", value=seed)
-        update_responses(key="week", value=week)
-        update_responses(key="assignment_type", value=assignment_type)
+        set_responses_json(key="seed", value=seed)
+        set_responses_json(key="week", value=week)
+        set_responses_json(key="assignment_type", value=assignment_type)
 
-        update_responses(key="assignment", value=name)
-        update_responses(key="jhub_user", value=jhub_user)
+        set_responses_json(key="assignment", value=name)
+        set_responses_json(key="jhub_user", value=jhub_user)
 
         # TODO: Check whether this is called correctly
         log_variable("Student Info", jhub_user, seed)

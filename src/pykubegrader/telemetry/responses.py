@@ -71,7 +71,7 @@ def ensure_responses() -> dict[str, Any]:
     return responses
 
 
-def update_responses(key: str, value) -> dict:
+def set_responses_json(key: str, value) -> dict:
     """
     Updates the responses dictionary with a new key-value pair and writes it to the .responses.json file.
 
