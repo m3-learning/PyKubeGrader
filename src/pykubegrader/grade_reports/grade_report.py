@@ -21,12 +21,12 @@ from pykubegrader.grade_reports.grading_config import (
     dropped_assignments,
     duplicated_scores,
     exclude_from_running_avg,
+    global_extensions_AVL,
     globally_exempted_assignments,
     grade_ranges,
     max_week,
     optional_drop_assignments,
     optional_drop_week,
-    global_extensions_AVL,
 )
 from pykubegrader.telemetry import get_assignments_submissions
 

@@ -9,11 +9,11 @@ def merge_bb_learn_data(
 ) -> pd.DataFrame:
     try:
         bblearn_df = pd.read_csv(bblearn_csv)
-    except:
+    except Exception:
         bblearn_df = pd.read_excel(bblearn_csv)
     try:
         grades_df = pd.read_csv(grades_csv)
-    except:
+    except Exception:
         grades_df = pd.read_excel(grades_csv)
 
     # Rename first column of grades_df to match bblearn_df's 'Username' column
