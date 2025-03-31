@@ -606,7 +606,7 @@ class NotebookProcessor:
         # Save the modified notebook
         with open(output_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
-            
+
     def add_final_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
         Adds final submission cells to the end of a Jupyter notebook.
@@ -628,7 +628,6 @@ class NotebookProcessor:
             "## Submitting Final Assignment\n\n"
             "Please run this cell with the provided token to identify your submission as final. Once your submission is final, you will not be able to make any changes to your assignment. "
         )
-
 
         # Define the Code cell
         code_cell = nbformat.v4.new_code_cell(

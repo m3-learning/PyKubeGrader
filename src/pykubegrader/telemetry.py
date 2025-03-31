@@ -14,11 +14,12 @@ import requests
 from IPython.core.interactiveshell import ExecutionInfo
 from requests import Response
 from requests.auth import HTTPBasicAuth
-from requests.exceptions import RequestException 
+from requests.exceptions import RequestException
 
 from pykubegrader.utils import api_base_url, student_pw, student_user
 
-#TODO: refactor this to other function
+
+# TODO: refactor this to other function
 def is_called_directly_from_notebook():
     """
     Checks if the current code is being executed directly from a Jupyter Notebook.
@@ -26,7 +27,7 @@ def is_called_directly_from_notebook():
     Returns:
         bool: True if the code is being executed from a Jupyter Notebook, False otherwise.
     """
-    
+
     # Check if the code is being executed from a Jupyter Notebook
     try:
         from IPython.core.getipython import get_ipython
@@ -70,6 +71,7 @@ def block_direct_notebook_calls(func):
     and raises an error if it is. This is useful to prevent accidental execution of grading functions
     from within the notebook environment.
     """
+
     # Define the wrapper function
     def wrapper(*args, **kwargs):
         # Check if the code is being executed from a Jupyter Notebook
@@ -119,30 +121,30 @@ def encrypt_to_b64(message: str) -> str:
     Returns:
         str: The encrypted message in base64 encoding.
     """
-    
+
     # Read the server's public key
     with open(".server_public_key.bin", "rb") as f:
         server_pub_key_bytes = f.read()
-        
+
     # Convert the server's public key to a public key object
     server_pub_key = nacl.public.PublicKey(server_pub_key_bytes)
 
     # Read the client's private key
     with open(".client_private_key.bin", "rb") as f:
         client_private_key_bytes = f.read()
-        
+
     # Convert the client's private key to a private key object
     client_priv_key = nacl.public.PrivateKey(client_private_key_bytes)
-    
+
     # Create a box object using the client's private key and the server's public key
     box = nacl.public.Box(client_priv_key, server_pub_key)
-    
+
     # Encrypt the message
     encrypted = box.encrypt(message.encode())
-    
+
     # Encode the encrypted message to base64
     encrypted_b64 = base64.b64encode(encrypted).decode("utf-8")
-    
+
     # Return the encrypted message in base64 encoding
     return encrypted_b64
 
@@ -329,8 +331,6 @@ def get_my_grades() -> pd.DataFrame:
 
     return sorted_vertical_df
 
-   
-    
 
 #
 # Code execution log testing
@@ -442,4 +442,3 @@ def get_assignments_submissions(params=None):
     )
 
     return res.json()
-

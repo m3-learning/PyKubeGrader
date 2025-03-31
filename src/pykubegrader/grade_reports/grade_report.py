@@ -47,8 +47,10 @@ class GradeReport:
             self.student_name = params.get("username", None)
         except Exception:
             self.student_name = os.environ.get("JUPYTERHUB_USER", None)
-            
-        self.assignments, self.student_subs = get_assignments_submissions(params={'username': self.student_name})
+
+        self.assignments, self.student_subs = get_assignments_submissions(
+            params={"username": self.student_name}
+        )
 
         self.max_week = max_week if max_week else self.get_num_weeks()
         self.start_date = start_date
@@ -389,13 +391,16 @@ class GradeReport:
             filtered_assignments,
             key=lambda x: datetime.fromisoformat(x["due_date"].replace("Z", "+00:00")),
         )
-        
+
         extension_minutes = self.check_global_extensions()
         if extension_minutes:
-            max_due["due_date"] = (datetime.fromisoformat(max_due["due_date"].replace("Z", "+00:00")) + timedelta(minutes=extension_minutes)).isoformat()
+            max_due["due_date"] = (
+                datetime.fromisoformat(max_due["due_date"].replace("Z", "+00:00"))
+                + timedelta(minutes=extension_minutes)
+            ).isoformat()
 
         return max_due["due_date"]  # Return the max due date as a string
-        
+
     def check_global_extensions(self):
         """
         Check if the student has a global extension available.
