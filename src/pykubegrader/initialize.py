@@ -17,9 +17,9 @@ from pykubegrader.utils import api_base_url
 # TODO: could cleanup to remove redundant imports
 def initialize_assignment(
     name: str,
-    week: str,
-    assignment_type: str,
-    verbose: bool = False,
+    week: Optional[str] = None,
+    assignment_type: Optional[str] = None,
+    verbose: Optional[bool] = False,
     assignment_points: Optional[float] = None,
     assignment_tag: Optional[str] = None,
 ) -> dict:
@@ -39,6 +39,10 @@ def initialize_assignment(
     """
 
     if assignment_tag is None:
+        if week is None:
+            raise ValueError("Week is required when assignment_tag is not provided")
+        if assignment_type is None:
+            raise ValueError("Assignment type is required when assignment_tag is not provided")
         assignment_tag = f"{week}-{assignment_type}"
 
     ipython = get_ipython()
