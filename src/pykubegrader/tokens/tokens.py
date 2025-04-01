@@ -3,7 +3,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 
-from .._utils import api_base_url
+from pykubegrader._utils import api_base_url
 
 
 def build_token_payload(token: str, duration: int, **kwargs) -> dict:
@@ -35,6 +35,7 @@ def add_token(token: str, duration: int = 20, **kwargs) -> None:
 
     if not api_base_url:
         raise ValueError("Environment variable for API URL not set")
+
     url = api_base_url.rstrip("/") + "/tokens"
 
     payload = build_token_payload(token=token, duration=duration, **kwargs)
