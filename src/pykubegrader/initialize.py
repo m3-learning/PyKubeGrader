@@ -54,11 +54,7 @@ def initialize_assignment(
         
         response = requests.get(api_base_url, params=params)
         
-        if verbose:
-            print(f"status code: {response.status_code}")
-            data = response.json()
-            for k, v in data.items():
-                print(f"{k}: {v}")
+        print_api_response(response, verbose = verbose)
                 
     except Exception as e:
         raise Exception(f"Failed to initialize assignment: {e}")
@@ -66,11 +62,25 @@ def initialize_assignment(
     log_variable("total-points", f"{assignment_tag}, {name}", assignment_points)
 
     print("Assignment successfully initialized")
+    print_assignment_info(name, jhub_user, verbose = verbose)
+
+    return responses
+
+def print_assignment_info(name,  jhub_user, **kwargs):
+    verbose = kwargs.get("verbose", False)
     if verbose:
         print(f"Assignment: {name}")
         print(f"Username: {jhub_user}")
 
-    return responses
+def print_api_response(response, **kwargs):
+    
+    verbose = kwargs.get("verbose", False)
+    
+    if verbose:
+        print(f"status code: {response.status_code}")
+        data = response.json()
+        for k, v in data.items():
+            print(f"{k}: {v}")
 
 def generate_user_seed(name, week, assignment_type, jhub_user):
     seed = username_to_seed(jhub_user) % 1000
