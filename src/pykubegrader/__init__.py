@@ -1,18 +1,19 @@
-from importlib.metadata import PackageNotFoundError, version  # pragma: no cover
-
-try:
-    dist_name = "PyKubeGrader"  # Change if project is renamed
-    __version__ = version(dist_name)
-except PackageNotFoundError:  # pragma: no cover
-    __version__ = "unknown"
+from pykubegrader import api
 from pykubegrader import build
 from pykubegrader import graders
-from pykubegrader import initialize
 from pykubegrader import log_parser
 from pykubegrader import telemetry
 from pykubegrader import widgets
 from pykubegrader import widgets_base
 
+from pykubegrader.api import (assignment, assignments, build_assignment_tag,
+                              check_api_connection, check_ipython, checks,
+                              code_logs, get, get_all_students,
+                              get_assignments_submissions,
+                              initialize_assignment, initialize_telemetry,
+                              move_dotfiles, post, score_question, scoring,
+                              students, submit, submit_question,
+                              upload_execution_log,)
 from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 MarkdownToNotebook, NotebookProcessor,
                                 QuestionCollator, api_notebook_builder,
@@ -29,12 +30,6 @@ from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 student_ids, update_initialize_assignment,
                                 user,)
 from pykubegrader.graders import (calculate_late_submission, late_assignments,)
-from pykubegrader.initialize import (build_assignment_tag,
-                                     check_api_connection, generate_user_seed,
-                                     get_jhub_user, initialize_assignment,
-                                     initialize_telemetry, move_dotfiles,
-                                     print_api_response, print_assignment_info,
-                                     username_to_seed,)
 from pykubegrader.log_parser import (LogParser, LogParserResults, parse,)
 from pykubegrader.telemetry import (ensure_responses, log_encrypted,
                                     log_variable, responses,
@@ -58,25 +53,26 @@ __all__ = ['EMAIL_PATTERN', 'FastAPINotebookBuilder', 'FolderCleaner', 'KEYS',
            'MultipleChoice', 'NotebookProcessor', 'QuestionCollator',
            'ReadingPython', 'ReadingPythonQuestion', 'SelectMany',
            'SelectQuestion', 'StudentInfoForm', 'TFQuestion', 'TFStyle',
-           'TypesQuestion', 'api_notebook_builder', 'build',
-           'build_assignment_tag', 'build_folder', 'calculate_late_submission',
-           'check_api_connection', 'check_for_heading', 'clean_folder',
-           'clean_notebook', 'collate', 'drexel_colors', 'ensure_imports',
-           'ensure_responses', 'extract_MCQ', 'extract_SELECT_MANY',
-           'extract_TF', 'extract_config_from_notebook', 'extract_files',
-           'extract_question', 'extract_raw_cells', 'find_first_code_cell',
-           'generate_mcq_file', 'generate_select_many_file',
-           'generate_tf_file', 'generate_user_seed', 'get_jhub_user',
-           'graders', 'initialize', 'initialize_assignment',
-           'initialize_telemetry', 'jupyterhub_user', 'late_assignments',
-           'log_encrypted', 'log_parser', 'log_variable', 'main',
-           'markdown_questions', 'move_dotfiles', 'multi_select',
-           'multiple_choice', 'parse', 'password', 'passwords',
-           'print_api_response', 'print_assignment_info',
+           'TypesQuestion', 'api', 'api_notebook_builder', 'assignment',
+           'assignments', 'build', 'build_assignment_tag', 'build_folder',
+           'calculate_late_submission', 'check_api_connection',
+           'check_for_heading', 'check_ipython', 'checks', 'clean_folder',
+           'clean_notebook', 'code_logs', 'collate', 'drexel_colors',
+           'ensure_imports', 'ensure_responses', 'extract_MCQ',
+           'extract_SELECT_MANY', 'extract_TF', 'extract_config_from_notebook',
+           'extract_files', 'extract_question', 'extract_raw_cells',
+           'find_first_code_cell', 'generate_mcq_file',
+           'generate_select_many_file', 'generate_tf_file', 'get',
+           'get_all_students', 'get_assignments_submissions', 'graders',
+           'initialize_assignment', 'initialize_telemetry', 'jupyterhub_user',
+           'late_assignments', 'log_encrypted', 'log_parser', 'log_variable',
+           'main', 'markdown_questions', 'move_dotfiles', 'multi_select',
+           'multiple_choice', 'parse', 'password', 'passwords', 'post',
            'process_questions_and_codes', 'question_processor', 'raw_css',
            'reading', 'reading_question', 'replace_cell_source',
            'replace_cells_between_markers', 'responses', 'sanitize_string',
-           'select', 'select_many', 'set_responses_json', 'student_ids',
-           'student_info', 'style', 'telemetry', 'true_false',
-           'types_question', 'update_initialize_assignment', 'user',
-           'username_to_seed', 'widgets', 'widgets_base']
+           'score_question', 'scoring', 'select', 'select_many',
+           'set_responses_json', 'student_ids', 'student_info', 'students',
+           'style', 'submit', 'submit_question', 'telemetry', 'true_false',
+           'types_question', 'update_initialize_assignment',
+           'upload_execution_log', 'user', 'widgets', 'widgets_base']
