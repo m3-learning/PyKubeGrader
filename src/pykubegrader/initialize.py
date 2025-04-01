@@ -38,8 +38,6 @@ def initialize_assignment(
         Exception: If the environment is unsupported or initialization fails.
     """
 
-    raise ValueError("Grading Closed.")
-
     if assignment_tag is None:
         assignment_tag = f"{week}-{assignment_type}"
 
