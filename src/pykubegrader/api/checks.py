@@ -1,3 +1,4 @@
+from IPython.core.getipython import get_ipython
 from pykubegrader.utils import api_base_url
 
 def check_api_connection():
@@ -12,3 +13,22 @@ def check_api_connection():
     """
     if not api_base_url:
         raise Exception("Environment variable for API URL not set")
+
+
+def check_ipython():
+    """
+    Check if the current environment is a Jupyter environment.
+
+    This function checks if the IPython environment is available. If it is not available,
+    it raises an exception indicating that the setup was unsuccessful.
+
+    Returns:
+        InteractiveShell: The IPython InteractiveShell instance.
+
+    Raises:
+        Exception: If the IPython environment is not available.
+    """
+    ipython = get_ipython()
+    if ipython is None:
+        raise Exception("Setup unsuccessful. Are you in a Jupyter environment?")
+    return ipython

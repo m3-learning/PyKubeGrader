@@ -3,21 +3,8 @@ import shutil
 from pathlib import Path
 from typing import Optional
 
-from IPython.core.getipython import get_ipython
 
 
-from pykubegrader._telemetry import telemetry
-
-def initialize_telemetry():
-    ipython = get_ipython()
-    if ipython is None:
-        raise Exception("Setup unsuccessful. Are you in a Jupyter environment?")
-
-    try:
-        move_dotfiles()
-        ipython.events.register("pre_run_cell", telemetry)
-    except Exception as e:
-        raise Exception(f"Failed to register telemetry: {e}")
 
 def build_assignment_tag(week, assignment_type, assignment_tag):
     if assignment_tag is None:

@@ -1,5 +1,7 @@
 from typing import Optional
-from pykubegrader._initialize import build_assignment_tag, check_api_connection, generate_user_seed, get_jhub_user, initialize_telemetry, print_api_response, print_assignment_info
+from pykubegrader._initialize import build_assignment_tag, check_api_connection, generate_user_seed, get_jhub_user, move_dotfiles, print_api_response, print_assignment_info
+from pykubegrader._telemetry import telemetry
+from pykubegrader.api.checks import check_ipython
 from pykubegrader.telemetry.responses import log_variable
 import panel as pn
 from pykubegrader.utils import api_base_url
@@ -68,3 +70,24 @@ def initialize_assignment(
     print_assignment_info(name, jhub_user, verbose = verbose)
 
     return responses
+
+
+def initialize_telemetry():
+    """
+    Initialize telemetry for the Jupyter environment.
+
+    This function checks if the current environment is a Jupyter environment,
+    moves essential dotfiles, and registers the telemetry function to be called
+    before each cell execution.
+
+    Raises:
+        Exception: If the environment is not a Jupyter environment or if telemetry
+                   registration fails.
+    """
+    ipython = check_ipython()
+
+    try:
+        move_dotfiles()
+        ipython.events.register("pre_run_cell", telemetry)
+    except Exception as e:
+        raise Exception(f"Failed to register telemetry: {e}")
