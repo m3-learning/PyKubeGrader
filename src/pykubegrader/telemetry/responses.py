@@ -23,6 +23,7 @@ def log_encrypted(logger: logging.Logger, message: str) -> None:
     encrypted_b64 = encrypt_to_b64(message)
     logger.info(f"Encrypted Output: {encrypted_b64}")
 
+
 @block_direct_notebook_calls
 def log_variable(assignment_name: str, value: Any, info_type: str) -> None:
     """

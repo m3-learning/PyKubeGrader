@@ -1,5 +1,4 @@
 def print_api_response(response, **kwargs):
-
     verbose = kwargs.get("verbose", False)
 
     if verbose:

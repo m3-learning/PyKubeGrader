@@ -32,6 +32,7 @@ file_handler_reduced = logging.FileHandler(".output_reduced.log")
 file_handler_reduced.setLevel(logging.INFO)
 logger_reduced.addHandler(file_handler_reduced)
 
+
 def telemetry(info: ExecutionInfo) -> None:
     cell_content = info.raw_cell
     log_encrypted(logger_code, f"code run: {cell_content}")
@@ -86,11 +87,7 @@ def get_my_grades() -> pd.DataFrame:
 
     return sorted_vertical_df
 
-   
-    
 
 #
 # Code execution log testing
 #
-
-

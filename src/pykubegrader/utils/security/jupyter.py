@@ -1,6 +1,7 @@
 import inspect
 import os
 
+
 def is_called_directly_from_notebook():
     """
     Determines if the current code execution is initiated directly from a Jupyter Notebook.
@@ -10,7 +11,7 @@ def is_called_directly_from_notebook():
     the presence of Otter Grader, and the stack trace to make this determination.
 
     Returns:
-        bool: 
+        bool:
             - True if the code is executed directly from a Jupyter Notebook.
             - False if executed from other environments or if Otter Grader is detected.
     """
@@ -69,6 +70,7 @@ def block_direct_notebook_calls(func):
     Raises:
         RuntimeError: If the function is called directly from a Jupyter Notebook.
     """
+
     def wrapper(*args, **kwargs):
         if is_called_directly_from_notebook():
             raise RuntimeError(

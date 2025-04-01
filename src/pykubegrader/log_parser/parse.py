@@ -14,6 +14,7 @@ class LogParserResults(TypedDict):
         assignment_information (dict[str, Any]): Detailed information about the assignment.
         assignment_scores (dict[str, Any]): Scores for the assignment.
     """
+
     student_information: dict[str, str]
     week: Optional[str]
     week_num: Optional[int]

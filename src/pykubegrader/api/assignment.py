@@ -59,7 +59,6 @@ def initialize_assignment(
     try:
         responses = generate_user_seed(name, week, assignment_type, jhub_user)
 
-        
         pn.extension(silent=True)
 
         # Check connection to API server
@@ -69,7 +68,7 @@ def initialize_assignment(
 
         response = requests.get(api_base_url, params=params)
 
-        print_api_response(response, verbose = verbose)
+        print_api_response(response, verbose=verbose)
 
     except Exception as e:
         raise Exception(f"Failed to initialize assignment: {e}")
@@ -77,7 +76,7 @@ def initialize_assignment(
     log_variable("total-points", f"{assignment_tag}, {name}", assignment_points)
 
     print("Assignment successfully initialized")
-    print_assignment_info(name, jhub_user, verbose = verbose)
+    print_assignment_info(name, jhub_user, verbose=verbose)
 
     return responses
 
@@ -106,6 +105,7 @@ def initialize_telemetry(**kwargs):
     except Exception as e:
         raise Exception(f"Failed to register telemetry: {e}")
 
+
 def move_dotfiles(**kwargs):
     """
     Move essential dotfiles from a fixed source directory to the current working directory.
@@ -123,9 +123,13 @@ def move_dotfiles(**kwargs):
         FileNotFoundError: If a source file is missing.
         Exception: If copying fails for any other reason.
     """
-    client_private_key_path = kwargs.get("client_private_key_path", ".client_private_key.bin")
-    server_public_key_path = kwargs.get("server_public_key_path", ".server_public_key.bin")
-    
+    client_private_key_path = kwargs.get(
+        "client_private_key_path", ".client_private_key.bin"
+    )
+    server_public_key_path = kwargs.get(
+        "server_public_key_path", ".server_public_key.bin"
+    )
+
     source_dir = Path("/opt/dotfiles")
     target_dir = Path.cwd()
 
@@ -166,6 +170,8 @@ def build_assignment_tag(week, assignment_type, assignment_tag):
         if week is None:
             raise ValueError("Week is required when assignment_tag is not provided")
         if assignment_type is None:
-            raise ValueError("Assignment type is required when assignment_tag is not provided")
+            raise ValueError(
+                "Assignment type is required when assignment_tag is not provided"
+            )
         assignment_tag = f"{week}-{assignment_type}"
     return assignment_tag

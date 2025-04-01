@@ -1,6 +1,7 @@
 from IPython.core.getipython import get_ipython
 from pykubegrader._utils import api_base_url
 
+
 def check_api_connection():
     """
     Check the API connection by verifying the API base URL.

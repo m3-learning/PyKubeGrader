@@ -12,9 +12,9 @@ def print_assignment_info(name, jhub_user, **kwargs):
     Keyword Args:
         verbose (bool): If True, prints detailed assignment information. Defaults to False.
     """
-    
+
     verbose = kwargs.get("verbose", False)
-    
+
     if verbose:
         print(f"Assignment: {name}")
         print(f"Username: {jhub_user}")

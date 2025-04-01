@@ -55,7 +55,9 @@ class GradeConfig:
 
     assignment_types: List[AssignmentType] = field(default_factory=list)
     global_extensions_AVL: Dict[str, int] = field(default_factory=dict)
-    custom_grade_adjustments: Dict[Tuple[str, int], Callable[[float], float]] = field(default_factory=dict)
+    custom_grade_adjustments: Dict[Tuple[str, int], Callable[[float], float]] = field(
+        default_factory=dict
+    )
     globally_exempted_assignments: List[Tuple[str, int]] = field(default_factory=list)
     aliases: Dict[str, List[str]] = field(default_factory=dict)
     skipped_assignments: Dict[Tuple[str, int], Any] = field(default_factory=dict)
@@ -68,7 +70,3 @@ class GradeConfig:
     max_week: int = 0
     students_to_include: List[str] = field(default_factory=list)
     grade_ranges: List[Tuple[int, int, str]] = field(default_factory=list)
-
-
-
-
