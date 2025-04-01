@@ -113,29 +113,28 @@ class NotebookProcessor:
         self.logger = logger  # Assign the logger instance to the class for use in instance methods
 
     def initialize_info(self):
+        """
+        Initializes the NotebookProcessor instance with assignment information.
+
+        This method performs the following tasks:
+        1. Checks if an 'assignment_config.yaml' file exists in the root folder.
+        2. If the YAML file exists, it initializes the instance using the YAML content.
+        3. If the YAML file does not exist, it initializes the instance using the assignment tag.
+        4. Sets the week number and week string based on the assignment tag.
+        5. Defines the folder to store solutions and ensures it exists.
+        6. Initializes the total points for the assignment and a log for total points.
+
+        Raises:
+            None
+        """
         if self.check_if_file_in_folder("assignment_config.yaml"):
-
             # Parse the YAML content
-            with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
-                data = yaml.safe_load(file)
-                # Extract assignment details
-                assignment = data.get("assignment", {})
-                self.week_num = assignment.get("week")
-                self.assignment_type = assignment.get("assignment_type")
-                self.bonus_points = assignment.get("bonus_points", 0)
-                self.require_key = assignment.get("require_key", False)
-                self.final_submission = assignment.get("final_submission", False)
-                self.assignment_tag = assignment.get(
-                    "assignment_tag",
-                    f"week{assignment.get('week')}-{self.assignment_type}",
-                )
-
+            self.initialize_from_assignment_yaml()
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
             self.week_num = self.assignment_tag.split("-")[-1]
             self.assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 
-        # self.week_num = week_num
         self.week = f"week_{self.week_num}"
 
         # Define the folder to store solutions and ensure it exists
@@ -143,25 +142,38 @@ class NotebookProcessor:
         self.assignment_total_points = 0
         self.total_point_log = {}
 
+    def initialize_from_assignment_yaml(self):
+        
+        #TODO: make robust to no week number set?
+        with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
+            data = yaml.safe_load(file)
+                # Extract assignment details
+            assignment = data.get("assignment", {})
+            self.week_num = assignment.get("week") 
+            self.assignment_type = assignment.get("assignment_type")
+            self.bonus_points = assignment.get("bonus_points", 0)
+            self.require_key = assignment.get("require_key", False)
+            self.final_submission = assignment.get("final_submission", False)
+            self.assignment_tag = assignment.get(
+                    "assignment_tag",
+                    f"week{assignment.get('week')}-{self.assignment_type}",
+                )
+
     def process_notebooks(self):
         """
-        Recursively processes Jupyter notebooks in a given folder and its subfolders.
+        Processes Jupyter notebooks within the root folder and its subfolders.
 
-        The function performs the following steps:
-        1. Iterates through all files within the root folder and subfolders.
-        2. Identifies Jupyter notebooks by checking file extensions (.ipynb).
-        3. Checks if each notebook contains assignment configuration metadata.
-        4. Processes notebooks that meet the criteria using `otter assign` or other defined steps.
+        This method performs the following actions:
+        1. Collects all Jupyter notebook files (.ipynb) from the root folder and its subdirectories.
+        2. Verifies if each notebook contains the necessary assignment configuration metadata.
+        3. Processes notebooks that meet the criteria using the `_process_single_notebook` method.
 
         Prerequisites:
-            - The `has_assignment` method should be implemented to check if a notebook
-            contains the required configuration for assignment processing.
-            - The `_process_single_notebook` method should handle the specific processing
-            of a single notebook, including moving it to a new folder or running
-            additional tools like `otter assign`.
+            - The `has_assignment` method must be implemented to verify the presence of assignment configuration in a notebook.
+            - The `_process_single_notebook` method should be defined to handle the processing of individual notebooks.
 
         Raises:
-            - OSError: If an issue occurs while accessing files or directories.
+            - OSError: If there is an error accessing files or directories.
 
         Example:
             class NotebookProcessor:
@@ -179,19 +191,14 @@ class NotebookProcessor:
             processor = NotebookProcessor("/path/to/root/folder")
             processor.process_notebooks()
         """
-        ipynb_files = []
-
-        # Walk through the root folder and its subfolders
-        for dirpath, _, filenames in os.walk(self.root_folder):
-            for filename in filenames:
-                # Check if the file is a Jupyter notebook
-                if filename.endswith(".ipynb"):
-                    notebook_path = os.path.join(dirpath, filename)
-                    ipynb_files.append(notebook_path)
+        
+        ipynb_files = self.get_notebooks_recursively()
 
         for notebook_path in ipynb_files:
+            
             # Check if the notebook has the required assignment configuration
             if self.has_assignment(notebook_path):
+                
                 self._print_and_log(f"notebook_path = {notebook_path}")
 
                 # Process the notebook if it meets the criteria
@@ -208,10 +215,44 @@ class NotebookProcessor:
 
         self.update_initialize_function()
 
-    def update_initialize_function(self):
-        for key, value in self.total_point_log.items():
-            # assignment_tag = f"week{self.week_num}-{self.assignment_type}"
+    def get_notebooks_recursively(self):
+        """
+        Recursively retrieves all Jupyter notebook files (.ipynb) from the root folder and its subfolders.
 
+        This method walks through the directory tree starting from the root folder, identifies all files
+        with a .ipynb extension, and collects their paths in a list.
+
+        Returns:
+            list: A list of file paths to Jupyter notebook files found within the root folder and its subfolders.
+        """
+        ipynb_files = []
+
+        # Walk through the root folder and its subfolders
+        for dirpath, _, filenames in os.walk(self.root_folder):
+            for filename in filenames:
+                # Check if the file is a Jupyter notebook
+                if filename.endswith(".ipynb"):
+                    notebook_path = os.path.join(dirpath, filename)
+                    ipynb_files.append(notebook_path)
+        return ipynb_files
+
+    def update_initialize_function(self):
+        """
+        Updates the initialization function for each notebook in the total point log.
+
+        This method iterates through the total point log, constructs the notebook path,
+        and updates the initialization assignment with the corresponding points and tag.
+
+        The `update_initialize_assignment` function is called for each notebook to
+        perform the update.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        for key, value in self.total_point_log.items():
             update_initialize_assignment(
                 notebook_path=os.path.join(self.root_folder, key + ".ipynb"),
                 assignment_points=value,
