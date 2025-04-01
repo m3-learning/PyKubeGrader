@@ -455,53 +455,16 @@ class NotebookProcessor:
         self.mcq_total_points = 0
         self.tf_total_points = 0
         self.otter_total_points = 0
+        self._print_and_log(f"Processing notebook: {notebook_path}")
 
-        print(f"Processing notebook: {notebook_path}")
-
-        logging.info(f"Processing notebook: {notebook_path}")
+        # Get the notebook name and subfolder path
         notebook_name = os.path.splitext(os.path.basename(notebook_path))[0]
         notebook_subfolder = os.path.join(self.solutions_folder, notebook_name)
-        os.makedirs(notebook_subfolder, exist_ok=True)
+        
+        # Create the subfolder if it doesn't exist
+        new_notebook_path, temp_notebook_path, autograder_path, student_path = self.duplicate_files(notebook_path, notebook_name, notebook_subfolder)
 
-        new_notebook_path = os.path.join(
-            notebook_subfolder, os.path.basename(notebook_path)
-        )
-
-        # makes a temp copy of the notebook
-        temp_notebook_path = os.path.join(
-            notebook_subfolder, f"{notebook_name}_temp.ipynb"
-        )
-        shutil.copy(notebook_path, temp_notebook_path)
-
-        # Determine the path to the autograder folder
-        autograder_path = os.path.join(notebook_subfolder, "dist/autograder/")
-        os.makedirs(autograder_path, exist_ok=True)
-
-        # Determine the path to the student folder
-        student_path = os.path.join(notebook_subfolder, "dist/student/")
-        os.makedirs(student_path, exist_ok=True)
-
-        if os.path.abspath(notebook_path) != os.path.abspath(new_notebook_path):
-            shutil.move(notebook_path, new_notebook_path)
-            self._print_and_log(f"Moved: {notebook_path} -> {new_notebook_path}")
-        else:
-            self._print_and_log(f"Notebook already in destination: {new_notebook_path}")
-
-        solution_path_1, question_path_1 = self.multiple_choice_parser(
-            temp_notebook_path, new_notebook_path
-        )
-        solution_path_2, question_path_2 = self.true_false_parser(
-            temp_notebook_path, new_notebook_path
-        )
-        solution_path_3, question_path_3 = self.select_many_parser(
-            temp_notebook_path, new_notebook_path
-        )
-
-        if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
-            solution_path = solution_path_1 or solution_path_2 or solution_path_3
-
-        if any([question_path_1, question_path_2, question_path_3]) is not None:
-            question_path = question_path_1 or question_path_2 or question_path_3
+        solution_path, question_path = self.widget_question_parser(new_notebook_path, temp_notebook_path)
 
         student_notebook, self.otter_total_points = self.free_response_parser(
             temp_notebook_path, notebook_subfolder, notebook_name
@@ -594,6 +557,53 @@ class NotebookProcessor:
         self.add_submission_cells(student_file_path, student_file_path)
         self.add_final_submission_cells(student_file_path, student_file_path)
         NotebookProcessor.remove_empty_cells(student_file_path)
+
+    def widget_question_parser(self, new_notebook_path, temp_notebook_path):
+        solution_path_1, question_path_1 = self.multiple_choice_parser(
+            temp_notebook_path, new_notebook_path
+        )
+        solution_path_2, question_path_2 = self.true_false_parser(
+            temp_notebook_path, new_notebook_path
+        )
+        solution_path_3, question_path_3 = self.select_many_parser(
+            temp_notebook_path, new_notebook_path
+        )
+
+        if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
+            solution_path = solution_path_1 or solution_path_2 or solution_path_3
+
+        if any([question_path_1, question_path_2, question_path_3]) is not None:
+            question_path = question_path_1 or question_path_2 or question_path_3
+        return solution_path,question_path
+
+    def duplicate_files(self, notebook_path, notebook_name, notebook_subfolder):
+        os.makedirs(notebook_subfolder, exist_ok=True)
+
+        # Create a new notebook path in the subfolder
+        new_notebook_path = os.path.join(
+            notebook_subfolder, os.path.basename(notebook_path)
+        )
+
+        # makes a temp copy of the notebook
+        temp_notebook_path = os.path.join(
+            notebook_subfolder, f"{notebook_name}_temp.ipynb"
+        )
+        shutil.copy(notebook_path, temp_notebook_path)
+
+        # Determine the path to the autograder folder
+        autograder_path = os.path.join(notebook_subfolder, "dist/autograder/")
+        os.makedirs(autograder_path, exist_ok=True)
+
+        # Determine the path to the student folder
+        student_path = os.path.join(notebook_subfolder, "dist/student/")
+        os.makedirs(student_path, exist_ok=True)
+
+        if os.path.abspath(notebook_path) != os.path.abspath(new_notebook_path):
+            shutil.move(notebook_path, new_notebook_path)
+            self._print_and_log(f"Moved: {notebook_path} -> {new_notebook_path}")
+        else:
+            self._print_and_log(f"Notebook already in destination: {new_notebook_path}")
+        return new_notebook_path,temp_notebook_path,autograder_path,student_path
 
     @staticmethod
     def remove_empty_cells(notebook_path, output_path=None):
@@ -716,6 +726,7 @@ class NotebookProcessor:
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
+        
         if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
             # TODO: This is hardcoded for now, but should be in a configuration file.
             client_private_key = os.path.join(
