@@ -2,7 +2,7 @@ from typing import Tuple
 
 import panel as pn
 
-from ..utils import list_of_lists
+from .._utils import list_of_lists
 from ..widgets_base.select import SelectQuestion
 
 #

@@ -1,4 +1,4 @@
-from pykubegrader.utils import api_base_url
+from pykubegrader._utils import api_base_url
 
 
 import requests

@@ -6,7 +6,7 @@ import panel as pn
 from ..telemetry.responses import ensure_responses, set_responses_json
 
 from ..telemetry import score_question
-from ..utils import shuffle_options
+from .._utils import shuffle_options
 
 
 class ReadingPython:

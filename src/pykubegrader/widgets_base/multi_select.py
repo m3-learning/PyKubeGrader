@@ -7,7 +7,7 @@ import panel as pn
 from ..telemetry.responses import ensure_responses, set_responses_json
 
 from ..telemetry import score_question
-from ..utils import shuffle_options, shuffle_questions
+from .._utils import shuffle_options, shuffle_questions
 from ..widgets.style import drexel_colors, raw_css
 
 # Pass the custom CSS to Panel

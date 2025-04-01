@@ -1,5 +1,5 @@
 from pykubegrader.telemetry.responses import ensure_responses
-from pykubegrader.utils import api_base_url, student_pw, student_user
+from pykubegrader._utils import api_base_url, student_pw, student_user
 
 
 import requests

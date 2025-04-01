@@ -6,7 +6,7 @@ from panel.pane import Markdown
 from panel.widgets import Button, Select, TextInput
 from requests.auth import HTTPBasicAuth
 
-from ..utils import api_base_url, student_pw, student_user
+from .._utils import api_base_url, student_pw, student_user
 
 pn.extension()
 

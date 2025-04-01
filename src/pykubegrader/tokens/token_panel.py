@@ -4,7 +4,7 @@ import panel as pn
 import requests
 from requests.auth import HTTPBasicAuth
 
-from ..utils import api_base_url
+from .._utils import api_base_url
 
 # Dummy credentials for HTTP Basic Auth
 AUTH = HTTPBasicAuth("user", "password")

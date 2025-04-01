@@ -3,7 +3,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 
-from ..utils import api_base_url
+from .._utils import api_base_url
 
 
 def build_token_payload(token: str, duration: int, **kwargs) -> dict:
