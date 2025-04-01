@@ -4,9 +4,9 @@ import logging
 import os
 from typing import Any
 
-from pykubegrader._telemetry import logger_reduced
 from pykubegrader.utils.security.jupyter import block_direct_notebook_calls
 from pykubegrader.utils.security.encryption import encrypt_to_b64
+from pykubegrader.logging import logger_reduced
 
 
 def log_encrypted(logger: logging.Logger, message: str) -> None:
