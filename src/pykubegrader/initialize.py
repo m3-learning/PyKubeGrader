@@ -13,8 +13,6 @@ from pykubegrader.telemetry.responses import ensure_responses, set_responses_jso
 from pykubegrader._telemetry import telemetry
 from pykubegrader.utils import api_base_url
 
-
-# TODO: could cleanup to remove redundant imports
 def initialize_assignment(
     name: str,
     week: Optional[str] = None,
@@ -38,55 +36,30 @@ def initialize_assignment(
         Exception: If the environment is unsupported or initialization fails.
     """
 
-    if assignment_tag is None:
-        if week is None:
-            raise ValueError("Week is required when assignment_tag is not provided")
-        if assignment_type is None:
-            raise ValueError("Assignment type is required when assignment_tag is not provided")
-        assignment_tag = f"{week}-{assignment_type}"
+    assignment_tag = build_assignment_tag(week, assignment_type, assignment_tag)
 
-    ipython = get_ipython()
-    if ipython is None:
-        raise Exception("Setup unsuccessful. Are you in a Jupyter environment?")
+    initialize_telemetry()
+
+    jhub_user = get_jhub_user()
 
     try:
-        move_dotfiles()
-        ipython.events.register("pre_run_cell", telemetry)
-    except Exception as e:
-        raise Exception(f"Failed to register telemetry: {e}")
-
-    jhub_user = os.getenv("JUPYTERHUB_USER")
-    if jhub_user is None:
-        raise Exception("Setup unsuccessful. Are you on JupyterHub?")
-
-    try:
-        seed = username_to_seed(jhub_user) % 1000
-        set_responses_json(key="seed", value=seed)
-        set_responses_json(key="week", value=week)
-        set_responses_json(key="assignment_type", value=assignment_type)
-
-        set_responses_json(key="assignment", value=name)
-        set_responses_json(key="jhub_user", value=jhub_user)
-
-        # TODO: Check whether this is called correctly
-        log_variable("Student Info", jhub_user, seed)
-
-        responses = ensure_responses()
-        # TODO: Add more checks here?
-        assert isinstance(responses.get("seed"), int), "Seed not set"
+        responses = generate_user_seed(name, week, assignment_type, jhub_user)
 
         pn.extension(silent=True)
 
         # Check connection to API server
-        if not api_base_url:
-            raise Exception("Environment variable for API URL not set")
+        check_api_connection()
+        
         params = {"jhub_user": responses["jhub_user"]}
+        
         response = requests.get(api_base_url, params=params)
+        
         if verbose:
             print(f"status code: {response.status_code}")
             data = response.json()
             for k, v in data.items():
                 print(f"{k}: {v}")
+                
     except Exception as e:
         raise Exception(f"Failed to initialize assignment: {e}")
 
@@ -99,11 +72,53 @@ def initialize_assignment(
 
     return responses
 
+def generate_user_seed(name, week, assignment_type, jhub_user):
+    seed = username_to_seed(jhub_user) % 1000
+    set_responses_json(key="seed", value=seed)
+    set_responses_json(key="week", value=week)
+    set_responses_json(key="assignment_type", value=assignment_type)
 
-#
-# Helper functions
-#
+    set_responses_json(key="assignment", value=name)
+    set_responses_json(key="jhub_user", value=jhub_user)
 
+        # TODO: Check whether this is called correctly
+    log_variable("Student Info", jhub_user, seed)
+
+    responses = ensure_responses()
+        
+    if not isinstance(responses.get("seed"), int):
+        raise ValueError("Seed not set or is not an integer")
+    return responses
+
+def check_api_connection():
+    if not api_base_url:
+        raise Exception("Environment variable for API URL not set")
+
+def get_jhub_user():
+    jhub_user = os.getenv("JUPYTERHUB_USER")
+    if jhub_user is None:
+        raise Exception("Setup unsuccessful. Are you on JupyterHub?")
+    return jhub_user
+
+def initialize_telemetry():
+    ipython = get_ipython()
+    if ipython is None:
+        raise Exception("Setup unsuccessful. Are you in a Jupyter environment?")
+
+    try:
+        move_dotfiles()
+        ipython.events.register("pre_run_cell", telemetry)
+    except Exception as e:
+        raise Exception(f"Failed to register telemetry: {e}")
+
+def build_assignment_tag(week, assignment_type, assignment_tag):
+    if assignment_tag is None:
+        if week is None:
+            raise ValueError("Week is required when assignment_tag is not provided")
+        if assignment_type is None:
+            raise ValueError("Assignment type is required when assignment_tag is not provided")
+        assignment_tag = f"{week}-{assignment_type}"
+    return assignment_tag
 
 def move_dotfiles():
     """
