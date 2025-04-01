@@ -288,6 +288,7 @@ class NotebookProcessor:
                 print(f"Error parsing due_date: {e}")
 
         title = f"Week {week} - {assignment_type}"
+        
         # Return the extracted details as a dictionary
         return {
             "title": title,
