@@ -71,7 +71,50 @@ class NotebookProcessor:
         Raises:
             OSError: If the solutions folder cannot be created due to permissions or other filesystem issues.
         """
+        # Initialize the info for the class
+        self.initialize_info()
+
+        os.makedirs(
+            self.solutions_folder, exist_ok=True
+        )  # Create the folder if it doesn't exist
+
+        # Initialize a global logger for the class
+        global logger
+        self.initialize_logger()
+
+    def initialize_logger(self):
+        """
+        Configures the logger for the NotebookProcessor class.
+
+        This method sets up logging to store log messages in a file located in the solutions folder.
+        It configures the logging level, format, and assigns a logger instance to the class.
+
+        The log file will contain messages at the INFO level and above, formatted with a timestamp,
+        log level, and the message content.
+
+        Attributes:
+            log_file_path (str): The path to the log file where log messages will be stored.
+            logger (logging.Logger): The logger instance specific to this module.
+
+        Raises:
+            OSError: If the log file cannot be created due to permissions or other filesystem issues.
+        """
+        # Configure logging to store log messages in the solutions folder
+        log_file_path = os.path.join(self.solutions_folder, "notebook_processor.log")
+        logging.basicConfig(
+            filename=log_file_path,  # Path to the log file
+            level=logging.INFO,  # Log messages at INFO level and above will be recorded
+            format="%(asctime)s - %(levelname)s - %(message)s",  # Log message format: timestamp, level, and message
+        )
+
+        logger = logging.getLogger(
+            __name__
+        )  # Create a logger instance specific to this module
+        self.logger = logger  # Assign the logger instance to the class for use in instance methods
+
+    def initialize_info(self):
         if self.check_if_file_in_folder("assignment_config.yaml"):
+
             # Parse the YAML content
             with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
                 data = yaml.safe_load(file)
@@ -86,6 +129,7 @@ class NotebookProcessor:
                     "assignment_tag",
                     f"week{assignment.get('week')}-{self.assignment_type}",
                 )
+
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
             self.week_num = self.assignment_tag.split("-")[-1]
@@ -97,26 +141,6 @@ class NotebookProcessor:
         # Define the folder to store solutions and ensure it exists
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
         self.assignment_total_points = 0
-
-        os.makedirs(
-            self.solutions_folder, exist_ok=True
-        )  # Create the folder if it doesn't exist
-
-        # Configure logging to store log messages in the solutions folder
-        log_file_path = os.path.join(self.solutions_folder, "notebook_processor.log")
-        logging.basicConfig(
-            filename=log_file_path,  # Path to the log file
-            level=logging.INFO,  # Log messages at INFO level and above will be recorded
-            format="%(asctime)s - %(levelname)s - %(message)s",  # Log message format: timestamp, level, and message
-        )
-
-        # Initialize a global logger for the class
-        global logger
-        logger = logging.getLogger(
-            __name__
-        )  # Create a logger instance specific to this module
-        self.logger = logger  # Assign the logger instance to the class for use in instance methods
-
         self.total_point_log = {}
 
     def process_notebooks(self):
