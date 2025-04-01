@@ -1,3 +1,4 @@
+import hashlib
 from pykubegrader.telemetry.responses import (
     ensure_responses,
     log_variable,
@@ -44,6 +45,19 @@ def generate_user_seed(name, week, assignment_type, jhub_user):
 
 
 def username_to_seed(username: str, mod: int = 1000) -> int:
+    """
+    Convert a username to a seed value.
+
+    This function takes a username, hashes it using SHA-256, converts the hash to an integer,
+    and then returns the integer modulo a given value.
+
+    Args:
+        username (str): The username to be converted to a seed.
+        mod (int, optional): The modulus value to be used. Defaults to 1000.
+
+    Returns:
+        int: The seed value derived from the username.
+    """
     hash_object = hashlib.sha256(username.encode())
     hash_hex = hash_object.hexdigest()
     hash_int = int(hash_hex, 16)
