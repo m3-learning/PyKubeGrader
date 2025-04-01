@@ -1,4 +1,3 @@
-from pykubegrader._initialize import username_to_seed
 from pykubegrader.telemetry.responses import (
     ensure_responses,
     log_variable,
@@ -42,3 +41,10 @@ def generate_user_seed(name, week, assignment_type, jhub_user):
         raise ValueError("Seed not set or is not an integer")
 
     return responses
+
+
+def username_to_seed(username: str, mod: int = 1000) -> int:
+    hash_object = hashlib.sha256(username.encode())
+    hash_hex = hash_object.hexdigest()
+    hash_int = int(hash_hex, 16)
+    return hash_int % mod
