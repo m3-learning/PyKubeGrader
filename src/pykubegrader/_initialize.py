@@ -1,5 +1,4 @@
 import hashlib
-import os
 import shutil
 from pathlib import Path
 from typing import Optional
@@ -8,12 +7,6 @@ from IPython.core.getipython import get_ipython
 
 
 from pykubegrader._telemetry import telemetry
-
-def get_jhub_user():
-    jhub_user = os.getenv("JUPYTERHUB_USER")
-    if jhub_user is None:
-        raise Exception("Setup unsuccessful. Are you on JupyterHub?")
-    return jhub_user
 
 def initialize_telemetry():
     ipython = get_ipython()
