@@ -4,11 +4,11 @@ from typing import Callable, Optional, Tuple
 import numpy as np
 import panel as pn
 
-from ..telemetry.responses import ensure_responses, set_responses_json
+from pykubegrader.telemetry.responses import ensure_responses, set_responses_json
 
-from ..telemetry import score_question
-from .._utils import shuffle_options, shuffle_questions
-from ..widgets.style import drexel_colors
+from pykubegrader.api.post.scoring import score_question
+from pykubegrader._utils import shuffle_options, shuffle_questions
+from pykubegrader.widgets.style import drexel_colors
 
 # Pass custom CSS to Panel
 pn.extension(design="material", global_css=[drexel_colors])

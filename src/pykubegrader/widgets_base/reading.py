@@ -3,10 +3,10 @@ from typing import Optional
 
 import panel as pn
 
-from ..telemetry.responses import ensure_responses, set_responses_json
+from pykubegrader.telemetry.responses import ensure_responses, set_responses_json
 
-from ..telemetry import score_question
-from .._utils import shuffle_options
+from pykubegrader.api.post.scoring import score_question
+from pykubegrader._utils import shuffle_options
 
 
 class ReadingPython:

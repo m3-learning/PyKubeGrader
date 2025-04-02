@@ -2,8 +2,8 @@ from typing import List, Tuple
 
 import panel as pn
 
-from ..widgets_base.select import SelectQuestion
-from .style import drexel_colors, raw_css
+from pykubegrader.widgets_base.select import SelectQuestion
+from pykubegrader.widgets.style import drexel_colors, raw_css
 
 # Pass the custom CSS to Panel
 pn.extension(design="material", global_css=[drexel_colors], raw_css=[raw_css])

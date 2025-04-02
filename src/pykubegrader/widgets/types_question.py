@@ -2,8 +2,8 @@ from typing import Tuple
 
 import panel as pn
 
-from .._utils import list_of_lists
-from ..widgets_base.select import SelectQuestion
+from pykubegrader._utils import list_of_lists
+from pykubegrader.widgets_base.select import SelectQuestion
 
 #
 # Style function

@@ -1,8 +1,8 @@
 import panel as pn
 
-from ..widgets.style import drexel_colors, raw_css
-from ..widgets_base.multi_select import MultiSelectQuestion
-from .question_processor import process_questions_and_codes
+from pykubegrader.widgets.style import drexel_colors, raw_css
+from pykubegrader.widgets_base.multi_select import MultiSelectQuestion
+from pykubegrader.widgets.question_processor import process_questions_and_codes
 
 # Pass the custom CSS to Panel
 pn.extension(design="material", global_css=[drexel_colors], raw_css=[raw_css])

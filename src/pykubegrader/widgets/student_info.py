@@ -5,9 +5,9 @@ import socket
 import numpy as np
 import panel as pn
 
-from ..telemetry.responses import set_responses_json
+from pykubegrader.telemetry.responses import set_responses_json
 
-from ..telemetry.responses import ensure_responses
+from pykubegrader.telemetry.responses import ensure_responses
 
 #
 # Constants

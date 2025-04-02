@@ -1,4 +1,4 @@
-from ..widgets_base.reading import ReadingPython
+from pykubegrader.widgets_base.reading import ReadingPython
 
 
 class ReadingPythonQuestion(ReadingPython):

@@ -2,9 +2,9 @@ from typing import Tuple
 
 import panel as pn
 
-from .._utils import list_of_lists
-from ..widgets_base.select import SelectQuestion
-from .question_processor import process_questions_and_codes
+from pykubegrader._utils import list_of_lists
+from pykubegrader.widgets_base.select import SelectQuestion
+from pykubegrader.widgets.question_processor import process_questions_and_codes
 
 #
 # Style function

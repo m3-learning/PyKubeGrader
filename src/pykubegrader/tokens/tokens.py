@@ -3,7 +3,10 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 
-from pykubegrader._utils import api_base_url
+#TODO: Move to env file
+api_base_url = os.getenv("DB_URL")
+student_user = os.getenv("user_name_student")
+student_pw = os.getenv("keys_student")
 
 
 def build_token_payload(token: str, duration: int, **kwargs) -> dict:
