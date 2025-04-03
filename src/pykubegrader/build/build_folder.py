@@ -109,6 +109,11 @@ class NotebookProcessor:
         """
         # Configure logging to store log messages in the solutions folder
         log_file_path = os.path.join(self.solutions_folder, "notebook_processor.log")
+        
+        # If the log file exists, remove it
+        if os.path.exists(log_file_path):
+            os.remove(log_file_path)
+            
         logging.basicConfig(
             filename=log_file_path,  # Path to the log file
             level=logging.INFO,  # Log messages at INFO level and above will be recorded
