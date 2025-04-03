@@ -209,15 +209,16 @@ class NotebookProcessor:
             processor = NotebookProcessor("/path/to/root/folder")
             processor.process_notebooks()
         """
-
+        # 1. Collects all Jupyter notebook files (.ipynb) from the root folder and its subdirectories.
         ipynb_files = self.get_notebooks_recursively()
 
+        # 2. Verifies if each notebook contains the necessary assignment configuration.
         for notebook_path in ipynb_files:
             # Check if the notebook has the required assignment configuration
             if self.has_assignment(notebook_path):
                 self._print_and_log(f"notebook_path = {notebook_path}")
 
-                # Process the notebook if it meets the criteria
+            # 3. Process the notebook if it meets the criteria
                 self._process_single_notebook(notebook_path)
 
         # Write the dictionary to a JSON file
@@ -467,19 +468,21 @@ class NotebookProcessor:
             None
         """
 
+        # 1. Initialize variables
         self.select_many_total_points = 0
         self.mcq_total_points = 0
         self.tf_total_points = 0
         self.otter_total_points = 0
+        
         self._print_and_log(f"Processing notebook: {notebook_path}")
 
-        # Get the notebook name and subfolder path
+        # 1. Get the notebook name and solution folder path
         notebook_name = os.path.splitext(os.path.basename(notebook_path))[0]
-        notebook_subfolder = os.path.join(self.solutions_folder, notebook_name)
+        solution_notebook_folder_path = os.path.join(self.solutions_folder, notebook_name)
 
-        # Create the subfolder if it doesn't exist
+        # 2. Create temporary and autograder notebooks and files
         new_notebook_path, temp_notebook_path, autograder_path, student_path = (
-            self.duplicate_files(notebook_path, notebook_name, notebook_subfolder)
+            self.duplicate_files(notebook_path, notebook_name, solution_notebook_folder_path)
         )
 
         solution_path, question_path = self.widget_question_parser(
@@ -487,7 +490,7 @@ class NotebookProcessor:
         )
 
         student_notebook, self.otter_total_points = self.free_response_parser(
-            temp_notebook_path, notebook_subfolder, notebook_name
+            temp_notebook_path, solution_notebook_folder_path, notebook_name
         )
 
         # If Otter does not run, move the student file to the main directory
@@ -596,28 +599,31 @@ class NotebookProcessor:
             question_path = question_path_1 or question_path_2 or question_path_3
         return solution_path, question_path
 
-    def duplicate_files(self, notebook_path, notebook_name, notebook_subfolder):
-        os.makedirs(notebook_subfolder, exist_ok=True)
+    def duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
+        
+        # 1. Create the subfolder if it doesn't exist
+        os.makedirs(solution_notebook_path, exist_ok=True)
 
-        # Create a new notebook path in the subfolder
+        # 2. Create a new notebook path in the subfolder
         new_notebook_path = os.path.join(
-            notebook_subfolder, os.path.basename(notebook_path)
+            solution_notebook_path, os.path.basename(notebook_path)
         )
 
-        # makes a temp copy of the notebook
+        # 3. Create a temp copy of the notebook
         temp_notebook_path = os.path.join(
-            notebook_subfolder, f"{notebook_name}_temp.ipynb"
+            solution_notebook_path, f"{notebook_name}_temp.ipynb"
         )
         shutil.copy(notebook_path, temp_notebook_path)
 
-        # Determine the path to the autograder folder
-        autograder_path = os.path.join(notebook_subfolder, "dist/autograder/")
+        # 4. Create the autograder folder
+        autograder_path = os.path.join(solution_notebook_path, "dist/autograder/")
         os.makedirs(autograder_path, exist_ok=True)
 
-        # Determine the path to the student folder
-        student_path = os.path.join(notebook_subfolder, "dist/student/")
+        # 5. Create the student folder
+        student_path = os.path.join(solution_notebook_path, "dist/student/")
         os.makedirs(student_path, exist_ok=True)
 
+        # 6. Move the notebook to the new path if it's not already there
         if os.path.abspath(notebook_path) != os.path.abspath(new_notebook_path):
             shutil.move(notebook_path, new_notebook_path)
             self._print_and_log(f"Moved: {notebook_path} -> {new_notebook_path}")
@@ -1782,16 +1788,6 @@ def extract_MCQ(ipynb_file):
                     subquestion_number += (
                         1  # Increment subquestion number for each question
                     )
-
-                    # # Extract question text (### heading)
-                    # question_text_match = re.search(
-                    #     r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
-                    # )
-                    # question_text = (
-                    #     question_text_match.group(1).strip()
-                    #     if question_text_match
-                    #     else None
-                    # )
 
                     # Extract question text enable multiple lines
                     question_text = extract_question(markdown_content)
