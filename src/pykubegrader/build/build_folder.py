@@ -41,7 +41,7 @@ add_token("token", duration=20)
 # Initialize logger at module level
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
@@ -111,16 +111,16 @@ class NotebookProcessor:
         Raises:
             OSError: If the log file cannot be created due to permissions or other filesystem issues.
         """
-        
+
         log_name = kwargs.get("log_name", "notebook_processor.log")
-        
+
         # Configure logging to store log messages in the solutions folder
         log_file_path = os.path.join(self.solutions_folder, log_name)
-        
+
         # If the log file exists, remove it
         if os.path.exists(log_file_path):
             os.remove(log_file_path)
-            
+
         logging.basicConfig(
             filename=log_file_path,  # Path to the log file
             level=logging.INFO,  # Log messages at INFO level and above will be recorded
@@ -162,21 +162,20 @@ class NotebookProcessor:
         self.total_point_log = {}
 
     def initialize_from_assignment_yaml(self):
-        
-        #TODO: make robust to no week number set?
+        # TODO: make robust to no week number set?
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
             data = yaml.safe_load(file)
-                # Extract assignment details
+            # Extract assignment details
             assignment = data.get("assignment", {})
-            self.week_num = assignment.get("week") 
+            self.week_num = assignment.get("week")
             self.assignment_type = assignment.get("assignment_type")
             self.bonus_points = assignment.get("bonus_points", 0)
             self.require_key = assignment.get("require_key", False)
             self.final_submission = assignment.get("final_submission", False)
             self.assignment_tag = assignment.get(
-                    "assignment_tag",
-                    f"week{assignment.get('week')}-{self.assignment_type}",
-                )
+                "assignment_tag",
+                f"week{assignment.get('week')}-{self.assignment_type}",
+            )
 
     def process_notebooks(self):
         """
@@ -210,14 +209,12 @@ class NotebookProcessor:
             processor = NotebookProcessor("/path/to/root/folder")
             processor.process_notebooks()
         """
-        
+
         ipynb_files = self.get_notebooks_recursively()
 
         for notebook_path in ipynb_files:
-            
             # Check if the notebook has the required assignment configuration
             if self.has_assignment(notebook_path):
-                
                 self._print_and_log(f"notebook_path = {notebook_path}")
 
                 # Process the notebook if it meets the criteria
@@ -307,7 +304,7 @@ class NotebookProcessor:
                 print(f"Error parsing due_date: {e}")
 
         title = f"Week {week} - {assignment_type}"
-        
+
         # Return the extracted details as a dictionary
         return {
             "title": title,
@@ -479,11 +476,15 @@ class NotebookProcessor:
         # Get the notebook name and subfolder path
         notebook_name = os.path.splitext(os.path.basename(notebook_path))[0]
         notebook_subfolder = os.path.join(self.solutions_folder, notebook_name)
-        
-        # Create the subfolder if it doesn't exist
-        new_notebook_path, temp_notebook_path, autograder_path, student_path = self.duplicate_files(notebook_path, notebook_name, notebook_subfolder)
 
-        solution_path, question_path = self.widget_question_parser(new_notebook_path, temp_notebook_path)
+        # Create the subfolder if it doesn't exist
+        new_notebook_path, temp_notebook_path, autograder_path, student_path = (
+            self.duplicate_files(notebook_path, notebook_name, notebook_subfolder)
+        )
+
+        solution_path, question_path = self.widget_question_parser(
+            new_notebook_path, temp_notebook_path
+        )
 
         student_notebook, self.otter_total_points = self.free_response_parser(
             temp_notebook_path, notebook_subfolder, notebook_name
@@ -593,7 +594,7 @@ class NotebookProcessor:
 
         if any([question_path_1, question_path_2, question_path_3]) is not None:
             question_path = question_path_1 or question_path_2 or question_path_3
-        return solution_path,question_path
+        return solution_path, question_path
 
     def duplicate_files(self, notebook_path, notebook_name, notebook_subfolder):
         os.makedirs(notebook_subfolder, exist_ok=True)
@@ -622,7 +623,7 @@ class NotebookProcessor:
             self._print_and_log(f"Moved: {notebook_path} -> {new_notebook_path}")
         else:
             self._print_and_log(f"Notebook already in destination: {new_notebook_path}")
-        return new_notebook_path,temp_notebook_path,autograder_path,student_path
+        return new_notebook_path, temp_notebook_path, autograder_path, student_path
 
     @staticmethod
     def remove_empty_cells(notebook_path, output_path=None):
@@ -745,7 +746,6 @@ class NotebookProcessor:
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
-        
         if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
             # TODO: This is hardcoded for now, but should be in a configuration file.
             client_private_key = os.path.join(
