@@ -38,6 +38,8 @@ from pykubegrader.tokens.tokens import add_token
 
 add_token("token", duration=20)
 
+logger = None
+
 
 @dataclass
 class NotebookProcessor:
