@@ -38,7 +38,13 @@ from pykubegrader.tokens.tokens import add_token
 
 add_token("token", duration=20)
 
-logger = None
+# Initialize logger at module level
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 
 @dataclass
@@ -112,7 +118,6 @@ class NotebookProcessor:
         logger = logging.getLogger(
             __name__
         )  # Create a logger instance specific to this module
-        self.logger = logger  # Assign the logger instance to the class for use in instance methods
 
     def initialize_info(self):
         """
@@ -428,7 +433,7 @@ class NotebookProcessor:
 
         # Log the message if logging is enabled
         if self.log:
-            self.logger.info(message)
+            logger.info(message)
 
     def _process_single_notebook(self, notebook_path):
         """
