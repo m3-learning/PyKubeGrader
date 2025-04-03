@@ -1424,7 +1424,7 @@ class NotebookProcessor:
             print(f"File {ipynb_file} not found.")
             return {}
         except json.JSONDecodeError:
-            print("Invalid JSON in notebook file.")
+            print("1 Invalid JSON in notebook file.")
             return {}
 
     @staticmethod
@@ -1474,7 +1474,7 @@ def extract_raw_cells(ipynb_file, heading="# BEGIN MULTIPLE CHOICE"):
         print(f"File {ipynb_file} not found.")
         return []
     except json.JSONDecodeError:
-        print("Invalid JSON in notebook file.")
+        print("2 Invalid JSON in notebook file.")
         return []
 
 
@@ -1618,7 +1618,7 @@ def extract_SELECT_MANY(ipynb_file):
         print(f"File {ipynb_file} not found.")
         return []
     except json.JSONDecodeError:
-        print("Invalid JSON in notebook file.")
+        print("3 Invalid JSON in notebook file.")
         return []
 
 
@@ -1708,7 +1708,7 @@ def extract_TF(ipynb_file):
         print(f"File {ipynb_file} not found.")
         return []
     except json.JSONDecodeError:
-        print("Invalid JSON in notebook file.")
+        print("4 Invalid JSON in notebook file.")
         return []
 
 
@@ -1827,7 +1827,7 @@ def extract_MCQ(ipynb_file):
         print(f"File {ipynb_file} not found.")
         return []
     except json.JSONDecodeError:
-        print("Invalid JSON in notebook file.")
+        print("5 Invalid JSON in notebook file.")
         return []
 
 
