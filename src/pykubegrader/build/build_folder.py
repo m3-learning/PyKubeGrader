@@ -58,6 +58,8 @@ class NotebookProcessor:
         solutions_folder (str): The directory where processed notebooks and solutions are stored.
         verbose (bool): Flag for verbose output to the console.
         log (bool): Flag to enable or disable logging.
+        kwargs:
+            log_name (str): The name of the log file.
     """
 
     root_folder: str
@@ -68,7 +70,7 @@ class NotebookProcessor:
     require_key: bool = False
     bonus_points: float = 0
 
-    def __post_init__(self):
+    def __post_init__(self, **kwargs):
         """
         Post-initialization method for setting up the `NotebookProcessor` instance.
 
@@ -88,9 +90,9 @@ class NotebookProcessor:
 
         # Initialize a global logger for the class
         global logger
-        self.initialize_logger()
+        self.initialize_logger(**kwargs)
 
-    def initialize_logger(self):
+    def initialize_logger(self, **kwargs):
         """
         Configures the logger for the NotebookProcessor class.
 
@@ -103,12 +105,17 @@ class NotebookProcessor:
         Attributes:
             log_file_path (str): The path to the log file where log messages will be stored.
             logger (logging.Logger): The logger instance specific to this module.
+            kwargs:
+                log_name (str): The name of the log file.
 
         Raises:
             OSError: If the log file cannot be created due to permissions or other filesystem issues.
         """
+        
+        log_name = kwargs.get("log_name", "notebook_processor.log")
+        
         # Configure logging to store log messages in the solutions folder
-        log_file_path = os.path.join(self.solutions_folder, "notebook_processor.log")
+        log_file_path = os.path.join(self.solutions_folder, log_name)
         
         # If the log file exists, remove it
         if os.path.exists(log_file_path):
