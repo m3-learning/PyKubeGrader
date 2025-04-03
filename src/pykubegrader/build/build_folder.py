@@ -1252,6 +1252,7 @@ class NotebookProcessor:
             contains_custom = has_assignment(notebook_path, "# CUSTOM CONFIG", "# ANOTHER CONFIG")
             self._print_and_log(f"Contains custom config: {contains_custom}")
         """
+        
         # Default tags if none are provided
         if not tags:
             tags = ["# ASSIGNMENT CONFIG", "# BEGIN MULTIPLE CHOICE"]
@@ -1837,10 +1838,25 @@ def extract_MCQ(ipynb_file):
         print("5 Invalid JSON in notebook file.")
         return []
 
-
+@staticmethod
 def check_for_heading(notebook_path, search_strings):
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
+
+    Args:
+        notebook_path (str): The file path to the Jupyter notebook to be checked.
+        search_strings (list of str): A list of strings to search for in the heading cells.
+
+    Returns:
+        bool: True if any of the search strings are found in the heading cells, False otherwise.
+
+    Example:
+        search_strings = ["# ASSIGNMENT CONFIG", "# BEGIN MULTIPLE CHOICE"]
+        result = check_for_heading("path/to/notebook.ipynb", search_strings)
+        if result:
+            print("Heading found.")
+        else:
+            print("Heading not found.")
     """
     try:
         with open(notebook_path, "r", encoding="utf-8") as f:
