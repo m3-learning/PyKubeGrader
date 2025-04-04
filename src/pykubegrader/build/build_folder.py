@@ -1242,7 +1242,8 @@ class NotebookProcessor:
         return data
 
     @staticmethod
-    def extract_question_points(raw, i, _data):
+    def extract_question_points(raw, i, _data, grade_ = None):
+        
         if isinstance(raw[i]["points"], str):
             points_ = [float(raw[i]["points"])] * len(
                     _data
