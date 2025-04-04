@@ -1400,6 +1400,7 @@ class NotebookProcessor:
 
         return question_points
 
+    @staticmethod
     def extract_MCQ(ipynb_file):
         """
         Extracts questions from markdown cells and organizes them as a nested dictionary,
