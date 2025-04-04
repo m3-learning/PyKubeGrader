@@ -46,6 +46,38 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
+@dataclass
+class WidgetQuestionParser:
+    
+    within_section: bool = False
+    subquestion_number: int = 0
+    current_section: dict = field(default_factory=dict)
+    sections: list = field(default_factory=list)
+    start_label: str = "# BEGIN MULTIPLE CHOICE"
+    end_label: str = "# END MULTIPLE CHOICE"
+
+    def process_raw_cell(self, raw_content):
+        if self.start_label in raw_content:
+            self.start_new_section()
+            return True
+        elif self.end_label in raw_content:
+            self.end_current_section()
+            return True
+        return False
+
+    def start_new_section(self):
+        self.within_section = True
+        self.subquestion_number = 0
+        self.current_section = {}
+
+    def end_current_section(self):
+        self.within_section = False
+        if self.current_section:
+            self.sections.append(self.current_section)
+            
+    def increment_subquestion_number(self):
+        self.subquestion_number += 1
+
 
 @dataclass
 class NotebookProcessor:
@@ -582,6 +614,21 @@ class NotebookProcessor:
         NotebookProcessor.remove_empty_cells(student_file_path)
 
     def widget_question_parser(self, new_notebook_path, temp_notebook_path):
+        """
+        Parses widget questions from a temporary notebook and returns paths to solution and question files.
+
+        This method processes multiple choice, true/false, and select-many type questions from the given
+        temporary notebook path and generates corresponding solution and question files in the new notebook path.
+
+        Parameters:
+            new_notebook_path (str): The path where the new notebook is located.
+            temp_notebook_path (str): The path to the temporary notebook containing widget questions.
+
+        Returns:
+            tuple: A tuple containing the path to the solution file and the path to the question file.
+                   If no questions are found, both paths will be None.
+        """
+        
         solution_path_1, question_path_1 = self.multiple_choice_parser(
             temp_notebook_path, new_notebook_path
         )
@@ -600,6 +647,19 @@ class NotebookProcessor:
         return solution_path, question_path
 
     def duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
+        """
+        Duplicates a Jupyter notebook into a specified solution directory, creating necessary subdirectories
+        and temporary files for further processing.
+
+        Parameters:
+            notebook_path (str): The path to the original Jupyter notebook.
+            notebook_name (str): The name of the notebook, used for naming temporary files.
+            solution_notebook_path (str): The path where the solution and related directories will be created.
+
+        Returns:
+            tuple: A tuple containing paths to the new notebook, temporary notebook, autograder directory, 
+                   and student directory.
+        """
         
         # 1. Create the subfolder if it doesn't exist
         os.makedirs(solution_notebook_path, exist_ok=True)
@@ -994,8 +1054,11 @@ class NotebookProcessor:
             )
 
     def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
+        
         ### Parse the notebook for multiple choice questions
+        
         if self.has_assignment(temp_notebook_path, "# BEGIN MULTIPLE CHOICE"):
+            
             self._print_and_log(
                 f"Notebook {temp_notebook_path} has multiple choice questions"
             )
@@ -1354,27 +1417,27 @@ class NotebookProcessor:
             # Load the notebook file
             with open(ipynb_file, "r", encoding="utf-8") as f:
                 notebook_data = json.load(f)
-
+                
             cells = notebook_data.get("cells", [])
             results = {}
-            within_section = False
-            subquestion_number = 0  # Counter for subquestions
+
+            parser = WidgetQuestionParser()
+            
+            # within_section = False
+            # subquestion_number = 0  # Counter for subquestions
 
             for cell in cells:
                 if cell.get("cell_type") == "raw":
                     # Check for the start and end labels in raw cells
                     raw_content = "".join(cell.get("source", []))
-                    if "# BEGIN MULTIPLE CHOICE" in raw_content:
-                        within_section = True
-                        subquestion_number = (
-                            0  # Reset counter at the start of a new section
-                        )
+                    if parser.process_raw_cell(raw_content):
                         continue
-                    elif "# END MULTIPLE CHOICE" in raw_content:
-                        within_section = False
+                    elif parser.end_label in raw_content:
+                        parser.end_new_section()
                         continue
 
-                if within_section and cell.get("cell_type") == "markdown":
+                if parser.within_section and cell.get("cell_type") == "markdown":
+                   
                     # Parse markdown cell content
                     markdown_content = "".join(cell.get("source", []))
 
@@ -1385,9 +1448,7 @@ class NotebookProcessor:
                     title = title_match.group(1).strip() if title_match else None
 
                     if title:
-                        subquestion_number += (
-                            1  # Increment the subquestion number for each question
-                        )
+                        parser.increment_subquestion_number()
 
                         # Extract question text (### heading)
                         question_text_match = re.search(
@@ -1423,10 +1484,11 @@ class NotebookProcessor:
                             solution_match.group(1).strip() if solution_match else None
                         )
 
+                        # TODO: Would be better to have a class for the question
                         # Create nested dictionary for the question
                         results[title] = {
                             "name": title,
-                            "subquestion_number": subquestion_number,
+                            "subquestion_number": parser.subquestion_number,
                             "question_text": question_text,
                             "OPTIONS": options,
                             "solution": solution,
@@ -1749,6 +1811,7 @@ def extract_MCQ(ipynb_file):
               'name', 'subquestion_number', 'question_text', 'OPTIONS', and 'solution'.
     """
     try:
+        
         # Load the notebook file
         with open(ipynb_file, "r", encoding="utf-8") as f:
             notebook_data = json.load(f)
