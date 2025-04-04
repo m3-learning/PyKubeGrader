@@ -57,8 +57,59 @@ class NotebookProcessor:
         solutions_folder (str): The directory where processed notebooks and solutions are stored.
         verbose (bool): Flag for verbose output to the console.
         log (bool): Flag to enable or disable logging.
+        require_key (bool): Flag to require a key for processing.
+        bonus_points (float): Additional points to be added to the assignment.
         kwargs:
             log_name (str): The name of the log file.
+
+    Methods:
+        __post_init__(self, **kwargs):
+            Post-initialization method for setting up the `NotebookProcessor` instance.
+
+        initialize_logger(self, **kwargs):
+            Configures the logger for the NotebookProcessor class.
+
+        initialize_info(self):
+            Initializes the information for the NotebookProcessor instance.
+
+        add_notebook(self, notebook_name, total_points):
+            Adds a notebook record to the database.
+
+        add_submission_cells(self, notebook_path, output_path):
+            Adds submission cells to the notebook.
+
+        add_final_submission_cells(self, notebook_path, output_path):
+            Adds final submission cells to the notebook.
+
+        remove_empty_cells(notebook_path):
+            Removes empty cells from the notebook.
+
+        multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
+            Parses the notebook for multiple choice questions.
+
+        true_false_parser(self, temp_notebook_path, new_notebook_path):
+            Parses the notebook for true/false questions.
+
+        select_many_parser(self, temp_notebook_path, new_notebook_path):
+            Parses the notebook for select-many type questions.
+
+        widget_question_parser(self, new_notebook_path, temp_notebook_path):
+            Parses widget questions from a temporary notebook and returns paths to solution and question files.
+
+        duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
+            Duplicates a Jupyter notebook into a specified solution directory, creating necessary subdirectories and temporary files for further processing.
+
+        merge_metadata(raw, data):
+            Merges raw metadata with extracted question data.
+
+        extract_question_points(raw, i, _data, grade_=None):
+            Extracts question points from raw metadata.
+
+        has_assignment(notebook_path, *tags):
+            Determines if a Jupyter notebook contains any of the specified configuration tags.
+
+        run_otter_assign(notebook_path, dist_folder):
+            Runs the Otter Assign command on the notebook.
     """
 
     root_folder: str
