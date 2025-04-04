@@ -47,39 +47,6 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 @dataclass
-class WidgetQuestionParser:
-    
-    within_section: bool = False
-    subquestion_number: int = 0
-    current_section: dict = field(default_factory=dict)
-    sections: list = field(default_factory=list)
-    start_label: str = "# BEGIN MULTIPLE CHOICE"
-    end_label: str = "# END MULTIPLE CHOICE"
-
-    def process_raw_cell(self, raw_content):
-        if self.start_label in raw_content:
-            self.start_new_section()
-            return True
-        elif self.end_label in raw_content:
-            self.end_current_section()
-            return True
-        return False
-
-    def start_new_section(self):
-        self.within_section = True
-        self.subquestion_number = 0
-        self.current_section = {}
-
-    def end_current_section(self):
-        self.within_section = False
-        if self.current_section:
-            self.sections.append(self.current_section)
-            
-    def increment_subquestion_number(self):
-        self.subquestion_number += 1
-
-
-@dataclass
 class NotebookProcessor:
     """
     A class for processing Jupyter notebooks in a directory and its subdirectories.
@@ -1798,6 +1765,39 @@ def extract_question(text):
     return None
 
 
+@dataclass
+class WidgetQuestionParser:
+    
+    sections: list = field(default_factory=list)
+    current_section: dict = field(default_factory=dict)
+    within_section: bool = False
+    subquestion_number: int = 0
+    start_label: str = "# BEGIN MULTIPLE CHOICE"
+    end_label: str = "# END MULTIPLE CHOICE"
+
+    def process_raw_cell(self, raw_content):
+        if self.start_label in raw_content:
+            self.start_new_section()
+            return True
+        elif self.end_label in raw_content:
+            self.end_current_section()
+            return True
+        return False
+
+    def start_new_section(self):
+        self.within_section = True
+        self.subquestion_number = 0
+        self.current_section = {}
+
+    def end_current_section(self):
+        self.within_section = False
+        if self.current_section:
+            self.sections.append(self.current_section)
+            
+    def increment_subquestion_number(self):
+        self.subquestion_number += 1
+
+
 def extract_MCQ(ipynb_file):
     """
     Extracts multiple-choice questions from markdown cells within sections marked by
@@ -1818,29 +1818,20 @@ def extract_MCQ(ipynb_file):
             notebook_data = json.load(f)
 
         cells = notebook_data.get("cells", [])
-        sections = []  # List to store results for each section
-        current_section = {}  # Current section being processed
-        within_section = False
-        subquestion_number = 0  # Counter for subquestions
+        
+        parser = WidgetQuestionParser()
 
         for cell in cells:
             if cell.get("cell_type") == "raw":
                 # Check for the start and end labels in raw cells
                 raw_content = "".join(cell.get("source", []))
-                if "# BEGIN MULTIPLE CHOICE" in raw_content:
-                    within_section = True
-                    subquestion_number = (
-                        0  # Reset counter at the start of a new section
-                    )
-                    current_section = {}  # Prepare a new section dictionary
-                    continue
-                elif "# END MULTIPLE CHOICE" in raw_content:
-                    within_section = False
-                    if current_section:
-                        sections.append(current_section)  # Save the current section
+                
+                flag = parser.process_raw_cell(raw_content)
+                
+                if flag:
                     continue
 
-            if within_section and cell.get("cell_type") == "markdown":
+            if parser.within_section and cell.get("cell_type") == "markdown":
                 # Parse markdown cell content
                 markdown_content = "".join(cell.get("source", []))
 
@@ -1849,9 +1840,7 @@ def extract_MCQ(ipynb_file):
                 title = title_match.group(1).strip() if title_match else None
 
                 if title:
-                    subquestion_number += (
-                        1  # Increment subquestion number for each question
-                    )
+                    parser.increment_subquestion_number()
 
                     # Extract question text enable multiple lines
                     question_text = extract_question(markdown_content)
@@ -1881,15 +1870,15 @@ def extract_MCQ(ipynb_file):
                     )
 
                     # Add question details to the current section
-                    current_section[title] = {
+                    parser.current_section[title] = {
                         "name": title,
-                        "subquestion_number": subquestion_number,
+                        "subquestion_number": parser.subquestion_number,
                         "question_text": question_text,
                         "OPTIONS": options,
                         "solution": solution,
                     }
 
-        return sections
+        return parser.sections
 
     except FileNotFoundError:
         print(f"File {ipynb_file} not found.")
