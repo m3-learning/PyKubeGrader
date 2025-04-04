@@ -1041,7 +1041,7 @@ class NotebookProcessor:
 
             data = NotebookProcessor.merge_metadata(value, data)
 
-            self.mcq_total_points = self.generate_solution_MCQ(
+            self.mcq_total_points = self.generate_widget_solutions(
                 data, output_file=solution_path
             )
 
@@ -1081,7 +1081,7 @@ class NotebookProcessor:
 
             # for data_ in data:
             # Generate the solution file
-            self.tf_total_points = self.generate_solution_MCQ(
+            self.tf_total_points = self.generate_widget_solutions(
                 data, output_file=solution_path
             )
 
@@ -1115,11 +1115,11 @@ class NotebookProcessor:
             # Extract the first value cells
             value = extract_raw_cells(temp_notebook_path, markers[0])
 
+            # Merge the metadata with the question data
             data = NotebookProcessor.merge_metadata(value, data)
 
-            # for data_ in data:
             # Generate the solution file
-            self.select_many_total_points = self.generate_solution_MCQ(
+            self.select_many_total_points = self.generate_widget_solutions(
                 data, output_file=solution_path
             )
 
@@ -1220,29 +1220,19 @@ class NotebookProcessor:
             #     {"Q2": {"question_text": "What is 3+3?", "points": 3.0}}
             # ]
         """
-        # merged_data = []
-
+        
         # Loop through each question set in the data
         for i, _data in enumerate(data):
+            
             # Handle 'points' from raw metadata: convert single string value to a list if necessary
-            if isinstance(raw[i]["points"], str):
-                points_ = [float(raw[i]["points"])] * len(
-                    _data
-                )  # Distribute the same point value
-            else:
-                points_ = raw[i]["points"]  # Use provided list of points
-
-            # Remove 'points' from raw metadata to avoid overwriting
-            raw[i].pop("points", None)
-
-            # Handle 'grade' from raw metadata
-            if "grade" in raw[i]:
-                grade_ = [raw[i]["grade"]]
+            points_, grade_ = NotebookProcessor.extract_question_points(raw, i, _data)
 
             # Merge each question's metadata with corresponding raw metadata
             for j, (key, _) in enumerate(_data.items()):
+                
                 # Combine raw metadata with question data
                 data[i][key] = data[i][key] | raw[i]
+                
                 # Assign the correct point value to the question
                 data[i][key]["points"] = points_[j]
 
@@ -1250,6 +1240,23 @@ class NotebookProcessor:
                     data[i][key]["grade"] = grade_
 
         return data
+
+    @staticmethod
+    def extract_question_points(raw, i, _data):
+        if isinstance(raw[i]["points"], str):
+            points_ = [float(raw[i]["points"])] * len(
+                    _data
+                )  # Distribute the same point value
+        else:
+            points_ = raw[i]["points"]  # Use provided list of points
+
+            # Remove 'points' from raw metadata to avoid overwriting
+        raw[i].pop("points", None)
+
+            # Handle 'grade' from raw metadata
+        if "grade" in raw[i]:
+            grade_ = [raw[i]["grade"]]
+        return points_,grade_
 
     @staticmethod
     def has_assignment(notebook_path, *tags):
@@ -1318,7 +1325,7 @@ class NotebookProcessor:
             )
 
     @staticmethod
-    def generate_solution_MCQ(data_list, output_file="output.py"):
+    def generate_widget_solutions(data_list, output_file="output.py"):
         """
         Generates a Python file with solutions and total points based on the input data.
         If the file already exists, it appends new solutions to the existing solution dictionary.
