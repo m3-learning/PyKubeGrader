@@ -2110,16 +2110,7 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
             for i, (q_key, q_value) in enumerate(question_dict.items()):
                 if i == 0:
                     # Write the MCQuestion class
-                    f.write(
-                        f"class Question{q_value['question number']}(MCQuestion):\n"
-                    )
-                    f.write("    def __init__(self):\n")
-                    f.write("        super().__init__(\n")
-                    f.write(f'            title=f"{q_value["title"]}",\n')
-                    f.write("            style=MCQ,\n")
-                    f.write(
-                        f"            question_number={q_value['question number']},\n"
-                    )
+                    write_question_class(f, q_value, class_type = "MCQuestion")
                 break
 
             keys = []
@@ -2151,6 +2142,23 @@ def generate_mcq_file(data_dict, output_file="mc_questions.py"):
 
             f.write(f"            points={points},\n")
             f.write("        )\n")
+            
+question_class_type = {"MCQuestion": {"class_type": "MCQuestion", "style": "MCQ"}}
+
+def write_question_class(f, q_value, class_type):
+    
+    class_type_ = question_class_type[class_type]
+    
+    f.write(
+                        f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
+                    )
+    f.write("    def __init__(self):\n")
+    f.write("        super().__init__(\n")
+    f.write(f'            title=f"{q_value["title"]}",\n')
+    f.write(f"            style={class_type_['style']},\n")
+    f.write(
+                        f"            question_number={q_value['question number']},\n"
+                    )
 
 
 def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
