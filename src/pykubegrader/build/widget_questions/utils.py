@@ -1,6 +1,5 @@
 import re
 
-
 def extract_question(text):
     # Regular expression to capture the multiline title
     match = re.search(r"###\s+(.*?)\s+####", text, re.DOTALL)
@@ -36,3 +35,36 @@ def extract_options(markdown_content):
     )
 
     return options
+
+def extract_title(markdown_content):
+    """
+    Extracts the title from the given markdown content.
+
+    Args:
+        markdown_content (str): The markdown content to search for the title.
+
+    Returns:
+        str: The extracted title if found, otherwise None.
+    """
+    title_match = re.search(r"^##\s*(.+)", markdown_content, re.MULTILINE)
+    title = title_match.group(1).strip() if title_match else None
+    return title
+
+def extract_solutions(markdown_content):
+        """
+        Extracts the solution from the given markdown content.
+
+        Args:
+            markdown_content (str): The markdown content to search for the solution.
+
+        Returns:
+            str: The extracted solution if found, otherwise None.
+        """
+        solution_match = re.search(
+            r"####\s*SOLUTION\s*(.+)", markdown_content, re.IGNORECASE
+        )
+        solution = (
+            solution_match.group(1).strip() if solution_match else None
+        )
+        
+        return solution

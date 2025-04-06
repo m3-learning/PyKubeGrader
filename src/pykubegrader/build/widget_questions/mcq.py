@@ -3,7 +3,7 @@ from pykubegrader.build.build_folder import NotebookProcessor, WidgetQuestionPar
 
 import json
 
-from pykubegrader.build.widget_questions.utils import extract_question
+from pykubegrader.build.widget_questions.utils import extract_question, extract_options, extract_title, extract_solutions
 
 
 def extract(ipynb_file):
@@ -44,7 +44,7 @@ def extract(ipynb_file):
                 markdown_content = "".join(cell.get("source", []))
 
                 # Extract title (## heading)
-                title = NotebookProcessor.extract_widget_title(markdown_content)
+                title = extract_title(markdown_content)
 
                 if title:
                     parser.increment_subquestion_number()
@@ -53,10 +53,10 @@ def extract(ipynb_file):
                     question_text = extract_question(markdown_content)
 
                     # Extract OPTIONS (lines after #### options)
-                    options = NotebookProcessor.extract_widget_options(markdown_content)
+                    options = extract_options(markdown_content)
 
                     # Extract solution (line after #### SOLUTION)
-                    solution = NotebookProcessor.extract_solutions(markdown_content)
+                    solution = extract_solutions(markdown_content)
 
                     #TODO: better to have as part of a class
                     # Add question details to the current section
