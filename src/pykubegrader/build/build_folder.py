@@ -17,6 +17,7 @@ import requests
 import yaml
 from dateutil import parser
 
+from pykubegrader.build.widget_questions.types import multiple_choice
 from pykubegrader.build.widget_questions.utils import extract_question  # For robust datetime parsing
 
 try:
@@ -1087,7 +1088,7 @@ class NotebookProcessor:
             )
 
             # Extract all the multiple choice questions
-            data = NotebookProcessor.extract_MCQ(temp_notebook_path)
+            data = multiple_choice(temp_notebook_path)
 
             # determine the output file path
             solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"

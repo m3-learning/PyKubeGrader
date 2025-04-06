@@ -1,4 +1,7 @@
+import json
 import re
+
+from pykubegrader.build.build_folder import WidgetQuestionParser
 
 def extract_question(text):
     # Regular expression to capture the multiline title
@@ -68,3 +71,63 @@ def extract_solutions(markdown_content):
         )
         
         return solution
+
+
+def process_widget_questions(ipynb_file, start_tag, end_tag):
+    try:
+
+        # Load the notebook file
+        with open(ipynb_file, "r", encoding="utf-8") as f:
+            notebook_data = json.load(f)
+
+        cells = notebook_data.get("cells", [])
+
+        parser = WidgetQuestionParser(start_tag=start_tag, end_tag=end_tag)
+
+        for cell in cells:
+            if cell.get("cell_type") == "raw":
+                # Check for the start and end labels in raw cells
+                raw_content = "".join(cell.get("source", []))
+
+                flag = parser.process_raw_cell(raw_content)
+
+                if flag:
+                    continue
+
+            if parser.within_section and cell.get("cell_type") == "markdown":
+                # Parse markdown cell content
+                markdown_content = "".join(cell.get("source", []))
+
+                # Extract title (## heading)
+                title = extract_title(markdown_content)
+
+                if title:
+                    parser.increment_subquestion_number()
+
+                    # Extract question text enable multiple lines
+                    question_text = extract_question(markdown_content)
+
+                    # Extract OPTIONS (lines after #### options)
+                    options = extract_options(markdown_content)
+
+                    # Extract solution (line after #### SOLUTION)
+                    solution = extract_solutions(markdown_content)
+
+                    #TODO: better to have as part of a class
+                    # Add question details to the current section
+                    parser.current_section[title] = {
+                        "name": title,
+                        "subquestion_number": parser.subquestion_number,
+                        "question_text": question_text,
+                        "OPTIONS": options,
+                        "solution": solution,
+                    }
+
+        return parser.sections
+
+    except FileNotFoundError:
+        print(f"File {ipynb_file} not found.")
+        return []
+    except json.JSONDecodeError:
+        print("Invalid JSON in notebook file.")
+        return []
