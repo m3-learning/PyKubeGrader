@@ -14,8 +14,7 @@ from pykubegrader.build.build_folder import (NotebookProcessor,
                                              ensure_imports,
                                              extract_SELECT_MANY, extract_TF,
                                              extract_config_from_notebook,
-                                             extract_files, extract_question,
-                                             extract_raw_cells,
+                                             extract_files, extract_raw_cells,
                                              find_first_code_cell, formatter,
                                              generate_mcq_file,
                                              generate_select_many_file,
@@ -29,6 +28,7 @@ from pykubegrader.build.collate import (QuestionCollator, main,)
 from pykubegrader.build.markdown_questions import (MarkdownToNotebook, main,)
 from pykubegrader.build.passwords import (jupyterhub_user, password,
                                           student_ids, user,)
+from pykubegrader.build.widget_questions.utils import extract_question
 
 __all__ = ['FastAPINotebookBuilder', 'FolderCleaner', 'MarkdownToNotebook',
            'NotebookProcessor', 'QuestionCollator', 'WidgetQuestionParser',

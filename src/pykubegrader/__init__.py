@@ -22,7 +22,7 @@ from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 clean_notebook, collate, ensure_imports,
                                 extract_SELECT_MANY, extract_TF,
                                 extract_config_from_notebook, extract_files,
-                                extract_question, extract_raw_cells,
+                                extract_raw_cells,
                                 find_first_code_cell, formatter,
                                 generate_mcq_file, generate_select_many_file,
                                 generate_tf_file, handler, jupyterhub_user,
@@ -31,6 +31,7 @@ from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 replace_cells_between_markers, sanitize_string,
                                 student_ids, update_initialize_assignment,
                                 user,)
+from pykubegrader.build.widget_questions.utils import extract_question
 from pykubegrader.graders import (calculate_late_submission, late_assignments,)
 from pykubegrader.log_parser import (LogParser, LogParserResults, parse,)
 from pykubegrader.telemetry import (ensure_responses, log_encrypted,
