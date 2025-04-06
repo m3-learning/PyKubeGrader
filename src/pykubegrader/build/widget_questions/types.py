@@ -9,6 +9,10 @@ from abc import abstractmethod
 class QuestionProcessorBaseClass:
     ipynb_file: str
     temp_notebook_path: str = None
+    
+    def __post_init__(self):
+        if self.temp_notebook_path is None:
+            self.temp_notebook_path = self.ipynb_file.replace(".ipynb", "_temp.ipynb")
 
     # Abstract properties to be implemented by subclasses
     @property
@@ -25,10 +29,6 @@ class QuestionProcessorBaseClass:
     @abstractmethod
     def question_type(self):
         pass
-
-    def __post_init__(self):
-        if self.temp_notebook_path is None:
-            self.temp_notebook_path = self.ipynb_file.replace(".ipynb", "_temp.ipynb")
             
     @abstractmethod
     def extract(self):
@@ -53,6 +53,8 @@ class QuestionProcessorBaseClass:
     def run(self):
         
         if self.has_assignment():
+            
+            # prints/logs the message
             self._print_and_log(
                 f"Notebook {self.temp_notebook_path} has {self.question_type} questions"
             )

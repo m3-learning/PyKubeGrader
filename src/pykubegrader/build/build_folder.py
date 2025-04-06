@@ -41,14 +41,6 @@ from pykubegrader.tokens.tokens import add_token
 
 add_token("token", duration=20)
 
-# Initialize logger at module level
-logger = logging.getLogger(__name__)
-handler = logging.StreamHandler()
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
-
 @dataclass
 class NotebookProcessor:
     """
@@ -471,35 +463,6 @@ class NotebookProcessor:
             if file in files:
                 return True
         return False
-
-    def _print_and_log(self, message):
-        """
-        Logs a message and optionally prints it to the console.
-
-        This method is used for logging important information and optionally
-        displaying it in the console based on the `verbose` and `log` attributes.
-
-        Args:
-            message (str): The message to be logged and/or printed.
-
-        Behavior:
-            - If `self.verbose` is True, the message will be printed to the console.
-            - If `self.log` is True, the message will be logged using the class's logger.
-
-        Example:
-            self._print_and_log("Processing completed successfully.")
-
-        Raises:
-            None: This method handles exceptions internally, if any arise from logging or printing.
-        """
-
-        # Print the message to the console if verbosity is enabled
-        if self.verbose:
-            print(message)
-
-        # Log the message if logging is enabled
-        if self.log:
-            logger.info(message)
 
     def _process_single_notebook(self, notebook_path):
         """
