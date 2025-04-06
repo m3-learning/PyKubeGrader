@@ -6,6 +6,8 @@ from pykubegrader.build.widget_questions.utils import generate_mcq_file, replace
 from dataclasses import dataclass
 from abc import abstractmethod
 import json
+import importlib
+from pykubegrader.build.build_folder import ensure_imports, write_question_class
 @dataclass
 class QuestionProcessorBaseClass:
     ipynb_file: str
@@ -296,6 +298,63 @@ class QuestionProcessorBaseClass:
                 question_points += question_data["points"]
         return question_points
     
+    @property
+    def header_lines(self):
+        return [
+            "import pykubegrader.initialize\n",
+            "import panel as pn\n\n",
+            "pn.extension()\n\n",
+        ]
+    
+    def make_question_py_file(self, data_dict, **kwargs):
+        
+        output_file = kwargs.get("output_file", "questions.py")
+        
+        header_lines = self.additional_header_lines + self.header_lines
+        
+        # Ensure header lines are present
+        _existing_content = ensure_imports(output_file, header_lines)
+        
+        for question_dict in data_dict:
+            with open(output_file, "a", encoding="utf-8") as f:
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    if i == 0:
+                        # Write the MCQuestion class
+                        write_question_class(f, q_value, class_name = "MCQuestion")
+                    break
+
+                keys = []
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write keys
+                    keys.append(
+                        f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
+                    )
+
+                f.write(f"            keys={keys},\n")
+
+                options = []
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write options
+                    options.append(q_value["OPTIONS"])
+
+                f.write(f"            options={options},\n")
+
+                descriptions = []
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write descriptions
+                    descriptions.append(q_value["question_text"])
+                f.write(f"            descriptions={descriptions},\n")
+
+                points = []
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write points
+                    points.append(q_value["points"])
+
+                f.write(f"            points={points},\n")
+                f.write("        )\n")
+        
+        
+    
     def run(self, **kwargs):
         
         if self.has_assignment():
@@ -317,7 +376,7 @@ class QuestionProcessorBaseClass:
             
             data = self.merge_metadata(value, data)
 
-            self.mcq_total_points = NotebookProcessor.generate_widget_solutions(
+            self.points_subtotal = QuestionProcessorBaseClass.generate_widget_solutions(
                 data, output_file=solution_path
             )            
 
@@ -348,5 +407,30 @@ class MultipleChoice(QuestionProcessorBaseClass):
 
     def extract(self):
         return process_widget_questions(self.ipynb_file, self.start_tag, self.end_tag)
+    
+    def make_question_file(self):
+        
+        self.additional_header_lines = ["from pykubegrader.widgets.multiple_choice import MCQuestion, MCQ\n",]
+        
+        
+        
+    
+    def generate_mcq_file(data_dict, output_file="mc_questions.py"):
+        """
+        Generates a Python file defining an MCQuestion class from a dictionary.
+
+        Args:
+            data_dict (dict): A nested dictionary containing question metadata.
+            output_file (str): The path for the output Python file.
+
+        Returns:
+            None
+        """
+
+        
+
+        
+
+        
     
     

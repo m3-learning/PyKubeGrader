@@ -1680,72 +1680,13 @@ def replace_cells_between_markers(data, markers, ipynb_file, output_file):
         ipynb_file = output_file
 
 
-def generate_mcq_file(data_dict, output_file="mc_questions.py"):
-    """
-    Generates a Python file defining an MCQuestion class from a dictionary.
 
-    Args:
-        data_dict (dict): A nested dictionary containing question metadata.
-        output_file (str): The path for the output Python file.
-
-    Returns:
-        None
-    """
-
-    # Define header lines
-    header_lines = [
-        "from pykubegrader.widgets.multiple_choice import MCQuestion, MCQ\n",
-        "import pykubegrader.initialize\n",
-        "import panel as pn\n\n",
-        "pn.extension()\n\n",
-    ]
-
-    # Ensure header lines are present
-    _existing_content = ensure_imports(output_file, header_lines)
-
-    for question_dict in data_dict:
-        with open(output_file, "a", encoding="utf-8") as f:
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                if i == 0:
-                    # Write the MCQuestion class
-                    write_question_class(f, q_value, class_type = "MCQuestion")
-                break
-
-            keys = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write keys
-                keys.append(
-                    f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
-                )
-
-            f.write(f"            keys={keys},\n")
-
-            options = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write options
-                options.append(q_value["OPTIONS"])
-
-            f.write(f"            options={options},\n")
-
-            descriptions = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write descriptions
-                descriptions.append(q_value["question_text"])
-            f.write(f"            descriptions={descriptions},\n")
-
-            points = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write points
-                points.append(q_value["points"])
-
-            f.write(f"            points={points},\n")
-            f.write("        )\n")
             
 question_class_type = {"MCQuestion": {"class_type": "MCQuestion", "style": "MCQ"}}
 
-def write_question_class(f, q_value, class_type):
+def write_question_class(f, q_value, class_name):
     
-    class_type_ = question_class_type[class_type]
+    class_type_ = question_class_type[class_name]
     
     f.write(
                         f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
