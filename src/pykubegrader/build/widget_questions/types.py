@@ -1,6 +1,6 @@
 from pykubegrader.build.widget_questions.utils import process_widget_questions
 import os
-from pykubegrader.build.build_folder import NotebookProcessor
+from pykubegrader.build.build_folder import NotebookProcessor, check_for_heading
 from pykubegrader.build.widget_questions.utils import extract_raw_cells, generate_mcq_file, replace_cells_between_markers
 from dataclasses import dataclass
 from abc import abstractmethod
@@ -34,9 +34,25 @@ class QuestionProcessorBaseClass:
     def extract(self):
         pass
     
+    def has_assignment(self):
+        """
+        Determines if the Jupyter notebook contains specific configuration tags.
+
+        This method checks the notebook for the presence of predefined start and end tags
+        to verify if it includes the necessary configuration for assignments.
+
+        Returns:
+            bool: True if the notebook contains any of the specified start or end tags, False otherwise.
+        """
+        
+        tags = [self.start_tag, self.end_tag]
+
+        # Use the helper function to check for the presence of any specified tag
+        return check_for_heading(self.temp_notebook_path, tags)
+    
     def run(self):
         
-        if self.has_assignment(self.temp_notebook_path, self.start_tag):
+        if self.has_assignment():
             self._print_and_log(
                 f"Notebook {self.temp_notebook_path} has {self.question_type} questions"
             )
