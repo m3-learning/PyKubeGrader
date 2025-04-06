@@ -177,7 +177,7 @@ class NotebookProcessor:
             format="%(asctime)s - %(levelname)s - %(message)s",  # Log message format: timestamp, level, and message
         )
 
-        logger = logging.getLogger(
+        logging.getLogger(
             __name__
         )  # Create a logger instance specific to this module
 
@@ -212,6 +212,7 @@ class NotebookProcessor:
         self.total_point_log = {}
 
     def initialize_from_assignment_yaml(self):
+        
         # TODO: make robust to no week number set?
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
             data = yaml.safe_load(file)

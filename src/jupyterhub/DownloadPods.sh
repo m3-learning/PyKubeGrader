@@ -20,6 +20,15 @@ for pvc in $pvc_list; do
   echo "--------------------------------"
   echo "Processing PVC: $pvc"
 
+   # Prepare the name of the local backup file
+  backup_file="${BACKUP_ROOT}/${pvc}.tar"
+
+  # ===> Skip if a backup file already exists
+  if [ -f "$backup_file" ]; then
+    echo "Backup for PVC=$pvc already exists at $backup_file. Skipping..."
+    continue
+  fi
+
   # We'll create a random ephemeral pod name
   POD_NAME="copy-pod-${pvc}-$(head /dev/urandom | tr -dc a-z0-9 | head -c6)"
 
