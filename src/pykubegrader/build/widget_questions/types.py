@@ -364,6 +364,9 @@ class QuestionProcessorBaseClass:
         
         if self.has_assignment():
             
+            # Define the markers for the questions
+            markers = (self.start_tag, self.end_tag)
+            
             # prints/logs the message
             self.logger.print_and_log(
                 f"Notebook {self.temp_notebook_path} has {self.question_type} questions"
@@ -373,27 +376,25 @@ class QuestionProcessorBaseClass:
             data = self.extract()
             
             # determine the output file path
-            solution_path = f"{os.path.splitext(self.ipynb_file)[0]}_solutions.py"
-            question_path = f"{os.path.splitext(self.ipynb_file)[0]}_questions.py"
-            
+            self.solution_path = f"{os.path.splitext(self.ipynb_file)[0]}_solutions.py"
+            self.question_path = f"{os.path.splitext(self.ipynb_file)[0]}_questions.py"
+
             # Extract the first value cells
             value = self.extract_raw_cells(self.temp_notebook_path, **kwargs)
             
             data = self.merge_metadata(value, data)
 
             self.points_subtotal = QuestionProcessorBaseClass.generate_widget_solutions(
-                data, output_file=solution_path
+                data, output_file=self.solution_path
             )            
 
-            generate_mcq_file(data, output_file=question_path)
+            self.make_question_file(data, output_file=self.question_path)
             
-            markers = (self.start_tag, self.end_tag)
-
             replace_cells_between_markers(
                 data, markers, self.temp_notebook_path, self.temp_notebook_path
             )
 
-            return solution_path, question_path
+            return self.solution_path, self.question_path
     
         else:
             
@@ -414,24 +415,13 @@ class MultipleChoice(QuestionProcessorBaseClass):
     def extract(self):
         return process_widget_questions(self.ipynb_file, self.start_tag, self.end_tag)
     
-    def make_question_file(self):
+    def make_question_file(self, data_dict, **kwargs):
         
+        # Define the additional header lines for the MCQuestion class imports
         self.additional_header_lines = ["from pykubegrader.widgets.multiple_choice import MCQuestion, MCQ\n",]
         
-        
-        
-    
-    def generate_mcq_file(data_dict, output_file="mc_questions.py"):
-        """
-        Generates a Python file defining an MCQuestion class from a dictionary.
-
-        Args:
-            data_dict (dict): A nested dictionary containing question metadata.
-            output_file (str): The path for the output Python file.
-
-        Returns:
-            None
-        """
+        # Make the question file
+        self.make_question_py_file(data_dict, output_file = "mc_questions.py")
 
         
 
