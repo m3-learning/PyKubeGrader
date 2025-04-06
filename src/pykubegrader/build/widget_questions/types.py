@@ -2,7 +2,7 @@ from pykubegrader.build.widget_questions.utils import process_widget_questions
 import os
 from pykubegrader.utils.logging import Logger
 from pykubegrader.build.build_folder import NotebookProcessor, check_for_heading
-from pykubegrader.build.widget_questions.utils import extract_raw_cells, generate_mcq_file, replace_cells_between_markers
+from pykubegrader.build.widget_questions.utils import generate_mcq_file, replace_cells_between_markers
 from dataclasses import dataclass
 from abc import abstractmethod
 import json
@@ -124,6 +124,68 @@ class QuestionProcessorBaseClass:
             metadata_list.append(current_metadata)
 
         return metadata_list
+    
+    @staticmethod
+    def merge_metadata(raw, data):
+        """
+        Merges raw metadata with extracted question data.
+
+        This method combines metadata from two sources: raw metadata and question data.
+        It ensures that the points associated with each question are appropriately distributed
+        and added to the final merged metadata.
+
+        Args:
+            raw (list): A list of dictionaries containing raw metadata.
+                        Each dictionary must have a 'points' key with a value
+                        that can be either a list of points or a string representing a single point value.
+            data (list): A list of dictionaries containing extracted question data.
+                        Each dictionary represents a set of questions and their details.
+
+        Returns:
+            list: A list of dictionaries where each dictionary represents a question
+                with merged metadata and associated points.
+
+        Raises:
+            KeyError: If 'points' is missing from any raw metadata entry.
+            IndexError: If the number of items in `raw` and `data` do not match.
+
+        Example:
+            raw = [
+                {"points": [1.0, 2.0]},
+                {"points": "3.0"}
+            ]
+            data = [
+                {"Q1": {"question_text": "What is 2+2?"}},
+                {"Q2": {"question_text": "What is 3+3?"}}
+            ]
+            merged = merge_metadata(raw, data)
+            print(merged)
+            # Output:
+            # [
+            #     {"Q1": {"question_text": "What is 2+2?", "points": 1.0}},
+            #     {"Q2": {"question_text": "What is 3+3?", "points": 3.0}}
+            # ]
+        """
+        
+        # Loop through each question set in the data
+        for i, _data in enumerate(data):
+            
+            # Handle 'points' from raw metadata: convert single string value to a list if necessary
+            points_, grade_ = NotebookProcessor.extract_question_points(raw, i, _data)
+
+            # Merge each question's metadata with corresponding raw metadata
+            for j, (key, _) in enumerate(_data.items()):
+                
+                # Combine raw metadata with question data
+                data[i][key] = data[i][key] | raw[i]
+                
+                # Assign the correct point value to the question
+                data[i][key]["points"] = points_[j]
+
+                if "grade" in raw[i]:
+                    data[i][key]["grade"] = grade_
+
+        return data
 
     
     def run(self, **kwargs):
@@ -145,7 +207,7 @@ class QuestionProcessorBaseClass:
             # Extract the first value cells
             value = self.extract_raw_cells(self.temp_notebook_path, **kwargs)
             
-            data = NotebookProcessor.merge_metadata(value, data)
+            data = self.merge_metadata(value, data)
 
             self.mcq_total_points = NotebookProcessor.generate_widget_solutions(
                 data, output_file=solution_path

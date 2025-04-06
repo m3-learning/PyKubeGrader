@@ -1199,67 +1199,7 @@ class NotebookProcessor:
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(notebook_data, f, indent=2)
 
-    @staticmethod
-    def merge_metadata(raw, data):
-        """
-        Merges raw metadata with extracted question data.
-
-        This method combines metadata from two sources: raw metadata and question data.
-        It ensures that the points associated with each question are appropriately distributed
-        and added to the final merged metadata.
-
-        Args:
-            raw (list): A list of dictionaries containing raw metadata.
-                        Each dictionary must have a 'points' key with a value
-                        that can be either a list of points or a string representing a single point value.
-            data (list): A list of dictionaries containing extracted question data.
-                        Each dictionary represents a set of questions and their details.
-
-        Returns:
-            list: A list of dictionaries where each dictionary represents a question
-                with merged metadata and associated points.
-
-        Raises:
-            KeyError: If 'points' is missing from any raw metadata entry.
-            IndexError: If the number of items in `raw` and `data` do not match.
-
-        Example:
-            raw = [
-                {"points": [1.0, 2.0]},
-                {"points": "3.0"}
-            ]
-            data = [
-                {"Q1": {"question_text": "What is 2+2?"}},
-                {"Q2": {"question_text": "What is 3+3?"}}
-            ]
-            merged = merge_metadata(raw, data)
-            print(merged)
-            # Output:
-            # [
-            #     {"Q1": {"question_text": "What is 2+2?", "points": 1.0}},
-            #     {"Q2": {"question_text": "What is 3+3?", "points": 3.0}}
-            # ]
-        """
-        
-        # Loop through each question set in the data
-        for i, _data in enumerate(data):
-            
-            # Handle 'points' from raw metadata: convert single string value to a list if necessary
-            points_, grade_ = NotebookProcessor.extract_question_points(raw, i, _data)
-
-            # Merge each question's metadata with corresponding raw metadata
-            for j, (key, _) in enumerate(_data.items()):
-                
-                # Combine raw metadata with question data
-                data[i][key] = data[i][key] | raw[i]
-                
-                # Assign the correct point value to the question
-                data[i][key]["points"] = points_[j]
-
-                if "grade" in raw[i]:
-                    data[i][key]["grade"] = grade_
-
-        return data
+    
 
     @staticmethod
     def extract_question_points(raw, i, _data, grade_ = None):
