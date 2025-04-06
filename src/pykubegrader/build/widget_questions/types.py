@@ -34,11 +34,7 @@ class QuestionProcessorBaseClass:
     @abstractmethod
     def question_type(self):
         pass
-            
-    @abstractmethod
-    def extract(self):
-        pass
-    
+                
     @property
     @abstractmethod
     def class_name(self):
@@ -373,7 +369,7 @@ class QuestionProcessorBaseClass:
             )
             
             # Extract all the questions
-            data = self.extract()
+            data = process_widget_questions(self.ipynb_file, self.start_tag, self.end_tag)
             
             # determine the output file path
             self.solution_path = f"{os.path.splitext(self.ipynb_file)[0]}_solutions.py"
@@ -411,9 +407,6 @@ class MultipleChoice(QuestionProcessorBaseClass):
     def __post_init__(self):
         if self.temp_notebook_path is None:
             self.temp_notebook_path = self.ipynb_file.replace(".ipynb", "_temp.ipynb")
-
-    def extract(self):
-        return process_widget_questions(self.ipynb_file, self.start_tag, self.end_tag)
     
     def make_question_file(self, data_dict, **kwargs):
         
@@ -421,7 +414,7 @@ class MultipleChoice(QuestionProcessorBaseClass):
         self.additional_header_lines = ["from pykubegrader.widgets.multiple_choice import MCQuestion, MCQ\n",]
         
         # Make the question file
-        self.make_question_py_file(data_dict, output_file = "mc_questions.py")
+        self.make_question_py_file(data_dict, output_file = self.question_path)
 
         
 
