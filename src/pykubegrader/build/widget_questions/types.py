@@ -39,6 +39,11 @@ class QuestionProcessorBaseClass:
     def extract(self):
         pass
     
+    @property
+    @abstractmethod
+    def class_name(self):
+        pass
+    
     def has_assignment(self):
         """
         Determines if the Jupyter notebook contains specific configuration tags.
@@ -320,7 +325,7 @@ class QuestionProcessorBaseClass:
                 for i, (q_key, q_value) in enumerate(question_dict.items()):
                     if i == 0:
                         # Write the MCQuestion class
-                        write_question_class(f, q_value, class_name = "MCQuestion")
+                        write_question_class(f, q_value, class_name = self.class_name)
                     break
 
                 keys = []
@@ -400,6 +405,7 @@ class MultipleChoice(QuestionProcessorBaseClass):
     start_tag: str = "# BEGIN MULTIPLE CHOICE"
     end_tag: str = "# END MULTIPLE CHOICE"
     question_type: str = "multiple choice"
+    class_name: str = "MCQuestion"
 
     def __post_init__(self):
         if self.temp_notebook_path is None:
