@@ -103,6 +103,7 @@ class NotebookProcessor(Logger):
     root_folder: str
     assignment_tag: str = field(default="")
     solutions_folder: str = field(init=False)
+    api_url: str = field(default="https://engr-131-api.eastus.cloudapp.azure.com")
     verbose: bool = False
     log: bool = True
     require_key: bool = False
@@ -160,6 +161,18 @@ class NotebookProcessor(Logger):
         self.total_point_log = {}
 
     def initialize_from_assignment_yaml(self):
+        """
+        Initializes the NotebookProcessor instance from the 'assignment_config.yaml' file.
+
+        This method performs the following tasks:
+        1. Opens and reads the 'assignment_config.yaml' file located in the root folder.
+        2. Parses the YAML content to extract assignment details.
+        3. Sets the week number, assignment type, bonus points, requirement key, final submission flag, and assignment tag.
+
+        Raises:
+            FileNotFoundError: If the 'assignment_config.yaml' file does not exist.
+            yaml.YAMLError: If there is an error parsing the YAML content.
+        """
         
         # TODO: make robust to no week number set?
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
@@ -212,7 +225,7 @@ class NotebookProcessor(Logger):
             )  # `indent=4` for pretty formatting
 
         if self.check_if_file_in_folder("assignment_config.yaml"):
-            self.add_assignment()
+            self.put_assignment()
 
         self.update_initialize_function()
 
@@ -260,6 +273,26 @@ class NotebookProcessor(Logger):
                 assignment_tag=self.assignment_tag,
             )
 
+    def build_payload_notebook(self, yaml_content, notebook_title, total_points):
+        # Parse the YAML content
+        with open(yaml_content, "r") as file:
+            data = yaml.safe_load(file)
+
+        # Extract assignment details
+        assignment = data.get("assignment", {})
+
+        week_num = self.week_num
+        assignment_type = self.assignment_type
+        due_date = self.get_due_date(assignment)
+
+        return {
+            "title": notebook_title,
+            "week_number": week_num,
+            "assignment_type": assignment_type,
+            "due_date": due_date,
+            "max_score": total_points,
+        }
+
     def build_payload(self, yaml_content):
         """
         Reads YAML content for an assignment and returns Python variables.
@@ -278,15 +311,7 @@ class NotebookProcessor(Logger):
         assignment = data.get("assignment", {})
         week = assignment.get("week")
         assignment_type = assignment.get("assignment_type")
-        due_date_str = assignment.get("due_date")
-
-        # Convert due_date to a datetime object if available
-        due_date = None
-        if due_date_str:
-            try:
-                due_date = parser.parse(due_date_str)  # Automatically handles timezones
-            except ValueError as e:
-                print(f"Error parsing due_date: {e}")
+        due_date = self.get_due_date(assignment)
 
         title = f"Week {week} - {assignment_type}"
 
@@ -300,16 +325,8 @@ class NotebookProcessor(Logger):
             "max_score": self.assignment_total_points - self.bonus_points,
         }
 
-    def build_payload_notebook(self, yaml_content, notebook_title, total_points):
-        # Parse the YAML content
-        with open(yaml_content, "r") as file:
-            data = yaml.safe_load(file)
-
-        # Extract assignment details
-        assignment = data.get("assignment", {})
-
-        week_num = self.week_num
-        assignment_type = self.assignment_type
+    @staticmethod
+    def get_due_date(assignment):
         due_date_str = assignment.get("due_date")
 
         # Convert due_date to a datetime object if available
@@ -319,21 +336,14 @@ class NotebookProcessor(Logger):
                 due_date = parser.parse(due_date_str)  # Automatically handles timezones
             except ValueError as e:
                 print(f"Error parsing due_date: {e}")
+        return due_date
 
-        return {
-            "title": notebook_title,
-            "week_number": week_num,
-            "assignment_type": assignment_type,
-            "due_date": due_date,
-            "max_score": total_points,
-        }
-
-    def add_notebook(self, notebook_title, total_points):
+    def put_notebook(self, notebook_title, total_points):
         """
         Sends a POST request to add a notebook.
         """
         # Define the URL
-        url = "https://engr-131-api.eastus.cloudapp.azure.com/notebook"
+        url = os.path.join(self.api_url, "notebook")
 
         # Build the payload
         payload = self.build_payload_notebook(
@@ -363,12 +373,13 @@ class NotebookProcessor(Logger):
         except ValueError:
             print(f"Response: {response.text}")
 
-    def add_assignment(self):
+    def put_assignment(self):
         """
         Sends a POST request to add an assignment.
         """
+        
         # Define the URL
-        url = "https://engr-131-api.eastus.cloudapp.azure.com/assignments"
+        url = os.path.join(self.api_url, "assignments")
 
         # Build the payload
         payload = self.build_payload(f"{self.root_folder}/assignment_config.yaml")
@@ -494,8 +505,43 @@ class NotebookProcessor(Logger):
         NotebookProcessor.remove_postfix(self.root_folder, "_temp")
 
         ### CODE TO ENSURE THAT STUDENT NOTEBOOK IS IMPORTABLE
+        
+        self.importable_file_name(student_path, question_path)
+
+        total_points = (
+            self.select_many_total_points
+            + self.mcq_total_points
+            + self.tf_total_points
+            + self.otter_total_points
+        )
+
+        # creates the assignment record in the database
+        self.put_notebook(notebook_name, total_points)
+
+        self.assignment_total_points += total_points
+
+        self.total_point_log.update({notebook_name: total_points})
+
+        student_file_path = os.path.join(self.root_folder, notebook_name + ".ipynb")
+        self.add_submission_cells(student_file_path, student_file_path)
+        self.add_final_submission_cells(student_file_path, student_file_path)
+        NotebookProcessor.remove_empty_cells(student_file_path)
+
+    def importable_file_name(self, student_path, question_path):
+        """
+        Ensures that the question file is importable by sanitizing its name and moving it to the appropriate directory.
+
+        This method performs the following steps:
+        1. Sanitizes the question file name by removing the "_questions" suffix and ensuring it has a ".py" extension.
+        2. Renames the question file in the student directory to its sanitized version.
+        3. Ensures the existence of a "questions" folder in the root directory.
+        4. Copies the renamed question file to the "questions" folder.
+
+        Parameters:
+            student_path (str): The path to the student directory where the question file is located.
+            question_path (str): The path to the question file that needs to be sanitized and moved.
+        """
         if question_path is not None:
-            # question_root_path = os.path.dirname(question_path)
             question_file_name = os.path.basename(question_path)
             question_file_name_sanitized = sanitize_string(
                 question_file_name.replace("_questions", "")
@@ -520,25 +566,6 @@ class NotebookProcessor(Logger):
                 os.path.join(student_path, question_file_name_sanitized),
                 os.path.join(questions_folder_jbook, question_file_name_sanitized),
             )
-
-        total_points = (
-            self.select_many_total_points
-            + self.mcq_total_points
-            + self.tf_total_points
-            + self.otter_total_points
-        )
-
-        # creates the assignment record in the database
-        self.add_notebook(notebook_name, total_points)
-
-        self.assignment_total_points += total_points
-
-        self.total_point_log.update({notebook_name: total_points})
-
-        student_file_path = os.path.join(self.root_folder, notebook_name + ".ipynb")
-        self.add_submission_cells(student_file_path, student_file_path)
-        self.add_final_submission_cells(student_file_path, student_file_path)
-        NotebookProcessor.remove_empty_cells(student_file_path)
 
     def widget_question_parser(self, new_notebook_path, temp_notebook_path):
         """
