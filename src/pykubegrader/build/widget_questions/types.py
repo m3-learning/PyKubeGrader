@@ -417,17 +417,7 @@ class TrueFalse(QuestionProcessorBaseClass):
     
     def make_question_file(self, data_dict, **kwargs):
         
-        
-        
-        
-        #     markers = ("# BEGIN TF", "# END TF")
-
-        #     self._print_and_log(
-        #         f"Notebook {temp_notebook_path} has True False questions"
-        #     )
-
-        #     # Extract all the multiple choice questions
-        #     data = extract_TF(temp_notebook_path)
+    
 
         #     # determine the output file path
         #     solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
@@ -454,11 +444,3 @@ class TrueFalse(QuestionProcessorBaseClass):
         #     return solution_path, question_path
         # else:
         #     return None, None
-
-        
-
-        
-
-        
-    
-    

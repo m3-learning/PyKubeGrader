@@ -4,6 +4,13 @@ import re
 from pykubegrader.build.build_folder import WidgetQuestionParser
 
 def extract_question(text):
+    
+    #TODO: this was the original for for TF
+    # TODO: Delete if not needed
+    # question_text_match = re.search(
+    #                             r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
+    #                         )
+    
     # Regular expression to capture the multiline title
     match = re.search(r"###\s+(.*?)\s+####", text, re.DOTALL)
     if match:
@@ -71,8 +78,7 @@ def extract_solutions(markdown_content):
         )
         
         return solution
-
-
+            
 def process_widget_questions(ipynb_file, start_tag, end_tag):
     try:
 
@@ -121,7 +127,7 @@ def process_widget_questions(ipynb_file, start_tag, end_tag):
                         "question_text": question_text,
                         "OPTIONS": options,
                         "solution": solution,
-                    }
+                    }        
 
         return parser.sections
 
