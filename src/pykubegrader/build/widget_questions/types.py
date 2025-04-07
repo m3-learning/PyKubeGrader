@@ -352,8 +352,6 @@ class QuestionProcessorBaseClass:
                 f.write(f"            points={points},\n")
                 f.write("        )\n")
         
-        
-    
     def run(self, **kwargs):
         
         if self.has_assignment():
@@ -401,10 +399,6 @@ class MultipleChoice(QuestionProcessorBaseClass):
     end_tag: str = "# END MULTIPLE CHOICE"
     question_type: str = "multiple choice"
     class_name: str = "MCQuestion"
-
-    def __post_init__(self):
-        if self.temp_notebook_path is None:
-            self.temp_notebook_path = self.ipynb_file.replace(".ipynb", "_temp.ipynb")
     
     def make_question_file(self, data_dict, **kwargs):
         
@@ -413,6 +407,53 @@ class MultipleChoice(QuestionProcessorBaseClass):
         
         # Make the question file
         self.make_question_py_file(data_dict, output_file = self.question_path)
+        
+@dataclass
+class TrueFalse(QuestionProcessorBaseClass):
+    start_tag: str = "# BEGIN TF"
+    end_tag: str = "# END TF"
+    question_type: str = "true false"
+    class_name: str = "TFQuestion"
+    
+    def make_question_file(self, data_dict, **kwargs):
+        
+        
+        
+        
+        #     markers = ("# BEGIN TF", "# END TF")
+
+        #     self._print_and_log(
+        #         f"Notebook {temp_notebook_path} has True False questions"
+        #     )
+
+        #     # Extract all the multiple choice questions
+        #     data = extract_TF(temp_notebook_path)
+
+        #     # determine the output file path
+        #     solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
+
+        #     # Extract the first value cells
+        #     value = extract_raw_cells(temp_notebook_path, markers[0])
+
+        #     data = NotebookProcessor.merge_metadata(value, data)
+
+        #     # for data_ in data:
+        #     # Generate the solution file
+        #     self.tf_total_points = self.generate_widget_solutions(
+        #         data, output_file=solution_path
+        #     )
+
+        #     question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
+
+        #     generate_tf_file(data, output_file=question_path)
+
+        #     replace_cells_between_markers(
+        #         data, markers, temp_notebook_path, temp_notebook_path
+        #     )
+
+        #     return solution_path, question_path
+        # else:
+        #     return None, None
 
         
 

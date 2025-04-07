@@ -1040,44 +1040,44 @@ class NotebookProcessor:
                 assignment_tag=kwargs.get("assignment_tag", None),
             )
 
-    def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
+    # def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
         
-        ### Parse the notebook for multiple choice questions
+    #     ### Parse the notebook for multiple choice questions
         
-        if self.has_assignment(temp_notebook_path, "# BEGIN MULTIPLE CHOICE"):
+    #     if self.has_assignment(temp_notebook_path, "# BEGIN MULTIPLE CHOICE"):
             
-            self._print_and_log(
-                f"Notebook {temp_notebook_path} has multiple choice questions"
-            )
+    #         self._print_and_log(
+    #             f"Notebook {temp_notebook_path} has multiple choice questions"
+    #         )
 
-            # Extract all the multiple choice questions
-            data = multiple_choice(temp_notebook_path)
+    #         # Extract all the multiple choice questions
+    #         data = multiple_choice(temp_notebook_path)
 
-            # determine the output file path
-            solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
+    #         # determine the output file path
+    #         solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
 
-            # Extract the first value cells
-            value = extract_raw_cells(temp_notebook_path)
+    #         # Extract the first value cells
+    #         value = extract_raw_cells(temp_notebook_path)
 
-            data = NotebookProcessor.merge_metadata(value, data)
+    #         data = NotebookProcessor.merge_metadata(value, data)
 
-            self.mcq_total_points = NotebookProcessor.generate_widget_solutions(
-                data, output_file=solution_path
-            )
+    #         self.mcq_total_points = NotebookProcessor.generate_widget_solutions(
+    #             data, output_file=solution_path
+    #         )
 
-            question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
+    #         question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
 
-            generate_mcq_file(data, output_file=question_path)
+    #         generate_mcq_file(data, output_file=question_path)
 
-            markers = ("# BEGIN MULTIPLE CHOICE", "# END MULTIPLE CHOICE")
+    #         markers = ("# BEGIN MULTIPLE CHOICE", "# END MULTIPLE CHOICE")
 
-            replace_cells_between_markers(
-                data, markers, temp_notebook_path, temp_notebook_path
-            )
+    #         replace_cells_between_markers(
+    #             data, markers, temp_notebook_path, temp_notebook_path
+    #         )
 
-            return solution_path, question_path
-        else:
-            return None, None
+    #         return solution_path, question_path
+    #     else:
+    #         return None, None
 
     def true_false_parser(self, temp_notebook_path, new_notebook_path):
         ### Parse the notebook for TF questions
