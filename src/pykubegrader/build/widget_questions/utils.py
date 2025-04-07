@@ -70,14 +70,27 @@ def extract_solutions(markdown_content):
         Returns:
             str: The extracted solution if found, otherwise None.
         """
-        solution_match = re.search(
-            r"####\s*SOLUTION\s*(.+)", markdown_content, re.IGNORECASE
-        )
-        solution = (
-            solution_match.group(1).strip() if solution_match else None
-        )
+        # solution_match = re.search(
+        #     r"####\s*SOLUTION\s*(.+)", markdown_content, re.IGNORECASE
+        # )
+        # solution = (
+        #     solution_match.group(1).strip() if solution_match else None
+        # )
         
-        return solution
+        # return solution
+        
+        #TODO: This was replaced with the original method to be compatible with the select many questions
+        solution_start = markdown_content.find("#### SOLUTION")
+        if solution_start != -1:
+            solution = []
+            lines = markdown_content[solution_start:].splitlines()
+            for line in lines[1:]:  # Skip the "#### SOLUTION" line
+                if line.strip():  # Non-blank line after trimming spaces
+                    solution.append(line.strip())
+                else:
+                    break
+            return solution
+        return []
             
 def process_widget_questions(ipynb_file, start_tag, end_tag):
     try:

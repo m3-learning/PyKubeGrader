@@ -1079,81 +1079,81 @@ class NotebookProcessor:
     #     else:
     #         return None, None
 
-    def true_false_parser(self, temp_notebook_path, new_notebook_path):
-        ### Parse the notebook for TF questions
-        if self.has_assignment(temp_notebook_path, "# BEGIN TF"):
-            markers = ("# BEGIN TF", "# END TF")
+    # def true_false_parser(self, temp_notebook_path, new_notebook_path):
+    #     ### Parse the notebook for TF questions
+    #     if self.has_assignment(temp_notebook_path, "# BEGIN TF"):
+    #         markers = ("# BEGIN TF", "# END TF")
 
-            self._print_and_log(
-                f"Notebook {temp_notebook_path} has True False questions"
-            )
+    #         self._print_and_log(
+    #             f"Notebook {temp_notebook_path} has True False questions"
+    #         )
 
-            # Extract all the multiple choice questions
-            data = extract_TF(temp_notebook_path)
+    #         # Extract all the multiple choice questions
+    #         data = extract_TF(temp_notebook_path)
 
-            # determine the output file path
-            solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
+    #         # determine the output file path
+    #         solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
 
-            # Extract the first value cells
-            value = extract_raw_cells(temp_notebook_path, markers[0])
+    #         # Extract the first value cells
+    #         value = extract_raw_cells(temp_notebook_path, markers[0])
 
-            data = NotebookProcessor.merge_metadata(value, data)
+    #         data = NotebookProcessor.merge_metadata(value, data)
 
-            # for data_ in data:
-            # Generate the solution file
-            self.tf_total_points = self.generate_widget_solutions(
-                data, output_file=solution_path
-            )
+    #         # for data_ in data:
+    #         # Generate the solution file
+    #         self.tf_total_points = self.generate_widget_solutions(
+    #             data, output_file=solution_path
+    #         )
 
-            question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
+    #         question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
 
-            generate_tf_file(data, output_file=question_path)
+    #         generate_tf_file(data, output_file=question_path)
 
-            replace_cells_between_markers(
-                data, markers, temp_notebook_path, temp_notebook_path
-            )
+    #         replace_cells_between_markers(
+    #             data, markers, temp_notebook_path, temp_notebook_path
+    #         )
 
-            return solution_path, question_path
-        else:
-            return None, None
+    #         return solution_path, question_path
+    #     else:
+    #         return None, None
 
-    def select_many_parser(self, temp_notebook_path, new_notebook_path):
-        ### Parse the notebook for select_many questions
-        if self.has_assignment(temp_notebook_path, "# BEGIN SELECT MANY"):
-            markers = ("# BEGIN SELECT MANY", "# END SELECT MANY")
+    # def select_many_parser(self, temp_notebook_path, new_notebook_path):
+    #     ### Parse the notebook for select_many questions
+    #     if self.has_assignment(temp_notebook_path, "# BEGIN SELECT MANY"):
+    #         markers = ("# BEGIN SELECT MANY", "# END SELECT MANY")
 
-            self._print_and_log(
-                f"Notebook {temp_notebook_path} has True False questions"
-            )
+    #         self._print_and_log(
+    #             f"Notebook {temp_notebook_path} has True False questions"
+    #         )
 
-            # Extract all the multiple choice questions
-            data = extract_SELECT_MANY(temp_notebook_path)
+    #         # Extract all the multiple choice questions
+    #         data = extract_SELECT_MANY(temp_notebook_path)
 
-            # determine the output file path
-            solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
+    #         # determine the output file path
+    #         solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
 
-            # Extract the first value cells
-            value = extract_raw_cells(temp_notebook_path, markers[0])
+    #         # Extract the first value cells
+    #         value = extract_raw_cells(temp_notebook_path, markers[0])
 
-            # Merge the metadata with the question data
-            data = NotebookProcessor.merge_metadata(value, data)
+    #         # Merge the metadata with the question data
+    #         data = NotebookProcessor.merge_metadata(value, data)
 
-            # Generate the solution file
-            self.select_many_total_points = self.generate_widget_solutions(
-                data, output_file=solution_path
-            )
+    #         # Generate the solution file
+    #         self.select_many_total_points = self.generate_widget_solutions(
+    #             data, output_file=solution_path
+    #         )
 
-            question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
+    #         question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
 
-            generate_select_many_file(data, output_file=question_path)
+    #         generate_select_many_file(data, output_file=question_path)
 
-            replace_cells_between_markers(
-                data, markers, temp_notebook_path, temp_notebook_path
-            )
+    #         replace_cells_between_markers(
+    #             data, markers, temp_notebook_path, temp_notebook_path
+    #         )
 
-            return solution_path, question_path
-        else:
-            return None, None
+    #         return solution_path, question_path
+    #     else:
+    #         return None, None
 
     @staticmethod
     def replace_temp_no_otter(input_file, output_file):
@@ -1255,117 +1255,117 @@ class NotebookProcessor:
 
 
 
-def extract_SELECT_MANY(ipynb_file):
-    """
-    Extracts questions marked by `# BEGIN SELECT MANY` and `# END SELECT MANY` in markdown cells,
-    including all lines under the SOLUTION header until the first blank line or whitespace-only line.
+# def extract_SELECT_MANY(ipynb_file):
+#     """
+#     Extracts questions marked by `# BEGIN SELECT MANY` and `# END SELECT MANY` in markdown cells,
+#     including all lines under the SOLUTION header until the first blank line or whitespace-only line.
 
-    Args:
-        ipynb_file (str): Path to the .ipynb file.
+#     Args:
+#         ipynb_file (str): Path to the .ipynb file.
 
-    Returns:
-        list: A list of dictionaries, where each dictionary corresponds to questions within
-              a section. Each dictionary contains parsed questions with details like
-              'name', 'subquestion_number', 'question_text', and 'solution'.
-    """
-    try:
-        # Load the notebook file
-        with open(ipynb_file, "r", encoding="utf-8") as f:
-            notebook_data = json.load(f)
+#     Returns:
+#         list: A list of dictionaries, where each dictionary corresponds to questions within
+#               a section. Each dictionary contains parsed questions with details like
+#               'name', 'subquestion_number', 'question_text', and 'solution'.
+#     """
+#     try:
+#         # Load the notebook file
+#         with open(ipynb_file, "r", encoding="utf-8") as f:
+#             notebook_data = json.load(f)
 
-        cells = notebook_data.get("cells", [])
-        sections = []  # List to store results for each section
-        current_section = {}  # Current section being processed
-        within_section = False
-        subquestion_number = 0  # Counter for subquestions
+#         cells = notebook_data.get("cells", [])
+#         sections = []  # List to store results for each section
+#         current_section = {}  # Current section being processed
+#         within_section = False
+#         subquestion_number = 0  # Counter for subquestions
 
-        for cell in cells:
-            if cell.get("cell_type") == "raw":
-                # Check for the start and end labels in raw cells
-                raw_content = "".join(cell.get("source", []))
-                if "# BEGIN SELECT MANY" in raw_content:
-                    within_section = True
-                    subquestion_number = (
-                        0  # Reset counter at the start of a new section
-                    )
-                    current_section = {}  # Prepare a new section dictionary
-                    continue
-                elif "# END SELECT MANY" in raw_content:
-                    within_section = False
-                    if current_section:
-                        sections.append(current_section)  # Save the current section
-                    continue
+#         for cell in cells:
+#             if cell.get("cell_type") == "raw":
+#                 # Check for the start and end labels in raw cells
+#                 raw_content = "".join(cell.get("source", []))
+#                 if "# BEGIN SELECT MANY" in raw_content:
+#                     within_section = True
+#                     subquestion_number = (
+#                         0  # Reset counter at the start of a new section
+#                     )
+#                     current_section = {}  # Prepare a new section dictionary
+#                     continue
+#                 elif "# END SELECT MANY" in raw_content:
+#                     within_section = False
+#                     if current_section:
+#                         sections.append(current_section)  # Save the current section
+#                     continue
 
-            if within_section and cell.get("cell_type") == "markdown":
-                # Parse markdown cell content
-                markdown_content = "".join(cell.get("source", []))
+#             if within_section and cell.get("cell_type") == "markdown":
+#                 # Parse markdown cell content
+#                 markdown_content = "".join(cell.get("source", []))
 
-                # Extract title (## heading)
-                title_match = re.search(r"^##\s*(.+)", markdown_content, re.MULTILINE)
-                title = title_match.group(1).strip() if title_match else None
+#                 # Extract title (## heading)
+#                 title_match = re.search(r"^##\s*(.+)", markdown_content, re.MULTILINE)
+#                 title = title_match.group(1).strip() if title_match else None
 
-                if title:
-                    subquestion_number += (
-                        1  # Increment subquestion number for each question
-                    )
+#                 if title:
+#                     subquestion_number += (
+#                         1  # Increment subquestion number for each question
+#                     )
 
-                    # # Extract question text (### heading)
-                    # question_text_match = re.search(
-                    #     r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
-                    # )
-                    # question_text = (
-                    #     question_text_match.group(1).strip()
-                    #     if question_text_match
-                    #     else None
-                    # )
+#                     # # Extract question text (### heading)
+#                     # question_text_match = re.search(
+#                     #     r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
+#                     # )
+#                     # question_text = (
+#                     #     question_text_match.group(1).strip()
+#                     #     if question_text_match
+#                     #     else None
+#                     # )
 
-                    # Extract question text enable multiple lines
-                    question_text = extract_question(markdown_content)
+#                     # Extract question text enable multiple lines
+#                     question_text = extract_question(markdown_content)
 
-                    # Extract OPTIONS (lines after #### options)
-                    options_match = re.search(
-                        r"####\s*options\s*(.+?)(?=####|$)",
-                        markdown_content,
-                        re.DOTALL | re.IGNORECASE,
-                    )
-                    options = (
-                        [
-                            line.strip()
-                            for line in options_match.group(1).strip().splitlines()
-                            if line.strip()
-                        ]
-                        if options_match
-                        else []
-                    )
+#                     # Extract OPTIONS (lines after #### options)
+#                     options_match = re.search(
+#                         r"####\s*options\s*(.+?)(?=####|$)",
+#                         markdown_content,
+#                         re.DOTALL | re.IGNORECASE,
+#                     )
+#                     options = (
+#                         [
+#                             line.strip()
+#                             for line in options_match.group(1).strip().splitlines()
+#                             if line.strip()
+#                         ]
+#                         if options_match
+#                         else []
+#                     )
 
-                    # Extract all lines under the SOLUTION header
-                    solution_start = markdown_content.find("#### SOLUTION")
-                    if solution_start != -1:
-                        solution = []
-                        lines = markdown_content[solution_start:].splitlines()
-                        for line in lines[1:]:  # Skip the "#### SOLUTION" line
-                            if line.strip():  # Non-blank line after trimming spaces
-                                solution.append(line.strip())
-                            else:
-                                break
+#                     # Extract all lines under the SOLUTION header
+#                     solution_start = markdown_content.find("#### SOLUTION")
+#                     if solution_start != -1:
+#                         solution = []
+#                         lines = markdown_content[solution_start:].splitlines()
+#                         for line in lines[1:]:  # Skip the "#### SOLUTION" line
+#                             if line.strip():  # Non-blank line after trimming spaces
+#                                 solution.append(line.strip())
+#                             else:
+#                                 break
 
-                    # Add question details to the current section
-                    current_section[title] = {
-                        "name": title,
-                        "subquestion_number": subquestion_number,
-                        "question_text": question_text,
-                        "solution": solution,
-                        "OPTIONS": options,
-                    }
+#                     # Add question details to the current section
+#                     current_section[title] = {
+#                         "name": title,
+#                         "subquestion_number": subquestion_number,
+#                         "question_text": question_text,
+#                         "solution": solution,
+#                         "OPTIONS": options,
+#                     }
 
-        return sections
+#         return sections
 
-    except FileNotFoundError:
-        print(f"File {ipynb_file} not found.")
-        return []
-    except json.JSONDecodeError:
-        print("3 Invalid JSON in notebook file.")
-        return []
+#     except FileNotFoundError:
+#         print(f"File {ipynb_file} not found.")
+#         return []
+#     except json.JSONDecodeError:
+#         print("3 Invalid JSON in notebook file.")
+#         return []
 
 
 
