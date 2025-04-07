@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class QuestionProcessorBaseClass:
+class QuestionProcessorBaseClass(Logger):
     """
     Base class for processing questions in a Jupyter notebook.
 
@@ -35,7 +35,7 @@ class QuestionProcessorBaseClass:
         if self.temp_notebook_path is None:
             self.temp_notebook_path = self.ipynb_file.replace(".ipynb", "_temp.ipynb")
 
-        self.logger = Logger(**kwargs)
+        super().__init__(**kwargs)
 
     # Abstract properties to be implemented by subclasses
     @property
@@ -500,7 +500,7 @@ class QuestionProcessorBaseClass:
             markers = (self.start_tag, self.end_tag)
 
             # Log the presence of questions in the notebook
-            self.logger.print_and_log(
+            self.print_and_log(
                 f"Notebook {self.temp_notebook_path} has {self.question_type} questions"
             )
 

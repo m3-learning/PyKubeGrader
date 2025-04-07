@@ -1,4 +1,4 @@
-from pykubegrader.build.widget_questions.QuestionProcessBaseClass import QuestionProcessorBaseClass
+from pykubegrader.build.widget_questions.question_base import QuestionProcessorBaseClass
 from dataclasses import dataclass
 @dataclass
 class MultipleChoice(QuestionProcessorBaseClass):

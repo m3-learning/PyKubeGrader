@@ -93,8 +93,21 @@ def extract_solutions(markdown_content):
         return []
             
 def process_widget_questions(ipynb_file, start_tag, end_tag):
-    try:
+    """
+    Processes widget questions in a Jupyter notebook file, extracting sections
+    of questions marked by specific start and end tags.
 
+    Args:
+        ipynb_file (str): The path to the Jupyter notebook file (.ipynb) to process.
+        start_tag (str): The tag indicating the start of a section to process.
+        end_tag (str): The tag indicating the end of a section to process.
+
+    Returns:
+        list: A list of sections, each containing details of questions extracted
+              from the notebook. Each section is represented as a dictionary with
+              question titles, subquestion numbers, question text, options, and solutions.
+    """
+    try:
         # Load the notebook file
         with open(ipynb_file, "r", encoding="utf-8") as f:
             notebook_data = json.load(f)
@@ -123,16 +136,11 @@ def process_widget_questions(ipynb_file, start_tag, end_tag):
                 if title:
                     parser.increment_subquestion_number()
 
-                    # Extract question text enable multiple lines
+                    # Extract question text, options, and solution
                     question_text = extract_question(markdown_content)
-
-                    # Extract OPTIONS (lines after #### options)
                     options = extract_options(markdown_content)
-
-                    # Extract solution (line after #### SOLUTION)
                     solution = extract_solutions(markdown_content)
 
-                    #TODO: better to have as part of a class
                     # Add question details to the current section
                     parser.current_section[title] = {
                         "name": title,
@@ -140,7 +148,7 @@ def process_widget_questions(ipynb_file, start_tag, end_tag):
                         "question_text": question_text,
                         "OPTIONS": options,
                         "solution": solution,
-                    }        
+                    }
 
         return parser.sections
 

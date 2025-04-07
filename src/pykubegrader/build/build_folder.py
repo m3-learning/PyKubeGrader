@@ -2,7 +2,6 @@
 
 
 import argparse
-import importlib.util
 import json
 import logging
 import os
@@ -22,9 +21,7 @@ from pykubegrader.build.widget_questions.types import (
     SelectMany,
     TrueFalse,
 )
-from pykubegrader.build.widget_questions.utils import (
-    extract_question,
-)
+
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 
 try:
@@ -163,6 +160,7 @@ class NotebookProcessor(Logger):
         self.total_point_log = {}
 
     def initialize_from_assignment_yaml(self):
+        
         # TODO: make robust to no week number set?
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
             data = yaml.safe_load(file)
@@ -194,22 +192,6 @@ class NotebookProcessor(Logger):
 
         Raises:
             - OSError: If there is an error accessing files or directories.
-
-        Example:
-            class NotebookProcessor:
-                def __init__(self, root_folder):
-                    self.root_folder = root_folder
-
-                def has_assignment(self, notebook_path):
-                    # Implementation to check for assignment configuration
-                    return True  # Replace with actual check logic
-
-                def _process_single_notebook(self, notebook_path):
-                    # Implementation to process a single notebook
-                    self._print_and_log(f"Processing notebook: {notebook_path}")
-
-            processor = NotebookProcessor("/path/to/root/folder")
-            processor.process_notebooks()
         """
         # 1. Collects all Jupyter notebook files (.ipynb) from the root folder and its subdirectories.
         ipynb_files = self.get_notebooks_recursively()
@@ -218,7 +200,7 @@ class NotebookProcessor(Logger):
         for notebook_path in ipynb_files:
             # Check if the notebook has the required assignment configuration
             if self.has_assignment(notebook_path):
-                self._print_and_log(f"notebook_path = {notebook_path}")
+                self.print_and_log(f"notebook_path = {notebook_path}")
 
                 # 3. Process the notebook if it meets the criteria
                 self._process_single_notebook(notebook_path)
@@ -447,7 +429,7 @@ class NotebookProcessor(Logger):
         self.tf_total_points = 0
         self.otter_total_points = 0
 
-        self._print_and_log(f"Processing notebook: {notebook_path}")
+        self.print_and_log(f"Processing notebook: {notebook_path}")
 
         # 1. Get the notebook name and solution folder path
         notebook_name = os.path.splitext(os.path.basename(notebook_path))[0]
@@ -480,10 +462,10 @@ class NotebookProcessor(Logger):
                     os.path.dirname(temp_notebook_path), os.path.basename(question_path)
                 ),
             )
-            self._print_and_log(
+            self.print_and_log(
                 f"Copied and cleaned student notebook: {path_} -> {self.root_folder}"
             )
-            self._print_and_log(
+            self.print_and_log(
                 f"Copied Questions to: {path_2} -> {os.path.join(os.path.dirname(temp_notebook_path), os.path.basename(question_path))}"
             )
 
@@ -635,9 +617,9 @@ class NotebookProcessor(Logger):
         # 6. Move the notebook to the new path if it's not already there
         if os.path.abspath(notebook_path) != os.path.abspath(new_notebook_path):
             shutil.move(notebook_path, new_notebook_path)
-            self._print_and_log(f"Moved: {notebook_path} -> {new_notebook_path}")
+            self.print_and_log(f"Moved: {notebook_path} -> {new_notebook_path}")
         else:
-            self._print_and_log(f"Notebook already in destination: {new_notebook_path}")
+            self.print_and_log(f"Notebook already in destination: {new_notebook_path}")
         return new_notebook_path, temp_notebook_path, autograder_path, student_path
 
     @staticmethod
@@ -850,7 +832,7 @@ class NotebookProcessor(Logger):
             clean_notebook(student_notebook)
 
             shutil.copy(student_notebook, self.root_folder)
-            self._print_and_log(
+            self.print_and_log(
                 f"Copied and cleaned student notebook: {student_notebook} -> {self.root_folder}"
             )
 
@@ -1063,8 +1045,7 @@ class NotebookProcessor(Logger):
             grade_ = [raw[i]["grade"]]
         return points_, grade_
 
-    @staticmethod
-    def run_otter_assign(notebook_path, dist_folder):
+    def run_otter_assign(self, notebook_path, dist_folder):
         """
         Runs `otter assign` on the given notebook and outputs to the specified distribution folder.
         """
@@ -1072,15 +1053,15 @@ class NotebookProcessor(Logger):
             os.makedirs(dist_folder, exist_ok=True)
             command = ["otter", "assign", notebook_path, dist_folder]
             subprocess.run(command, check=True)
-            logger.info(f"Otter assign completed: {notebook_path} -> {dist_folder}")
+            self.print_and_log(f"Otter assign completed: {notebook_path} -> {dist_folder}")
 
             # Remove all postfix _test from filenames in dist_folder
             NotebookProcessor.remove_postfix(dist_folder)
 
         except subprocess.CalledProcessError as e:
-            logger.info(f"Error running `otter assign` for {notebook_path}: {e}")
+            self.print_and_log(f"Error running `otter assign` for {notebook_path}: {e}")
         except Exception as e:
-            logger.info(
+            self.print_and_log(
                 f"Unexpected error during `otter assign` for {notebook_path}: {e}"
             )
 
@@ -1128,8 +1109,7 @@ class WidgetQuestionParser:
         self.subquestion_number += 1
 
 
-@staticmethod
-def check_for_heading(notebook_path, search_strings):
+def check_for_heading(self, notebook_path, search_strings):
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
 
@@ -1158,11 +1138,11 @@ def check_for_heading(notebook_path, search_strings):
                     ):
                         return True
     except Exception as e:
-        logger.info(f"Error reading notebook {notebook_path}: {e}")
+        self.print_and_log(f"Error reading notebook {notebook_path}: {e}")
     return False
 
 
-def clean_notebook(notebook_path):
+def clean_notebook(self, notebook_path):
     """
     Removes specific cells and makes Markdown cells non-editable and non-deletable by updating their metadata.
     """
@@ -1195,10 +1175,10 @@ def clean_notebook(notebook_path):
 
         with open(notebook_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
-        logger.info(f"Cleaned notebook: {notebook_path}")
+        self.print_and_log(f"Cleaned notebook: {notebook_path}")
 
     except Exception as e:
-        logger.info(f"Error cleaning notebook {notebook_path}: {e}")
+        self.print_and_log(f"Error cleaning notebook {notebook_path}: {e}")
 
 
 def ensure_imports(output_file, header_lines):
