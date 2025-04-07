@@ -17,8 +17,15 @@ import requests
 import yaml
 from dateutil import parser
 
-from pykubegrader.build.widget_questions.types import multiple_choice
-from pykubegrader.build.widget_questions.utils import extract_question  # For robust datetime parsing
+from pykubegrader.build.widget_questions.types import (
+    MultipleChoice,
+    SelectMany,
+    TrueFalse,
+)
+from pykubegrader.build.widget_questions.utils import (
+    extract_question,
+)
+from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 
 try:
     from pykubegrader.build.passwords import password, user
@@ -41,8 +48,9 @@ from pykubegrader.tokens.tokens import add_token
 
 add_token("token", duration=20)
 
+
 @dataclass
-class NotebookProcessor:
+class NotebookProcessor(Logger):
     """
     A class for processing Jupyter notebooks in a directory and its subdirectories.
 
@@ -79,18 +87,6 @@ class NotebookProcessor:
         remove_empty_cells(notebook_path):
             Removes empty cells from the notebook.
 
-        multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
-            Parses the notebook for multiple choice questions.
-
-        true_false_parser(self, temp_notebook_path, new_notebook_path):
-            Parses the notebook for true/false questions.
-
-        select_many_parser(self, temp_notebook_path, new_notebook_path):
-            Parses the notebook for select-many type questions.
-
-        widget_question_parser(self, new_notebook_path, temp_notebook_path):
-            Parses widget questions from a temporary notebook and returns paths to solution and question files.
-
         duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
             Duplicates a Jupyter notebook into a specified solution directory, creating necessary subdirectories and temporary files for further processing.
 
@@ -126,55 +122,15 @@ class NotebookProcessor:
         Raises:
             OSError: If the solutions folder cannot be created due to permissions or other filesystem issues.
         """
+        
+        super().__init__(verbose=self.verbose, log=self.log, **kwargs)
+        
         # Initialize the info for the class
         self.initialize_info()
 
         os.makedirs(
             self.solutions_folder, exist_ok=True
         )  # Create the folder if it doesn't exist
-
-        # Initialize a global logger for the class
-        global logger
-        self.initialize_logger(**kwargs)
-
-    def initialize_logger(self, **kwargs):
-        """
-        Configures the logger for the NotebookProcessor class.
-
-        This method sets up logging to store log messages in a file located in the solutions folder.
-        It configures the logging level, format, and assigns a logger instance to the class.
-
-        The log file will contain messages at the INFO level and above, formatted with a timestamp,
-        log level, and the message content.
-
-        Attributes:
-            log_file_path (str): The path to the log file where log messages will be stored.
-            logger (logging.Logger): The logger instance specific to this module.
-            kwargs:
-                log_name (str): The name of the log file.
-
-        Raises:
-            OSError: If the log file cannot be created due to permissions or other filesystem issues.
-        """
-
-        log_name = kwargs.get("log_name", "notebook_processor.log")
-
-        # Configure logging to store log messages in the solutions folder
-        log_file_path = os.path.join(self.solutions_folder, log_name)
-
-        # If the log file exists, remove it
-        if os.path.exists(log_file_path):
-            os.remove(log_file_path)
-
-        logging.basicConfig(
-            filename=log_file_path,  # Path to the log file
-            level=logging.INFO,  # Log messages at INFO level and above will be recorded
-            format="%(asctime)s - %(levelname)s - %(message)s",  # Log message format: timestamp, level, and message
-        )
-
-        logging.getLogger(
-            __name__
-        )  # Create a logger instance specific to this module
 
     def initialize_info(self):
         """
@@ -207,12 +163,10 @@ class NotebookProcessor:
         self.total_point_log = {}
 
     def initialize_from_assignment_yaml(self):
-        
         # TODO: make robust to no week number set?
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
-            
             data = yaml.safe_load(file)
-            
+
             # Extract assignment details
             assignment = data.get("assignment", {})
             self.week_num = assignment.get("week")
@@ -266,7 +220,7 @@ class NotebookProcessor:
             if self.has_assignment(notebook_path):
                 self._print_and_log(f"notebook_path = {notebook_path}")
 
-            # 3. Process the notebook if it meets the criteria
+                # 3. Process the notebook if it meets the criteria
                 self._process_single_notebook(notebook_path)
 
         # Write the dictionary to a JSON file
@@ -492,16 +446,20 @@ class NotebookProcessor:
         self.mcq_total_points = 0
         self.tf_total_points = 0
         self.otter_total_points = 0
-        
+
         self._print_and_log(f"Processing notebook: {notebook_path}")
 
         # 1. Get the notebook name and solution folder path
         notebook_name = os.path.splitext(os.path.basename(notebook_path))[0]
-        solution_notebook_folder_path = os.path.join(self.solutions_folder, notebook_name)
+        solution_notebook_folder_path = os.path.join(
+            self.solutions_folder, notebook_name
+        )
 
         # 2. Create temporary and autograder notebooks and files
         new_notebook_path, temp_notebook_path, autograder_path, student_path = (
-            self.duplicate_files(notebook_path, notebook_name, solution_notebook_folder_path)
+            self.duplicate_files(
+                notebook_path, notebook_name, solution_notebook_folder_path
+            )
         )
 
         solution_path, question_path = self.widget_question_parser(
@@ -615,22 +573,26 @@ class NotebookProcessor:
             tuple: A tuple containing the path to the solution file and the path to the question file.
                    If no questions are found, both paths will be None.
         """
-        
-        solution_path_1, question_path_1 = self.multiple_choice_parser(
-            temp_notebook_path, new_notebook_path
-        )
-        solution_path_2, question_path_2 = self.true_false_parser(
-            temp_notebook_path, new_notebook_path
-        )
-        solution_path_3, question_path_3 = self.select_many_parser(
-            temp_notebook_path, new_notebook_path
-        )
+
+        # TODO: Make it so we can have a list of objects in config to loop through
+        solution_path_1, question_path_1 = MultipleChoice(
+            ipynb_file=new_notebook_path, temp_notebook_path=temp_notebook_path
+        ).run()
+
+        solution_path_2, question_path_2 = TrueFalse(
+            ipynb_file=new_notebook_path, temp_notebook_path=temp_notebook_path
+        ).run()
+
+        solution_path_3, question_path_3 = SelectMany(
+            ipynb_file=new_notebook_path, temp_notebook_path=temp_notebook_path
+        ).run()
 
         if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
             solution_path = solution_path_1 or solution_path_2 or solution_path_3
 
         if any([question_path_1, question_path_2, question_path_3]) is not None:
             question_path = question_path_1 or question_path_2 or question_path_3
+
         return solution_path, question_path
 
     def duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
@@ -644,10 +606,10 @@ class NotebookProcessor:
             solution_notebook_path (str): The path where the solution and related directories will be created.
 
         Returns:
-            tuple: A tuple containing paths to the new notebook, temporary notebook, autograder directory, 
+            tuple: A tuple containing paths to the new notebook, temporary notebook, autograder directory,
                    and student directory.
         """
-        
+
         # 1. Create the subfolder if it doesn't exist
         os.makedirs(solution_notebook_path, exist_ok=True)
 
@@ -1040,121 +1002,6 @@ class NotebookProcessor:
                 assignment_tag=kwargs.get("assignment_tag", None),
             )
 
-    # def multiple_choice_parser(self, temp_notebook_path, new_notebook_path):
-        
-    #     ### Parse the notebook for multiple choice questions
-        
-    #     if self.has_assignment(temp_notebook_path, "# BEGIN MULTIPLE CHOICE"):
-            
-    #         self._print_and_log(
-    #             f"Notebook {temp_notebook_path} has multiple choice questions"
-    #         )
-
-    #         # Extract all the multiple choice questions
-    #         data = multiple_choice(temp_notebook_path)
-
-    #         # determine the output file path
-    #         solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
-
-    #         # Extract the first value cells
-    #         value = extract_raw_cells(temp_notebook_path)
-
-    #         data = NotebookProcessor.merge_metadata(value, data)
-
-    #         self.mcq_total_points = NotebookProcessor.generate_widget_solutions(
-    #             data, output_file=solution_path
-    #         )
-
-    #         question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
-
-    #         generate_mcq_file(data, output_file=question_path)
-
-    #         markers = ("# BEGIN MULTIPLE CHOICE", "# END MULTIPLE CHOICE")
-
-    #         replace_cells_between_markers(
-    #             data, markers, temp_notebook_path, temp_notebook_path
-    #         )
-
-    #         return solution_path, question_path
-    #     else:
-    #         return None, None
-
-    # def true_false_parser(self, temp_notebook_path, new_notebook_path):
-    #     ### Parse the notebook for TF questions
-    #     if self.has_assignment(temp_notebook_path, "# BEGIN TF"):
-    #         markers = ("# BEGIN TF", "# END TF")
-
-    #         self._print_and_log(
-    #             f"Notebook {temp_notebook_path} has True False questions"
-    #         )
-
-    #         # Extract all the multiple choice questions
-    #         data = extract_TF(temp_notebook_path)
-
-    #         # determine the output file path
-    #         solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
-
-    #         # Extract the first value cells
-    #         value = extract_raw_cells(temp_notebook_path, markers[0])
-
-    #         data = NotebookProcessor.merge_metadata(value, data)
-
-    #         # for data_ in data:
-    #         # Generate the solution file
-    #         self.tf_total_points = self.generate_widget_solutions(
-    #             data, output_file=solution_path
-    #         )
-
-    #         question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
-
-    #         generate_tf_file(data, output_file=question_path)
-
-    #         replace_cells_between_markers(
-    #             data, markers, temp_notebook_path, temp_notebook_path
-    #         )
-
-    #         return solution_path, question_path
-    #     else:
-    #         return None, None
-
-    # def select_many_parser(self, temp_notebook_path, new_notebook_path):
-    #     ### Parse the notebook for select_many questions
-    #     if self.has_assignment(temp_notebook_path, "# BEGIN SELECT MANY"):
-    #         markers = ("# BEGIN SELECT MANY", "# END SELECT MANY")
-
-    #         self._print_and_log(
-    #             f"Notebook {temp_notebook_path} has True False questions"
-    #         )
-
-    #         # Extract all the multiple choice questions
-    #         data = extract_SELECT_MANY(temp_notebook_path)
-
-    #         # determine the output file path
-    #         solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
-
-    #         # Extract the first value cells
-    #         value = extract_raw_cells(temp_notebook_path, markers[0])
-
-    #         # Merge the metadata with the question data
-    #         data = NotebookProcessor.merge_metadata(value, data)
-
-    #         # Generate the solution file
-    #         self.select_many_total_points = self.generate_widget_solutions(
-    #             data, output_file=solution_path
-    #         )
-
-    #         question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
-
-    #         generate_select_many_file(data, output_file=question_path)
-
-    #         replace_cells_between_markers(
-    #             data, markers, temp_notebook_path, temp_notebook_path
-    #         )
-
-    #         return solution_path, question_path
-    #     else:
-    #         return None, None
-
     @staticmethod
     def replace_temp_no_otter(input_file, output_file):
         # Load the notebook
@@ -1199,26 +1046,22 @@ class NotebookProcessor:
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(notebook_data, f, indent=2)
 
-    
-
     @staticmethod
-    def extract_question_points(raw, i, _data, grade_ = None):
-        
+    def extract_question_points(raw, i, _data, grade_=None):
         if isinstance(raw[i]["points"], str):
             points_ = [float(raw[i]["points"])] * len(
-                    _data
-                )  # Distribute the same point value
+                _data
+            )  # Distribute the same point value
         else:
             points_ = raw[i]["points"]  # Use provided list of points
 
             # Remove 'points' from raw metadata to avoid overwriting
         raw[i].pop("points", None)
 
-            # Handle 'grade' from raw metadata
+        # Handle 'grade' from raw metadata
         if "grade" in raw[i]:
             grade_ = [raw[i]["grade"]]
-        return points_,grade_
-
+        return points_, grade_
 
     @staticmethod
     def run_otter_assign(notebook_path, dist_folder):
@@ -1253,127 +1096,8 @@ class NotebookProcessor:
                     logging.info(f"Renamed: {old_file_path} -> {new_file_path}")
 
 
-
-
-# def extract_SELECT_MANY(ipynb_file):
-#     """
-#     Extracts questions marked by `# BEGIN SELECT MANY` and `# END SELECT MANY` in markdown cells,
-#     including all lines under the SOLUTION header until the first blank line or whitespace-only line.
-
-#     Args:
-#         ipynb_file (str): Path to the .ipynb file.
-
-#     Returns:
-#         list: A list of dictionaries, where each dictionary corresponds to questions within
-#               a section. Each dictionary contains parsed questions with details like
-#               'name', 'subquestion_number', 'question_text', and 'solution'.
-#     """
-#     try:
-#         # Load the notebook file
-#         with open(ipynb_file, "r", encoding="utf-8") as f:
-#             notebook_data = json.load(f)
-
-#         cells = notebook_data.get("cells", [])
-#         sections = []  # List to store results for each section
-#         current_section = {}  # Current section being processed
-#         within_section = False
-#         subquestion_number = 0  # Counter for subquestions
-
-#         for cell in cells:
-#             if cell.get("cell_type") == "raw":
-#                 # Check for the start and end labels in raw cells
-#                 raw_content = "".join(cell.get("source", []))
-#                 if "# BEGIN SELECT MANY" in raw_content:
-#                     within_section = True
-#                     subquestion_number = (
-#                         0  # Reset counter at the start of a new section
-#                     )
-#                     current_section = {}  # Prepare a new section dictionary
-#                     continue
-#                 elif "# END SELECT MANY" in raw_content:
-#                     within_section = False
-#                     if current_section:
-#                         sections.append(current_section)  # Save the current section
-#                     continue
-
-#             if within_section and cell.get("cell_type") == "markdown":
-#                 # Parse markdown cell content
-#                 markdown_content = "".join(cell.get("source", []))
-
-#                 # Extract title (## heading)
-#                 title_match = re.search(r"^##\s*(.+)", markdown_content, re.MULTILINE)
-#                 title = title_match.group(1).strip() if title_match else None
-
-#                 if title:
-#                     subquestion_number += (
-#                         1  # Increment subquestion number for each question
-#                     )
-
-#                     # # Extract question text (### heading)
-#                     # question_text_match = re.search(
-#                     #     r"^###\s*\*\*(.+)\*\*", markdown_content, re.MULTILINE
-#                     # )
-#                     # question_text = (
-#                     #     question_text_match.group(1).strip()
-#                     #     if question_text_match
-#                     #     else None
-#                     # )
-
-#                     # Extract question text enable multiple lines
-#                     question_text = extract_question(markdown_content)
-
-#                     # Extract OPTIONS (lines after #### options)
-#                     options_match = re.search(
-#                         r"####\s*options\s*(.+?)(?=####|$)",
-#                         markdown_content,
-#                         re.DOTALL | re.IGNORECASE,
-#                     )
-#                     options = (
-#                         [
-#                             line.strip()
-#                             for line in options_match.group(1).strip().splitlines()
-#                             if line.strip()
-#                         ]
-#                         if options_match
-#                         else []
-#                     )
-
-#                     # Extract all lines under the SOLUTION header
-#                     solution_start = markdown_content.find("#### SOLUTION")
-#                     if solution_start != -1:
-#                         solution = []
-#                         lines = markdown_content[solution_start:].splitlines()
-#                         for line in lines[1:]:  # Skip the "#### SOLUTION" line
-#                             if line.strip():  # Non-blank line after trimming spaces
-#                                 solution.append(line.strip())
-#                             else:
-#                                 break
-
-#                     # Add question details to the current section
-#                     current_section[title] = {
-#                         "name": title,
-#                         "subquestion_number": subquestion_number,
-#                         "question_text": question_text,
-#                         "solution": solution,
-#                         "OPTIONS": options,
-#                     }
-
-#         return sections
-
-#     except FileNotFoundError:
-#         print(f"File {ipynb_file} not found.")
-#         return []
-#     except json.JSONDecodeError:
-#         print("3 Invalid JSON in notebook file.")
-#         return []
-
-
-
-
-
 @dataclass
 class WidgetQuestionParser:
-    
     sections: list = field(default_factory=list)
     current_section: dict = field(default_factory=dict)
     within_section: bool = False
@@ -1399,11 +1123,9 @@ class WidgetQuestionParser:
         self.within_section = False
         if self.current_section:
             self.sections.append(self.current_section)
-            
+
     def increment_subquestion_number(self):
         self.subquestion_number += 1
-
-
 
 
 @staticmethod
@@ -1593,27 +1315,24 @@ def replace_cells_between_markers(data, markers, ipynb_file, output_file):
         ipynb_file = output_file
 
 
+question_class_type = {
+    "MCQuestion": {"class_type": "MCQuestion", "style": "MCQ"},
+    "SelectMany": {"class_type": "SelectMany", "style": "MultiSelect"},
+    "TFQuestion": {"class_type": "TFQuestion", "style": "TFStyle"},
+}
 
-            
-question_class_type = {"MCQuestion": {"class_type": "MCQuestion", "style": "MCQ"}, 
-                                    "SelectMany": {"class_type": "SelectMany", "style": "MultiSelect"}, 
-                                    "TFQuestion": {"class_type": "TFQuestion", "style": "TFStyle"},
-                                    }
 
 def write_question_class(f, q_value, class_name):
-    
     class_type_ = question_class_type[class_name]
-    
+
     f.write(
-                        f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
-                    )
+        f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
+    )
     f.write("    def __init__(self):\n")
     f.write("        super().__init__(\n")
     f.write(f'            title=f"{q_value["title"]}",\n')
     f.write(f"            style={class_type_['style']},\n")
-    f.write(
-                        f"            question_number={q_value['question number']},\n"
-                    )
+    f.write(f"            question_number={q_value['question number']},\n")
 
 
 def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
@@ -1903,4 +1622,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
