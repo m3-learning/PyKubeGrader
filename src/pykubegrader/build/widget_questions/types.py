@@ -308,16 +308,14 @@ class QuestionProcessorBaseClass:
         ]
     
     def make_question_py_file(self, data_dict, **kwargs):
-        
-        output_file = kwargs.get("output_file", "questions.py")
-        
+            
         header_lines = self.additional_header_lines + self.header_lines
         
         # Ensure header lines are present
-        _existing_content = ensure_imports(output_file, header_lines)
+        _existing_content = ensure_imports(self.question_path, header_lines)
         
         for question_dict in data_dict:
-            with open(output_file, "a", encoding="utf-8") as f:
+            with open(self.question_path, "a", encoding="utf-8") as f:
                 for i, (q_key, q_value) in enumerate(question_dict.items()):
                     if i == 0:
                         # Write the MCQuestion class
@@ -384,7 +382,7 @@ class QuestionProcessorBaseClass:
                 data, output_file=self.solution_path
             )            
 
-            self.make_question_file(data, output_file=self.question_path)
+            self.make_question_file(data)
             
             replace_cells_between_markers(
                 data, markers, self.temp_notebook_path, self.temp_notebook_path
