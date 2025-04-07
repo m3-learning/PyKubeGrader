@@ -330,11 +330,11 @@ class QuestionProcessorBaseClass:
                     )
 
                 f.write(f"            keys={keys},\n")
-
+                                
                 options = []
                 for i, (q_key, q_value) in enumerate(question_dict.items()):
                     # Write options
-                    options.append(q_value["OPTIONS"])
+                    options.append(q_value.get("OPTIONS", [None]))
 
                 f.write(f"            options={options},\n")
 
@@ -417,23 +417,10 @@ class TrueFalse(QuestionProcessorBaseClass):
     
     def make_question_file(self, data_dict, **kwargs):
         
-    
-
-        #     # determine the output file path
-        #     solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
-
-        #     # Extract the first value cells
-        #     value = extract_raw_cells(temp_notebook_path, markers[0])
-
-        #     data = NotebookProcessor.merge_metadata(value, data)
-
-        #     # for data_ in data:
-        #     # Generate the solution file
-        #     self.tf_total_points = self.generate_widget_solutions(
-        #         data, output_file=solution_path
-        #     )
-
-        #     question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
+        self.additional_header_lines = ["from pykubegrader.widgets.true_false import TFQuestion, TFStyle\n",]
+        
+        # Make the question file
+        self.make_question_py_file(data_dict, output_file = self.question_path)
 
         #     generate_tf_file(data, output_file=question_path)
 
@@ -444,3 +431,66 @@ class TrueFalse(QuestionProcessorBaseClass):
         #     return solution_path, question_path
         # else:
         #     return None, None
+
+
+def generate_tf_file(data_dict, output_file="tf_questions.py"):
+    """
+    Generates a Python file defining an MCQuestion class from a dictionary.
+
+    Args:
+        data_dict (dict): A nested dictionary containing question metadata.
+        output_file (str): The path for the output Python file.
+
+    Returns:
+        None
+    """
+
+
+            descriptions = []
+            for i, (q_key, q_value) in enumerate(question_dict.items()):
+                # Write descriptions
+                descriptions.append(q_value["question_text"])
+            f.write(f"            descriptions={descriptions},\n")
+
+            points = []
+            for i, (q_key, q_value) in enumerate(question_dict.items()):
+                # Write points
+                points.append(q_value["points"])
+
+            f.write(f"            points={points},\n")
+            f.write("        )\n")
+            
+            
+            header_lines = self.additional_header_lines + self.header_lines
+        
+        
+
+                keys = []
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write keys
+                    keys.append(
+                        f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
+                    )
+
+                f.write(f"            keys={keys},\n")
+
+                options = []
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write options
+                    options.append(q_value["OPTIONS"])
+
+                f.write(f"            options={options},\n")
+
+                descriptions = []
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write descriptions
+                    descriptions.append(q_value["question_text"])
+                f.write(f"            descriptions={descriptions},\n")
+
+                points = []
+                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write points
+                    points.append(q_value["points"])
+
+                f.write(f"            points={points},\n")
+                f.write("        )\n")
