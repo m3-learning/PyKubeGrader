@@ -525,7 +525,7 @@ class NotebookProcessor(Logger):
         student_file_path = os.path.join(self.root_folder, notebook_name + ".ipynb")
         self.add_submission_cells(student_file_path, student_file_path)
         self.add_final_submission_cells(student_file_path, student_file_path)
-        NotebookProcessor.remove_empty_cells(student_file_path)
+        self.remove_empty_cells(student_file_path)
 
     def importable_file_name(self, student_path, question_path):
         """
@@ -649,8 +649,7 @@ class NotebookProcessor(Logger):
             self.print_and_log(f"Notebook already in destination: {new_notebook_path}")
         return new_notebook_path, temp_notebook_path, autograder_path, student_path
 
-    @staticmethod
-    def remove_empty_cells(notebook_path, output_path=None):
+    def remove_empty_cells(self, notebook_path, output_path=None):
         """
         Removes empty cells from a Jupyter Notebook and saves the updated notebook.
 
@@ -674,10 +673,10 @@ class NotebookProcessor(Logger):
             with open(save_path, "w") as nb_file:
                 nbformat.write(notebook, nb_file)
 
-            print(f"Empty cells removed. Updated notebook saved at: {save_path}")
+            self.print_and_log(f"Empty cells removed. Updated notebook saved at: {save_path}")
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            self.print_and_log(f"An error occurred: {e}")
 
     def add_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
@@ -698,6 +697,21 @@ class NotebookProcessor(Logger):
             "you should see your score."
         )
 
+        code_cell = self.add_key_requirement_import(notebook_path)
+
+        # Make the code cell non-editable and non-deletable
+        code_cell.metadata = {"editable": True, "deletable": False}
+        code_cell.metadata["tags"] = ["skip-execution"]
+
+        # Add the cells to the notebook
+        notebook.cells.append(markdown_cell)
+        notebook.cells.append(code_cell)
+
+        # Save the modified notebook
+        with open(output_path, "w", encoding="utf-8") as f:
+            nbformat.write(notebook, f)
+
+    def add_key_requirement_import(self, notebook_path):
         if self.require_key:
             # Add an additional line for validate_token()
             validate_token_line = f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment = '{self.assignment_tag}')\n"
@@ -714,18 +728,8 @@ class NotebookProcessor(Logger):
                 "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
                 f'submit_assignment("{self.assignment_tag}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
             )
-
-        # Make the code cell non-editable and non-deletable
-        code_cell.metadata = {"editable": True, "deletable": False}
-        code_cell.metadata["tags"] = ["skip-execution"]
-
-        # Add the cells to the notebook
-        notebook.cells.append(markdown_cell)
-        notebook.cells.append(code_cell)
-
-        # Save the modified notebook
-        with open(output_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
+            
+        return code_cell
 
     def add_final_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
