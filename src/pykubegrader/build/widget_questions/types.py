@@ -439,66 +439,13 @@ class SelectMany(QuestionProcessorBaseClass):
     start_tag: str = "# BEGIN SELECT MANY"
     end_tag: str = "# END SELECT MANY"
     question_type: str = "select many"
-    class_name: str = "SelectManyQuestion"
+    class_name: str = "SelectMany"
     
-
-
-            # Extract all the multiple choice questions
-            data = extract_SELECT_MANY(temp_notebook_path)
-
-            # determine the output file path
-            solution_path = f"{os.path.splitext(new_notebook_path)[0]}_solutions.py"
-
-            # Extract the first value cells
-            value = extract_raw_cells(temp_notebook_path, markers[0])
-
-            # Merge the metadata with the question data
-            data = NotebookProcessor.merge_metadata(value, data)
-
-            # Generate the solution file
-            self.select_many_total_points = self.generate_widget_solutions(
-                data, output_file=solution_path
-            )
-
-            question_path = f"{new_notebook_path.replace('.ipynb', '')}_questions.py"
-
-            generate_select_many_file(data, output_file=question_path)
-
-            replace_cells_between_markers(
-                data, markers, temp_notebook_path, temp_notebook_path
-            )
-
-            return solution_path, question_path
-        else:
-            return None, None
+    def make_question_file(self, data_dict, **kwargs):
         
-    
-
-                    # Extract all lines under the SOLUTION header
-                    solution_start = markdown_content.find("#### SOLUTION")
-                    if solution_start != -1:
-                        solution = []
-                        lines = markdown_content[solution_start:].splitlines()
-                        for line in lines[1:]:  # Skip the "#### SOLUTION" line
-                            if line.strip():  # Non-blank line after trimming spaces
-                                solution.append(line.strip())
-                            else:
-                                break
-
-                    # Add question details to the current section
-                    current_section[title] = {
-                        "name": title,
-                        "subquestion_number": subquestion_number,
-                        "question_text": question_text,
-                        "solution": solution,
-                        "OPTIONS": options,
-                    }
-
-        return sections
-
-    except FileNotFoundError:
-        print(f"File {ipynb_file} not found.")
-        return []
-    except json.JSONDecodeError:
-        print("3 Invalid JSON in notebook file.")
-        return []
+        # Define the additional header lines for the SelectManyQuestion class imports
+        self.additional_header_lines = ["from pykubegrader.widgets.select_many import MultiSelect, SelectMany\n",]
+        
+        # Make the question file
+        self.make_question_py_file(data_dict, output_file = self.question_path)
+        

@@ -1595,7 +1595,10 @@ def replace_cells_between_markers(data, markers, ipynb_file, output_file):
 
 
             
-question_class_type = {"MCQuestion": {"class_type": "MCQuestion", "style": "MCQ"}}
+question_class_type = {"MCQuestion": {"class_type": "MCQuestion", "style": "MCQ"}, 
+                                    "SelectMany": {"class_type": "SelectMany", "style": "MultiSelect"}, 
+                                    "TFQuestion": {"class_type": "TFQuestion", "style": "TFStyle"},
+                                    }
 
 def write_question_class(f, q_value, class_name):
     
