@@ -322,35 +322,47 @@ class QuestionProcessorBaseClass:
                         write_question_class(f, q_value, class_name = self.class_name)
                     break
 
-                keys = []
-                for i, (q_key, q_value) in enumerate(question_dict.items()):
+                self.write_keys(question_dict, f)
+                                
+                self.write_options(question_dict, f)
+
+                self.write_descriptions(question_dict, f)
+
+                self.write_points(question_dict, f)
+
+    def write_points(self, question_dict, f):
+        points = []
+        for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write points
+            points.append(q_value["points"])
+
+        f.write(f"            points={points},\n")
+        f.write("        )\n")
+
+    def write_descriptions(self, question_dict, f):
+        descriptions = []
+        for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write descriptions
+            descriptions.append(q_value["question_text"])
+        f.write(f"            descriptions={descriptions},\n")
+
+    def write_options(self, question_dict, f):
+        options = []
+        for i, (q_key, q_value) in enumerate(question_dict.items()):
+                    # Write options
+            options.append(q_value.get("OPTIONS", [None]))
+
+        f.write(f"            options={options},\n")
+
+    def write_keys(self, question_dict, f):
+        keys = []
+        for i, (q_key, q_value) in enumerate(question_dict.items()):
                     # Write keys
-                    keys.append(
+            keys.append(
                         f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
                     )
 
-                f.write(f"            keys={keys},\n")
-                                
-                options = []
-                for i, (q_key, q_value) in enumerate(question_dict.items()):
-                    # Write options
-                    options.append(q_value.get("OPTIONS", [None]))
-
-                f.write(f"            options={options},\n")
-
-                descriptions = []
-                for i, (q_key, q_value) in enumerate(question_dict.items()):
-                    # Write descriptions
-                    descriptions.append(q_value["question_text"])
-                f.write(f"            descriptions={descriptions},\n")
-
-                points = []
-                for i, (q_key, q_value) in enumerate(question_dict.items()):
-                    # Write points
-                    points.append(q_value["points"])
-
-                f.write(f"            points={points},\n")
-                f.write("        )\n")
+        f.write(f"            keys={keys},\n")
         
     def run(self, **kwargs):
         
@@ -421,76 +433,3 @@ class TrueFalse(QuestionProcessorBaseClass):
         
         # Make the question file
         self.make_question_py_file(data_dict, output_file = self.question_path)
-
-        #     generate_tf_file(data, output_file=question_path)
-
-        #     replace_cells_between_markers(
-        #         data, markers, temp_notebook_path, temp_notebook_path
-        #     )
-
-        #     return solution_path, question_path
-        # else:
-        #     return None, None
-
-
-def generate_tf_file(data_dict, output_file="tf_questions.py"):
-    """
-    Generates a Python file defining an MCQuestion class from a dictionary.
-
-    Args:
-        data_dict (dict): A nested dictionary containing question metadata.
-        output_file (str): The path for the output Python file.
-
-    Returns:
-        None
-    """
-
-
-            descriptions = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write descriptions
-                descriptions.append(q_value["question_text"])
-            f.write(f"            descriptions={descriptions},\n")
-
-            points = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write points
-                points.append(q_value["points"])
-
-            f.write(f"            points={points},\n")
-            f.write("        )\n")
-            
-            
-            header_lines = self.additional_header_lines + self.header_lines
-        
-        
-
-                keys = []
-                for i, (q_key, q_value) in enumerate(question_dict.items()):
-                    # Write keys
-                    keys.append(
-                        f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
-                    )
-
-                f.write(f"            keys={keys},\n")
-
-                options = []
-                for i, (q_key, q_value) in enumerate(question_dict.items()):
-                    # Write options
-                    options.append(q_value["OPTIONS"])
-
-                f.write(f"            options={options},\n")
-
-                descriptions = []
-                for i, (q_key, q_value) in enumerate(question_dict.items()):
-                    # Write descriptions
-                    descriptions.append(q_value["question_text"])
-                f.write(f"            descriptions={descriptions},\n")
-
-                points = []
-                for i, (q_key, q_value) in enumerate(question_dict.items()):
-                    # Write points
-                    points.append(q_value["points"])
-
-                f.write(f"            points={points},\n")
-                f.write("        )\n")
