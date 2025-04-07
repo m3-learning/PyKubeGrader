@@ -16,6 +16,8 @@ import requests
 import yaml
 from dateutil import parser
 
+from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
+from pykubegrader.build.notebooks.writers import write_validation_token_cell
 from pykubegrader.build.widget_questions.types import (
     MultipleChoice,
     SelectMany,
@@ -791,18 +793,8 @@ class NotebookProcessor(Logger):
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
         if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
-            # TODO: This is hardcoded for now, but should be in a configuration file.
-            client_private_key = os.path.join(
-                os.path.dirname(temp_notebook_path),
-                ".client_private_key.bin",
-            )
-            server_public_key = os.path.join(
-                os.path.dirname(temp_notebook_path),
-                ".server_public_key.bin",
-            )
 
-            shutil.copy("./keys/.client_private_key.bin", client_private_key)
-            shutil.copy("./keys/.server_public_key.bin", server_public_key)
+            client_private_key, server_public_key = self.transfer_encryption_keys(temp_notebook_path)
 
             # Extract the assignment config
             config = extract_config_from_notebook(temp_notebook_path)
@@ -818,18 +810,8 @@ class NotebookProcessor(Logger):
                         os.path.join(self.root_folder, file),
                         os.path.join(notebook_subfolder, file),
                     )
-
-            client_private_key = os.path.join(
-                notebook_subfolder,
-                ".client_private_key.bin",
-            )
-            server_public_key = os.path.join(
-                notebook_subfolder,
-                ".server_public_key.bin",
-            )
-
-            shutil.copy("./keys/.client_private_key.bin", client_private_key)
-            shutil.copy("./keys/.server_public_key.bin", server_public_key)
+                    
+            client_private_key, server_public_key = self.transfer_encryption_keys(notebook_subfolder)
 
             out = FastAPINotebookBuilder(
                 notebook_path=temp_notebook_path,
@@ -848,11 +830,10 @@ class NotebookProcessor(Logger):
                 temp_notebook_path, os.path.join(notebook_subfolder, "dist")
             )
 
-            print(f"Copying {temp_notebook_path} to {debug_notebook}")
-
+            self.print_and_log(f"Copying {temp_notebook_path} to {debug_notebook}")
             shutil.copy(temp_notebook_path, debug_notebook)
 
-            NotebookProcessor.remove_assignment_config_cells(debug_notebook)
+            remove_assignment_config_cells(debug_notebook)
 
             student_notebook = os.path.join(
                 notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
@@ -901,6 +882,21 @@ class NotebookProcessor(Logger):
             )
             return None, 0
 
+    def transfer_encryption_keys(self, temp_notebook_path):
+        client_private_key = os.path.join(
+                os.path.dirname(temp_notebook_path),
+                ".client_private_key.bin",
+            )
+        server_public_key = os.path.join(
+                os.path.dirname(temp_notebook_path),
+                ".server_public_key.bin",
+            )
+
+        shutil.copy("./keys/.client_private_key.bin", client_private_key)
+        shutil.copy("./keys/.server_public_key.bin", server_public_key)
+        
+        return client_private_key, server_public_key
+
     @staticmethod
     def json_serial(obj):
         """JSON serializer for objects not serializable by default."""
@@ -908,104 +904,7 @@ class NotebookProcessor(Logger):
             return obj.isoformat()
         raise TypeError(f"Type {type(obj)} not serializable")
 
-    @staticmethod
-    def remove_assignment_config_cells(notebook_path):
-        # Read the notebook
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=nbformat.NO_CONVERT)
 
-        # Filter out cells containing "# ASSIGNMENT CONFIG"
-        notebook.cells = [
-            cell
-            for cell in notebook.cells
-            if "# ASSIGNMENT CONFIG" not in cell.get("source", "")
-        ]
-
-        # Save the updated notebook
-        with open(notebook_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
-
-    @staticmethod
-    def add_validate_token_cell(
-        notebook_path: str, require_key: bool, **kwargs
-    ) -> None:
-        """
-        Adds a new code cell at the top of a Jupyter notebook if require_key is True.
-
-        Args:
-            notebook_path (str): The path to the notebook file to modify.
-            require_key (bool): Whether to add the validate_token cell.
-
-        Returns:
-            None
-        """
-        if not require_key:
-            print("require_key is False. No changes made to the notebook.")
-            return
-
-        NotebookProcessor.add_validate_block(
-            notebook_path,
-            require_key,
-            assignment_tag=kwargs.get("assignment_tag", None),
-        )
-
-        # Load the notebook
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
-
-        # Create the new code cell
-        if kwargs.get("assignment_tag", None):
-            new_cell = nbformat.v4.new_code_cell(
-                "from pykubegrader.tokens.validate_token import validate_token\n"
-                f"validate_token('type the key provided by your instructor here', assignment = '{kwargs.get('assignment_tag')}')\n"
-            )
-        else:
-            new_cell = nbformat.v4.new_code_cell(
-                "from pykubegrader.tokens.validate_token import validate_token\n"
-                "validate_token('type the key provided by your instructor here')\n"
-            )
-
-        # Add the new cell to the top of the notebook
-        notebook.cells.insert(0, new_cell)
-
-        # Save the modified notebook
-        with open(notebook_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
-
-    @staticmethod
-    def add_validate_block(
-        notebook_path: str, require_key: bool, assignment_tag=None, **kwargs
-    ) -> None:
-        """
-        Modifies the first code cell of a Jupyter notebook to add the validate_token call if require_key is True.
-
-        Args:
-            notebook_path (str): The path to the notebook file to modify.
-            require_key (bool): Whether to add the validate_token cell.
-
-        Returns:
-            None
-        """
-        if not require_key:
-            return
-
-        # Load the notebook
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
-
-        # Prepare the validation code
-        validation_code = f"validate_token(assignment = '{assignment_tag}')\n"
-
-        # Modify the first cell if it's a code cell, otherwise insert a new one
-        if notebook.cells and notebook.cells[0].cell_type == "code":
-            notebook.cells[0].source = validation_code + "\n" + notebook.cells[0].source
-        else:
-            new_cell = nbformat.v4.new_code_cell(validation_code)
-            notebook.cells.insert(0, new_cell)
-
-        # Save the modified notebook
-        with open(notebook_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
 
     @staticmethod
     def add_initialization_code(
@@ -1025,12 +924,13 @@ class NotebookProcessor(Logger):
         replace_cell_source(notebook_path, index, cell)
 
         if require_key:
-            NotebookProcessor.add_validate_token_cell(
+            write_validation_token_cell(
                 notebook_path,
                 require_key,
                 assignment_tag=kwargs.get("assignment_tag", None),
             )
 
+    #TODO: Check if we can combine this with replace_temp_in_notebook
     @staticmethod
     def replace_temp_no_otter(input_file, output_file):
         # Load the notebook
@@ -1649,3 +1549,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
