@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from pykubegrader.build.util import EncryptionKeyBaseClass
 @dataclass
 class DisplayQuestionCode:
     
@@ -37,3 +37,8 @@ class SubmissionCodeBaseClass:
         ]
         return string
     
+    
+    @dataclass
+    class EncryptionKeyTransfer(EncryptionKeyBaseClass):
+        client_private_key_path: str = "./keys/.client_private_key.bin"
+        server_public_key_path: str = "./keys/.server_public_key.bin"

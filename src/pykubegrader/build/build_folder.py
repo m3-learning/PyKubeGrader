@@ -19,7 +19,8 @@ from pykubegrader.build.io import remove_file_suffix
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
-from pykubegrader.build.util import get_due_date, json_serial
+from pykubegrader.build.util import  get_due_date, json_serial
+from pykubegrader.build.config import EncryptionKeyTransfer
 from pykubegrader.build.widget_questions.types import (
     MultipleChoice,
     SelectMany,
@@ -50,7 +51,7 @@ from pykubegrader.tokens.tokens import add_token
 add_token("token", duration=20)
 
 @dataclass
-class NotebookProcessor(SubmissionCodeBaseClass,Logger):
+class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger):
     """
     A class for processing Jupyter notebooks in a directory and its subdirectories.
 
@@ -782,7 +783,7 @@ class NotebookProcessor(SubmissionCodeBaseClass,Logger):
     ):
         if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
 
-            client_private_key, server_public_key = self.transfer_encryption_keys(temp_notebook_path)
+            client_private_key, server_public_key = transfer_encryption_keys(temp_notebook_path)
 
             # Extract the assignment config
             config = extract_config_from_notebook(temp_notebook_path)
@@ -797,7 +798,7 @@ class NotebookProcessor(SubmissionCodeBaseClass,Logger):
                         os.path.join(notebook_subfolder, file),
                     )
                     
-            client_private_key, server_public_key = self.transfer_encryption_keys(notebook_subfolder)
+            client_private_key, server_public_key = transfer_encryption_keys(notebook_subfolder)
 
             out = FastAPINotebookBuilder(
                 notebook_path=temp_notebook_path,
@@ -867,22 +868,6 @@ class NotebookProcessor(SubmissionCodeBaseClass,Logger):
                 temp_notebook_path, temp_notebook_path
             )
             return None, 0
-
-    def transfer_encryption_keys(self, temp_notebook_path):
-        client_private_key = os.path.join(
-                os.path.dirname(temp_notebook_path),
-                ".client_private_key.bin",
-            )
-        server_public_key = os.path.join(
-                os.path.dirname(temp_notebook_path),
-                ".server_public_key.bin",
-            )
-
-        shutil.copy("./keys/.client_private_key.bin", client_private_key)
-        shutil.copy("./keys/.server_public_key.bin", server_public_key)
-        
-        return client_private_key, server_public_key
-
 
     #TODO: Check if we can combine this with replace_temp_in_notebook
     @staticmethod
@@ -1312,4 +1297,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
+    
