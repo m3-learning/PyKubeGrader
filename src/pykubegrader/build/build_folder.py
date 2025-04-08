@@ -703,41 +703,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger):
         with open(output_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
 
-    def add_key_requirement_import(self, notebook_path):
-        """
-        Creates a code cell for the notebook that includes the necessary import statements for assignment submission.
-        
-        If the `require_key` attribute is set to True, the code cell will include an import and call to `validate_token`.
-        This ensures that the assignment is validated with a token before submission.
-
-        Args:
-            notebook_path (str): The path to the notebook file.
-
-        Returns:
-            nbformat.NotebookNode: A new code cell with the required import statements for submission.
-        """
-        if self.require_key:
-            # Add an additional line for validate_token()
-            validate_token_line = (
-                f"from pykubegrader.tokens.validate_token import validate_token\n"
-                f"validate_token(assignment = '{self.assignment_tag}')\n"
-            )
-
-            # Define the Code cell
-            code_cell = nbformat.v4.new_code_cell(
-                f"{validate_token_line}\n\n"
-                "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-                f'submit_assignment("{self.assignment_tag}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
-            )
-        else:
-            # Define the Code cell without validate_token()
-            code_cell = nbformat.v4.new_code_cell(
-                "from pykubegrader.submit.submit_assignment import submit_assignment\n\n"
-                f'submit_assignment("{self.assignment_tag}", "{os.path.basename(notebook_path).replace(".ipynb", "")}")'
-            )
-            
-        return code_cell
-
     def add_final_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
         Adds final submission cells to the end of a Jupyter notebook.

@@ -42,3 +42,39 @@ class SubmissionCodeBaseClass:
     class EncryptionKeyTransfer(EncryptionKeyBaseClass):
         client_private_key_path: str = "./keys/.client_private_key.bin"
         server_public_key_path: str = "./keys/.server_public_key.bin"
+    
+    #TODO: Fix and refactor for simplicity  
+    @dataclass
+    class AddKeyRequirementImport(AddKeyRequirementImportBaseClass):
+
+        @property
+        def validate_token_line(self):
+            # Add an additional line for validate_token()
+            validate_token_line = (
+                f"from pykubegrader.tokens.validate_token import validate_token\n"
+                f"validate_token(assignment = '{self.assignment_tag}')\n"
+            )
+            return validate_token_line
+        
+        @property
+        def code_cell(self):
+            
+            # Prepare the lines of code to include
+            lines = []
+
+            # Optionally include the validate_token_line
+            if self.require_key:
+                lines.append(self.validate_token_line)
+                lines.append("")  # blank line for readability
+
+            # Always include import and submission call
+            lines += [
+                "from pykubegrader.submit.submit_assignment import submit_assignment",
+                f'submit_assignment("{self.assignment_tag}", "{Path(notebook_path).stem}")'
+            ]
+
+            # Create the code cell with joined lines
+            code_cell = nbformat.v4.new_code_cell("\n".join(lines))
+            
+            return code_cell
+        

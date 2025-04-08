@@ -285,3 +285,28 @@ def replace_cells_between_markers(data, markers, ipynb_file, output_file):
         # Write the modified notebook to the output file
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(notebook_data, f, indent=2)
+            
+@dataclass
+class AddKeyRequirementImportBaseClass(ABC):
+    
+    @property
+    @abstractmethod
+    def code_cell(self):
+        pass
+    
+    def add_key_requirement_import(self, notebook_path):
+        """
+        Creates a code cell for the notebook that includes the necessary import statements for assignment submission.
+        
+        If the `require_key` attribute is set to True, the code cell will include an import and call to `validate_token`.
+        This ensures that the assignment is validated with a token before submission.
+
+        Args:
+            notebook_path (str): The path to the notebook file.
+
+        Returns:
+            nbformat.NotebookNode: A new code cell with the required import statements for submission.
+        """
+        
+        return self.code_cell
+  
