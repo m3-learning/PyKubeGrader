@@ -19,7 +19,7 @@ from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 QuestionCollator, WidgetQuestionParser,
                                 api_notebook_builder, build_folder,
                                 check_for_heading, clean_folder,
-                                clean_notebook, collate, ensure_imports,
+                                collate, ensure_imports,
                                 extract_SELECT_MANY, extract_TF,
                                 extract_config_from_notebook, extract_files,
                                 extract_raw_cells,
@@ -27,11 +27,12 @@ from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 generate_mcq_file, generate_select_many_file,
                                 generate_tf_file, handler, jupyterhub_user,
                                 logger, main, markdown_questions, password,
-                                passwords, replace_cells_between_markers, sanitize_string,
+                                passwords, sanitize_string,
                                 student_ids, update_initialize_assignment,
                                 user,)
+from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.search import find_first_code_cell
-from pykubegrader.build.notebooks.writers import replace_cell_source
+from pykubegrader.build.notebooks.writers import replace_cell_source, replace_cells_between_markers
 from pykubegrader.build.widget_questions.utils import extract_question
 from pykubegrader.graders import (calculate_late_submission, late_assignments,)
 from pykubegrader.log_parser import (LogParser, LogParserResults, parse,)
@@ -61,7 +62,7 @@ __all__ = ['EMAIL_PATTERN', 'FastAPINotebookBuilder', 'FolderCleaner', 'KEYS',
            'api_notebook_builder', 'assignment', 'assignments', 'build',
            'build_assignment_tag', 'build_folder', 'calculate_late_submission',
            'check_api_connection', 'check_for_heading', 'check_ipython',
-           'checks', 'clean_folder', 'clean_notebook', 'code_logs', 'collate',
+           'checks', 'clean_folder', 'lock_cells_from_students', 'code_logs', 'collate',
            'drexel_colors', 'ensure_imports', 'ensure_responses',
            'extract_SELECT_MANY', 'extract_TF', 'extract_config_from_notebook',
            'extract_files', 'extract_question', 'extract_raw_cells',

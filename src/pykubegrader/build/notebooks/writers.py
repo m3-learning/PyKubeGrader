@@ -1,6 +1,7 @@
 import nbformat
 
-from pykubegrader.build.build_folder import NotebookProcessor
+from pykubegrader.build.build_folder import NotebookProcessor, sanitize_string
+from pykubegrader.build.config import DisplayQuestionCode
 from pykubegrader.build.notebooks.search import find_first_code_cell
 
 
@@ -149,3 +150,84 @@ def write_initialization_code(
             require_key,
             assignment_tag=kwargs.get("assignment_tag", None),
         )
+
+
+def replace_cells_between_markers(data, markers, ipynb_file, output_file):
+    """
+    Replaces the cells between specified markers in a Jupyter Notebook (.ipynb file)
+    with provided replacement cells and writes the result to the output file.
+
+    Parameters:
+    data (list): A list of dictionaries with data for creating replacement cells.
+    markers (tuple): A tuple containing two strings: the BEGIN and END markers.
+    ipynb_file (str): Path to the input Jupyter Notebook file.
+    output_file (str): Path to the output Jupyter Notebook file.
+
+    Returns:
+    None: Writes the modified notebook to the output file.
+    """
+    begin_marker, end_marker = markers
+    file_name_ipynb = ipynb_file.split("/")[-1].replace("_temp.ipynb", "")
+
+    file_name_ipynb = sanitize_string(file_name_ipynb)
+
+    # Iterate over each set of replacement data
+    for data_ in data:
+        dict_ = data_[next(iter(data_.keys()))]
+
+        # Create the replacement cells
+        replacement_cells = {
+            "cell_type": "code",
+            "metadata": {},
+            "source": DisplayQuestionCode.build_code(file_name_ipynb, dict_),
+            "outputs": [],
+            "execution_count": None,
+        }
+
+        # Process the notebook cells
+        new_cells = []
+        inside_markers = False
+        done = False
+
+        # Load the notebook data
+        with open(ipynb_file, "r", encoding="utf-8") as f:
+            notebook_data = json.load(f)
+
+        # Iterate over each cell in the notebook
+        for cell in notebook_data["cells"]:
+
+            # If the cell is a raw cell and not done, check if it contains the begin marker
+            if cell.get("cell_type") == "raw" and not done:
+                if any(begin_marker in line for line in cell.get("source", [])):
+                    # Enter the marked block
+                    inside_markers = True
+                    new_cells.append(replacement_cells)
+                    continue
+                elif inside_markers:
+                    if any(end_marker in line for line in cell.get("source", [])):
+                        # Exit the marked block
+                        inside_markers = False
+                        done = True
+                        continue
+                    else:
+                        continue
+                else:
+                    new_cells.append(cell)
+            elif inside_markers:
+                # Skip cells inside the marked block
+                continue
+            else:
+                new_cells.append(cell)
+                continue
+
+            if done:
+                # Add cells outside the marked block
+                new_cells.append(cell)
+                continue
+
+        # Update the notebook with modified cells, preserving metadata
+        notebook_data["cells"] = new_cells
+
+        # Write the modified notebook to the output file
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(notebook_data, f, indent=2)

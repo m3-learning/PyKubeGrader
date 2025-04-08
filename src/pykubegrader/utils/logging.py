@@ -6,7 +6,7 @@ class Logger:
     verbose: bool = False
     log: bool = True
 
-    def __init__(self, **kwargs):
+    def __post_init__(self, **kwargs):
         """
         Initializes the Logger class with optional keyword arguments.
 
@@ -15,7 +15,7 @@ class Logger:
                 - verbose (bool): If True, enables verbose output to the console.
                 - log (bool): If True, enables logging to the logger instance.
         """
-
+        super().__post_init__(**kwargs)
         # Initialize logger at instance level
         self.logger = logging.getLogger(__name__)
         handler = logging.StreamHandler()

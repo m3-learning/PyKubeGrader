@@ -10,15 +10,16 @@ import shutil
 import subprocess
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime
 
 import requests
 import yaml
-from dateutil import parser
 
+from pykubegrader.build.config import SubmissionCodeBaseClass, question_class_type
 from pykubegrader.build.io import remove_file_suffix
+from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
+from pykubegrader.build.util import get_due_date, json_serial
 from pykubegrader.build.widget_questions.types import (
     MultipleChoice,
     SelectMany,
@@ -48,9 +49,8 @@ from pykubegrader.tokens.tokens import add_token
 
 add_token("token", duration=20)
 
-
 @dataclass
-class NotebookProcessor(Logger):
+class NotebookProcessor(SubmissionCodeBaseClass,Logger):
     """
     A class for processing Jupyter notebooks in a directory and its subdirectories.
 
@@ -124,7 +124,8 @@ class NotebookProcessor(Logger):
             OSError: If the solutions folder cannot be created due to permissions or other filesystem issues.
         """
         
-        super().__init__(verbose=self.verbose, log=self.log, **kwargs)
+        # Initialize Logger with the required parameters
+        super().__post_init__(verbose=self.verbose, log=self.log, **kwargs)
         
         # Initialize the info for the class
         self.initialize_info()
@@ -286,7 +287,7 @@ class NotebookProcessor(Logger):
 
         week_num = self.week_num
         assignment_type = self.assignment_type
-        due_date = self.get_due_date(assignment)
+        due_date = get_due_date(assignment)
 
         return {
             "title": notebook_title,
@@ -314,7 +315,7 @@ class NotebookProcessor(Logger):
         assignment = data.get("assignment", {})
         week = assignment.get("week")
         assignment_type = assignment.get("assignment_type")
-        due_date = self.get_due_date(assignment)
+        due_date = get_due_date(assignment)
 
         title = f"Week {week} - {assignment_type}"
 
@@ -327,19 +328,6 @@ class NotebookProcessor(Logger):
             "due_date": due_date,
             "max_score": self.assignment_total_points - self.bonus_points,
         }
-
-    @staticmethod
-    def get_due_date(assignment):
-        due_date_str = assignment.get("due_date")
-
-        # Convert due_date to a datetime object if available
-        due_date = None
-        if due_date_str:
-            try:
-                due_date = parser.parse(due_date_str)  # Automatically handles timezones
-            except ValueError as e:
-                print(f"Error parsing due_date: {e}")
-        return due_date
 
     def put_notebook(self, notebook_title, total_points):
         """
@@ -362,7 +350,7 @@ class NotebookProcessor(Logger):
         headers = {"Content-Type": "application/json"}
 
         # Serialize the payload with the custom JSON encoder
-        serialized_payload = json.dumps(payload, default=self.json_serial)
+        serialized_payload = json.dumps(payload, default=json_serial)
 
         # Send the POST request
         response = requests.post(
@@ -394,7 +382,7 @@ class NotebookProcessor(Logger):
         headers = {"Content-Type": "application/json"}
 
         # Serialize the payload with the custom JSON encoder
-        serialized_payload = json.dumps(payload, default=self.json_serial)
+        serialized_payload = json.dumps(payload, default=json_serial)
 
         # Send the POST request
         response = requests.post(
@@ -468,7 +456,7 @@ class NotebookProcessor(Logger):
 
         # If Otter does not run, move the student file to the main directory
         if student_notebook is None:
-            clean_notebook(temp_notebook_path)
+            lock_cells_from_students(temp_notebook_path, self.logger)
             path_ = shutil.copy(temp_notebook_path, self.root_folder)
             path_2 = shutil.move(
                 question_path,
@@ -855,7 +843,7 @@ class NotebookProcessor(Logger):
                 autograder_notebook, autograder_notebook
             )
 
-            clean_notebook(student_notebook)
+            lock_cells_from_students(student_notebook, self.logger)
 
             shutil.copy(student_notebook, self.root_folder)
             self.print_and_log(
@@ -895,12 +883,6 @@ class NotebookProcessor(Logger):
         
         return client_private_key, server_public_key
 
-    @staticmethod
-    def json_serial(obj):
-        """JSON serializer for objects not serializable by default."""
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        raise TypeError(f"Type {type(obj)} not serializable")
 
     #TODO: Check if we can combine this with replace_temp_in_notebook
     @staticmethod
@@ -983,7 +965,6 @@ class NotebookProcessor(Logger):
             self.print_and_log(
                 f"Unexpected error during `otter assign` for {notebook_path}: {e}"
             )
-
 @dataclass
 class WidgetQuestionParser:
     sections: list = field(default_factory=list)
@@ -1049,45 +1030,6 @@ def check_for_heading(self, notebook_path, search_strings):
     return False
 
 
-def clean_notebook(self, notebook_path):
-    """
-    Removes specific cells and makes Markdown cells non-editable and non-deletable by updating their metadata.
-    """
-    try:
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
-
-        cleaned_cells = []
-        for cell in notebook.cells:
-            if not hasattr(cell, "cell_type") or not hasattr(cell, "source"):
-                continue
-
-            if (
-                "## Submission" not in cell.source
-                and "# Save your notebook first," not in cell.source
-            ):
-                if cell.cell_type == "markdown":
-                    cell.metadata["editable"] = cell.metadata.get("editable", False)
-                    cell.metadata["deletable"] = cell.metadata.get("deletable", False)
-                if cell.cell_type == "code":
-                    cell.metadata["tags"] = cell.metadata.get("tags", [])
-                    if "skip-execution" not in cell.metadata["tags"]:
-                        cell.metadata["tags"].append("skip-execution")
-
-                cleaned_cells.append(cell)
-            else:
-                (f"Removed cell: {cell.source.strip()[:50]}...")
-
-        notebook.cells = cleaned_cells
-
-        with open(notebook_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
-        self.print_and_log(f"Cleaned notebook: {notebook_path}")
-
-    except Exception as e:
-        self.print_and_log(f"Error cleaning notebook {notebook_path}: {e}")
-
-
 def ensure_imports(output_file, header_lines):
     """
     Ensures specified header lines are present at the top of the file.
@@ -1117,98 +1059,6 @@ def ensure_imports(output_file, header_lines):
     return existing_content
 
 
-def replace_cells_between_markers(data, markers, ipynb_file, output_file):
-    """
-    Replaces the cells between specified markers in a Jupyter Notebook (.ipynb file)
-    with provided replacement cells and writes the result to the output file.
-
-    Parameters:
-    data (list): A list of dictionaries with data for creating replacement cells.
-    markers (tuple): A tuple containing two strings: the BEGIN and END markers.
-    ipynb_file (str): Path to the input Jupyter Notebook file.
-    output_file (str): Path to the output Jupyter Notebook file.
-
-    Returns:
-    None: Writes the modified notebook to the output file.
-    """
-    begin_marker, end_marker = markers
-    file_name_ipynb = ipynb_file.split("/")[-1].replace("_temp.ipynb", "")
-
-    file_name_ipynb = sanitize_string(file_name_ipynb)
-
-    # Iterate over each set of replacement data
-    for data_ in data:
-        dict_ = data_[next(iter(data_.keys()))]
-
-        # Create the replacement cells
-        replacement_cells = {
-            "cell_type": "code",
-            "metadata": {},
-            "source": [
-                "# Run this block of code by pressing Shift + Enter to display the question\n",
-                f"from questions.{file_name_ipynb} import Question{dict_['question number']}\n",
-                f"Question{dict_['question number']}().show()\n",
-            ],
-            "outputs": [],
-            "execution_count": None,
-        }
-
-        # Process the notebook cells
-        new_cells = []
-        inside_markers = False
-        done = False
-
-        # Load the notebook data
-        with open(ipynb_file, "r", encoding="utf-8") as f:
-            notebook_data = json.load(f)
-
-        for cell in notebook_data["cells"]:
-            if cell.get("cell_type") == "raw" and not done:
-                if any(begin_marker in line for line in cell.get("source", [])):
-                    # Enter the marked block
-                    inside_markers = True
-                    new_cells.append(replacement_cells)
-                    continue
-                elif inside_markers:
-                    if any(end_marker in line for line in cell.get("source", [])):
-                        # Exit the marked block
-                        inside_markers = False
-                        done = True
-                        continue
-                    else:
-                        continue
-                else:
-                    new_cells.append(cell)
-            elif inside_markers:
-                # Skip cells inside the marked block
-                continue
-            else:
-                new_cells.append(cell)
-                continue
-
-            if done:
-                # Add cells outside the marked block
-                new_cells.append(cell)
-                continue
-
-        # Update the notebook with modified cells, preserving metadata
-        notebook_data["cells"] = new_cells
-
-        # Write the modified notebook to the output file
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(notebook_data, f, indent=2)
-
-        # Update ipynb_file to the output file for subsequent iterations
-        ipynb_file = output_file
-
-
-question_class_type = {
-    "MCQuestion": {"class_type": "MCQuestion", "style": "MCQ"},
-    "SelectMany": {"class_type": "SelectMany", "style": "MultiSelect"},
-    "TFQuestion": {"class_type": "TFQuestion", "style": "TFStyle"},
-}
-
-
 def write_question_class(f, q_value, class_name):
     class_type_ = question_class_type[class_name]
 
@@ -1222,7 +1072,7 @@ def write_question_class(f, q_value, class_name):
     f.write(f"            question_number={q_value['question number']},\n")
 
 
-def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
+# def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
     """
     Generates a Python file defining an MCQuestion class from a dictionary.
 
