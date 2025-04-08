@@ -6,6 +6,22 @@ from pykubegrader.build.notebooks.search import find_first_code_cell
 
 
 def remove_assignment_config_cells(notebook_path):
+    """
+    Remove cells containing "# ASSIGNMENT CONFIG" from a Jupyter notebook.
+
+    This function reads a Jupyter notebook from the specified path, filters out any cells
+    that contain the string "# ASSIGNMENT CONFIG" in their source, and then saves the
+    updated notebook back to the same path.
+
+    Args:
+        notebook_path (str): The path to the Jupyter notebook file to be modified.
+
+    Returns:
+        None
+
+    Example:
+        remove_assignment_config_cells("path/to/notebook.ipynb")
+    """
     # Read the notebook
     with open(notebook_path, "r", encoding="utf-8") as f:
         notebook = nbformat.read(f, as_version=nbformat.NO_CONVERT)
@@ -28,12 +44,32 @@ def write_validation_token_cell(
         """
         Adds a new code cell at the top of a Jupyter notebook if require_key is True.
 
+        This function modifies a Jupyter notebook by inserting a new code cell at the top.
+        The new cell contains a call to the `validate_token` function, which is used to
+        validate a token provided by the instructor. The function only performs this action
+        if the `require_key` parameter is set to True.
+
         Args:
             notebook_path (str): The path to the notebook file to modify.
             require_key (bool): Whether to add the validate_token cell.
+            **kwargs: Additional keyword arguments that may include:
+                - assignment_tag (str, optional): A tag for the assignment, which will be
+                  included in the validate_token call if provided.
 
         Returns:
             None
+
+        Example:
+            write_validation_token_cell("path/to/notebook.ipynb", True, assignment_tag="Week1")
+
+        Behavior:
+            - If `require_key` is False, the function will print a message and make no changes.
+            - If `require_key` is True, a new code cell is added at the top of the notebook.
+            - The new cell will import the `validate_token` function and call it with a placeholder
+              for the key and the optional assignment tag.
+
+        Raises:
+            None: This function handles exceptions internally, if any arise from file operations.
         """
         if not require_key:
             print("require_key is False. No changes made to the notebook.")
@@ -135,7 +171,25 @@ def write_initialization_code(
     require_key=False,
     **kwargs,
 ):
-    # finds the first code cell
+    """
+    Inserts initialization code into the first code cell of a Jupyter notebook.
+
+    This function modifies the first code cell of the specified notebook to include
+    initialization code necessary for the assignment. If `require_key` is True, it also
+    adds a validation token cell.
+
+    Args:
+        notebook_path (str): The path to the Jupyter notebook file.
+        week (str): The week identifier for the assignment.
+        assignment_type (str): The type of the assignment.
+        require_key (bool, optional): If True, adds a validation token cell. Defaults to False.
+        **kwargs: Additional keyword arguments, including:
+            - assignment_tag (str, optional): The tag for the assignment, used if `require_key` is True.
+
+    Returns:
+        None
+    """
+    # Find the first code cell
     index, cell = find_first_code_cell(notebook_path)
     cell = cell["source"]
     import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
