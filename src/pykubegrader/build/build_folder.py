@@ -16,6 +16,7 @@ import requests
 import yaml
 from dateutil import parser
 
+from pykubegrader.build.io import remove_file_suffix
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
 from pykubegrader.build.widget_questions.types import (
@@ -502,9 +503,9 @@ class NotebookProcessor(Logger):
         os.remove(temp_notebook_path)
 
         # Remove all postfix from filenames in dist
-        NotebookProcessor.remove_postfix(autograder_path, "_solutions")
-        NotebookProcessor.remove_postfix(student_path, "_questions")
-        NotebookProcessor.remove_postfix(self.root_folder, "_temp")
+        remove_file_suffix(autograder_path, "_solutions", logger=self.logger)
+        remove_file_suffix(student_path, "_questions", logger=self.logger)
+        remove_file_suffix(self.root_folder, "_temp", logger=self.logger)
 
         ### CODE TO ENSURE THAT STUDENT NOTEBOOK IS IMPORTABLE
         
@@ -974,7 +975,7 @@ class NotebookProcessor(Logger):
             self.print_and_log(f"Otter assign completed: {notebook_path} -> {dist_folder}")
 
             # Remove all postfix _test from filenames in dist_folder
-            NotebookProcessor.remove_postfix(dist_folder)
+            remove_file_suffix(dist_folder, logger=self.logger)
 
         except subprocess.CalledProcessError as e:
             self.print_and_log(f"Error running `otter assign` for {notebook_path}: {e}")
@@ -982,18 +983,6 @@ class NotebookProcessor(Logger):
             self.print_and_log(
                 f"Unexpected error during `otter assign` for {notebook_path}: {e}"
             )
-
-    @staticmethod
-    def remove_postfix(dist_folder, suffix="_temp"):
-        logging.info(f"Removing postfix '{suffix}' from filenames in {dist_folder}")
-        for root, _, files in os.walk(dist_folder):
-            for file in files:
-                if suffix in file:
-                    old_file_path = os.path.join(root, file)
-                    new_file_path = os.path.join(root, file.replace(suffix, ""))
-                    os.rename(old_file_path, new_file_path)
-                    logging.info(f"Renamed: {old_file_path} -> {new_file_path}")
-
 
 @dataclass
 class WidgetQuestionParser:
