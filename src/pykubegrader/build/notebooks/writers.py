@@ -1,6 +1,7 @@
 import nbformat
 
 from pykubegrader.build.build_folder import NotebookProcessor
+from pykubegrader.build.notebooks.search import find_first_code_cell
 
 
 def remove_assignment_config_cells(notebook_path):
@@ -100,3 +101,51 @@ def write_validation_block(
         # Save the modified notebook
         with open(notebook_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
+
+
+def replace_cell_source(notebook_path, cell_index, new_source):
+    """
+    Replace the source code of a specific Jupyter notebook cell.
+
+    Args:
+        cell_index (int): Index of the cell to be modified (0-based).
+        new_source (str): New source code to replace the cell's content.
+    """
+    # Load the notebook
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        notebook = nbformat.read(f, as_version=4)
+
+    # Check if the cell index is valid
+    if cell_index >= len(notebook.cells) or cell_index < 0:
+        raise IndexError(f"Cell index {cell_index} is out of range for this notebook.")
+
+    # Replace the source code of the specified cell
+    notebook.cells[cell_index]["source"] = new_source
+
+    # Save the notebook
+    with open(notebook_path, "w", encoding="utf-8") as f:
+        nbformat.write(notebook, f)
+
+
+def write_initialization_code(
+    notebook_path,
+    week,
+    assignment_type,
+    require_key=False,
+    **kwargs,
+):
+    # finds the first code cell
+    index, cell = find_first_code_cell(notebook_path)
+    cell = cell["source"]
+    import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
+    import_text += "from pykubegrader.initialize import initialize_assignment\n"
+    import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
+    cell = f"{import_text}\n" + cell
+    replace_cell_source(notebook_path, index, cell)
+
+    if require_key:
+        write_validation_token_cell(
+            notebook_path,
+            require_key,
+            assignment_tag=kwargs.get("assignment_tag", None),
+        )

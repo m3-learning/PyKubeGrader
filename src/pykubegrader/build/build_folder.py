@@ -17,7 +17,7 @@ import yaml
 from dateutil import parser
 
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
-from pykubegrader.build.notebooks.writers import write_validation_token_cell
+from pykubegrader.build.notebooks.writers import write_initialization_code
 from pykubegrader.build.widget_questions.types import (
     MultipleChoice,
     SelectMany,
@@ -788,7 +788,6 @@ class NotebookProcessor(Logger):
         with open(output_path, "w", encoding="utf-8") as f:
             nbformat.write(notebook, f)
 
-    #TODO: This is where I left off.
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
@@ -800,8 +799,6 @@ class NotebookProcessor(Logger):
             config = extract_config_from_notebook(temp_notebook_path)
 
             files = extract_files(config)
-
-            # print(f"Files: {files}, from {temp_notebook_path}")
 
             if files:
                 for file in files:
@@ -839,7 +836,7 @@ class NotebookProcessor(Logger):
                 notebook_subfolder, "dist", "student", f"{notebook_name}.ipynb"
             )
 
-            NotebookProcessor.add_initialization_code(
+            write_initialization_code(
                 student_notebook,
                 self.week,
                 self.assignment_type,
@@ -870,7 +867,7 @@ class NotebookProcessor(Logger):
 
             return student_notebook, out.total_points
         else:
-            NotebookProcessor.add_initialization_code(
+            write_initialization_code(
                 temp_notebook_path,
                 self.week,
                 self.assignment_type,
@@ -903,32 +900,6 @@ class NotebookProcessor(Logger):
         if isinstance(obj, datetime):
             return obj.isoformat()
         raise TypeError(f"Type {type(obj)} not serializable")
-
-
-
-    @staticmethod
-    def add_initialization_code(
-        notebook_path,
-        week,
-        assignment_type,
-        require_key=False,
-        **kwargs,
-    ):
-        # finds the first code cell
-        index, cell = find_first_code_cell(notebook_path)
-        cell = cell["source"]
-        import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
-        import_text += "from pykubegrader.initialize import initialize_assignment\n"
-        import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
-        cell = f"{import_text}\n" + cell
-        replace_cell_source(notebook_path, index, cell)
-
-        if require_key:
-            write_validation_token_cell(
-                notebook_path,
-                require_key,
-                assignment_tag=kwargs.get("assignment_tag", None),
-            )
 
     #TODO: Check if we can combine this with replace_temp_in_notebook
     @staticmethod
@@ -1352,53 +1323,6 @@ def sanitize_string(input_string):
     # Replace invalid characters with underscores
     sanitized = re.sub(r"\W|^(?=\d)", "_", input_string)
     return sanitized
-
-
-def find_first_code_cell(notebook_path):
-    """
-    Finds the first Python code cell in a Jupyter notebook and its index.
-
-    Args:
-        notebook_path (str): Path to the Jupyter notebook file.
-
-    Returns:
-        tuple: A tuple containing the index of the first code cell and the cell dictionary,
-            or (None, None) if no code cell is found.
-    """
-    # Load the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
-        notebook = nbformat.read(f, as_version=4)
-
-    # Iterate through the cells to find the first code cell
-    for index, cell in enumerate(notebook.get("cells", [])):
-        if cell.get("cell_type") == "code":
-            return index, cell  # Return the index and the first code cell
-
-    return None, None  # No code cell found
-
-
-def replace_cell_source(notebook_path, cell_index, new_source):
-    """
-    Replace the source code of a specific Jupyter notebook cell.
-
-    Args:
-        cell_index (int): Index of the cell to be modified (0-based).
-        new_source (str): New source code to replace the cell's content.
-    """
-    # Load the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
-        notebook = nbformat.read(f, as_version=4)
-
-    # Check if the cell index is valid
-    if cell_index >= len(notebook.cells) or cell_index < 0:
-        raise IndexError(f"Cell index {cell_index} is out of range for this notebook.")
-
-    # Replace the source code of the specified cell
-    notebook.cells[cell_index]["source"] = new_source
-
-    # Save the notebook
-    with open(notebook_path, "w", encoding="utf-8") as f:
-        nbformat.write(notebook, f)
 
 
 def update_initialize_assignment(

@@ -15,17 +15,18 @@ from pykubegrader.build.build_folder import (NotebookProcessor,
                                              extract_SELECT_MANY, extract_TF,
                                              extract_config_from_notebook,
                                              extract_files, extract_raw_cells,
-                                             find_first_code_cell, formatter,
+                                             formatter,
                                              generate_mcq_file,
                                              generate_select_many_file,
                                              generate_tf_file, handler, logger,
-                                             main, replace_cell_source,
-                                             replace_cells_between_markers,
+                                             main, replace_cells_between_markers,
                                              sanitize_string,
                                              update_initialize_assignment,)
 from pykubegrader.build.clean_folder import (FolderCleaner, main,)
 from pykubegrader.build.collate import (QuestionCollator, main,)
 from pykubegrader.build.markdown_questions import (MarkdownToNotebook, main,)
+from pykubegrader.build.notebooks.search import find_first_code_cell
+from pykubegrader.build.notebooks.writers import replace_cell_source
 from pykubegrader.build.passwords import (jupyterhub_user, password,
                                           student_ids, user,)
 from pykubegrader.build.widget_questions.utils import extract_question
