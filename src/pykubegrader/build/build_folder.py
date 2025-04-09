@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 import requests
 import yaml
 
-from pykubegrader.build.config import SubmissionCodeBaseClass, question_class_type
+from pykubegrader.build.config import SubmissionCodeBaseClass, question_class_type, EnvironmentVariables
 from pykubegrader.build.io import remove_file_suffix
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
@@ -40,18 +40,12 @@ import nbformat
 
 from .api_notebook_builder import FastAPINotebookBuilder
 
-os.environ["JUPYTERHUB_USER"] = "jca92"
-os.environ["TOKEN"] = "token"
-os.environ["DB_URL"] = "https://engr-131-api.eastus.cloudapp.azure.com/"
-os.environ["keys_student"] = "capture"
-os.environ["user_name_student"] = "student"
-
 from pykubegrader.tokens.tokens import add_token
 
 add_token("token", duration=20)
 
 @dataclass
-class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger):
+class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, EnvironmentVariables):
     """
     A class for processing Jupyter notebooks in a directory and its subdirectories.
 
@@ -105,9 +99,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger):
     """
 
     root_folder: str
-    assignment_tag: str = field(default="")
     solutions_folder: str = field(init=False)
-    api_url: str = field(default="https://engr-131-api.eastus.cloudapp.azure.com")
     verbose: bool = False
     log: bool = True
     require_key: bool = False
@@ -127,6 +119,8 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger):
         
         # Initialize Logger with the required parameters
         super().__post_init__(verbose=self.verbose, log=self.log, **kwargs)
+        
+        self.assignment_tag = kwargs.get("assignment_tag", None)
         
         # Initialize the info for the class
         self.initialize_info()
@@ -156,7 +150,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger):
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
             self.week_num = self.assignment_tag.split("-")[-1]
-            self.assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 
         self.week = f"week_{self.week_num}"
 
@@ -164,6 +157,20 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger):
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
         self.assignment_total_points = 0
         self.total_point_log = {}
+    
+    
+    @property
+    def assignment_tag(self):
+        return self._assignment_tag
+    
+    @assignment_tag.setter
+    def assignment_tag(self, value):
+        if value is not None:
+            self._assignment_tag = value
+        elif self.week_num is None:
+            self._assignment_tag = self.assignment_type
+        else:
+            self._assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 
     def initialize_from_assignment_yaml(self):
         """

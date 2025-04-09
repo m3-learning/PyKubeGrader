@@ -1,4 +1,8 @@
 from dataclasses import dataclass
+from pathlib import Path
+
+import nbformat
+from pykubegrader.build.notebooks.writers import AddKeyRequirementImportBaseClass
 from pykubegrader.build.util import EncryptionKeyBaseClass
 @dataclass
 class DisplayQuestionCode:
@@ -46,7 +50,6 @@ class SubmissionCodeBaseClass:
     #TODO: Fix and refactor for simplicity  
     @dataclass
     class AddKeyRequirementImport(AddKeyRequirementImportBaseClass):
-
         @property
         def validate_token_line(self):
             # Add an additional line for validate_token()
@@ -78,3 +81,11 @@ class SubmissionCodeBaseClass:
             
             return code_cell
         
+@dataclass
+class EnvironmentVariables:
+    jhub_user: str = "jca92"
+    token: str = "token"
+    api_url: str = "https://engr-131-api.eastus.cloudapp.azure.com/"
+    keys_student: str = "capture"
+    user_name_student: str = "student"
+
