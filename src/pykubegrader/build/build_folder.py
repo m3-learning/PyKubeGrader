@@ -372,10 +372,18 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         )
 
         # Define HTTP Basic Authentication
-        auth = (user(), password())
+        self.post_request(url, payload,)
 
-        # Define headers
-        headers = {"Content-Type": "application/json"}
+    def post_request(self, url, payload, **kwargs):
+        
+        # Get user and password from kwargs if provided, otherwise use default credentials
+        if "user" in kwargs and "password" in kwargs:
+            auth = (kwargs["user"], kwargs["password"])
+        else:
+            auth = (user(), password())
+            
+        # Get headers from kwargs if provided, otherwise use default headers
+        headers = kwargs.get("headers", {"Content-Type": "application/json"})
 
         # Serialize the payload with the custom JSON encoder
         serialized_payload = json.dumps(payload, default=json_serial)
@@ -386,11 +394,11 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         )
 
         # Print the response
-        print(f"Status Code: {response.status_code}")
+        self.print_and_log(f"Status Code: {response.status_code}")
         try:
-            print(f"Response: {response.json()}")
+            self.print_and_log(f"Response: {response.json()}")
         except ValueError:
-            print(f"Response: {response.text}")
+            self.print_and_log(f"Response: {response.text}")
 
     def put_assignment(self):
         """
