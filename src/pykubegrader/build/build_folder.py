@@ -299,27 +299,33 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                 assignment_tag=self.assignment_tag,
             )
 
-    def build_payload_notebook(self, yaml_content, notebook_title, total_points):
+    def mod_build_payload(self, yaml_content, **kwargs):
+        notebook_title = kwargs.get("notebook_title", None)
+        total_points = kwargs.get("total_points", None)
+        
         # Parse the YAML content
         with open(yaml_content, "r") as file:
             data = yaml.safe_load(file)
-
+        
         # Extract assignment details
         assignment = data.get("assignment", {})
-
-        week_num = self.week_num
-        assignment_type = self.assignment_type
         due_date = get_due_date(assignment)
 
         return {
             "title": notebook_title,
-            "week_number": week_num,
-            "assignment_type": assignment_type,
+            "week_number": self.week_num,
+            "assignment_type": self.assignment_type,
             "due_date": due_date,
-            "max_score": total_points,
+            "max_points": total_points - self.bonus_points, # TODO: need a fix here for the total points
+            "total_points": total_points, # Added total points to the payload
+            "bonus_points": self.bonus_points, # Added bonus points to the payload
+            "description": str(self.week_num), # Added description to the payload TODO: should fix this to be better.
         }
 
+    #TODO: passthrough remove soon.
     def build_payload(self, yaml_content):
+        
+        self.mod_build_payload(yaml_content)
         """
         Reads YAML content for an assignment and returns Python variables.
 
@@ -329,27 +335,27 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         Returns:
             dict: A dictionary containing the parsed assignment data.
         """
-        # Parse the YAML content
-        with open(yaml_content, "r") as file:
-            data = yaml.safe_load(file)
+        # # Parse the YAML content
+        # with open(yaml_content, "r") as file:
+        #     data = yaml.safe_load(file)
 
-        # Extract assignment details
-        assignment = data.get("assignment", {})
-        week = assignment.get("week")
-        assignment_type = assignment.get("assignment_type")
-        due_date = get_due_date(assignment)
+        # # Extract assignment details
+        # assignment = data.get("assignment", {})
+        # week = assignment.get("week")
+        # assignment_type = assignment.get("assignment_type")
+        # due_date = get_due_date(assignment)
 
-        title = f"Week {week} - {assignment_type}"
+        # title = f"Week {week} - {assignment_type}"
 
-        # Return the extracted details as a dictionary
-        return {
-            "title": title,
-            "description": str(week),
-            "week_number": week,
-            "assignment_type": assignment_type,
-            "due_date": due_date,
-            "max_score": self.assignment_total_points - self.bonus_points,
-        }
+        # # Return the extracted details as a dictionary
+        # return {
+        #     "title": title,
+        #     "description": str(week),
+        #     "week_number": week,
+        #     "assignment_type": assignment_type,
+        #     "due_date": due_date,
+        #     "max_score": self.assignment_total_points - self.bonus_points,
+        # }
 
     def put_notebook(self, notebook_title, total_points):
         """
@@ -359,7 +365,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         url = os.path.join(self.api_url, "notebook")
 
         # Build the payload
-        payload = self.build_payload_notebook(
+        payload = self.mod_build_payload(
             yaml_content=f"{self.root_folder}/assignment_config.yaml",
             notebook_title=notebook_title,
             total_points=total_points,
