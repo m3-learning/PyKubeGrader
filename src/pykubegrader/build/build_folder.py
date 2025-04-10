@@ -151,17 +151,18 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
             self.week_num = self.assignment_tag.split("-")[-1]
 
-        self.week = f"week_{self.week_num}"
-
         # Define the folder to store solutions and ensure it exists
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
         self.assignment_total_points = 0
         self.total_point_log = {}
     
-    
     @property
     def assignment_tag(self):
         return self._assignment_tag
+    
+    @property
+    def week(self):
+        return f"week_{self.week_num}"
     
     @assignment_tag.setter
     def assignment_tag(self, value):
@@ -192,7 +193,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
             # Extract assignment details
             assignment = data.get("assignment", {})
-            self.week_num = assignment.get("week")
+            self.week_num = assignment.get("week", None)
             self.assignment_type = assignment.get("assignment_type")
             self.bonus_points = assignment.get("bonus_points", 0)
             self.require_key = assignment.get("require_key", False)
@@ -219,7 +220,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             - OSError: If there is an error accessing files or directories.
         """
         # 1. Collects all Jupyter notebook files (.ipynb) from the root folder and its subdirectories.
-        ipynb_files = self.get_notebooks_recursively()
+        ipynb_files = self.get_notebooks_recursively(self.root_folder)
 
         # 2. Verifies if each notebook contains the necessary assignment configuration.
         for notebook_path in ipynb_files:
@@ -231,17 +232,30 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                 self._process_single_notebook(notebook_path)
 
         # Write the dictionary to a JSON file
-        with open(f"{self.solutions_folder}/total_points.json", "w") as json_file:
-            json.dump(
-                self.total_point_log, json_file, indent=4
-            )  # `indent=4` for pretty formatting
+        self.write_JSON()
 
         if self.check_if_file_in_folder("assignment_config.yaml"):
             self.put_assignment()
 
-        self.update_initialize_function()
+        self.update_initialize_function(base_folder=self.solutions_folder, 
+                                        total_point_log=self.total_point_log, indent=4)
 
-    def get_notebooks_recursively(self):
+    @staticmethod
+    def write_JSON(**kwargs):
+        
+        base_folder = kwargs.get("base_folder", None)
+        information = kwargs.get("information", None)
+        indent = kwargs.get("indent", 2)
+        
+        path = os.path.join(base_folder, "total_points.json")
+        
+        with open(path, "w") as json_file:
+            json.dump(
+                information, json_file, indent=indent
+            )
+
+    @staticmethod
+    def get_notebooks_recursively(root_folder):
         """
         Recursively retrieves all Jupyter notebook files (.ipynb) from the root folder and its subfolders.
 
@@ -254,7 +268,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         ipynb_files = []
 
         # Walk through the root folder and its subfolders
-        for dirpath, _, filenames in os.walk(self.root_folder):
+        for dirpath, _, filenames in os.walk(root_folder):
             for filename in filenames:
                 # Check if the file is a Jupyter notebook
                 if filename.endswith(".ipynb"):
