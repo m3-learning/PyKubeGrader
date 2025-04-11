@@ -383,7 +383,10 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             auth = (user(), password())
             
         # Get headers from kwargs if provided, otherwise use default headers
-        headers = kwargs.get("headers", {"Content-Type": "application/json"})
+        if "headers" in kwargs:
+            headers = kwargs["headers"]
+        else:
+            headers = kwargs.get("headers", {"Content-Type": "application/json"})
 
         # Serialize the payload with the custom JSON encoder
         serialized_payload = json.dumps(payload, default=json_serial)
@@ -394,11 +397,13 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         )
 
         # Print the response
-        self.print_and_log(f"Status Code: {response.status_code}")
+        self.print_and_log(f"Status Code: {response.status_code}", verbose=True)
         try:
-            self.print_and_log(f"Response: {response.json()}")
+            self.print_and_log(f"Response: {response.json()}", verbose=True)
         except ValueError:
-            self.print_and_log(f"Response: {response.text}")
+            self.print_and_log(f"Response: {response.text}", verbose=True)
+
+        return response
 
     def put_assignment(self):
         """
@@ -410,20 +415,9 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
         # Build the payload
         payload = self.build_payload(f"{self.root_folder}/assignment_config.yaml")
+        
+        response = self.post_request(url, payload)
 
-        # Define HTTP Basic Authentication
-        auth = (user(), password())
-
-        # Define headers
-        headers = {"Content-Type": "application/json"}
-
-        # Serialize the payload with the custom JSON encoder
-        serialized_payload = json.dumps(payload, default=json_serial)
-
-        # Send the POST request
-        response = requests.post(
-            url, data=serialized_payload, headers=headers, auth=auth
-        )
 
         # Print the response
         print(f"Status Code: {response.status_code}")

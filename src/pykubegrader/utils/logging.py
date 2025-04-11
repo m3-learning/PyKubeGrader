@@ -24,7 +24,7 @@ class Logger:
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
 
-    def print_and_log(self, message):
+    def print_and_log(self, message, verbose=False, log=False):
         """
         Logs a message and optionally prints it to the console.
 
@@ -46,9 +46,9 @@ class Logger:
         """
 
         # Print the message to the console if verbosity is enabled
-        if self.verbose:
+        if self.verbose or verbose:
             print(message)
 
         # Log the message if logging is enabled
-        if self.log:
+        if self.log or log:
             self.logger.info(message)
