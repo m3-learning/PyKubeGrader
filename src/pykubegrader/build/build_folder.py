@@ -1013,7 +1013,8 @@ class WidgetQuestionParser:
 def update_initialize_assignment(
     notebook_path: str,
     assignment_points: Optional[float] = None,
-    assignment_tag: Optional[str] = None,
+    assignment_tag: Optional[str] = None, 
+    **kwargs,
 ) -> None:
     """
     Search for a specific line in a Jupyter Notebook and update it with additional input variables.
@@ -1026,19 +1027,23 @@ def update_initialize_assignment(
     Returns:
         None
     """
+    
+    variable = kwargs.get("variable", 'responses')
+    function_name = kwargs.get("function_name", 'initialize_assignment')
+    additional_variables_dict = kwargs.get("additional_variables", {})
+    additional_variables_ = add_variables_from_dict(additional_variables_dict)
+    
     # Load the notebook content
-    with open(notebook_path, "r", encoding="utf-8") as file:
-        notebook_data = json.load(file)
+    notebook_data = NotebookProcessor.read_notebook(notebook_path)
 
     # Pattern to match the specific initialize_assignment line
-    pattern = re.compile(r"responses\s*=\s*initialize_assignment\((.*?)\)")
+    pattern = re.compile(rf"{variable}\s*=\s*{function_name}\((.*?)\)")
 
     # Collect additional variables
-    additional_variables = []
     if assignment_points is not None:
-        additional_variables.append(f"assignment_points = {assignment_points}")
+        additional_variables_.append(f"assignment_points = {assignment_points}")
     if assignment_tag is not None:
-        additional_variables.append(f"assignment_tag = '{assignment_tag}'")
+        additional_variables_.append(f"assignment_tag = '{assignment_tag}'")
 
     # Join additional variables into a string
     additional_variables_str = ", ".join(additional_variables)
@@ -1057,10 +1062,10 @@ def update_initialize_assignment(
                     existing_args = match.group(1).strip()
                     # Replace with the updated line
                     if additional_variables_str:
-                        updated_line = f"responses = initialize_assignment({existing_args}, {additional_variables_str})\n"
+                        updated_line = f"{variable} = {function_name}({existing_args}, {additional_variables_str})\n"
                     else:
                         updated_line = (
-                            f"responses = initialize_assignment({existing_args})\n"
+                            f"{variable} = {function_name}({existing_args})\n"
                         )
                     source_code[i] = updated_line
                     updated = True
@@ -1071,6 +1076,13 @@ def update_initialize_assignment(
         print(f"Notebook '{notebook_path}' has been updated.")
     else:
         print(f"No matching lines found in '{notebook_path}'.")
+
+def add_variables_from_dict(additional_variables_dict):
+    additional_variables_ = []
+    for key, value in additional_variables_dict.items():
+        if value is not None:
+            additional_variables_.append(f"{key} = {value}")
+    return additional_variables_
 
 
 def extract_config_from_notebook(notebook_path):
