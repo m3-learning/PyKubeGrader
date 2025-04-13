@@ -91,6 +91,17 @@ class EncryptionKeyBaseClass:
         Raises:
             IOError: If the file copy operation fails.
         """
+        
+        self.temp_notebook_path = temp_notebook_path
+        
+        client_private_key, server_public_key = self.get_key_paths(temp_notebook_path)
+
+        shutil.copy(self.client_private_key_path, client_private_key)
+        shutil.copy(self.server_public_key_path, server_public_key)
+
+        return client_private_key, server_public_key
+
+    def get_key_paths(self, temp_notebook_path):
         client_private_key = os.path.join(
             os.path.dirname(temp_notebook_path),
             self.client_private_key_filename,
@@ -99,8 +110,13 @@ class EncryptionKeyBaseClass:
             os.path.dirname(temp_notebook_path),
             self.server_public_key_filename,
         )
-
-        shutil.copy(self.client_private_key_path, client_private_key)
-        shutil.copy(self.server_public_key_path, server_public_key)
-
-        return client_private_key, server_public_key
+        
+        return client_private_key,server_public_key
+    
+    def remove_encryption_keys(self) -> None:
+        if self.temp_notebook_path:
+            client_private_key, server_public_key = self.get_key_paths(self.temp_notebook_path)
+            os.remove(client_private_key)
+            os.remove(server_public_key)
+        else:
+            raise ValueError("temp_notebook_path is not set")

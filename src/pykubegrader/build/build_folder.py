@@ -732,7 +732,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
     ):
         if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
 
-            client_private_key, server_public_key = transfer_encryption_keys(temp_notebook_path)
+            client_private_key, server_public_key = self.transfer_encryption_keys(temp_notebook_path)
 
             # Extract the assignment config
             config = extract_config_from_notebook(temp_notebook_path)
@@ -747,7 +747,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                         os.path.join(notebook_subfolder, file),
                     )
                     
-            client_private_key, server_public_key = transfer_encryption_keys(notebook_subfolder)
+            client_private_key, server_public_key = self.transfer_encryption_keys(notebook_subfolder)
 
             out = FastAPINotebookBuilder(
                 notebook_path=temp_notebook_path,
@@ -1028,10 +1028,9 @@ def update_initialize_assignment(
         None
     """
     
-    variable = kwargs.get("variable", 'responses')
+    
     function_name = kwargs.get("function_name", 'initialize_assignment')
-    additional_variables_dict = kwargs.get("additional_variables", {})
-    additional_variables_ = add_variables_from_dict(additional_variables_dict)
+    variable = kwargs.get("variable", 'responses')
     
     # Load the notebook content
     notebook_data = NotebookProcessor.read_notebook(notebook_path)
@@ -1039,14 +1038,7 @@ def update_initialize_assignment(
     # Pattern to match the specific initialize_assignment line
     pattern = re.compile(rf"{variable}\s*=\s*{function_name}\((.*?)\)")
 
-    # Collect additional variables
-    if assignment_points is not None:
-        additional_variables_.append(f"assignment_points = {assignment_points}")
-    if assignment_tag is not None:
-        additional_variables_.append(f"assignment_tag = '{assignment_tag}'")
-
-    # Join additional variables into a string
-    additional_variables_str = ", ".join(additional_variables)
+    additional_variables_str = extract_additional_variables(assignment_points, assignment_tag, kwargs)
 
     # Flag to check if any replacements were made
     updated = False
@@ -1076,6 +1068,20 @@ def update_initialize_assignment(
         print(f"Notebook '{notebook_path}' has been updated.")
     else:
         print(f"No matching lines found in '{notebook_path}'.")
+
+def extract_additional_variables(assignment_points, assignment_tag, kwargs):
+    additional_variables_dict = kwargs.get("additional_variables", {})
+    additional_variables_ = add_variables_from_dict(additional_variables_dict)
+
+    # Collect additional variables
+    if assignment_points is not None:
+        additional_variables_.append(f"assignment_points = {assignment_points}")
+    if assignment_tag is not None:
+        additional_variables_.append(f"assignment_tag = '{assignment_tag}'")
+
+    # Join additional variables into a string
+    additional_variables_str = ", ".join(additional_variables_)
+    return additional_variables_str
 
 def add_variables_from_dict(additional_variables_dict):
     additional_variables_ = []
