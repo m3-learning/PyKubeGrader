@@ -17,6 +17,8 @@ import yaml
 
 from pykubegrader.build.config import SubmissionCodeBaseClass, question_class_type, EnvironmentVariables
 from pykubegrader.build.io import get_notebooks_recursively, remove_file_suffix, write_JSON
+from pykubegrader.build.notebooks.io import write_notebook
+from pykubegrader.build.notebooks.io import read_notebook
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
@@ -40,7 +42,7 @@ from typing import Optional
 
 import nbformat
 
-from .api_notebook_builder import FastAPINotebookBuilder
+from .free_response_builder import FastAPINotebookBuilder
 
 from pykubegrader.tokens.tokens import add_token
 
@@ -636,7 +638,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         """
         try:
             # Load the notebook
-            notebook = NotebookProcessor.read_notebook(notebook_path)
+            notebook = read_notebook(notebook_path)
 
             # Filter out empty cells
             non_empty_cells = [cell for cell in notebook.cells if cell.source.strip()]
@@ -646,17 +648,12 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
             # Save the updated notebook
             save_path = output_path if output_path else notebook_path
-            self.write_notebook(notebook, save_path)
+            write_notebook(notebook, save_path)
 
             self.print_and_log(f"Empty cells removed. Updated notebook saved at: {save_path}")
 
         except Exception as e:
-            self.print_and_log(f"An error occurred: {e}")
-
-    @staticmethod
-    def write_notebook(notebook, save_path):
-        with open(save_path, "w") as nb_file:
-            nbformat.write(notebook, nb_file)
+            self.print_and_log(f"An error occurred: {e}")    
 
     def add_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
@@ -667,7 +664,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             output_path (str): Path to save the modified notebook.
         """
         # Load the notebook
-        notebook = NotebookProcessor.read_notebook(notebook_path)
+        notebook = read_notebook(notebook_path)
 
         # Define the Markdown cell
         markdown_cell = nbformat.v4.new_markdown_cell(
@@ -687,7 +684,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         notebook.cells.append(code_cell)
 
         # Save the modified notebook
-        self.write_notebook(notebook, output_path)
+        write_notebook(notebook, output_path)
 
     def add_final_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
@@ -702,7 +699,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             return
 
         # Load the notebook
-        notebook = NotebookProcessor.read_notebook(notebook_path)
+        notebook = read_notebook(notebook_path)
 
         # Define the Markdown cell
         markdown_cell = nbformat.v4.new_markdown_cell(
@@ -725,7 +722,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         notebook.cells.append(code_cell)
 
         # Save the modified notebook
-        self.write_notebook(notebook, output_path)
+        write_notebook(notebook, output_path)
 
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
@@ -822,7 +819,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
     @staticmethod
     def replace_temp_no_otter(input_file, output_file):
         # Load the notebook
-        notebook = NotebookProcessor.read_notebook(input_file)
+        notebook = read_notebook(input_file)
 
         # Iterate through the cells and modify `cell.source`
         for cell in notebook.cells:
@@ -831,13 +828,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                     cell.source = cell.source.replace("_temp", "")
 
         # Save the modified notebook
-        self.write_notebook(notebook, output_file)
-
-    @staticmethod
-    def read_notebook(input_file):
-        with open(input_file, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
-        return notebook
+        write_notebook(notebook, output_file)
 
     @staticmethod
     def replace_temp_in_notebook(input_file, output_file):
@@ -864,7 +855,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                 ]
 
         # Write the updated notebook to the output file
-        NotebookProcessor.write_notebook(notebook_data, output_file)
+        write_notebook(notebook_data, output_file)
 
     @staticmethod
     def extract_question_points(raw, i, _data, grade_=None):
@@ -1033,7 +1024,7 @@ def update_initialize_assignment(
     variable = kwargs.get("variable", 'responses')
     
     # Load the notebook content
-    notebook_data = NotebookProcessor.read_notebook(notebook_path)
+    notebook_data = read_notebook(notebook_path)
 
     # Pattern to match the specific initialize_assignment line
     pattern = re.compile(rf"{variable}\s*=\s*{function_name}\((.*?)\)")
@@ -1064,7 +1055,7 @@ def update_initialize_assignment(
 
     # If updated, save the notebook
     if updated:
-        NotebookProcessor.write_notebook(notebook_data, notebook_path)
+        write_notebook(notebook_data, notebook_path)
         print(f"Notebook '{notebook_path}' has been updated.")
     else:
         print(f"No matching lines found in '{notebook_path}'.")
@@ -1251,3 +1242,4 @@ if __name__ == "__main__":
 #                 f.write(f"            grade={grade},\n")
 
 #             f.write("        )\n")
+

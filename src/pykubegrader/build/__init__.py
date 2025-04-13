@@ -1,13 +1,13 @@
 # Auto-generated __init__.py
 
-from pykubegrader.build import api_notebook_builder
+from pykubegrader.build import free_response_builder
 from pykubegrader.build import build_folder
 from pykubegrader.build import clean_folder
 from pykubegrader.build import collate
 from pykubegrader.build import markdown_questions
 from pykubegrader.build import passwords
 
-from pykubegrader.build.api_notebook_builder import (FastAPINotebookBuilder,)
+from pykubegrader.build.free_response_builder import (FastAPINotebookBuilder,)
 from pykubegrader.build.build_folder import (NotebookProcessor,
                                              WidgetQuestionParser,
                                              check_for_heading, ensure_imports,
@@ -31,7 +31,7 @@ from pykubegrader.build.widget_questions.utils import extract_question, sanitize
 
 __all__ = ['FastAPINotebookBuilder', 'FolderCleaner', 'MarkdownToNotebook',
            'NotebookProcessor', 'QuestionCollator', 'WidgetQuestionParser',
-           'api_notebook_builder', 'build_folder', 'check_for_heading',
+           'free_response_builder', 'build_folder', 'check_for_heading',
            'clean_folder', 'lock_cells_from_students', 'collate', 'ensure_imports',
            'extract_SELECT_MANY', 'extract_TF', 'extract_config_from_notebook',
            'extract_files', 'extract_question', 'extract_raw_cells',
