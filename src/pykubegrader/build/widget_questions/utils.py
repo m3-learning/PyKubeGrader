@@ -158,3 +158,18 @@ def process_widget_questions(ipynb_file, start_tag, end_tag):
     except json.JSONDecodeError:
         print("Invalid JSON in notebook file.")
         return []
+
+
+def sanitize_string(input_string):
+    """
+    Converts a string into a valid Python variable name.
+
+    Args:
+        input_string (str): The string to convert.
+
+    Returns:
+        str: A valid Python variable name.
+    """
+    # Replace invalid characters with underscores
+    sanitized = re.sub(r"\W|^(?=\d)", "_", input_string)
+    return sanitized

@@ -27,13 +27,12 @@ from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 generate_mcq_file, generate_select_many_file,
                                 generate_tf_file, handler, jupyterhub_user,
                                 logger, main, markdown_questions, password,
-                                passwords, sanitize_string,
-                                student_ids, update_initialize_assignment,
+                                passwords, student_ids, update_initialize_assignment,
                                 user,)
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.search import find_first_code_cell
 from pykubegrader.build.notebooks.writers import replace_cell_source, replace_cells_between_markers
-from pykubegrader.build.widget_questions.utils import extract_question
+from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string
 from pykubegrader.graders import (calculate_late_submission, late_assignments,)
 from pykubegrader.log_parser import (LogParser, LogParserResults, parse,)
 from pykubegrader.telemetry import (ensure_responses, log_encrypted,

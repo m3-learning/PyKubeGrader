@@ -18,8 +18,7 @@ from pykubegrader.build.build_folder import (NotebookProcessor,
                                              generate_mcq_file,
                                              generate_select_many_file,
                                              generate_tf_file, handler, logger,
-                                             main, sanitize_string,
-                                             update_initialize_assignment,)
+                                             main, update_initialize_assignment,)
 from pykubegrader.build.clean_folder import (FolderCleaner, main,)
 from pykubegrader.build.collate import (QuestionCollator, main,)
 from pykubegrader.build.markdown_questions import (MarkdownToNotebook, main,)
@@ -28,7 +27,7 @@ from pykubegrader.build.notebooks.search import find_first_code_cell
 from pykubegrader.build.notebooks.writers import replace_cell_source, replace_cells_between_markers
 from pykubegrader.build.passwords import (jupyterhub_user, password,
                                           student_ids, user,)
-from pykubegrader.build.widget_questions.utils import extract_question
+from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string
 
 __all__ = ['FastAPINotebookBuilder', 'FolderCleaner', 'MarkdownToNotebook',
            'NotebookProcessor', 'QuestionCollator', 'WidgetQuestionParser',

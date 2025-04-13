@@ -1,8 +1,9 @@
 import nbformat
 
-from pykubegrader.build.build_folder import NotebookProcessor, sanitize_string
+from pykubegrader.build.build_folder import NotebookProcessor
 from pykubegrader.build.config import DisplayQuestionCode
 from pykubegrader.build.notebooks.search import find_first_code_cell
+from pykubegrader.build.widget_questions.utils import sanitize_string
 
 
 def remove_assignment_config_cells(notebook_path):

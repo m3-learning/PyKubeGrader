@@ -16,7 +16,7 @@ import requests
 import yaml
 
 from pykubegrader.build.config import SubmissionCodeBaseClass, question_class_type, EnvironmentVariables
-from pykubegrader.build.io import remove_file_suffix
+from pykubegrader.build.io import get_notebooks_recursively, remove_file_suffix, write_JSON
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
@@ -28,6 +28,7 @@ from pykubegrader.build.widget_questions.types import (
     TrueFalse,
 )
 
+from pykubegrader.build.widget_questions.utils import sanitize_string
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 
 try:
@@ -221,7 +222,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             - OSError: If there is an error accessing files or directories.
         """
         # 1. Collects all Jupyter notebook files (.ipynb) from the root folder and its subdirectories.
-        ipynb_files = self.get_notebooks_recursively(self.root_folder)
+        ipynb_files = get_notebooks_recursively(self.root_folder, extension=".ipynb")
 
         # 2. Verifies if each notebook contains the necessary assignment configuration.
         for notebook_path in ipynb_files:
@@ -231,49 +232,13 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                 self._process_single_notebook(notebook_path)
 
         # Write the dictionary to a JSON file
-        self.write_JSON()
+        write_JSON()
 
         if self.check_if_file_in_folder("assignment_config.yaml"):
             self.post_assignment()
 
         self.update_initialize_function(base_folder=self.solutions_folder, 
                                         total_point_log=self.total_point_log, indent=4)
-
-    @staticmethod
-    def write_JSON(**kwargs):
-        
-        base_folder = kwargs.get("base_folder", None)
-        information = kwargs.get("information", None)
-        indent = kwargs.get("indent", 2)
-        
-        path = os.path.join(base_folder, "total_points.json")
-        
-        with open(path, "w") as json_file:
-            json.dump(
-                information, json_file, indent=indent
-            )
-
-    @staticmethod
-    def get_notebooks_recursively(root_folder):
-        """
-        Recursively retrieves all Jupyter notebook files (.ipynb) from the root folder and its subfolders.
-
-        This method walks through the directory tree starting from the root folder, identifies all files
-        with a .ipynb extension, and collects their paths in a list.
-
-        Returns:
-            list: A list of file paths to Jupyter notebook files found within the root folder and its subfolders.
-        """
-        ipynb_files = []
-
-        # Walk through the root folder and its subfolders
-        for dirpath, _, filenames in os.walk(root_folder):
-            for filename in filenames:
-                # Check if the file is a Jupyter notebook
-                if filename.endswith(".ipynb"):
-                    notebook_path = os.path.join(dirpath, filename)
-                    ipynb_files.append(notebook_path)
-        return ipynb_files
 
     def update_initialize_function(self):
         """
@@ -671,8 +636,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         """
         try:
             # Load the notebook
-            with open(notebook_path, "r") as nb_file:
-                notebook = nbformat.read(nb_file, as_version=4)
+            notebook = NotebookProcessor.read_notebook(notebook_path)
 
             # Filter out empty cells
             non_empty_cells = [cell for cell in notebook.cells if cell.source.strip()]
@@ -703,8 +667,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             output_path (str): Path to save the modified notebook.
         """
         # Load the notebook
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
+        notebook = NotebookProcessor.read_notebook(notebook_path)
 
         # Define the Markdown cell
         markdown_cell = nbformat.v4.new_markdown_cell(
@@ -739,8 +702,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             return
 
         # Load the notebook
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
+        notebook = NotebookProcessor.read_notebook(notebook_path)
 
         # Define the Markdown cell
         markdown_cell = nbformat.v4.new_markdown_cell(
@@ -860,8 +822,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
     @staticmethod
     def replace_temp_no_otter(input_file, output_file):
         # Load the notebook
-        with open(input_file, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
+        notebook = NotebookProcessor.read_notebook(input_file)
 
         # Iterate through the cells and modify `cell.source`
         for cell in notebook.cells:
@@ -871,6 +832,12 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
         # Save the modified notebook
         self.write_notebook(notebook, output_file)
+
+    @staticmethod
+    def read_notebook(input_file):
+        with open(input_file, "r", encoding="utf-8") as f:
+            notebook = nbformat.read(f, as_version=4)
+        return notebook
 
     @staticmethod
     def replace_temp_in_notebook(input_file, output_file):
@@ -967,172 +934,80 @@ class WidgetQuestionParser:
         self.subquestion_number += 1
 
 
-def check_for_heading(self, notebook_path, search_strings):
-    """
-    Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
+# def check_for_heading(self, notebook_path, search_strings):
+#     """
+#     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
 
-    Args:
-        notebook_path (str): The file path to the Jupyter notebook to be checked.
-        search_strings (list of str): A list of strings to search for in the heading cells.
+#     Args:
+#         notebook_path (str): The file path to the Jupyter notebook to be checked.
+#         search_strings (list of str): A list of strings to search for in the heading cells.
 
-    Returns:
-        bool: True if any of the search strings are found in the heading cells, False otherwise.
+#     Returns:
+#         bool: True if any of the search strings are found in the heading cells, False otherwise.
 
-    Example:
-        search_strings = ["# ASSIGNMENT CONFIG", "# BEGIN MULTIPLE CHOICE"]
-        result = check_for_heading("path/to/notebook.ipynb", search_strings)
-        if result:
-            print("Heading found.")
-        else:
-            print("Heading not found.")
-    """
-    try:
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
-            for cell in notebook.cells:
-                if cell.cell_type == "raw" and cell.source.startswith("#"):
-                    if any(
-                        search_string in cell.source for search_string in search_strings
-                    ):
-                        return True
-    except Exception as e:
-        self.print_and_log(f"Error reading notebook {notebook_path}: {e}")
-    return False
+#     Example:
+#         search_strings = ["# ASSIGNMENT CONFIG", "# BEGIN MULTIPLE CHOICE"]
+#         result = check_for_heading("path/to/notebook.ipynb", search_strings)
+#         if result:
+#             print("Heading found.")
+#         else:
+#             print("Heading not found.")
+#     """
+#     try:
+#         with open(notebook_path, "r", encoding="utf-8") as f:
+#             notebook = nbformat.read(f, as_version=4)
+#             for cell in notebook.cells:
+#                 if cell.cell_type == "raw" and cell.source.startswith("#"):
+#                     if any(
+#                         search_string in cell.source for search_string in search_strings
+#                     ):
+#                         return True
+#     except Exception as e:
+#         self.print_and_log(f"Error reading notebook {notebook_path}: {e}")
+#     return False
 
 
-def ensure_imports(output_file, header_lines):
-    """
-    Ensures specified header lines are present at the top of the file.
+# def ensure_imports(output_file, header_lines):
+#     """
+#     Ensures specified header lines are present at the top of the file.
 
-    Args:
-        output_file (str): The path of the file to check and modify.
-        header_lines (list of str): Lines to ensure are present at the top.
+#     Args:
+#         output_file (str): The path of the file to check and modify.
+#         header_lines (list of str): Lines to ensure are present at the top.
 
-    Returns:
-        str: The existing content of the file (without the header).
-    """
-    existing_content = ""
-    if os.path.exists(output_file):
-        with open(output_file, "r", encoding="utf-8") as f:
-            existing_content = f.read()
+#     Returns:
+#         str: The existing content of the file (without the header).
+#     """
+#     existing_content = ""
+#     if os.path.exists(output_file):
+#         with open(output_file, "r", encoding="utf-8") as f:
+#             existing_content = f.read()
 
-    # Determine missing lines
-    missing_lines = [line for line in header_lines if line not in existing_content]
+#     # Determine missing lines
+#     missing_lines = [line for line in header_lines if line not in existing_content]
 
-    # Write the updated content back to the file
-    with open(output_file, "w", encoding="utf-8") as f:
-        # Add missing lines at the top
-        f.writelines(missing_lines)
+#     # Write the updated content back to the file
+#     with open(output_file, "w", encoding="utf-8") as f:
+#         # Add missing lines at the top
+#         f.writelines(missing_lines)
         
-        # Retain the existing content
-        f.write(existing_content)
+#         # Retain the existing content
+#         f.write(existing_content)
 
-    return existing_content
-
-
-def write_question_class(f, q_value, class_name):
-    class_type_ = question_class_type[class_name]
-
-    f.write(
-        f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
-    )
-    f.write("    def __init__(self):\n")
-    f.write("        super().__init__(\n")
-    f.write(f'            title=f"{q_value["title"]}",\n')
-    f.write(f"            style={class_type_['style']},\n")
-    f.write(f"            question_number={q_value['question number']},\n")
+#     return existing_content
 
 
-# def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
-    """
-    Generates a Python file defining an MCQuestion class from a dictionary.
+# def write_question_class(f, q_value, class_name):
+#     class_type_ = question_class_type[class_name]
 
-    Args:
-        data_dict (dict): A nested dictionary containing question metadata.
-        output_file (str): The path for the output Python file.
-
-    Returns:
-        None
-    """
-
-    # Define header lines
-    header_lines = [
-        "from pykubegrader.widgets.select_many import MultiSelect, SelectMany\n",
-        "import pykubegrader.initialize\n",
-        "import panel as pn\n\n",
-        "pn.extension()\n\n",
-    ]
-
-    # Ensure header lines are present
-    _existing_content = ensure_imports(output_file, header_lines)
-
-    for question_dict in data_dict:
-        with open(output_file, "a", encoding="utf-8") as f:
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                if i == 0:
-                    # Write the MCQuestion class
-                    f.write(
-                        f"class Question{q_value['question number']}(SelectMany):\n"
-                    )
-                    f.write("    def __init__(self):\n")
-                    f.write("        super().__init__(\n")
-                    f.write(f'            title=f"{q_value["title"]}",\n')
-                    f.write("            style=MultiSelect,\n")
-                    f.write(
-                        f"            question_number={q_value['question number']},\n"
-                    )
-                break
-
-            keys = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write keys
-                keys.append(
-                    f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
-                )
-
-            f.write(f"            keys={keys},\n")
-
-            descriptions = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write descriptions
-                descriptions.append(q_value["question_text"])
-            f.write(f"            descriptions={descriptions},\n")
-
-            options = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write options
-                options.append(q_value["OPTIONS"])
-
-            f.write(f"            options={options},\n")
-
-            points = []
-            for i, (q_key, q_value) in enumerate(question_dict.items()):
-                # Write points
-                points.append(q_value["points"])
-
-            f.write(f"            points={points},\n")
-
-            first_key = next(iter(question_dict))
-            if "grade" in question_dict[first_key]:
-                grade = question_dict[first_key]["grade"]
-                f.write(f"            grade={grade},\n")
-
-            f.write("        )\n")
-
-
-def sanitize_string(input_string):
-    """
-    Converts a string into a valid Python variable name.
-
-    Args:
-        input_string (str): The string to convert.
-
-    Returns:
-        str: A valid Python variable name.
-    """
-    # Replace invalid characters with underscores
-    sanitized = re.sub(r"\W|^(?=\d)", "_", input_string)
-    return sanitized
+#     f.write(
+#         f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
+#     )
+#     f.write("    def __init__(self):\n")
+#     f.write("        super().__init__(\n")
+#     f.write(f'            title=f"{q_value["title"]}",\n')
+#     f.write(f"            style={class_type_['style']},\n")
+#     f.write(f"            question_number={q_value['question number']},\n")
 
 
 def update_initialize_assignment(
@@ -1283,3 +1158,78 @@ def main():
 if __name__ == "__main__":
     sys.exit(main())
     
+# # def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
+#     """
+#     Generates a Python file defining an MCQuestion class from a dictionary.
+
+#     Args:
+#         data_dict (dict): A nested dictionary containing question metadata.
+#         output_file (str): The path for the output Python file.
+
+#     Returns:
+#         None
+#     """
+
+#     # Define header lines
+#     header_lines = [
+#         "from pykubegrader.widgets.select_many import MultiSelect, SelectMany\n",
+#         "import pykubegrader.initialize\n",
+#         "import panel as pn\n\n",
+#         "pn.extension()\n\n",
+#     ]
+
+#     # Ensure header lines are present
+#     _existing_content = ensure_imports(output_file, header_lines)
+
+#     for question_dict in data_dict:
+#         with open(output_file, "a", encoding="utf-8") as f:
+#             for i, (q_key, q_value) in enumerate(question_dict.items()):
+#                 if i == 0:
+#                     # Write the MCQuestion class
+#                     f.write(
+#                         f"class Question{q_value['question number']}(SelectMany):\n"
+#                     )
+#                     f.write("    def __init__(self):\n")
+#                     f.write("        super().__init__(\n")
+#                     f.write(f'            title=f"{q_value["title"]}",\n')
+#                     f.write("            style=MultiSelect,\n")
+#                     f.write(
+#                         f"            question_number={q_value['question number']},\n"
+#                     )
+#                 break
+
+#             keys = []
+#             for i, (q_key, q_value) in enumerate(question_dict.items()):
+#                 # Write keys
+#                 keys.append(
+#                     f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
+#                 )
+
+#             f.write(f"            keys={keys},\n")
+
+#             descriptions = []
+#             for i, (q_key, q_value) in enumerate(question_dict.items()):
+#                 # Write descriptions
+#                 descriptions.append(q_value["question_text"])
+#             f.write(f"            descriptions={descriptions},\n")
+
+#             options = []
+#             for i, (q_key, q_value) in enumerate(question_dict.items()):
+#                 # Write options
+#                 options.append(q_value["OPTIONS"])
+
+#             f.write(f"            options={options},\n")
+
+#             points = []
+#             for i, (q_key, q_value) in enumerate(question_dict.items()):
+#                 # Write points
+#                 points.append(q_value["points"])
+
+#             f.write(f"            points={points},\n")
+
+#             first_key = next(iter(question_dict))
+#             if "grade" in question_dict[first_key]:
+#                 grade = question_dict[first_key]["grade"]
+#                 f.write(f"            grade={grade},\n")
+
+#             f.write("        )\n")
