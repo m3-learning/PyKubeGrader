@@ -5,6 +5,7 @@ import argparse
 import json
 import logging
 import os
+from pathlib import Path
 import re
 import shutil
 import subprocess
@@ -226,8 +227,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         for notebook_path in ipynb_files:
             # Check if the notebook has the required assignment configuration
             if self.has_assignment(notebook_path):
-                self.print_and_log(f"notebook_path = {notebook_path}")
-
                 # 3. Process the notebook if it meets the criteria
                 self._process_single_notebook(notebook_path)
 
@@ -235,7 +234,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         self.write_JSON()
 
         if self.check_if_file_in_folder("assignment_config.yaml"):
-            self.put_assignment()
+            self.post_assignment()
 
         self.update_initialize_function(base_folder=self.solutions_folder, 
                                         total_point_log=self.total_point_log, indent=4)
@@ -375,7 +374,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         self.post_request(url, payload,)
 
     def post_request(self, url, payload, **kwargs):
-        
         # Get user and password from kwargs if provided, otherwise use default credentials
         if "user" in kwargs and "password" in kwargs:
             auth = (kwargs["user"], kwargs["password"])
@@ -403,9 +401,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         except ValueError:
             self.print_and_log(f"Response: {response.text}", verbose=True)
 
-        return response
-
-    def put_assignment(self):
+    def post_assignment(self):
         """
         Sends a POST request to add an assignment.
         """
@@ -416,15 +412,8 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         # Build the payload
         payload = self.build_payload(f"{self.root_folder}/assignment_config.yaml")
         
-        response = self.post_request(url, payload)
+        self.post_request(url, payload)
 
-
-        # Print the response
-        print(f"Status Code: {response.status_code}")
-        try:
-            print(f"Response: {response.json()}")
-        except ValueError:
-            print(f"Response: {response.text}")
 
     def check_if_file_in_folder(self, file):
         for root, _, files in os.walk(self.root_folder):
@@ -464,7 +453,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         self.print_and_log(f"Processing notebook: {notebook_path}")
 
         # 1. Get the notebook name and solution folder path
-        notebook_name = os.path.splitext(os.path.basename(notebook_path))[0]
+        notebook_name = Path(notebook_path).stem
         solution_notebook_folder_path = os.path.join(
             self.solutions_folder, notebook_name
         )
@@ -484,6 +473,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             temp_notebook_path, solution_notebook_folder_path, notebook_name
         )
 
+        #TODO: might want to refactor this
         # If Otter does not run, move the student file to the main directory
         if student_notebook is None:
             lock_cells_from_students(temp_notebook_path, self.logger)
@@ -503,6 +493,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
         # Move the solution file to the autograder folder
         if solution_path is not None:
+            
             # gets importable file name
             importable_file_name = sanitize_string(
                 os.path.splitext(os.path.basename(solution_path))[0]
@@ -691,13 +682,17 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
             # Save the updated notebook
             save_path = output_path if output_path else notebook_path
-            with open(save_path, "w") as nb_file:
-                nbformat.write(notebook, nb_file)
+            self.write_notebook(notebook, save_path)
 
             self.print_and_log(f"Empty cells removed. Updated notebook saved at: {save_path}")
 
         except Exception as e:
             self.print_and_log(f"An error occurred: {e}")
+
+    @staticmethod
+    def write_notebook(notebook, save_path):
+        with open(save_path, "w") as nb_file:
+            nbformat.write(notebook, nb_file)
 
     def add_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
@@ -729,8 +724,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         notebook.cells.append(code_cell)
 
         # Save the modified notebook
-        with open(output_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
+        self.write_notebook(notebook, output_path)
 
     def add_final_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
@@ -769,8 +763,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         notebook.cells.append(code_cell)
 
         # Save the modified notebook
-        with open(output_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
+        self.write_notebook(notebook, output_path)
 
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
@@ -877,8 +870,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                     cell.source = cell.source.replace("_temp", "")
 
         # Save the modified notebook
-        with open(output_file, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
+        self.write_notebook(notebook, output_file)
 
     @staticmethod
     def replace_temp_in_notebook(input_file, output_file):
@@ -905,8 +897,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                 ]
 
         # Write the updated notebook to the output file
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(notebook_data, f, indent=2)
+        NotebookProcessor.write_notebook(notebook_data, output_file)
 
     @staticmethod
     def extract_question_points(raw, i, _data, grade_=None):
@@ -1032,6 +1023,7 @@ def ensure_imports(output_file, header_lines):
     with open(output_file, "w", encoding="utf-8") as f:
         # Add missing lines at the top
         f.writelines(missing_lines)
+        
         # Retain the existing content
         f.write(existing_content)
 
@@ -1200,8 +1192,7 @@ def update_initialize_assignment(
 
     # If updated, save the notebook
     if updated:
-        with open(notebook_path, "w", encoding="utf-8") as file:
-            json.dump(notebook_data, file, indent=2)
+        NotebookProcessor.write_notebook(notebook_data, notebook_path)
         print(f"Notebook '{notebook_path}' has been updated.")
     else:
         print(f"No matching lines found in '{notebook_path}'.")
