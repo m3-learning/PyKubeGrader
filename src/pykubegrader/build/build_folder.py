@@ -51,55 +51,55 @@ add_token("token", duration=20)
 @dataclass
 class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, EnvironmentVariables):
     """
-    A class for processing Jupyter notebooks in a directory and its subdirectories.
+    A class for processing Jupyter notebooks within a directory and its subdirectories.
 
     Attributes:
-        root_folder (str): The root directory containing notebooks to process.
-        assignment_tag (str): Tag for the assignment being processed.
-        solutions_folder (str): The directory where processed notebooks and solutions are stored.
-        verbose (bool): Flag for verbose output to the console.
-        log (bool): Flag to enable or disable logging.
-        require_key (bool): Flag to require a key for processing.
-        bonus_points (float): Additional points to be added to the assignment.
+        root_folder (str): The root directory containing notebooks to be processed.
+        assignment_tag (str): Identifier for the assignment being processed.
+        solutions_folder (str): Directory where processed notebooks and solutions are stored.
+        verbose (bool): Enables verbose output to the console if set to True.
+        log (bool): Enables logging if set to True.
+        require_key (bool): Requires a key for processing if set to True.
+        bonus_points (float): Additional points to be added to the assignment score.
         kwargs:
-            log_name (str): The name of the log file.
+            log_name (str): The name of the log file, if logging is enabled.
 
     Methods:
         __post_init__(self, **kwargs):
-            Post-initialization method for setting up the `NotebookProcessor` instance.
+            Initializes the `NotebookProcessor` instance after creation.
 
         initialize_logger(self, **kwargs):
-            Configures the logger for the NotebookProcessor class.
+            Sets up the logger for the NotebookProcessor class.
 
         initialize_info(self):
-            Initializes the information for the NotebookProcessor instance.
+            Sets up the information for the NotebookProcessor instance.
 
         add_notebook(self, notebook_name, total_points):
-            Adds a notebook record to the database.
+            Records a notebook entry in the database.
 
         add_submission_cells(self, notebook_path, output_path):
-            Adds submission cells to the notebook.
+            Inserts submission cells into the notebook.
 
         add_final_submission_cells(self, notebook_path, output_path):
-            Adds final submission cells to the notebook.
+            Inserts final submission cells into the notebook.
 
         remove_empty_cells(notebook_path):
-            Removes empty cells from the notebook.
+            Deletes empty cells from the notebook.
 
         duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
-            Duplicates a Jupyter notebook into a specified solution directory, creating necessary subdirectories and temporary files for further processing.
+            Copies a Jupyter notebook to a specified solution directory, creating necessary subdirectories and temporary files for further processing.
 
         merge_metadata(raw, data):
-            Merges raw metadata with extracted question data.
+            Combines raw metadata with extracted question data.
 
         extract_question_points(raw, i, _data, grade_=None):
-            Extracts question points from raw metadata.
+            Retrieves question points from raw metadata.
 
         has_assignment(notebook_path, *tags):
-            Determines if a Jupyter notebook contains any of the specified configuration tags.
+            Checks if a Jupyter notebook contains any of the specified configuration tags.
 
         run_otter_assign(notebook_path, dist_folder):
-            Runs the Otter Assign command on the notebook.
+            Executes the Otter Assign command on the notebook.
     """
 
     root_folder: str
