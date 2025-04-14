@@ -164,14 +164,44 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
     
     @property
     def assignment_tag(self):
+        """
+        Returns the assignment tag.
+
+        The assignment tag is a string that uniquely identifies the assignment.
+        It is either derived from the assignment tag provided during initialization
+        or constructed based on the week number and assignment type.
+
+        Returns:
+            str: The assignment tag.
+        """
         return self._assignment_tag
     
     @property
     def week(self):
+        """
+        Returns the week string.
+
+        The week string is constructed using the week number, prefixed with 'week_'.
+
+        Returns:
+            str: The week string in the format 'week_<week_num>'.
+        """
         return f"week_{self.week_num}"
     
     @assignment_tag.setter
     def assignment_tag(self, value):
+        """
+        Sets the assignment tag.
+
+        The assignment tag is set based on the provided value. If the value is None,
+        it constructs the assignment tag using the week number and assignment type.
+
+        Args:
+            value (str): The assignment tag to set. If None, the assignment tag is constructed.
+
+        Returns:
+            None
+        """
         if value is not None:
             self._assignment_tag = value
         elif self.week_num is None:
