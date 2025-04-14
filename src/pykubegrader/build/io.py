@@ -68,3 +68,20 @@ def write_JSON(**kwargs):
         json.dump(
             information, json_file, indent=indent
         )
+
+
+def check_if_file_in_folder(folder, file):
+    """
+    Checks if a specific file exists within a given folder or its subdirectories.
+
+    Args:
+        folder (str): The path to the folder to search within.
+        file (str): The name of the file to search for.
+
+    Returns:
+        bool: True if the file is found, False otherwise.
+    """
+    for root, _, files in os.walk(folder):
+        if file in files:
+            return True
+    return False

@@ -16,7 +16,7 @@ import requests
 import yaml
 
 from pykubegrader.build.config import SubmissionCodeBaseClass, question_class_type, EnvironmentVariables
-from pykubegrader.build.io import get_notebooks_recursively, remove_file_suffix, write_JSON
+from pykubegrader.build.io import check_if_file_in_folder, get_notebooks_recursively, remove_file_suffix, write_JSON
 from pykubegrader.build.notebooks.io import write_notebook
 from pykubegrader.build.notebooks.io import read_notebook
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
@@ -129,11 +129,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         # Initialize the info for the class
         self.initialize_info()
 
-        # makes the solutions folder
-        os.makedirs(
-            self.solutions_folder, exist_ok=True
-        )  # Create the folder if it doesn't exist
-
     def initialize_info(self):
         """
         Initializes the NotebookProcessor instance with assignment information.
@@ -161,6 +156,11 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
         self.assignment_total_points = 0
         self.total_point_log = {}
+        
+        # makes the solutions folder
+        os.makedirs(
+            self.solutions_folder, exist_ok=True
+        )  # Create the folder if it doesn't exist
     
     @property
     def assignment_tag(self):
@@ -193,7 +193,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             yaml.YAMLError: If there is an error parsing the YAML content.
         """
         
-        # TODO: make robust to no week number set?
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
             data = yaml.safe_load(file)
 
@@ -1162,22 +1161,6 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-    
-def check_if_file_in_folder(folder, file):
-    """
-    Checks if a specific file exists within a given folder or its subdirectories.
-
-    Args:
-        folder (str): The path to the folder to search within.
-        file (str): The name of the file to search for.
-
-    Returns:
-        bool: True if the file is found, False otherwise.
-    """
-    for root, _, files in os.walk(folder):
-        if file in files:
-            return True
-    return False
     
 # # def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
 #     """
