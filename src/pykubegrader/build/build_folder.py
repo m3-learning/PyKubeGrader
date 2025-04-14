@@ -129,6 +129,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         # Initialize the info for the class
         self.initialize_info()
 
+        # makes the solutions folder
         os.makedirs(
             self.solutions_folder, exist_ok=True
         )  # Create the folder if it doesn't exist
@@ -148,8 +149,9 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         Raises:
             None
         """
-        if self.check_if_file_in_folder("assignment_config.yaml"):
-            # Parse the YAML content
+        # 1. check if assignment_config.yaml exists
+        if check_if_file_in_folder(self.root_folder, "assignment_config.yaml"):
+            # 2. parse the YAML content
             self.initialize_from_assignment_yaml()
         else:
             self.assignment_type = self.assignment_tag.split("-")[0].lower()
@@ -236,7 +238,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         # Write the dictionary to a JSON file
         write_JSON()
 
-        if self.check_if_file_in_folder("assignment_config.yaml"):
+        if check_if_file_in_folder(self.root_folder, "assignment_config.yaml"):
             self.post_assignment()
 
         self.update_initialize_function(base_folder=self.solutions_folder, 
@@ -381,12 +383,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         
         self.post_request(url, payload)
 
-
-    def check_if_file_in_folder(self, file):
-        for root, _, files in os.walk(self.root_folder):
-            if file in files:
-                return True
-        return False
 
     def _process_single_notebook(self, notebook_path):
         """
@@ -1166,6 +1162,22 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+    
+def check_if_file_in_folder(folder, file):
+    """
+    Checks if a specific file exists within a given folder or its subdirectories.
+
+    Args:
+        folder (str): The path to the folder to search within.
+        file (str): The name of the file to search for.
+
+    Returns:
+        bool: True if the file is found, False otherwise.
+    """
+    for root, _, files in os.walk(folder):
+        if file in files:
+            return True
+    return False
     
 # # def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
 #     """
