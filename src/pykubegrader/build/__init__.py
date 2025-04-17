@@ -10,7 +10,7 @@ from pykubegrader.build import passwords
 from pykubegrader.build.free_response_builder import (FastAPINotebookBuilder,)
 from pykubegrader.build.build_folder import (NotebookProcessor,
                                              WidgetQuestionParser,
-                                             check_for_heading, ensure_imports,
+                                             ensure_imports,
                                              extract_SELECT_MANY, extract_TF,
                                              extract_config_from_notebook,
                                              extract_files, extract_raw_cells,
@@ -23,7 +23,7 @@ from pykubegrader.build.clean_folder import (FolderCleaner, main,)
 from pykubegrader.build.collate import (QuestionCollator, main,)
 from pykubegrader.build.markdown_questions import (MarkdownToNotebook, main,)
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
-from pykubegrader.build.notebooks.search import find_first_code_cell
+from pykubegrader.build.notebooks.search import check_for_heading, find_first_code_cell
 from pykubegrader.build.notebooks.writers import replace_cell_source, replace_cells_between_markers
 from pykubegrader.build.passwords import (jupyterhub_user, password,
                                           student_ids, user,)

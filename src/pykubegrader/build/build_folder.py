@@ -20,6 +20,7 @@ from pykubegrader.build.io import check_if_file_in_folder, get_notebooks_recursi
 from pykubegrader.build.notebooks.io import write_notebook
 from pykubegrader.build.notebooks.io import read_notebook
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
+from pykubegrader.build.notebooks.search import has_assignment
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
 from pykubegrader.build.util import  get_due_date, json_serial
@@ -47,6 +48,7 @@ from .free_response_builder import FastAPINotebookBuilder
 from pykubegrader.tokens.tokens import add_token
 
 add_token("token", duration=20)
+
 
 @dataclass
 class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, EnvironmentVariables):
@@ -215,7 +217,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         # 2. Verifies if each notebook contains the necessary assignment configuration.
         for notebook_path in ipynb_files:
             # Check if the notebook has the required assignment configuration
-            if self.has_assignment(notebook_path):
+            if has_assignment(notebook_path):
                 # 3. Process the notebook if it meets the criteria
                 self._process_single_notebook(notebook_path)
 
@@ -308,6 +310,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         #     "due_date": due_date,
         #     "max_score": self.assignment_total_points - self.bonus_points,
         # }
+        
 
     def put_notebook(self, notebook_title, total_points):
         """
@@ -707,7 +710,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
-        if self.has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
+        if has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
 
             client_private_key, server_public_key = self.transfer_encryption_keys(temp_notebook_path)
 
@@ -952,37 +955,7 @@ class WidgetQuestionParser:
         self.subquestion_number += 1
 
 
-# def check_for_heading(self, notebook_path, search_strings):
-#     """
-#     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
 
-#     Args:
-#         notebook_path (str): The file path to the Jupyter notebook to be checked.
-#         search_strings (list of str): A list of strings to search for in the heading cells.
-
-#     Returns:
-#         bool: True if any of the search strings are found in the heading cells, False otherwise.
-
-#     Example:
-#         search_strings = ["# ASSIGNMENT CONFIG", "# BEGIN MULTIPLE CHOICE"]
-#         result = check_for_heading("path/to/notebook.ipynb", search_strings)
-#         if result:
-#             print("Heading found.")
-#         else:
-#             print("Heading not found.")
-#     """
-#     try:
-#         with open(notebook_path, "r", encoding="utf-8") as f:
-#             notebook = nbformat.read(f, as_version=4)
-#             for cell in notebook.cells:
-#                 if cell.cell_type == "raw" and cell.source.startswith("#"):
-#                     if any(
-#                         search_string in cell.source for search_string in search_strings
-#                     ):
-#                         return True
-#     except Exception as e:
-#         self.print_and_log(f"Error reading notebook {notebook_path}: {e}")
-#     return False
 
 
 # def ensure_imports(output_file, header_lines):

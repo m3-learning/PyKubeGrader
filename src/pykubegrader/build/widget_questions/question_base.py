@@ -1,4 +1,5 @@
-from pykubegrader.build.build_folder import NotebookProcessor, check_for_heading, ensure_imports, write_question_class
+from pykubegrader.build.build_folder import NotebookProcessor, ensure_imports, write_question_class
+from pykubegrader.build.notebooks.search import check_for_heading, has_assignment
 from pykubegrader.build.widget_questions.utils import process_widget_questions, replace_cells_between_markers
 from pykubegrader.utils.logging import Logger
 
@@ -93,22 +94,6 @@ class QuestionProcessorBaseClass(Logger):
             str: The class name string.
         """
         pass
-
-    def has_assignment(self):
-        """
-        Determines if the Jupyter notebook contains specific configuration tags.
-
-        This method checks the notebook for the presence of predefined start and end tags
-        to verify if it includes the necessary configuration for assignments.
-
-        Returns:
-            bool: True if the notebook contains any of the specified start or end tags, False otherwise.
-        """
-
-        tags = [self.start_tag, self.end_tag]
-
-        # Use the helper function to check for the presence of any specified tag
-        return check_for_heading(self.temp_notebook_path, tags)
 
     def extract_raw_cells(self, **kwargs):
         """
@@ -495,7 +480,7 @@ class QuestionProcessorBaseClass(Logger):
             tuple: A tuple containing the paths to the solution and question files if assignments
                    are present, otherwise (None, None).
         """
-        if self.has_assignment():
+        if has_assignment(self.temp_notebook_path, self.start_tag, self.end_tag):
             # Define the markers for the questions
             markers = (self.start_tag, self.end_tag)
 
