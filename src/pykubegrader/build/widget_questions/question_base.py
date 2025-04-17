@@ -1,4 +1,5 @@
 from pykubegrader.build.build_folder import NotebookProcessor, ensure_imports, write_question_class
+from pykubegrader.build.notebooks.io import read_notebook
 from pykubegrader.build.notebooks.search import check_for_heading, has_assignment
 from pykubegrader.build.widget_questions.utils import process_widget_questions, replace_cells_between_markers
 from pykubegrader.utils.logging import Logger
@@ -106,9 +107,11 @@ class QuestionProcessorBaseClass(Logger):
         Returns:
             list of dict: A list of dictionaries containing extracted metadata for each heading occurrence.
         """
+        
+        logger = kwargs.get("logger", None)
+        
         try:
-            with open(self.ipynb_file, "r", encoding="utf-8") as f:
-                notebook_data = json.load(f)
+            notebook_data = read_notebook(self.ipynb_file)
 
             # Extract value cell content
             raw_cells = [
@@ -127,10 +130,16 @@ class QuestionProcessorBaseClass(Logger):
             return metadata_list
 
         except FileNotFoundError:
-            print(f"File {self.ipynb_file} not found.")
+            if logger is not None:
+                logger.print_and_log(f"File {self.ipynb_file} not found.")
+            else:
+                print(f"File {self.ipynb_file} not found.")
             return []
         except json.JSONDecodeError:
-            print("2 Invalid JSON in notebook file.")
+            if logger is not None:
+                logger.print_and_log("2 Invalid JSON in notebook file.")
+            else:
+                print("2 Invalid JSON in notebook file.")
             return []
 
     def _extract_metadata_from_heading(self, raw_cell, **kwargs):
