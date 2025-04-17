@@ -222,7 +222,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                 self._process_single_notebook(notebook_path)
 
         # Write the dictionary to a JSON file
-        write_JSON()
+        write_JSON() 
 
         if check_if_file_in_folder(self.root_folder, "assignment_config.yaml"):
             self.post_assignment()
