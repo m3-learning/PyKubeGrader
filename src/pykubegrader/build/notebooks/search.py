@@ -103,3 +103,39 @@ def has_assignment(notebook_path, *tags):
 
     # Use the helper function to check for the presence of any specified tag
     return check_for_heading(notebook_path, list(tags))
+
+
+def extract_question_points(raw, i, _data, grade_=None):
+    """
+    Extracts point values and grade information from raw metadata.
+
+    This method processes the 'points' field from raw metadata and converts it
+    to a list of point values that can be assigned to individual questions.
+    It also extracts grade information if present.
+
+    Args:
+        raw (list): A list of dictionaries containing raw metadata.
+        i (int): The index of the current metadata entry in the raw list.
+        _data (dict): A dictionary containing question data.
+        grade_ (list, optional): A list to store grade information. Defaults to None.
+
+    Returns:
+        tuple: A tuple containing:
+            - points_ (list): A list of point values for each question.
+            - grade_ (list or None): A list containing grade information if present,
+                otherwise None.
+    """
+    if isinstance(raw[i]["points"], str):
+        points_ = [float(raw[i]["points"])] * len(
+            _data
+        )  # Distribute the same point value
+    else:
+        points_ = raw[i]["points"]  # Use provided list of points
+
+    # Remove 'points' from raw metadata to avoid overwriting
+    raw[i].pop("points", None)
+
+    # Handle 'grade' from raw metadata
+    if "grade" in raw[i]:
+        grade_ = [raw[i]["grade"]]
+    return points_, grade_

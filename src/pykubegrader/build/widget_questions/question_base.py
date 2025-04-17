@@ -1,6 +1,6 @@
 from pykubegrader.build.build_folder import NotebookProcessor, ensure_imports, write_question_class
 from pykubegrader.build.notebooks.io import read_notebook
-from pykubegrader.build.notebooks.search import check_for_heading, has_assignment
+from pykubegrader.build.notebooks.search import check_for_heading, extract_question_points, has_assignment
 from pykubegrader.build.widget_questions.utils import process_widget_questions, replace_cells_between_markers
 from pykubegrader.utils.logging import Logger
 
@@ -199,30 +199,13 @@ class QuestionProcessorBaseClass(Logger):
         Raises:
             KeyError: If 'points' is missing from any raw metadata entry.
             IndexError: If the number of items in `raw` and `data` do not match.
-
-        Example:
-            raw = [
-                {"points": [1.0, 2.0]},
-                {"points": "3.0"}
-            ]
-            data = [
-                {"Q1": {"question_text": "What is 2+2?"}},
-                {"Q2": {"question_text": "What is 3+3?"}}
-            ]
-            merged = merge_metadata(raw, data)
-            print(merged)
-            # Output:
-            # [
-            #     {"Q1": {"question_text": "What is 2+2?", "points": 1.0}},
-            #     {"Q2": {"question_text": "What is 3+3?", "points": 3.0}}
-            # ]
         """
 
         # Loop through each question set in the data
         for i, _data in enumerate(data):
 
             # Handle 'points' from raw metadata: convert single string value to a list if necessary
-            points_, grade_ = NotebookProcessor.extract_question_points(raw, i, _data)
+            points_, grade_ = extract_question_points(raw, i, _data)
 
             # Merge each question's metadata with corresponding raw metadata
             for j, (key, _) in enumerate(_data.items()):

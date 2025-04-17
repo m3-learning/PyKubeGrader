@@ -840,23 +840,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         # Write the updated notebook to the output file
         write_notebook(notebook_data, output_file)
 
-    @staticmethod
-    def extract_question_points(raw, i, _data, grade_=None):
-        if isinstance(raw[i]["points"], str):
-            points_ = [float(raw[i]["points"])] * len(
-                _data
-            )  # Distribute the same point value
-        else:
-            points_ = raw[i]["points"]  # Use provided list of points
-
-            # Remove 'points' from raw metadata to avoid overwriting
-        raw[i].pop("points", None)
-
-        # Handle 'grade' from raw metadata
-        if "grade" in raw[i]:
-            grade_ = [raw[i]["grade"]]
-        return points_, grade_
-
     def run_otter_assign(self, notebook_path, dist_folder):
         """
         Runs `otter assign` on the given notebook and outputs to the specified distribution folder.
