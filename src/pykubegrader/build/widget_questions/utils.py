@@ -36,21 +36,19 @@ def extract_question(text, regex = r"^###\s+(.*?)\s+####"):
     return None
 
 
-def extract_options(markdown_content):
+def extract_options(markdown_content, regex = r"####\s*options\s*(.+?)(?=####|$)"):
     """
     Extracts the options from the given markdown content.
 
     Args:
         markdown_content (str): The markdown content to search for the options.
+        regex (str, optional): Regular expression pattern to match the options.
+            Defaults to r"####\s*options\s*(.+?)(?=####|$)".
 
     Returns:
         list: A list of extracted options if found, otherwise an empty list.
     """
-    options_match = re.search(
-        r"####\s*options\s*(.+?)(?=####|$)",
-        markdown_content,
-        re.DOTALL | re.IGNORECASE,
-    )
+    options_match = re.search(regex, markdown_content, re.DOTALL | re.IGNORECASE)
     options = (
         [
             line.strip()
@@ -80,36 +78,41 @@ def extract_title(markdown_content, title_regex = r"^##\s*(.+)"):
     return title
 
 def extract_solutions(markdown_content):
-        """
-        Extracts the solution from the given markdown content.
-
-        Args:
-            markdown_content (str): The markdown content to search for the solution.
-
-        Returns:
-            str: The extracted solution if found, otherwise None.
-        """
-        # solution_match = re.search(
-        #     r"####\s*SOLUTION\s*(.+)", markdown_content, re.IGNORECASE
-        # )
-        # solution = (
-        #     solution_match.group(1).strip() if solution_match else None
-        # )
-        
-        # return solution
-        
-        #TODO: This was replaced with the original method to be compatible with the select many questions
-        solution_start = markdown_content.find("#### SOLUTION")
-        if solution_start != -1:
-            solution = []
-            lines = markdown_content[solution_start:].splitlines()
-            for line in lines[1:]:  # Skip the "#### SOLUTION" line
-                if line.strip():  # Non-blank line after trimming spaces
-                    solution.append(line.strip())
-                else:
-                    break
-            return solution
-        return []
+    """
+    Extracts the solution from the given markdown content.
+    
+    This function searches for a section marked with "#### SOLUTION" in the markdown content
+    and extracts all non-empty lines following it until the first empty line is encountered.
+    
+    Args:
+        markdown_content (str): The markdown content to search for the solution.
+            This should be the full text content of a markdown cell.
+            
+    Returns:
+        list: A list of solution lines if found, otherwise an empty list.
+              Each item in the list is a trimmed line from the solution section.
+    """
+    
+    # solution_match = re.search(
+    #     r"####\s*SOLUTION\s*(.+)", markdown_content, re.IGNORECASE
+    # )
+    # solution = (
+    #     solution_match.group(1).strip() if solution_match else None
+    # )
+    
+    # return solution
+    
+    solution_start = markdown_content.find("#### SOLUTION")
+    if solution_start != -1:
+        solution = []
+        lines = markdown_content[solution_start:].splitlines()
+        for line in lines[1:]:  # Skip the "#### SOLUTION" line
+            if line.strip():  # Non-blank line after trimming spaces
+                solution.append(line.strip())
+            else:
+                break
+        return solution
+    return []
             
 def process_widget_questions(ipynb_file, start_tag, end_tag):
     """
