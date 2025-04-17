@@ -2,8 +2,25 @@ import json
 import re
 
 from pykubegrader.build.build_folder import WidgetQuestionParser
+from pykubegrader.build.notebooks.io import read_notebook
 
-def extract_question(text):
+def extract_question(text, regex = r"^###\s+(.*?)\s+####"):
+    """
+    Extracts the question text from the given markdown content.
+    
+    This function searches for text between a level 3 heading (###) and 
+    the next level 4 heading (####) using regular expressions. It then 
+    cleans the extracted text by removing unnecessary whitespace and 
+    asterisks.
+    
+    Args:
+        text (str): The markdown content to search for the question text.
+        regex (str, optional): Regular expression pattern to match the question text.
+            Defaults to r"^###\s+(.*?)\s+####".
+            
+    Returns:
+        str or None: The extracted question text if found, otherwise None.
+    """
     
     #TODO: this was the original for for TF
     # TODO: Delete if not needed
@@ -12,7 +29,7 @@ def extract_question(text):
     #                         )
     
     # Regular expression to capture the multiline title
-    match = re.search(r"###\s+(.*?)\s+####", text, re.DOTALL)
+    match = re.search(regex, text, re.DOTALL)
     if match:
         # Stripping unnecessary whitespace and asterisks
         return match.group(1).strip().strip("**")
@@ -46,17 +63,19 @@ def extract_options(markdown_content):
 
     return options
 
-def extract_title(markdown_content):
+def extract_title(markdown_content, title_regex = r"^##\s*(.+)"):
     """
     Extracts the title from the given markdown content.
 
     Args:
         markdown_content (str): The markdown content to search for the title.
+        title_regex (str, optional): Regular expression pattern to match the title.
+            Defaults to r"^##\s*(.+)".
 
     Returns:
         str: The extracted title if found, otherwise None.
     """
-    title_match = re.search(r"^##\s*(.+)", markdown_content, re.MULTILINE)
+    title_match = re.search(title_regex, markdown_content, re.MULTILINE)
     title = title_match.group(1).strip() if title_match else None
     return title
 
@@ -108,9 +127,7 @@ def process_widget_questions(ipynb_file, start_tag, end_tag):
               question titles, subquestion numbers, question text, options, and solutions.
     """
     try:
-        # Load the notebook file
-        with open(ipynb_file, "r", encoding="utf-8") as f:
-            notebook_data = json.load(f)
+        notebook_data = read_notebook(ipynb_file)
 
         cells = notebook_data.get("cells", [])
 
@@ -118,6 +135,7 @@ def process_widget_questions(ipynb_file, start_tag, end_tag):
 
         for cell in cells:
             if cell.get("cell_type") == "raw":
+                
                 # Check for the start and end labels in raw cells
                 raw_content = "".join(cell.get("source", []))
 
@@ -127,6 +145,7 @@ def process_widget_questions(ipynb_file, start_tag, end_tag):
                     continue
 
             if parser.within_section and cell.get("cell_type") == "markdown":
+                
                 # Parse markdown cell content
                 markdown_content = "".join(cell.get("source", []))
 
