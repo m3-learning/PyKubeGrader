@@ -211,16 +211,17 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
     def initialize_from_assignment_yaml(self):
         """
-        Initializes the NotebookProcessor instance from the 'assignment_config.yaml' file.
+        Initializes the NotebookProcessor instance using the 'assignment_config.yaml' file.
 
-        This method performs the following tasks:
-        1. Opens and reads the 'assignment_config.yaml' file located in the root folder.
-        2. Parses the YAML content to extract assignment details.
-        3. Sets the week number, assignment type, bonus points, requirement key, final submission flag, and assignment tag.
+        This method executes the following steps:
+        1. Opens and reads the 'assignment_config.yaml' file found in the root folder.
+        2. Parses the YAML content to retrieve assignment details.
+        3. Configures the instance attributes: week number, assignment type, bonus points, 
+           requirement key, final submission flag, and assignment tag based on the parsed data.
 
         Raises:
-            FileNotFoundError: If the 'assignment_config.yaml' file does not exist.
-            yaml.YAMLError: If there is an error parsing the YAML content.
+            FileNotFoundError: Raised if the 'assignment_config.yaml' file is not found.
+            yaml.YAMLError: Raised if there is an error while parsing the YAML content.
         """
         
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
