@@ -74,14 +74,16 @@ def check_if_file_in_folder(folder, file):
     """
     Checks if a specific file exists within a given folder or its subdirectories.
 
+    This method traverses the directory tree starting from the specified folder and searches for the specified file.
+
     Args:
         folder (str): The path to the folder to search within.
         file (str): The name of the file to search for.
 
     Returns:
-        bool: True if the file is found, False otherwise.
+        bool: True if the file is found within the folder or its subdirectories, False otherwise.
     """
-    for root, _, files in os.walk(folder):
+    for _, _, files in os.walk(folder):
         if file in files:
             return True
     return False
