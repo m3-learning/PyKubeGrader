@@ -19,13 +19,18 @@ def remove_file_suffix(dist_folder, suffix="_temp", logger = None):
 
 def get_notebooks_recursively(root_folder, **kwargs):
     """
-    Recursively retrieves all Jupyter notebook files (.ipynb) from the root folder and its subfolders.
+    Recursively retrieves all files with a specified extension from the root folder and its subfolders.
 
-    This method walks through the directory tree starting from the root folder, identifies all files
-    with a .ipynb extension, and collects their paths in a list.
+    This function traverses the directory tree starting from the root folder, identifies all files
+    with the specified extension (default is .ipynb), and collects their paths in a list.
+
+    Args:
+        root_folder (str): The root directory to start the search from.
+        **kwargs: Arbitrary keyword arguments.
+            - extension (str): The file extension to search for (default is ".ipynb").
 
     Returns:
-        list: A list of file paths to Jupyter notebook files found within the root folder and its subfolders.
+        list: A list of file paths to files with the specified extension found within the root folder and its subfolders.
     """
     extension = kwargs.get("extension", ".ipynb")
 
@@ -34,7 +39,7 @@ def get_notebooks_recursively(root_folder, **kwargs):
     # Walk through the root folder and its subfolders
     for dirpath, _, filenames in os.walk(root_folder):
         for filename in filenames:
-            # Check if the file is a Jupyter notebook
+            # Check if the file has the specified extension
             if filename.endswith(extension):
                 notebook_path = os.path.join(dirpath, filename)
                 files.append(notebook_path)

@@ -162,52 +162,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             self.solutions_folder, exist_ok=True
         )  # Create the folder if it doesn't exist
     
-    @property
-    def assignment_tag(self):
-        """
-        Returns the assignment tag.
-
-        The assignment tag is a string that uniquely identifies the assignment.
-        It is either derived from the assignment tag provided during initialization
-        or constructed based on the week number and assignment type.
-
-        Returns:
-            str: The assignment tag.
-        """
-        return self._assignment_tag
-    
-    @property
-    def week(self):
-        """
-        Returns the week string.
-
-        The week string is constructed using the week number, prefixed with 'week_'.
-
-        Returns:
-            str: The week string in the format 'week_<week_num>'.
-        """
-        return f"week_{self.week_num}"
-    
-    @assignment_tag.setter
-    def assignment_tag(self, value):
-        """
-        Sets the assignment tag.
-
-        The assignment tag is set based on the provided value. If the value is None,
-        it constructs the assignment tag using the week number and assignment type.
-
-        Args:
-            value (str): The assignment tag to set. If None, the assignment tag is constructed.
-
-        Returns:
-            None
-        """
-        if value is not None:
-            self._assignment_tag = value
-        elif self.week_num is None:
-            self._assignment_tag = self.assignment_type
-        else:
-            self._assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 
     def initialize_from_assignment_yaml(self):
         """
@@ -919,6 +873,53 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             self.print_and_log(
                 f"Unexpected error during `otter assign` for {notebook_path}: {e}"
             )
+            
+    @property
+    def assignment_tag(self):
+        """
+        Returns the assignment tag.
+
+        The assignment tag is a string that uniquely identifies the assignment.
+        It is either derived from the assignment tag provided during initialization
+        or constructed based on the week number and assignment type.
+
+        Returns:
+            str: The assignment tag.
+        """
+        return self._assignment_tag
+    
+    @property
+    def week(self):
+        """
+        Returns the week string.
+
+        The week string is constructed using the week number, prefixed with 'week_'.
+
+        Returns:
+            str: The week string in the format 'week_<week_num>'.
+        """
+        return f"week_{self.week_num}"
+    
+    @assignment_tag.setter
+    def assignment_tag(self, value):
+        """
+        Sets the assignment tag.
+
+        The assignment tag is set based on the provided value. If the value is None,
+        it constructs the assignment tag using the week number and assignment type.
+
+        Args:
+            value (str): The assignment tag to set. If None, the assignment tag is constructed.
+
+        Returns:
+            None
+        """
+        if value is not None:
+            self._assignment_tag = value
+        elif self.week_num is None:
+            self._assignment_tag = self.assignment_type
+        else:
+            self._assignment_tag = f"week{self.week_num}-{self.assignment_type}"
 @dataclass
 class WidgetQuestionParser:
     sections: list = field(default_factory=list)
