@@ -97,6 +97,7 @@ def has_assignment(notebook_path, *tags):
         contains_custom = has_assignment(notebook_path, "# CUSTOM CONFIG", "# ANOTHER CONFIG")
         self._print_and_log(f"Contains custom config: {contains_custom}")
     """
+    # TODO: add config for tags by question types
     # Default tags if none are provided
     if not tags:
         tags = ["# ASSIGNMENT CONFIG", "# BEGIN MULTIPLE CHOICE"]

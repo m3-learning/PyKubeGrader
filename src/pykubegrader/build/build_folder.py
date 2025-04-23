@@ -988,47 +988,7 @@ class WidgetQuestionParser:
 
 
 
-# def ensure_imports(output_file, header_lines):
-#     """
-#     Ensures specified header lines are present at the top of the file.
 
-#     Args:
-#         output_file (str): The path of the file to check and modify.
-#         header_lines (list of str): Lines to ensure are present at the top.
-
-#     Returns:
-#         str: The existing content of the file (without the header).
-#     """
-#     existing_content = ""
-#     if os.path.exists(output_file):
-#         with open(output_file, "r", encoding="utf-8") as f:
-#             existing_content = f.read()
-
-#     # Determine missing lines
-#     missing_lines = [line for line in header_lines if line not in existing_content]
-
-#     # Write the updated content back to the file
-#     with open(output_file, "w", encoding="utf-8") as f:
-#         # Add missing lines at the top
-#         f.writelines(missing_lines)
-        
-#         # Retain the existing content
-#         f.write(existing_content)
-
-#     return existing_content
-
-
-# def write_question_class(f, q_value, class_name):
-#     class_type_ = question_class_type[class_name]
-
-#     f.write(
-#         f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
-#     )
-#     f.write("    def __init__(self):\n")
-#     f.write("        super().__init__(\n")
-#     f.write(f'            title=f"{q_value["title"]}",\n')
-#     f.write(f"            style={class_type_['style']},\n")
-#     f.write(f"            question_number={q_value['question number']},\n")
 
 
 def update_initialize_assignment(

@@ -1,10 +1,10 @@
-from pykubegrader.build.build_folder import NotebookProcessor, ensure_imports, write_question_class
+from pykubegrader.build.build_folder import NotebookProcessor
 from pykubegrader.build.notebooks.io import read_notebook
 from pykubegrader.build.notebooks.search import check_for_heading, extract_question_points, has_assignment
-from pykubegrader.build.widget_questions.utils import process_widget_questions, replace_cells_between_markers
+from pykubegrader.build.widget_questions.utils import process_widget_questions
+from pykubegrader.build.notebooks.writers import ensure_imports, replace_cells_between_markers
 from pykubegrader.utils.logging import Logger
-
-
+from pykubegrader.build.config import question_class_type
 import importlib
 import json
 import os
@@ -93,6 +93,33 @@ class QuestionProcessorBaseClass(Logger):
 
         Returns:
             str: The class name string.
+        """
+        pass
+
+    @abstractmethod
+    def make_question_file(self):
+        
+        """
+        Abstract method to be implemented by subclasses to generate a Python file defining question classes.
+
+        This method creates a Python file containing the necessary class definitions
+        for the questions provided in the data dictionary. It ensures that the required
+        header lines are present and writes the class definitions and their attributes.
+
+        Args:
+            data_dict (dict): A nested dictionary containing question metadata.
+            **kwargs: Additional keyword arguments.
+        """
+        pass
+    
+    @property
+    @abstractmethod
+    def additional_header_lines(self):
+        """
+        Abstract property to be implemented by subclasses to define additional header lines.
+
+        This property provides a list of import statements and initialization code
+        that are necessary for the question file to function correctly.
         """
         pass
 
@@ -354,6 +381,19 @@ class QuestionProcessorBaseClass(Logger):
             "pn.extension()\n\n",
         ]
 
+    @staticmethod
+    def write_question_class(f, q_value, class_name):
+        class_type_ = question_class_type[class_name]
+
+        f.write(
+            f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
+        )
+        f.write("    def __init__(self):\n")
+        f.write("        super().__init__(\n")
+        f.write(f'            title=f"{q_value["title"]}",\n')
+        f.write(f"            style={class_type_['style']},\n")
+        f.write(f"            question_number={q_value['question number']},\n")
+        
     def make_question_py_file(self, data_dict, **kwargs):
         """
         Generates a Python file defining question classes from a dictionary.
@@ -376,13 +416,14 @@ class QuestionProcessorBaseClass(Logger):
                 for i, (q_key, q_value) in enumerate(question_dict.items()):
                     if i == 0:
                         # Write the question class
-                        write_question_class(f, q_value, class_name=self.class_name)
+                        self.write_question_class(f, q_value, class_name=self.class_name)
                     break
 
                 self.write_keys(question_dict, f)
                 self.write_options(question_dict, f)
                 self.write_descriptions(question_dict, f)
                 self.write_points(question_dict, f)
+            
 
     def write_points(self, question_dict, f):
         """

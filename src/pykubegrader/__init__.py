@@ -19,8 +19,7 @@ from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 QuestionCollator, WidgetQuestionParser,
                                 build_folder,
                                 clean_folder,
-                                collate, ensure_imports,
-                                extract_SELECT_MANY, extract_TF,
+                                collate, extract_SELECT_MANY, extract_TF,
                                 extract_config_from_notebook, extract_files,
                                 extract_raw_cells,
                                 formatter, free_response_builder,
@@ -31,7 +30,7 @@ from pykubegrader.build import (FastAPINotebookBuilder, FolderCleaner,
                                 user,)
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.search import check_for_heading, find_first_code_cell
-from pykubegrader.build.notebooks.writers import replace_cell_source, replace_cells_between_markers
+from pykubegrader.build.notebooks.writers import ensure_imports, replace_cell_source, replace_cells_between_markers
 from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string
 from pykubegrader.graders import (calculate_late_submission, late_assignments,)
 from pykubegrader.log_parser import (LogParser, LogParserResults, parse,)
