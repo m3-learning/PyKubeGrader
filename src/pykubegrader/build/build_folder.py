@@ -560,8 +560,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
         if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
             solution_path = solution_path_1 or solution_path_2 or solution_path_3
-
-        if any([question_path_1, question_path_2, question_path_3]) is not None:
             question_path = question_path_1 or question_path_2 or question_path_3
 
         return solution_path, question_path
