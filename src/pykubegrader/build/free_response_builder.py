@@ -23,7 +23,7 @@ class OtterNotebookBuilder(Logger):
         
         super().__init__(**kwargs)
         
-        self.root_path, self.filename = OtterNotebookBuilder.get_filename_and_root(
+        self.root_path, self.filename = self.get_filename_and_root(
             self.notebook_path
         )
         self.total_points = 0.0
@@ -32,14 +32,9 @@ class OtterNotebookBuilder(Logger):
         self.run()
 
     def run(self) -> None:
+        
         # here for easy debugging
-        if self.temp_notebook is not None:
-            shutil.copy(
-                self.notebook_path, self.notebook_path.replace(".ipynb", "_temp.ipynb")
-            )
-            self.temp_notebook = self.notebook_path.replace(".ipynb", "_temp.ipynb")
-        else:
-            self.temp_notebook = self.notebook_path
+        self.make_temp_notebook()
 
         self.assertion_tests_dict = self.question_dict()
         self.question_points = self.question_points_by_part = (
@@ -47,6 +42,25 @@ class OtterNotebookBuilder(Logger):
         )
         self.add_points_to_notebook()
         self.add_api_code()
+
+    def make_temp_notebook(self):
+        """
+        Creates a temporary copy of the notebook for processing.
+
+        If a temporary notebook path is provided, this method copies the original
+        notebook to a new file with '_temp' appended to its name. If no temporary
+        path is provided, the original notebook path is used as the temporary path.
+
+        Raises:
+            IOError: If the file copy operation fails.
+        """
+        if self.temp_notebook is not None:
+            shutil.copy(
+                self.notebook_path, self.notebook_path.replace(".ipynb", "_temp.ipynb")
+            )
+            self.temp_notebook = self.notebook_path.replace(".ipynb", "_temp.ipynb")
+        else:
+            self.temp_notebook = self.notebook_path
 
     def add_points_to_notebook(self) -> None:
         self.add_question_points_to_notebook()
