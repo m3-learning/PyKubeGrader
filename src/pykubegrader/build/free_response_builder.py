@@ -673,6 +673,27 @@ class OtterNotebookBuilder(Logger):
         question_groups = OtterNotebookBuilder.group_keys_by_question_name(cells_dict)
 
         # Add 'is_first' and 'is_last' flags to all cells
+        OtterNotebookBuilder.add_cell_first_last_tag(cells_dict, question_groups)
+
+        return cells_dict
+
+    @staticmethod
+    def add_cell_first_last_tag(cells_dict, question_groups):
+        """
+        Adds 'is_first', 'is_last', and 'test_number' attributes to each cell in the cells_dict.
+
+        This function iterates over groups of cell keys, assigning boolean flags 'is_first' and 'is_last'
+        to indicate the position of each cell within its group. It also assigns a sequential 'test_number'
+        to each cell.
+
+        Args:
+            cells_dict (dict): A dictionary where keys are cell IDs and values are cell details.
+            question_groups (dict): A dictionary where keys are question names and values are lists of cell IDs
+                                    associated with each question.
+
+        Modifies:
+            cells_dict: Updates each cell's dictionary with 'is_first', 'is_last', and 'test_number' attributes.
+        """
         for keys in question_groups.values():
             test_number = 1
             for i, key in enumerate(keys):
@@ -680,8 +701,6 @@ class OtterNotebookBuilder(Logger):
                 cells_dict[key]["is_last"] = i == len(keys) - 1
                 cells_dict[key]["test_number"] = test_number
                 test_number += 1
-
-        return cells_dict
 
     @staticmethod
     def group_keys_by_question_name(cells_dict):
