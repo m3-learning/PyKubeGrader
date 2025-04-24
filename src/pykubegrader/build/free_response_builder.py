@@ -402,17 +402,19 @@ class OtterNotebookBuilder(Logger):
         return modified_source
 
     def compute_max_points_free_response(self) -> None:
+        """
+        Computes and stores the maximum points for each free response question.
+
+        This method iterates over the assertion tests dictionary to calculate the
+        maximum points for each question. It ensures that points are only counted
+        once per question by checking if the cell is marked as the first for that
+        question. The computed maximum points are stored in the `max_question_points`
+        attribute, and the total points are accumulated in the `total_points` attribute.
+        """
         for cell_dict in self.assertion_tests_dict.values():
-            # gets the question name from the first cell to not double count
             if cell_dict["is_first"]:
-                # get the max points for the question
                 max_question_points = self.get_max_question_points(cell_dict)
-
-                # store the max points for the question
-                self.max_question_points[f"{cell_dict['question']}"] = (
-                    max_question_points
-                )
-
+                self.max_question_points[f"{cell_dict['question']}"] = max_question_points
                 self.total_points += max_question_points
 
     def construct_first_cell_question_header(self, cell_dict: dict) -> list[str]:
