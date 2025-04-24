@@ -6,10 +6,9 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
+from pykubegrader.build.notebooks.io import modify_notebook_cell
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
-from pykubegrader.build.io import read_notebook
-
-import nbformat
+from pykubegrader.build.io import read_notebook, get_cell_source
 
 
 @dataclass
@@ -21,24 +20,22 @@ class OtterNotebookBuilder(Logger):
     verbose: bool = False
 
     def __post_init__(self, **kwargs) -> None:
-        
         super().__init__(**kwargs)
-        
-        self.root_path, self.filename = self.get_filename_and_root(
-            self.notebook_path
-        )
+
+        self.root_path, self.filename = self.get_filename_and_root(self.notebook_path)
         self.total_points = 0.0
 
         self.max_question_points: dict[str, float] = {}
         self.run()
 
     def run(self) -> None:
-        
         # here for easy debugging
         self.make_temp_notebook()
 
         self.assertion_tests_dict = self.question_dict()
-        self.question_points_by_part = self.construct_question_points_by_part(self.assertion_tests_dict)
+        self.question_points_by_part = self.construct_question_points_by_part(
+            self.assertion_tests_dict
+        )
 
         self.add_points_to_notebook()
         self.add_api_code()
@@ -84,8 +81,8 @@ class OtterNotebookBuilder(Logger):
                 continue
 
             # add the question points to the question description
-            source = self.get_cell_source(self.temp_notebook, index)
-            modified_source = OtterNotebookBuilder.add_text_after_double_hash(
+            source = get_cell_source(self.temp_notebook, index)
+            modified_source = OtterNotebookBuilder.add_text_after_octothorpe(
                 source,
                 f"Question {points['question_number']} (Points: {points['total_points']:.2f}):",
             )
@@ -103,8 +100,8 @@ class OtterNotebookBuilder(Logger):
                     continue
 
                 # add the question part points to the question part description
-                source = self.get_cell_source(self.temp_notebook, index)
-                modified_source = OtterNotebookBuilder.add_text_after_double_hash(
+                source = get_cell_source(self.temp_notebook, index)
+                modified_source = OtterNotebookBuilder.add_text_after_octothorpe(
                     source,
                     f"Question {points['question_number']}-Part {points['question_part_number']} (Points: {points['total_points']:.2f}):",
                     "### ",
@@ -126,7 +123,7 @@ class OtterNotebookBuilder(Logger):
         - tuple: The index of the found markdown cell and its source content.
         """
         notebook = read_notebook(self.temp_notebook)
-        
+
         for idx in range(start_index, end_index - 1, -1):
             cell = notebook.get("cells", [])[idx]
             if cell["cell_type"] == "markdown" and cell.get("source", [])[0].startswith(
@@ -251,7 +248,7 @@ class OtterNotebookBuilder(Logger):
             question_sums[question_number]["current_key"] = (
                 key  # Update current key to the end of the current question
             )
-            
+
         return question_sums
 
     @staticmethod
@@ -386,7 +383,7 @@ class OtterNotebookBuilder(Logger):
         )
 
     @staticmethod
-    def add_text_after_double_hash(markdown_source, insert_text, hash_prefix="## "):
+    def add_text_after_octothorpe(markdown_source, insert_text, hash_prefix="## "):
         """
         Adds insert_text immediately after the first '##' in the first line that starts with '##'.
 
@@ -638,22 +635,9 @@ class OtterNotebookBuilder(Logger):
         # Load the notebook
         if not self.temp_notebook:
             raise ValueError("No temporary notebook file path provided")
-        with open(self.temp_notebook, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
+        modify_notebook_cell(self.temp_notebook, cell_index, new_source)
 
-        # Check if the cell index is valid
-        if cell_index >= len(notebook.cells) or cell_index < 0:
-            raise IndexError(
-                f"Cell index {cell_index} is out of range for this notebook."
-            )
-
-        # Replace the source code of the specified cell
-        notebook.cells[cell_index]["source"] = new_source
-
-        # Save the notebook
-        with open(self.temp_notebook, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
-        print(f"Updated notebook saved to {self.temp_notebook}")
+        self.print_and_log(f"Updated notebook saved to {self.temp_notebook}")
 
     @staticmethod
     def find_last_import_line(cell_source: list[str]) -> int:
@@ -791,7 +775,9 @@ class OtterNotebookBuilder(Logger):
         """
         question_groups: dict = {}
         for key, cell in cells_dict.items():
-            question = cell.get("question")  # Use .get() to avoid errors if key is missing
+            question = cell.get(
+                "question"
+            )  # Use .get() to avoid errors if key is missing
             if question not in question_groups:
                 question_groups[question] = []
             question_groups[question].append(key)
@@ -983,5 +969,3 @@ class OtterNotebookBuilder(Logger):
             except ValueError:
                 points_value = None
         return logging_variables, assertions, comments, points_value
-
-

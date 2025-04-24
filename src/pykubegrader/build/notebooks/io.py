@@ -11,6 +11,7 @@ def read_notebook(input_file):
         notebook = nbformat.read(f, as_version=4)
     return notebook
 
+
 def get_cell_source(notebook_path, cell_index):
     """
     Retrieves the source code of a specific cell from a Jupyter notebook.
@@ -31,3 +32,31 @@ def get_cell_source(notebook_path, cell_index):
     """
     notebook = read_notebook(notebook_path)
     return notebook["cells"][cell_index]["source"]
+
+
+def modify_notebook_cell(notebook_path, cell_index, new_source):
+    """
+    Modifies the source code of a specific cell in a Jupyter notebook.
+
+    This function reads a Jupyter notebook from the specified path, updates the source
+    code of the cell at the given index, and saves the changes back to the notebook.
+
+    Args:
+        notebook_path (str): The file path to the Jupyter notebook.
+        cell_index (int): The index of the cell to be modified.
+        new_source (str or list of str): The new source code to replace the cell's content.
+
+    Raises:
+        IndexError: If the cell_index is out of range for the notebook's cells.
+    """
+    notebook = read_notebook(notebook_path)
+
+    # Check if the cell index is valid
+    if cell_index >= len(notebook.cells) or cell_index < 0:
+        raise IndexError(f"Cell index {cell_index} is out of range for this notebook.")
+
+    # Replace the source code of the specified cell
+    notebook.cells[cell_index]["source"] = new_source
+
+    # Save the notebook
+    write_notebook(notebook, notebook_path)
