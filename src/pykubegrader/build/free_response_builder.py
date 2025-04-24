@@ -516,6 +516,15 @@ class OtterNotebookBuilder(Logger):
 
     @staticmethod
     def get_filename_and_root(path: str) -> tuple[Path, str]:
+        """
+        Extracts the root directory and filename from a given file path.
+
+        Args:
+            path (str): The file path to process.
+
+        Returns:
+            tuple[Path, str]: A tuple containing the root directory as a Path object and the filename as a string.
+        """
         path_obj = Path(path).resolve()  # Resolve the path to get an absolute path
         root_path = path_obj.parent  # Get the parent directory
         filename = path_obj.name  # Get the filename
