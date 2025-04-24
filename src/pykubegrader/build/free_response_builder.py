@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
+from pykubegrader.build.io import read_notebook
 
 import nbformat
 
@@ -729,7 +730,7 @@ class OtterNotebookBuilder(Logger):
             raise FileNotFoundError(f"The file {notebook_path} does not exist.")
 
         # Read the notebook
-        notebook = self.read_notebook(notebook_path)
+        notebook = read_notebook(notebook_path)
 
         # Initialize the results dictionary
         results_dict = {}
@@ -875,11 +876,6 @@ class OtterNotebookBuilder(Logger):
             except ValueError:
                 points_value = None
         return logging_variables, assertions, comments, points_value
-
-    def read_notebook(self, notebook_path):
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = json.load(f)
-        return notebook
 
     def get_cell_source(self, notebook_path, cell_index):
         notebook = self.read_notebook(notebook_path)
