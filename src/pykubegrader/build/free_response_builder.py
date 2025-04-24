@@ -38,9 +38,8 @@ class OtterNotebookBuilder(Logger):
         self.make_temp_notebook()
 
         self.assertion_tests_dict = self.question_dict()
-        self.question_points = self.question_points_by_part = (
-            self.get_question_points_by_part(self.assertion_tests_dict)
-        )
+        self.question_points_by_part = self.construct_question_points_by_part(self.assertion_tests_dict)
+
         self.add_points_to_notebook()
         self.add_api_code()
 
@@ -68,7 +67,7 @@ class OtterNotebookBuilder(Logger):
         self.add_question_part_points_to_notebook()
 
     def add_question_points_to_notebook(self) -> None:
-        for question, points in self.question_points["question_sums"].items():
+        for question, points in self.question_points_by_part["question_sums"].items():
             index, source = self.find_first_markdown_cell_with(
                 points["current_key"], points["previous_key"], "## "
             )
@@ -86,7 +85,7 @@ class OtterNotebookBuilder(Logger):
             self.replace_cell_source(index, modified_source)
 
     def add_question_part_points_to_notebook(self) -> None:
-        for question, points in self.question_points["part_sums"].items():
+        for question, points in self.question_points_by_part["part_sums"].items():
             for part, points in points.items():
                 index, source = self.find_first_markdown_cell_with(
                     points["current_key"], points["previous_key"], "### "
@@ -132,30 +131,57 @@ class OtterNotebookBuilder(Logger):
         return None, None  # Return None if no such markdown cell is found
 
     @staticmethod
-    def get_question_points_by_part(question_dict: dict) -> dict:
+    def construct_question_points_by_part(question_dict: dict) -> dict:
         """
-        Get the points for each part of a question.
+        Calculate and return the total points for each question and its parts.
+
+        This function processes a dictionary of question data to compute the total
+        points for each question and each part of a question. It utilizes helper
+        methods to perform these calculations and combines the results into a
+        single dictionary.
+
+        Args:
+            question_dict (dict): A dictionary containing question data, where each
+                                  key is a unique identifier for a question or part,
+                                  and each value is a dictionary with details about
+                                  the question or part, including its points.
+
+        Returns:
+            dict: A dictionary with two keys:
+                  - "question_sums": Contains the total points for each question.
+                  - "part_sums": Contains the total points for each part of a question.
         """
-        # Compute sum for each question and store the previous cell number (key)
-        question_sums = {}
-        prev_question = 0  # Initialize previous cell number as 0
+        question_sums = OtterNotebookBuilder.question_points(question_dict)
+        part_sums = OtterNotebookBuilder.parts_points(question_dict)
+        result = {"question_sums": question_sums, "part_sums": part_sums}
+        return result
 
-        for key, entry in question_dict.items():
-            question_number = entry["question_number"]
-            if question_number not in question_sums:
-                question_sums[question_number] = {
-                    "total_points": 0,
-                    "previous_key": prev_question,
-                    "current_key": None,
-                    "question_number": question_number,
-                }
-                prev_question = key  # Update previous key for the next new question
-            question_sums[question_number]["total_points"] += entry["points"]
-            question_sums[question_number]["current_key"] = (
-                key  # Update current key to the end of the current question
-            )
+    @staticmethod
+    def parts_points(question_dict):
+        """
+        Calculate the total points for each part of a question.
 
-        # Compute sum for each question part and store the previous cell number (key)
+        This method processes a dictionary of question data to compute the total
+        points for each part of a question. It organizes the results in a nested
+        dictionary structure, where each question is a key, and its value is another
+        dictionary containing parts as keys and their respective total points and
+        metadata as values.
+
+        Args:
+            question_dict (dict): A dictionary containing question data, where each
+                                  key is a unique identifier for a question or part,
+                                  and each value is a dictionary with details about
+                                  the question or part, including its points.
+
+        Returns:
+            dict: A dictionary with questions as keys and dictionaries of parts as values.
+                  Each part dictionary contains:
+                  - "total_points": The sum of points for the part.
+                  - "previous_key": The key of the previous part.
+                  - "current_key": The key of the current part.
+                  - "question_number": The number of the question.
+                  - "question_part_number": The part number of the question.
+        """
         part_sums = {}
         prev_part = 0  # Initialize previous cell number as 0
 
@@ -176,12 +202,51 @@ class OtterNotebookBuilder(Logger):
                 }
                 prev_part = key  # Update previous key for the next new question part
             part_sums[question][part]["total_points"] += entry["points"]
+        return part_sums
 
-        # Combine results into a dictionary
-        result = {"question_sums": question_sums, "part_sums": part_sums}
+    @staticmethod
+    def question_points(question_dict):
+        """
+        Calculate the total points for each question.
 
-        # Return result dictionary
-        return result
+        This method processes a dictionary of question data to compute the total
+        points for each question. It organizes the results in a dictionary structure,
+        where each question number is a key, and its value is a dictionary containing
+        the total points and metadata for that question.
+
+        Args:
+            question_dict (dict): A dictionary containing question data, where each
+                                  key is a unique identifier for a question or part,
+                                  and each value is a dictionary with details about
+                                  the question or part, including its points.
+
+        Returns:
+            dict: A dictionary with question numbers as keys and dictionaries of metadata as values.
+                  Each metadata dictionary contains:
+                  - "total_points": The sum of points for the question.
+                  - "previous_key": The key of the previous question.
+                  - "current_key": The key of the current question.
+                  - "question_number": The number of the question.
+        """
+        question_sums = {}
+        prev_question = 0  # Initialize previous cell number as 0
+
+        for key, entry in question_dict.items():
+            question_number = entry["question_number"]
+            if question_number not in question_sums:
+                question_sums[question_number] = {
+                    "total_points": 0,
+                    "previous_key": prev_question,
+                    "current_key": None,
+                    "question_number": question_number,
+                }
+                prev_question = key  # Update previous key for the next new question
+            question_sums[question_number]["total_points"] += entry["points"]
+            question_sums[question_number]["current_key"] = (
+                key  # Update current key to the end of the current question
+            )
+            
+        return question_sums
 
     @staticmethod
     def conceal_tests(cell_source):
