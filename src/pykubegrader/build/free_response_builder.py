@@ -73,16 +73,26 @@ class OtterNotebookBuilder(Logger):
         self.add_question_part_points_to_notebook()
 
     def add_question_points_to_notebook(self) -> None:
+        """
+        Updates the notebook with total points for each question.
+
+        This method iterates over each question in the notebook, finds the corresponding
+        markdown cell, and appends the total points information to the question description.
+
+        The method uses the `question_points_by_part` attribute to retrieve the points
+        information and modifies the notebook cells accordingly.
+
+        Raises:
+            ValueError: If the notebook cell cannot be found or modified.
+        """
         for question, points in self.question_points_by_part["question_sums"].items():
             index, source = self.find_first_markdown_cell_with(
                 points["current_key"], points["previous_key"], "## "
             )
 
-            # if the question is not found, skip it
             if index is None:
                 continue
 
-            # add the question points to the question description
             source = get_cell_source(self.temp_notebook, index)
             modified_source = OtterNotebookBuilder.add_text_after_octothorpe(
                 source,
@@ -91,17 +101,27 @@ class OtterNotebookBuilder(Logger):
             self.replace_cell_source(index, modified_source)
 
     def add_question_part_points_to_notebook(self) -> None:
-        for question, points in self.question_points_by_part["part_sums"].items():
-            for part, points in points.items():
+        """
+        Updates the notebook with total points for each question part.
+
+        This method iterates over each question part in the notebook, finds the corresponding
+        markdown cell, and appends the total points information to the question part description.
+
+        The method uses the `question_points_by_part` attribute to retrieve the points
+        information and modifies the notebook cells accordingly.
+
+        Raises:
+            ValueError: If the notebook cell cannot be found or modified.
+        """
+        for question, parts in self.question_points_by_part["part_sums"].items():
+            for part, points in parts.items():
                 index, source = self.find_first_markdown_cell_with(
                     points["current_key"], points["previous_key"], "### "
                 )
 
-                # if the question part is not found, skip it
                 if index is None:
                     continue
 
-                # add the question part points to the question part description
                 source = get_cell_source(self.temp_notebook, index)
                 modified_source = OtterNotebookBuilder.add_text_after_octothorpe(
                     source,
@@ -349,11 +369,6 @@ class OtterNotebookBuilder(Logger):
             updated_cell_source.extend(
                 OtterNotebookBuilder.construct_update_responses(cell_dict)
             )
-
-            # # code to reset matplotlib
-            # updated_cell_source.extend(
-            #     ["_ = matplotlib.pyplot.close('all')\n"]
-            # )
 
             self.replace_cell_source(cell_index, updated_cell_source)
 
