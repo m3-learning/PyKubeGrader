@@ -10,6 +10,8 @@ from pykubegrader.build.notebooks.io import modify_notebook_cell
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 from pykubegrader.build.io import read_notebook, get_cell_source
 
+import nbformat
+
 
 @dataclass
 class OtterNotebookBuilder(Logger):
