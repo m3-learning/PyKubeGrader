@@ -6,19 +6,23 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
+from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 
 import nbformat
 
 
 @dataclass
-class OtterNotebookBuilder:
+class OtterNotebookBuilder(Logger):
     notebook_path: str
     temp_notebook: Optional[str] = None
     assignment_tag: str = ""
     require_key: bool = False
     verbose: bool = False
 
-    def __post_init__(self) -> None:
+    def __post_init__(self, **kwargs) -> None:
+        
+        super().__init__(**kwargs)
+        
         self.root_path, self.filename = OtterNotebookBuilder.get_filename_and_root(
             self.notebook_path
         )
