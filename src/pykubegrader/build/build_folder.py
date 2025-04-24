@@ -15,15 +15,24 @@ from dataclasses import dataclass, field
 import requests
 import yaml
 
-from pykubegrader.build.config import SubmissionCodeBaseClass, question_class_type, EnvironmentVariables
-from pykubegrader.build.io import check_if_file_in_folder, get_notebooks_recursively, remove_file_suffix, write_JSON
+from pykubegrader.build.config import (
+    SubmissionCodeBaseClass,
+    question_class_type,
+    EnvironmentVariables,
+)
+from pykubegrader.build.io import (
+    check_if_file_in_folder,
+    get_notebooks_recursively,
+    remove_file_suffix,
+    write_JSON,
+)
 from pykubegrader.build.notebooks.io import write_notebook
 from pykubegrader.build.notebooks.io import read_notebook
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.search import check_for_heading, has_assignment
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
-from pykubegrader.build.util import  get_due_date, json_serial
+from pykubegrader.build.util import get_due_date, json_serial
 from pykubegrader.build.config import EncryptionKeyTransfer
 from pykubegrader.build.widget_questions.types import (
     MultipleChoice,
@@ -43,7 +52,7 @@ from typing import Optional
 
 import nbformat
 
-from .free_response_builder import FastAPINotebookBuilder
+from .free_response_builder import OtterNotebookBuilder
 
 from pykubegrader.tokens.tokens import add_token
 
@@ -51,7 +60,9 @@ add_token("token", duration=20)
 
 
 @dataclass
-class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, EnvironmentVariables):
+class NotebookProcessor(
+    SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, EnvironmentVariables
+):
     """
     A class for processing Jupyter notebooks within a directory and its subdirectories.
 
@@ -122,12 +133,12 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         Raises:
             OSError: If the solutions folder cannot be created due to permissions or other filesystem issues.
         """
-        
+
         # Initialize Logger with the required parameters
         super().__post_init__(verbose=self.verbose, log=self.log, **kwargs)
-        
+
         self.assignment_tag = kwargs.get("assignment_tag", None)
-        
+
         # Initialize the info for the class
         self.initialize_info()
 
@@ -158,12 +169,11 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         self.solutions_folder = os.path.join(self.root_folder, "_solutions")
         self.assignment_total_points = 0
         self.total_point_log = {}
-        
+
         # makes the solutions folder
         os.makedirs(
             self.solutions_folder, exist_ok=True
         )  # Create the folder if it doesn't exist
-    
 
     def initialize_from_assignment_yaml(self):
         """
@@ -172,14 +182,14 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         This method executes the following steps:
         1. Opens and reads the 'assignment_config.yaml' file found in the root folder.
         2. Parses the YAML content to retrieve assignment details.
-        3. Configures the instance attributes: week number, assignment type, bonus points, 
+        3. Configures the instance attributes: week number, assignment type, bonus points,
            requirement key, final submission flag, and assignment tag based on the parsed data.
 
         Raises:
             FileNotFoundError: Raised if the 'assignment_config.yaml' file is not found.
             yaml.YAMLError: Raised if there is an error while parsing the YAML content.
         """
-        
+
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
             data = yaml.safe_load(file)
 
@@ -222,13 +232,16 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                 self._process_single_notebook(notebook_path)
 
         # Write the dictionary to a JSON file
-        write_JSON() 
+        write_JSON()
 
         if check_if_file_in_folder(self.root_folder, "assignment_config.yaml"):
             self.post_assignment()
 
-        self.update_initialize_function(base_folder=self.solutions_folder, 
-                                        total_point_log=self.total_point_log, indent=4)
+        self.update_initialize_function(
+            base_folder=self.solutions_folder,
+            total_point_log=self.total_point_log,
+            indent=4,
+        )
 
     def update_initialize_function(self):
         """
@@ -256,11 +269,11 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
     def mod_build_payload(self, yaml_content, **kwargs):
         notebook_title = kwargs.get("notebook_title", None)
         total_points = kwargs.get("total_points", None)
-        
+
         # Parse the YAML content
         with open(yaml_content, "r") as file:
             data = yaml.safe_load(file)
-        
+
         # Extract assignment details
         assignment = data.get("assignment", {})
         due_date = get_due_date(assignment)
@@ -270,15 +283,17 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             "week_number": self.week_num,
             "assignment_type": self.assignment_type,
             "due_date": due_date,
-            "max_points": total_points - self.bonus_points, # TODO: need a fix here for the total points
-            "total_points": total_points, # Added total points to the payload
-            "bonus_points": self.bonus_points, # Added bonus points to the payload
-            "description": str(self.week_num), # Added description to the payload TODO: should fix this to be better.
+            "max_points": total_points
+            - self.bonus_points,  # TODO: need a fix here for the total points
+            "total_points": total_points,  # Added total points to the payload
+            "bonus_points": self.bonus_points,  # Added bonus points to the payload
+            "description": str(
+                self.week_num
+            ),  # Added description to the payload TODO: should fix this to be better.
         }
 
-    #TODO: passthrough remove soon.
+    # TODO: passthrough remove soon.
     def build_payload(self, yaml_content):
-        
         self.mod_build_payload(yaml_content)
         """
         Reads YAML content for an assignment and returns Python variables.
@@ -310,7 +325,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         #     "due_date": due_date,
         #     "max_score": self.assignment_total_points - self.bonus_points,
         # }
-        
 
     def put_notebook(self, notebook_title, total_points):
         """
@@ -327,7 +341,10 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         )
 
         # Define HTTP Basic Authentication
-        self.post_request(url, payload,)
+        self.post_request(
+            url,
+            payload,
+        )
 
     def post_request(self, url, payload, **kwargs):
         # Get user and password from kwargs if provided, otherwise use default credentials
@@ -335,7 +352,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             auth = (kwargs["user"], kwargs["password"])
         else:
             auth = (user(), password())
-            
+
         # Get headers from kwargs if provided, otherwise use default headers
         if "headers" in kwargs:
             headers = kwargs["headers"]
@@ -361,15 +378,14 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         """
         Sends a POST request to add an assignment.
         """
-        
+
         # Define the URL
         url = os.path.join(self.api_url, "assignments")
 
         # Build the payload
         payload = self.build_payload(f"{self.root_folder}/assignment_config.yaml")
-        
-        self.post_request(url, payload)
 
+        self.post_request(url, payload)
 
     def _process_single_notebook(self, notebook_path):
         """
@@ -423,7 +439,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             temp_notebook_path, solution_notebook_folder_path, notebook_name
         )
 
-        #TODO: might want to refactor this
+        # TODO: might want to refactor this
         # If Otter does not run, move the student file to the main directory
         if student_notebook is None:
             lock_cells_from_students(temp_notebook_path, self.logger)
@@ -443,7 +459,6 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
         # Move the solution file to the autograder folder
         if solution_path is not None:
-            
             # gets importable file name
             importable_file_name = sanitize_string(
                 os.path.splitext(os.path.basename(solution_path))[0]
@@ -467,7 +482,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
         remove_file_suffix(self.root_folder, "_temp", logger=self.logger)
 
         ### CODE TO ENSURE THAT STUDENT NOTEBOOK IS IMPORTABLE
-        
+
         self.importable_file_name(student_path, question_path)
 
         total_points = (
@@ -631,10 +646,12 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             save_path = output_path if output_path else notebook_path
             write_notebook(notebook, save_path)
 
-            self.print_and_log(f"Empty cells removed. Updated notebook saved at: {save_path}")
+            self.print_and_log(
+                f"Empty cells removed. Updated notebook saved at: {save_path}"
+            )
 
         except Exception as e:
-            self.print_and_log(f"An error occurred: {e}")    
+            self.print_and_log(f"An error occurred: {e}")
 
     def add_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
@@ -708,10 +725,10 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
-        
         if has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
-
-            client_private_key, server_public_key = self.transfer_encryption_keys(temp_notebook_path)
+            client_private_key, server_public_key = self.transfer_encryption_keys(
+                temp_notebook_path
+            )
 
             # Extract the assignment config
             config = check_for_heading(
@@ -724,10 +741,12 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             files = self.get_files(config)
 
             self.copy_files(notebook_subfolder, files)
-                    
-            client_private_key, server_public_key = self.transfer_encryption_keys(notebook_subfolder)
 
-            out = FastAPINotebookBuilder(
+            client_private_key, server_public_key = self.transfer_encryption_keys(
+                notebook_subfolder
+            )
+
+            out = OtterNotebookBuilder(
                 notebook_path=temp_notebook_path,
                 assignment_tag=self.assignment_tag,
                 require_key=self.require_key,
@@ -818,7 +837,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                     os.path.join(notebook_subfolder, file),
                 )
 
-    #TODO: Check if we can combine this with replace_temp_in_notebook
+    # TODO: Check if we can combine this with replace_temp_in_notebook
     @staticmethod
     def replace_temp_no_otter(input_file, output_file):
         # Load the notebook
@@ -868,7 +887,9 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             os.makedirs(dist_folder, exist_ok=True)
             command = ["otter", "assign", notebook_path, dist_folder]
             subprocess.run(command, check=True)
-            self.print_and_log(f"Otter assign completed: {notebook_path} -> {dist_folder}")
+            self.print_and_log(
+                f"Otter assign completed: {notebook_path} -> {dist_folder}"
+            )
 
             # Remove all postfix _test from filenames in dist_folder
             remove_file_suffix(dist_folder, logger=self.logger)
@@ -879,7 +900,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             self.print_and_log(
                 f"Unexpected error during `otter assign` for {notebook_path}: {e}"
             )
-            
+
     @staticmethod
     def get_files(config_text):
         """
@@ -905,7 +926,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             return file_list
         else:
             return []
-            
+
     @property
     def assignment_tag(self):
         """
@@ -919,7 +940,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             str: The assignment tag.
         """
         return self._assignment_tag
-    
+
     @property
     def week(self):
         """
@@ -931,7 +952,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             str: The week string in the format 'week_<week_num>'.
         """
         return f"week_{self.week_num}"
-    
+
     @assignment_tag.setter
     def assignment_tag(self, value):
         """
@@ -952,15 +973,17 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             self._assignment_tag = self.assignment_type
         else:
             self._assignment_tag = f"week{self.week_num}-{self.assignment_type}"
+
+
 @dataclass
 class WidgetQuestionParser:
     """
     A parser for widget questions in Jupyter notebooks.
-    
+
     This class is responsible for parsing and extracting widget questions from Jupyter notebook cells.
     It tracks sections of widget questions marked by specific start and end tags, and maintains
     the state of the current section being processed.
-    
+
     Attributes:
         sections (list): A list of dictionaries, each containing a section of widget questions.
         current_section (dict): The dictionary representing the section currently being processed.
@@ -969,6 +992,7 @@ class WidgetQuestionParser:
         start_label (str): The tag that marks the beginning of a widget question section.
         end_label (str): The tag that marks the end of a widget question section.
     """
+
     sections: list = field(default_factory=list)
     current_section: dict = field(default_factory=dict)
     within_section: bool = False
@@ -979,14 +1003,14 @@ class WidgetQuestionParser:
     def process_raw_cell(self, raw_content):
         """
         Processes a raw cell from a Jupyter notebook to identify section markers.
-        
+
         This method checks if the raw content contains the start or end label for a widget question section.
         If a start label is found, it initializes a new section. If an end label is found, it finalizes
         the current section and adds it to the list of sections.
-        
+
         Args:
             raw_content (str): The content of the raw cell to process.
-            
+
         Returns:
             bool: True if a start or end label was found and processed, False otherwise.
         """
@@ -1001,10 +1025,10 @@ class WidgetQuestionParser:
     def start_new_section(self):
         """
         Initializes a new section for widget questions.
-        
+
         This method sets the within_section flag to True, resets the subquestion_number to 0,
         and initializes an empty dictionary for the current_section to store question data.
-        
+
         Returns:
             None
         """
@@ -1015,11 +1039,11 @@ class WidgetQuestionParser:
     def end_current_section(self):
         """
         Finalizes the current section of widget questions.
-        
+
         This method sets the within_section flag to False, indicating that we are no longer
         within a widget question section. If the current_section contains any questions,
         it adds the current_section to the list of sections.
-        
+
         Returns:
             None
         """
@@ -1031,16 +1055,10 @@ class WidgetQuestionParser:
         self.subquestion_number += 1
 
 
-
-
-
-
-
-
 def update_initialize_assignment(
     notebook_path: str,
     assignment_points: Optional[float] = None,
-    assignment_tag: Optional[str] = None, 
+    assignment_tag: Optional[str] = None,
     **kwargs,
 ) -> None:
     """
@@ -1054,18 +1072,19 @@ def update_initialize_assignment(
     Returns:
         None
     """
-    
-    
-    function_name = kwargs.get("function_name", 'initialize_assignment')
-    variable = kwargs.get("variable", 'responses')
-    
+
+    function_name = kwargs.get("function_name", "initialize_assignment")
+    variable = kwargs.get("variable", "responses")
+
     # Load the notebook content
     notebook_data = read_notebook(notebook_path)
 
     # Pattern to match the specific initialize_assignment line
     pattern = re.compile(rf"{variable}\s*=\s*{function_name}\((.*?)\)")
 
-    additional_variables_str = extract_additional_variables(assignment_points, assignment_tag, kwargs)
+    additional_variables_str = extract_additional_variables(
+        assignment_points, assignment_tag, kwargs
+    )
 
     # Flag to check if any replacements were made
     updated = False
@@ -1096,6 +1115,7 @@ def update_initialize_assignment(
     else:
         print(f"No matching lines found in '{notebook_path}'.")
 
+
 def extract_additional_variables(assignment_points, assignment_tag, kwargs):
     additional_variables_dict = kwargs.get("additional_variables", {})
     additional_variables_ = add_variables_from_dict(additional_variables_dict)
@@ -1110,13 +1130,13 @@ def extract_additional_variables(assignment_points, assignment_tag, kwargs):
     additional_variables_str = ", ".join(additional_variables_)
     return additional_variables_str
 
+
 def add_variables_from_dict(additional_variables_dict):
     additional_variables_ = []
     for key, value in additional_variables_dict.items():
         if value is not None:
             additional_variables_.append(f"{key} = {value}")
     return additional_variables_
-
 
 
 def main():
@@ -1152,7 +1172,7 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-    
+
 # # def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
 #     """
 #     Generates a Python file defining an MCQuestion class from a dictionary.
@@ -1228,4 +1248,3 @@ if __name__ == "__main__":
 #                 f.write(f"            grade={grade},\n")
 
 #             f.write("        )\n")
-

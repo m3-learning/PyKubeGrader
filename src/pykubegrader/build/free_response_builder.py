@@ -11,7 +11,7 @@ import nbformat
 
 
 @dataclass
-class FastAPINotebookBuilder:
+class OtterNotebookBuilder:
     notebook_path: str
     temp_notebook: Optional[str] = None
     assignment_tag: str = ""
@@ -19,7 +19,7 @@ class FastAPINotebookBuilder:
     verbose: bool = False
 
     def __post_init__(self) -> None:
-        self.root_path, self.filename = FastAPINotebookBuilder.get_filename_and_root(
+        self.root_path, self.filename = OtterNotebookBuilder.get_filename_and_root(
             self.notebook_path
         )
         self.total_points = 0.0
@@ -60,7 +60,7 @@ class FastAPINotebookBuilder:
 
             # add the question points to the question description
             source = self.get_cell_source(self.temp_notebook, index)
-            modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
+            modified_source = OtterNotebookBuilder.add_text_after_double_hash(
                 source,
                 f"Question {points['question_number']} (Points: {points['total_points']:.2f}):",
             )
@@ -79,7 +79,7 @@ class FastAPINotebookBuilder:
 
                 # add the question part points to the question part description
                 source = self.get_cell_source(self.temp_notebook, index)
-                modified_source = FastAPINotebookBuilder.add_text_after_double_hash(
+                modified_source = OtterNotebookBuilder.add_text_after_double_hash(
                     source,
                     f"Question {points['question_number']}-Part {points['question_part_number']} (Points: {points['total_points']:.2f}):",
                     "### ",
@@ -212,15 +212,15 @@ class FastAPINotebookBuilder:
                 )
 
             cell = self.get_cell(cell_index)
-            cell_source = FastAPINotebookBuilder.add_import_statements_to_tests(
+            cell_source = OtterNotebookBuilder.add_import_statements_to_tests(
                 cell["source"],
                 require_key=self.require_key,
                 assignment_tag=self.assignment_tag,
             )
 
-            cell_source = FastAPINotebookBuilder.conceal_tests(cell_source)
+            cell_source = OtterNotebookBuilder.conceal_tests(cell_source)
 
-            last_import_line_ind = FastAPINotebookBuilder.find_last_import_line(
+            last_import_line_ind = OtterNotebookBuilder.find_last_import_line(
                 cell_source
             )
 
@@ -232,14 +232,14 @@ class FastAPINotebookBuilder:
                 )
             updated_cell_source.extend(["\n"])
             updated_cell_source.extend(
-                FastAPINotebookBuilder.construct_question_info(cell_dict)
+                OtterNotebookBuilder.construct_question_info(cell_dict)
             )
 
             updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
             updated_cell_source.extend(["\n"])
 
             updated_cell_source.extend(
-                FastAPINotebookBuilder.construct_graders(cell_dict)
+                OtterNotebookBuilder.construct_graders(cell_dict)
             )
             updated_cell_source.extend(["\n"])
             updated_cell_source.extend(
@@ -258,7 +258,7 @@ class FastAPINotebookBuilder:
             )
 
             updated_cell_source.extend(
-                FastAPINotebookBuilder.construct_update_responses(cell_dict)
+                OtterNotebookBuilder.construct_update_responses(cell_dict)
             )
 
             # # code to reset matplotlib
@@ -713,7 +713,7 @@ class FastAPINotebookBuilder:
                 source = "".join(cell.get("source", ""))
                 if source.strip().startswith("# BEGIN QUESTION"):
                     question_name, question_number, question_part = (
-                        FastAPINotebookBuilder.extract_question_information(source)
+                        OtterNotebookBuilder.extract_question_information(source)
                     )
 
             elif cell.get("cell_type") == "code":
@@ -735,7 +735,7 @@ class FastAPINotebookBuilder:
                         "logging_variables": logging_variables,
                     }
 
-                    results_dict = FastAPINotebookBuilder.tag_questions(results_dict)
+                    results_dict = OtterNotebookBuilder.tag_questions(results_dict)
 
         return results_dict
 
@@ -762,7 +762,7 @@ class FastAPINotebookBuilder:
         Raises:
             ValueError: If the points value cannot be converted to a float.
         """
-        logging_variables = FastAPINotebookBuilder.extract_log_variables(cell)
+        logging_variables = OtterNotebookBuilder.extract_log_variables(cell)
 
         # Extract assert statements using a more robust approach
         assertions = []
