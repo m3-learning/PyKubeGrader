@@ -25,13 +25,13 @@ def get_cell_source(notebook_path, cell_index):
 
     Returns:
         str: The source code of the specified cell.
-
-    Raises:
-        IndexError: If the cell_index is out of range for the notebook's cells.
-        KeyError: If the 'cells' key is not present in the notebook structure.
     """
     notebook = read_notebook(notebook_path)
-    return notebook["cells"][cell_index]["source"]
+    
+    if "cells" in notebook and len(notebook["cells"]) > cell_index:
+            return notebook["cells"][cell_index]
+    else:
+        return None
 
 
 def modify_notebook_cell(notebook_path, cell_index, new_source):

@@ -9,7 +9,7 @@ from typing import Any, Optional
 from pykubegrader.build.notebooks.io import modify_notebook_cell
 from pykubegrader.build.notebooks.search import find_first_cell_with
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
-from pykubegrader.build.io import read_notebook, get_cell_source
+from pykubegrader.build.notebooks.io import get_cell_source
 
 import nbformat
 
@@ -291,12 +291,9 @@ class OtterNotebookBuilder(Logger):
         self.compute_max_points_free_response()
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
-            if self.verbose:
-                print(
-                    f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}"
-                )
+            self.print_and_log(f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}")
 
-            cell = self.get_cell(cell_index)
+            cell = get_cell_source(self.temp_notebook, cell_index)
             cell_source = OtterNotebookBuilder.add_import_statements_to_tests(
                 cell["source"],
                 require_key=self.require_key,
@@ -607,17 +604,6 @@ class OtterNotebookBuilder(Logger):
         root_path = path_obj.parent  # Get the parent directory
         filename = path_obj.name  # Get the filename
         return root_path, filename
-
-    # TODO: `Any` return not good; would be better to specify return type(s)
-    def get_cell(self, cell_index: int) -> Any:
-        if not self.temp_notebook:
-            raise ValueError("No temporary notebook file path provided")
-        with open(self.temp_notebook, "r", encoding="utf-8") as f:
-            notebook = json.load(f)
-        if "cells" in notebook and len(notebook["cells"]) > cell_index:
-            return notebook["cells"][cell_index]
-        else:
-            return None
 
     def replace_cell_source(self, cell_index: int, new_source: str | list[str]) -> None:
         """
