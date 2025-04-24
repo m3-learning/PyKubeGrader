@@ -797,13 +797,26 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             return None, 0
 
     def copy_files(self, notebook_subfolder, files):
+        """
+        Copies specified files from the root folder to a given notebook subfolder.
+
+        This method iterates over a list of files and copies each file from the root folder
+        to the specified notebook subfolder. It prints a message for each file being copied.
+
+        Args:
+            notebook_subfolder (str): The destination subfolder where files will be copied.
+            files (list): A list of file names to be copied.
+
+        Returns:
+            None
+        """
         if files:
             for file in files:
                 print(f"Copying {file} to {os.path.join(notebook_subfolder, file)}")
                 shutil.copy(
-                        os.path.join(self.root_folder, file),
-                        os.path.join(notebook_subfolder, file),
-                    )
+                    os.path.join(self.root_folder, file),
+                    os.path.join(notebook_subfolder, file),
+                )
 
     #TODO: Check if we can combine this with replace_temp_in_notebook
     @staticmethod
