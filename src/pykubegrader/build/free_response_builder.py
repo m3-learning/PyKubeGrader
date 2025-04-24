@@ -984,6 +984,4 @@ class OtterNotebookBuilder(Logger):
                 points_value = None
         return logging_variables, assertions, comments, points_value
 
-    def get_cell_source(self, notebook_path, cell_index):
-        notebook = self.read_notebook(notebook_path)
-        return notebook["cells"][cell_index]["source"]
+
