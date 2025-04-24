@@ -116,8 +116,8 @@ class OtterNotebookBuilder(Logger):
         """
         for question, parts in self.question_points_by_part["part_sums"].items():
             for part, points in parts.items():
-                index, source = self.find_first_markdown_cell_with(
-                    points["current_key"], points["previous_key"], "### "
+                index, source = find_first_cell_with(
+                    self.temp_notebook, points["current_key"], points["previous_key"], "markdown", "### "
                 )
 
                 if index is None:
