@@ -63,6 +63,13 @@ class OtterNotebookBuilder(Logger):
             self.temp_notebook = self.notebook_path
 
     def add_points_to_notebook(self) -> None:
+        """
+        Adds point information to the notebook.
+
+        This method updates the notebook with the total points for each question
+        and each question part. It modifies the notebook cells to include point
+        details in the question descriptions.
+        """
         self.add_question_points_to_notebook()
         self.add_question_part_points_to_notebook()
 
