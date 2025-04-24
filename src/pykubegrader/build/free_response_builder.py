@@ -670,14 +670,7 @@ class OtterNotebookBuilder(Logger):
                 raise KeyError(f"Cell {key} is missing the 'question' key.")
 
         # Group the keys by question name
-        question_groups: dict = {}
-        for key, cell in cells_dict.items():
-            question = cell.get(
-                "question"
-            )  # Use .get() to avoid errors if key is missing
-            if question not in question_groups:
-                question_groups[question] = []
-            question_groups[question].append(key)
+        question_groups = OtterNotebookBuilder.group_keys_by_question_name(cells_dict)
 
         # Add 'is_first' and 'is_last' flags to all cells
         for keys in question_groups.values():
@@ -689,6 +682,30 @@ class OtterNotebookBuilder(Logger):
                 test_number += 1
 
         return cells_dict
+
+    @staticmethod
+    def group_keys_by_question_name(cells_dict):
+        """
+        Groups cell keys by their associated question name.
+
+        This method organizes the keys of a dictionary of cells into groups based on the
+        'question' attribute of each cell. It returns a dictionary where each key is a
+        question name and the corresponding value is a list of keys from the original
+        dictionary that are associated with that question.
+
+        Args:
+            cells_dict (dict): A dictionary where keys are cell IDs and values are cell details.
+
+        Returns:
+            dict: A dictionary with question names as keys and lists of cell IDs as values.
+        """
+        question_groups: dict = {}
+        for key, cell in cells_dict.items():
+            question = cell.get("question")  # Use .get() to avoid errors if key is missing
+            if question not in question_groups:
+                question_groups[question] = []
+            question_groups[question].append(key)
+        return question_groups
 
     @staticmethod
     def extract_question_information(source: str) -> tuple[str, str, str]:
