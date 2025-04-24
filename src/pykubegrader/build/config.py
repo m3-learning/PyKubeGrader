@@ -4,6 +4,8 @@ from pathlib import Path
 import nbformat
 from pykubegrader.build.notebooks.writers import AddKeyRequirementImportBaseClass
 from pykubegrader.build.util import EncryptionKeyBaseClass
+from textwrap import dedent
+
 @dataclass
 class DisplayQuestionCode:
     
@@ -89,3 +91,25 @@ class EnvironmentVariables:
     keys_student: str = "capture"
     user_name_student: str = "student"
 
+
+
+
+@dataclass
+class OtterConfigSettings:
+    _required_imports: str = dedent("""
+        from pykubegrader.telemetry import (
+            ensure_responses,
+            log_variable,
+            score_question,
+            submit_question,
+            telemetry,
+            update_responses,
+        )
+        import os
+        import base64
+        import matplotlib
+    """)
+
+    @property
+    def formatted_required_imports(self) -> str:
+        return self._required_imports.strip() + "\n"
