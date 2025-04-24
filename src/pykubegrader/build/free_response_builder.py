@@ -125,11 +125,10 @@ class OtterNotebookBuilder(Logger):
         Returns:
         - tuple: The index of the found markdown cell and its source content.
         """
-        with open(self.temp_notebook, "r", encoding="utf-8") as f:
-            nb_data = json.load(f)
-
+        notebook = read_notebook(self.temp_notebook)
+        
         for idx in range(start_index, end_index - 1, -1):
-            cell = nb_data.get("cells", [])[idx]
+            cell = notebook.get("cells", [])[idx]
             if cell["cell_type"] == "markdown" and cell.get("source", [])[0].startswith(
                 code_to_find
             ):
