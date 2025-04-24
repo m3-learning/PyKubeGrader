@@ -20,7 +20,7 @@ from pykubegrader.build.io import check_if_file_in_folder, get_notebooks_recursi
 from pykubegrader.build.notebooks.io import write_notebook
 from pykubegrader.build.notebooks.io import read_notebook
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
-from pykubegrader.build.notebooks.search import has_assignment
+from pykubegrader.build.notebooks.search import check_for_heading, has_assignment
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
 from pykubegrader.build.util import  get_due_date, json_serial
@@ -708,14 +708,20 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
     def free_response_parser(
         self, temp_notebook_path, notebook_subfolder, notebook_name
     ):
+        
         if has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
 
             client_private_key, server_public_key = self.transfer_encryption_keys(temp_notebook_path)
 
             # Extract the assignment config
-            config = extract_config_from_notebook(temp_notebook_path)
+            config = check_for_heading(
+                temp_notebook_path,
+                ["# ASSIGNMENT CONFIG"],
+                cell_type="raw",
+                return_cell=True,
+            )
 
-            files = extract_files(config)
+            files = self.get_files(config)
 
             if files:
                 for file in files:
@@ -857,6 +863,32 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
             self.print_and_log(
                 f"Unexpected error during `otter assign` for {notebook_path}: {e}"
             )
+            
+    @staticmethod
+    def get_files(config_text):
+        """
+        Extract the list of files from the given configuration text, excluding .bin files.
+
+        Parameters:
+            config_text (str): The configuration text to process.
+
+        Returns:
+            list: A list of file names excluding .bin files.
+        """
+        # Regular expression to extract files list
+        file_pattern = re.search(r"files:\s*\[(.*?)\]", config_text, re.DOTALL)
+
+        if file_pattern:
+            files = file_pattern.group(1)
+            # Split the list into individual file names and exclude .bin files
+            file_list = [
+                file.strip()
+                for file in files.split(",")
+                if not file.strip().endswith(".bin")
+            ]
+            return file_list
+        else:
+            return []
             
     @property
     def assignment_tag(self):
@@ -1069,56 +1101,6 @@ def add_variables_from_dict(additional_variables_dict):
             additional_variables_.append(f"{key} = {value}")
     return additional_variables_
 
-
-def extract_config_from_notebook(notebook_path):
-    """
-    Extract configuration text from a Jupyter Notebook.
-
-    Parameters:
-        notebook_path (str): Path to the Jupyter Notebook file.
-
-    Returns:
-        str: The configuration text if found, otherwise an empty string.
-    """
-    with open(notebook_path, "r", encoding="utf-8") as f:
-        notebook_data = json.load(f)
-
-    # Iterate through cells to find the configuration text
-    config_text = ""
-    for cell in notebook_data.get("cells", []):
-        if cell.get("cell_type") == "raw":  # Check for code cells
-            source = "".join(cell.get("source", []))
-            if "# ASSIGNMENT CONFIG" in source:
-                config_text = source
-                break
-
-    return config_text
-
-
-def extract_files(config_text):
-    """
-    Extract the list of files from the given configuration text, excluding .bin files.
-
-    Parameters:
-        config_text (str): The configuration text to process.
-
-    Returns:
-        list: A list of file names excluding .bin files.
-    """
-    # Regular expression to extract files list
-    file_pattern = re.search(r"files:\s*\[(.*?)\]", config_text, re.DOTALL)
-
-    if file_pattern:
-        files = file_pattern.group(1)
-        # Split the list into individual file names and exclude .bin files
-        file_list = [
-            file.strip()
-            for file in files.split(",")
-            if not file.strip().endswith(".bin")
-        ]
-        return file_list
-    else:
-        return []
 
 
 def main():

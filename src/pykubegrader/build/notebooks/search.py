@@ -15,8 +15,7 @@ def find_first_code_cell(notebook_path):
             or (None, None) if no code cell is found.
     """
     # Load the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
-        notebook = nbformat.read(f, as_version=4)
+    notebook = read_notebook(notebook_path)
 
     # Iterate through the cells to find the first code cell
     for index, cell in enumerate(notebook.get("cells", [])):
@@ -26,7 +25,7 @@ def find_first_code_cell(notebook_path):
     return None, None  # No code cell found
 
 
-def check_for_heading(notebook_path, search_strings, logger=None):
+def check_for_heading(notebook_path, search_strings, logger=None, cell_type="raw", return_cell=False):
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
 
@@ -48,11 +47,14 @@ def check_for_heading(notebook_path, search_strings, logger=None):
     try:
         notebook = read_notebook(notebook_path)
         for cell in notebook.cells:
-            if cell.cell_type == "raw" and cell.source.startswith("#"):
+            if cell.cell_type == cell_type and cell.source.startswith("#"):
                 if any(
                     search_string in cell.source for search_string in search_strings
                 ):
-                    return True
+                    if return_cell:
+                        return cell.source
+                    else:
+                        return True
     except Exception as e:
         if logger is not None:
             logger.print_and_log(f"Error reading notebook {notebook_path}: {e}")
