@@ -723,13 +723,7 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
 
             files = self.get_files(config)
 
-            if files:
-                for file in files:
-                    print(f"Copying {file} to {os.path.join(notebook_subfolder, file)}")
-                    shutil.copy(
-                        os.path.join(self.root_folder, file),
-                        os.path.join(notebook_subfolder, file),
-                    )
+            self.copy_files(notebook_subfolder, files)
                     
             client_private_key, server_public_key = self.transfer_encryption_keys(notebook_subfolder)
 
@@ -801,6 +795,15 @@ class NotebookProcessor(SubmissionCodeBaseClass, EncryptionKeyTransfer, Logger, 
                 temp_notebook_path, temp_notebook_path
             )
             return None, 0
+
+    def copy_files(self, notebook_subfolder, files):
+        if files:
+            for file in files:
+                print(f"Copying {file} to {os.path.join(notebook_subfolder, file)}")
+                shutil.copy(
+                        os.path.join(self.root_folder, file),
+                        os.path.join(notebook_subfolder, file),
+                    )
 
     #TODO: Check if we can combine this with replace_temp_in_notebook
     @staticmethod
