@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 from pykubegrader.build.notebooks.io import modify_notebook_cell
+from pykubegrader.build.notebooks.search import find_first_cell_with
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 from pykubegrader.build.io import read_notebook, get_cell_source
 
@@ -86,8 +87,8 @@ class OtterNotebookBuilder(Logger):
             ValueError: If the notebook cell cannot be found or modified.
         """
         for question, points in self.question_points_by_part["question_sums"].items():
-            index, source = self.find_first_markdown_cell_with(
-                points["current_key"], points["previous_key"], "## "
+            index, source = find_first_cell_with(
+                self.temp_notebook, points["current_key"], points["previous_key"], "markdown", "## "
             )
 
             if index is None:
@@ -129,31 +130,6 @@ class OtterNotebookBuilder(Logger):
                     "### ",
                 )
                 self.replace_cell_source(index, modified_source)
-
-    def find_first_markdown_cell_with(
-        self, start_index: int, end_index: int = 0, code_to_find: str = "## "
-    ):
-        """
-        Finds the first markdown cell going backwards from the given start_index
-        to the given end_index where the first line starts with '##'.
-
-        Args:
-        - start_index (int): The index to start searching from.
-        - end_index (int): The index to stop searching at.
-
-        Returns:
-        - tuple: The index of the found markdown cell and its source content.
-        """
-        notebook = read_notebook(self.temp_notebook)
-
-        for idx in range(start_index, end_index - 1, -1):
-            cell = notebook.get("cells", [])[idx]
-            if cell["cell_type"] == "markdown" and cell.get("source", [])[0].startswith(
-                code_to_find
-            ):
-                return idx, cell.get("source", [])
-
-        return None, None  # Return None if no such markdown cell is found
 
     @staticmethod
     def construct_question_points_by_part(question_dict: dict) -> dict:

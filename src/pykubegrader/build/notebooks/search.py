@@ -25,6 +25,34 @@ def find_first_code_cell(notebook_path):
     return None, None  # No code cell found
 
 
+def find_first_cell_with(
+    notebook_path: str, start_index: int, end_index: int = 0, cell_type: str = "markdown", code_to_find: str = "## "
+):
+    """
+    Searches for the first cell of a specified type in a Jupyter notebook, moving backwards from a given start index to an end index, where the first line of the cell starts with a specified string.
+
+    Args:
+        notebook_path (str): The path to the Jupyter notebook file.
+        start_index (int): The index to begin the search from.
+        end_index (int, optional): The index to stop the search at. Defaults to 0.
+        cell_type (str, optional): The type of cell to search for (e.g., "markdown"). Defaults to "markdown".
+        code_to_find (str, optional): The string that the first line of the cell should start with. Defaults to "## ".
+
+    Returns:
+        tuple: A tuple containing the index of the found cell and its source content, or (None, None) if no matching cell is found.
+    """
+    notebook = read_notebook(notebook_path)
+
+    for idx in range(start_index, end_index - 1, -1):
+        cell = notebook.get("cells", [])[idx]
+        if cell["cell_type"] == cell_type and cell.get("source", [])[0].startswith(
+            code_to_find
+        ):
+            return idx, cell.get("source", [])
+
+    return None, None  # Return None if no such cell is found
+
+
 def check_for_heading(notebook_path, search_strings, logger=None, cell_type="raw", return_cell=False):
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
