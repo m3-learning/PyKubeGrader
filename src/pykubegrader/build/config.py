@@ -92,11 +92,9 @@ class EnvironmentVariables:
     user_name_student: str = "student"
 
 
-
-
 @dataclass
 class OtterConfigSettings:
-    _required_imports: str = dedent("""
+    _test_required_imports: str = dedent("""
         from pykubegrader.telemetry import (
             ensure_responses,
             log_variable,
@@ -108,8 +106,22 @@ class OtterConfigSettings:
         import os
         import base64
         import matplotlib
+        matplotlib.use('Agg')
     """)
-
+    end_test_config_line = "# END TEST CONFIG"
+    
+    def get_key_validation_line(self, assignment_tag: str) -> str:
+        return (
+            "from pykubegrader.tokens.validate_token import validate_token\n"
+            f"validate_token(assignment='{assignment_tag}')\n"
+        )
+    
     @property
-    def formatted_required_imports(self) -> str:
-        return self._required_imports.strip() + "\n"
+    def test_required_imports(self) -> str:
+        return self.format_imports(self._test_required_imports)
+    
+
+    
+    @staticmethod
+    def format_imports(imports: list[str]) -> str:
+        return imports.strip() + "\n"

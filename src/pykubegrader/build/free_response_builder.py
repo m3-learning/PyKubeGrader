@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Optional
 from pykubegrader.build.notebooks.io import modify_notebook_cell
 from pykubegrader.build.notebooks.search import find_first_cell_with
+from pykubegrader.build.notebooks.writers import insert_into_source
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 from pykubegrader.build.notebooks.io import get_cell_source
 
@@ -88,7 +89,11 @@ class OtterNotebookBuilder(Logger):
         """
         for question, points in self.question_points_by_part["question_sums"].items():
             index, source = find_first_cell_with(
-                self.temp_notebook, points["current_key"], points["previous_key"], "markdown", "## "
+                self.temp_notebook,
+                points["current_key"],
+                points["previous_key"],
+                "markdown",
+                "## ",
             )
 
             if index is None:
@@ -117,7 +122,11 @@ class OtterNotebookBuilder(Logger):
         for question, parts in self.question_points_by_part["part_sums"].items():
             for part, points in parts.items():
                 index, source = find_first_cell_with(
-                    self.temp_notebook, points["current_key"], points["previous_key"], "markdown", "### "
+                    self.temp_notebook,
+                    points["current_key"],
+                    points["previous_key"],
+                    "markdown",
+                    "### ",
                 )
 
                 if index is None:
@@ -291,7 +300,9 @@ class OtterNotebookBuilder(Logger):
         self.compute_max_points_free_response()
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
-            self.print_and_log(f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}")
+            self.print_and_log(
+                f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}"
+            )
 
             cell = get_cell_source(self.temp_notebook, cell_index)
             cell_source = OtterNotebookBuilder.add_import_statements_to_tests(
@@ -411,7 +422,9 @@ class OtterNotebookBuilder(Logger):
         for cell_dict in self.assertion_tests_dict.values():
             if cell_dict["is_first"]:
                 max_question_points = self.get_max_question_points(cell_dict)
-                self.max_question_points[f"{cell_dict['question']}"] = max_question_points
+                self.max_question_points[f"{cell_dict['question']}"] = (
+                    max_question_points
+                )
                 self.total_points += max_question_points
 
     def construct_first_cell_question_header(self, cell_dict: dict) -> list[str]:
@@ -544,10 +557,10 @@ class OtterNotebookBuilder(Logger):
         Adds the necessary import statements to the first cell of the notebook.
         """
 
-        end_test_config_line = "# END TEST CONFIG"
+        flag_to_insert = "# END TEST CONFIG"
 
         # Imports to add
-        imports = [
+        lines_to_insert = [
             "from pykubegrader.telemetry import (\n",
             "    ensure_responses,\n",
             "    log_variable,\n",
@@ -562,22 +575,13 @@ class OtterNotebookBuilder(Logger):
         ]
 
         if require_key:
-            imports.append(
+            lines_to_insert.append(
                 f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment='{assignment_tag}')\n"
             )
 
-        imports.append("import matplotlib\n")
-        imports.append("matplotlib.use('Agg')\n")
+        cell_source = insert_into_source(cell_source, lines_to_insert, flag_to_insert)
 
-        for i, line in enumerate(cell_source):
-            if end_test_config_line in line:
-                # Insert the imports immediately after the current line
-                cell_source[i + 1 : i + 1] = [
-                    "\n"
-                ] + imports  # Add a blank line for readability
-                return cell_source  # Exit the loop once the imports are inserted
-
-        raise ValueError("End of test configuration not found")
+        return cell_source
 
     # TODO: `Any` return not good; would be better to specify return type(s)
     def extract_first_cell(self) -> Any:

@@ -40,105 +40,105 @@ def remove_assignment_config_cells(notebook_path):
 
 
 def write_validation_token_cell(
-        notebook_path: str, require_key: bool, **kwargs
-    ) -> None:
-        """
-        Adds a new code cell at the top of a Jupyter notebook if require_key is True.
+    notebook_path: str, require_key: bool, **kwargs
+) -> None:
+    """
+    Adds a new code cell at the top of a Jupyter notebook if require_key is True.
 
-        This function modifies a Jupyter notebook by inserting a new code cell at the top.
-        The new cell contains a call to the `validate_token` function, which is used to
-        validate a token provided by the instructor. The function only performs this action
-        if the `require_key` parameter is set to True.
+    This function modifies a Jupyter notebook by inserting a new code cell at the top.
+    The new cell contains a call to the `validate_token` function, which is used to
+    validate a token provided by the instructor. The function only performs this action
+    if the `require_key` parameter is set to True.
 
-        Args:
-            notebook_path (str): The path to the notebook file to modify.
-            require_key (bool): Whether to add the validate_token cell.
-            **kwargs: Additional keyword arguments that may include:
-                - assignment_tag (str, optional): A tag for the assignment, which will be
-                  included in the validate_token call if provided.
+    Args:
+        notebook_path (str): The path to the notebook file to modify.
+        require_key (bool): Whether to add the validate_token cell.
+        **kwargs: Additional keyword arguments that may include:
+            - assignment_tag (str, optional): A tag for the assignment, which will be
+              included in the validate_token call if provided.
 
-        Returns:
-            None
+    Returns:
+        None
 
-        Example:
-            write_validation_token_cell("path/to/notebook.ipynb", True, assignment_tag="Week1")
+    Example:
+        write_validation_token_cell("path/to/notebook.ipynb", True, assignment_tag="Week1")
 
-        Behavior:
-            - If `require_key` is False, the function will print a message and make no changes.
-            - If `require_key` is True, a new code cell is added at the top of the notebook.
-            - The new cell will import the `validate_token` function and call it with a placeholder
-              for the key and the optional assignment tag.
+    Behavior:
+        - If `require_key` is False, the function will print a message and make no changes.
+        - If `require_key` is True, a new code cell is added at the top of the notebook.
+        - The new cell will import the `validate_token` function and call it with a placeholder
+          for the key and the optional assignment tag.
 
-        Raises:
-            None: This function handles exceptions internally, if any arise from file operations.
-        """
-        if not require_key:
-            print("require_key is False. No changes made to the notebook.")
-            return
+    Raises:
+        None: This function handles exceptions internally, if any arise from file operations.
+    """
+    if not require_key:
+        print("require_key is False. No changes made to the notebook.")
+        return
 
-        write_validation_block(
-            notebook_path,
-            require_key,
-            assignment_tag=kwargs.get("assignment_tag", None),
+    write_validation_block(
+        notebook_path,
+        require_key,
+        assignment_tag=kwargs.get("assignment_tag", None),
+    )
+
+    # Load the notebook
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        notebook = nbformat.read(f, as_version=4)
+
+    # Create the new code cell
+    if kwargs.get("assignment_tag", None):
+        new_cell = nbformat.v4.new_code_cell(
+            "from pykubegrader.tokens.validate_token import validate_token\n"
+            f"validate_token('type the key provided by your instructor here', assignment = '{kwargs.get('assignment_tag')}')\n"
         )
-        
-        # Load the notebook
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
+    else:
+        new_cell = nbformat.v4.new_code_cell(
+            "from pykubegrader.tokens.validate_token import validate_token\n"
+            "validate_token('type the key provided by your instructor here')\n"
+        )
 
-        # Create the new code cell
-        if kwargs.get("assignment_tag", None):
-            new_cell = nbformat.v4.new_code_cell(
-                "from pykubegrader.tokens.validate_token import validate_token\n"
-                f"validate_token('type the key provided by your instructor here', assignment = '{kwargs.get('assignment_tag')}')\n"
-            )
-        else:
-            new_cell = nbformat.v4.new_code_cell(
-                "from pykubegrader.tokens.validate_token import validate_token\n"
-                "validate_token('type the key provided by your instructor here')\n"
-            )
+    # Add the new cell to the top of the notebook
+    notebook.cells.insert(0, new_cell)
 
-        # Add the new cell to the top of the notebook
-        notebook.cells.insert(0, new_cell)
-
-        # Save the modified notebook
-        with open(notebook_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
+    # Save the modified notebook
+    with open(notebook_path, "w", encoding="utf-8") as f:
+        nbformat.write(notebook, f)
 
 
 def write_validation_block(
-        notebook_path: str, require_key: bool, assignment_tag=None, **kwargs
-    ) -> None:
-        """
-        Modifies the first code cell of a Jupyter notebook to add the validate_token call if require_key is True.
+    notebook_path: str, require_key: bool, assignment_tag=None, **kwargs
+) -> None:
+    """
+    Modifies the first code cell of a Jupyter notebook to add the validate_token call if require_key is True.
 
-        Args:
-            notebook_path (str): The path to the notebook file to modify.
-            require_key (bool): Whether to add the validate_token cell.
+    Args:
+        notebook_path (str): The path to the notebook file to modify.
+        require_key (bool): Whether to add the validate_token cell.
 
-        Returns:
-            None
-        """
-        if not require_key:
-            return
+    Returns:
+        None
+    """
+    if not require_key:
+        return
 
-        # Load the notebook
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
+    # Load the notebook
+    with open(notebook_path, "r", encoding="utf-8") as f:
+        notebook = nbformat.read(f, as_version=4)
 
-        # Prepare the validation code
-        validation_code = f"validate_token(assignment = '{assignment_tag}')\n"
+    # Prepare the validation code
+    validation_code = f"validate_token(assignment = '{assignment_tag}')\n"
 
-        # Modify the first cell if it's a code cell, otherwise insert a new one
-        if notebook.cells and notebook.cells[0].cell_type == "code":
-            notebook.cells[0].source = validation_code + "\n" + notebook.cells[0].source
-        else:
-            new_cell = nbformat.v4.new_code_cell(validation_code)
-            notebook.cells.insert(0, new_cell)
+    # Modify the first cell if it's a code cell, otherwise insert a new one
+    if notebook.cells and notebook.cells[0].cell_type == "code":
+        notebook.cells[0].source = validation_code + "\n" + notebook.cells[0].source
+    else:
+        new_cell = nbformat.v4.new_code_cell(validation_code)
+        notebook.cells.insert(0, new_cell)
 
-        # Save the modified notebook
-        with open(notebook_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
+    # Save the modified notebook
+    with open(notebook_path, "w", encoding="utf-8") as f:
+        nbformat.write(notebook, f)
 
 
 def replace_cell_source(notebook_path, cell_index, new_source):
@@ -250,7 +250,6 @@ def replace_cells_between_markers(data, markers, ipynb_file, output_file):
 
         # Iterate over each cell in the notebook
         for cell in notebook_data["cells"]:
-
             # If the cell is a raw cell and not done, check if it contains the begin marker
             if cell.get("cell_type") == "raw" and not done:
                 if any(begin_marker in line for line in cell.get("source", [])):
@@ -286,19 +285,19 @@ def replace_cells_between_markers(data, markers, ipynb_file, output_file):
         # Write the modified notebook to the output file
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(notebook_data, f, indent=2)
-            
+
+
 @dataclass
 class AddKeyRequirementImportBaseClass(ABC):
-    
     @property
     @abstractmethod
     def code_cell(self):
         pass
-    
+
     def add_key_requirement_import(self, notebook_path):
         """
         Creates a code cell for the notebook that includes the necessary import statements for assignment submission.
-        
+
         If the `require_key` attribute is set to True, the code cell will include an import and call to `validate_token`.
         This ensures that the assignment is validated with a token before submission.
 
@@ -308,7 +307,7 @@ class AddKeyRequirementImportBaseClass(ABC):
         Returns:
             nbformat.NotebookNode: A new code cell with the required import statements for submission.
         """
-        
+
         return self.code_cell
 
 
@@ -340,4 +339,16 @@ def ensure_imports(output_file, header_lines):
         f.write(existing_content)
 
     return existing_content
-  
+
+
+def insert_into_source(
+    cell_source: list[str], lines_to_insert: list[str], flag_to_insert: str
+):
+    for i, line in enumerate(cell_source):
+        if flag_to_insert in line:
+            # Insert the imports immediately after the current line
+            cell_source[i + 1 : i + 1] = ["\n"] + lines_to_insert
+
+            return cell_source  # Exit the loop once the imports are inserted
+
+    raise ValueError("End of test configuration not found")
