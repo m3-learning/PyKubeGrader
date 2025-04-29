@@ -117,12 +117,13 @@ class OtterConfigSettings(ABC):
             f"validate_token(assignment='{assignment_tag}')\n"
         )
         
-    def first_test_header(self, cell_dict: dict, max_question_points: float) -> list[str]:
+    def first_test_header(self, cell_dict: dict, max_question_points: float, filename: str) -> list[str]:
         return dedent(f"""
             max_question_points = str({max_question_points})
             earned_points = 0
             os.environ['EARNED_POINTS'] = str(earned_points)
             os.environ['TOTAL_POINTS_FREE_RESPONSE'] = str({self.total_points})
+            log_variable("total-points",f"{self.assignment_tag}, {filename}", {self.total_points})
         """).strip().split("\n")
     
     @property

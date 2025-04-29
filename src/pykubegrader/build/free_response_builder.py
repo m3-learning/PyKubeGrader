@@ -430,21 +430,32 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
                 self.total_points += max_question_points
 
     def construct_first_cell_question_header(self, cell_dict: dict) -> list[str]:
-        max_question_points = self.get_max_question_points(cell_dict)
+        """
+        Constructs the header code for the first cell of a question.
 
-        first_cell_header = self.config.first_test_header(cell_dict, max_question_points)
+        This method generates the initial code block that sets up the testing environment
+        for a question. It includes:
+        - Maximum points for the question
+        - Total points for the free response section
+        - Key validation (if required)
+        - Logging setup
+
+        Args:
+            cell_dict (dict): A dictionary containing information about the question cell,
+                            including the question number and points.
+
+        Returns:
+            list[str]: A list of strings representing the lines of code for the question header.
+        """
+        max_question_points = self.get_max_question_points(cell_dict)
+        filename = self.filename.split(".")[0].replace("_temp", "")
+        
+        first_cell_header = self.first_test_header(cell_dict, max_question_points, filename)
 
         if self.require_key:
             first_cell_header.append(
-                f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment='{self.assignment_tag}')\n"
+                self.get_key_validation_line(assignment_tag=self.assignment_tag)
             )
-
-        short_filename = self.filename.split(".")[0].replace("_temp", "")
-        first_cell_header.extend(
-            [
-                f'log_variable("total-points",f"{self.assignment_tag}, {short_filename}", {self.total_points})\n'
-            ]
-        )
 
         return first_cell_header
 
