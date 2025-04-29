@@ -12,12 +12,13 @@ from pykubegrader.build.notebooks.writers import insert_into_source
 from pykubegrader.build.notebooks.writers import add_text_after_octothorpe
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 from pykubegrader.build.notebooks.io import get_cell_source
+from pykubegrader.build.config import OtterConfigSettings
 
 import nbformat
 
 
 @dataclass
-class OtterNotebookBuilder(Logger):
+class OtterNotebookBuilder(Logger, OtterConfigSettings):
     notebook_path: str
     temp_notebook: Optional[str] = None
     assignment_tag: str = ""
@@ -25,7 +26,7 @@ class OtterNotebookBuilder(Logger):
     verbose: bool = False
 
     def __post_init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
+        super(Logger, OtterConfigSettings, self).__init__(**kwargs)
         self.root_path, self.filename = self.get_filename_and_root(self.notebook_path)
         self.total_points = 0.0
         self.max_question_points: dict[str, float] = {}
@@ -376,6 +377,20 @@ class OtterNotebookBuilder(Logger):
         return None, None  # Return None if no such markdown cell is found
 
     def get_max_question_points(self, cell_dict) -> float:
+        """
+        Calculate the maximum points for a given question.
+
+        This method computes the total points available for a specific question by summing
+        the points from all cells in the assertion tests dictionary that belong to the same
+        question as the provided cell dictionary.
+
+        Args:
+            cell_dict (dict): A dictionary containing information about a specific cell,
+                            including the question it belongs to.
+
+        Returns:
+            float: The total maximum points available for the question.
+        """
         return sum(
             cell["points"]
             for cell in self.assertion_tests_dict.values()
