@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
-
+from abc import abstractmethod
+from abc import ABC
 import nbformat
 from pykubegrader.build.notebooks.writers import AddKeyRequirementImportBaseClass
 from pykubegrader.build.util import EncryptionKeyBaseClass
@@ -93,7 +94,7 @@ class EnvironmentVariables:
 
 
 @dataclass
-class OtterConfigSettings:
+class OtterConfigSettings(ABC):
     _test_required_imports: str = dedent("""
         from pykubegrader.telemetry import (
             ensure_responses,
@@ -115,6 +116,14 @@ class OtterConfigSettings:
             "from pykubegrader.tokens.validate_token import validate_token\n"
             f"validate_token(assignment='{assignment_tag}')\n"
         )
+        
+    def first_test_header(self, cell_dict: dict, max_question_points: float) -> list[str]:
+        return dedent(f"""
+            max_question_points = str({max_question_points})
+            earned_points = 0
+            os.environ['EARNED_POINTS'] = str(earned_points)
+            os.environ['TOTAL_POINTS_FREE_RESPONSE'] = str({self.total_points})
+        """).strip().split("\n")
     
     @property
     def test_required_imports(self) -> str:
@@ -123,3 +132,8 @@ class OtterConfigSettings:
     @staticmethod
     def format_imports(imports: list[str]) -> str:
         return imports.strip() + "\n"
+
+    @abstractmethod
+    @property
+    def total_points(self) -> float:
+        pass

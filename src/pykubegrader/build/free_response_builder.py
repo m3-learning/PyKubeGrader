@@ -331,10 +331,12 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
             updated_cell_source = []
             updated_cell_source.extend(cell_source[: last_import_line_ind + 1])
+            
             if cell_dict["is_first"]:
                 updated_cell_source.extend(
                     self.construct_first_cell_question_header(cell_dict)
                 )
+                
             updated_cell_source.extend(["\n"])
             updated_cell_source.extend(
                 OtterNotebookBuilder.construct_question_info(cell_dict)
@@ -428,18 +430,9 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
                 self.total_points += max_question_points
 
     def construct_first_cell_question_header(self, cell_dict: dict) -> list[str]:
-        max_question_points = sum(
-            cell["points"]
-            for cell in self.assertion_tests_dict.values()
-            if cell["question"] == cell_dict["question"]
-        )
+        max_question_points = self.get_max_question_points(cell_dict)
 
-        first_cell_header = [f"max_question_points = str({max_question_points})\n"]
-        first_cell_header.append("earned_points = 0 \n")
-        first_cell_header.append("os.environ['EARNED_POINTS'] = str(earned_points)\n")
-        first_cell_header.append(
-            f"os.environ['TOTAL_POINTS_FREE_RESPONSE'] = str({self.total_points})\n"
-        )
+        first_cell_header = self.config.first_test_header(cell_dict, max_question_points)
 
         if self.require_key:
             first_cell_header.append(
