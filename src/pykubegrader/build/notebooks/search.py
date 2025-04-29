@@ -26,7 +26,11 @@ def find_first_code_cell(notebook_path):
 
 
 def find_first_cell_with(
-    notebook_path: str, start_index: int, end_index: int = 0, cell_type: str = "markdown", code_to_find: str = "## "
+    notebook_path: str,
+    start_index: int,
+    end_index: int = 0,
+    cell_type: str = "markdown",
+    code_to_find: str = "## ",
 ):
     """
     Searches for the first cell of a specified type in a Jupyter notebook, moving backwards from a given start index to an end index, where the first line of the cell starts with a specified string.
@@ -53,7 +57,9 @@ def find_first_cell_with(
     return None, None  # Return None if no such cell is found
 
 
-def check_for_heading(notebook_path, search_strings, logger=None, cell_type="raw", return_cell=False):
+def check_for_heading(
+    notebook_path, search_strings, logger=None, cell_type="raw", return_cell=False
+):
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
 
@@ -170,3 +176,41 @@ def extract_question_points(raw, i, _data, grade_=None):
     if "grade" in raw[i]:
         grade_ = [raw[i]["grade"]]
     return points_, grade_
+
+
+def find_last_import_line(cell_source: list[str]) -> int:
+    """
+    Finds the index of the last line with an import statement in a list of code lines,
+    including multiline import statements.
+
+    Args:
+        cell_source (list): List of strings representing the code lines.
+
+    Returns:
+        int: The index of the last line with an import statement, or -1 if no import is found.
+    """
+    last_import_index = -1
+    is_multiline_import = False  # Flag to track if we're inside a multiline import
+
+    for i, line in enumerate(cell_source):
+        stripped_line = line.strip()
+
+        if is_multiline_import:
+            # Continue tracking multiline import
+            if stripped_line.endswith("\\") or (
+                stripped_line and not stripped_line.endswith(")")
+            ):
+                last_import_index = i  # Update to current line
+                continue
+            else:
+                is_multiline_import = False  # End of multiline import
+                last_import_index = i  # Update to current line
+
+        # Check for single-line or start of multiline imports
+        if stripped_line.startswith("import") or stripped_line.startswith("from"):
+            last_import_index = i
+            # Check if it's a multiline import
+            if stripped_line.endswith("\\") or "(" in stripped_line:
+                is_multiline_import = True
+
+    return last_import_index

@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Optional
 from pykubegrader.build.notebooks.io import modify_notebook_cell
 from pykubegrader.build.notebooks.search import find_first_cell_with
+from pykubegrader.build.notebooks.search import find_last_import_line
 from pykubegrader.build.notebooks.writers import insert_into_source
 from pykubegrader.build.notebooks.writers import add_text_after_octothorpe
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
@@ -278,7 +279,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         Returns:
             list[str]: A new list of code lines with concealed blocks replaced by exec() statements.
         """
-        
+
         start_hide_line = kwargs.get("start_hide_line", "# BEGIN HIDE")
         end_hide_line = kwargs.get("end_hide_line", "# END HIDE")
         encoder = kwargs.get("encoder", base64.b64encode)
@@ -297,9 +298,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
             elif end_hide_line in line:
                 hide_mode = False
                 # Encode the entire block
-                encoded_block = encoder(
-                    "\n".join(hidden_code).encode()
-                ).decode()
+                encoded_block = encoder("\n".join(hidden_code).encode()).decode()
                 concealed_lines.append(
                     f'exec({decoder}("{encoded_block}").decode())  # Obfuscated\n'
                 )
@@ -326,11 +325,9 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
                 cell["source"],
             )
 
-            cell_source = OtterNotebookBuilder.conceal_tests(cell_source, **kwargs)
+            cell_source = self.conceal_tests(cell_source, **kwargs)
 
-            last_import_line_ind = OtterNotebookBuilder.find_last_import_line(
-                cell_source
-            )
+            last_import_line_ind = find_last_import_line(cell_source)
 
             updated_cell_source = []
             updated_cell_source.extend(cell_source[: last_import_line_ind + 1])
@@ -552,7 +549,8 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         return original_list[:index] + insert_list + original_list[index:]
 
     def add_import_statements_to_tests(
-        self, cell_source: list[str],
+        self,
+        cell_source: list[str],
     ) -> list[str]:
         """
         Adds the necessary import statements and optional key validation to the first cell of the notebook.
@@ -626,44 +624,6 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         modify_notebook_cell(self.temp_notebook, cell_index, new_source)
 
         self.print_and_log(f"Updated notebook saved to {self.temp_notebook}")
-
-    @staticmethod
-    def find_last_import_line(cell_source: list[str]) -> int:
-        """
-        Finds the index of the last line with an import statement in a list of code lines,
-        including multiline import statements.
-
-        Args:
-            cell_source (list): List of strings representing the code lines.
-
-        Returns:
-            int: The index of the last line with an import statement, or -1 if no import is found.
-        """
-        last_import_index = -1
-        is_multiline_import = False  # Flag to track if we're inside a multiline import
-
-        for i, line in enumerate(cell_source):
-            stripped_line = line.strip()
-
-            if is_multiline_import:
-                # Continue tracking multiline import
-                if stripped_line.endswith("\\") or (
-                    stripped_line and not stripped_line.endswith(")")
-                ):
-                    last_import_index = i  # Update to current line
-                    continue
-                else:
-                    is_multiline_import = False  # End of multiline import
-                    last_import_index = i  # Update to current line
-
-            # Check for single-line or start of multiline imports
-            if stripped_line.startswith("import") or stripped_line.startswith("from"):
-                last_import_index = i
-                # Check if it's a multiline import
-                if stripped_line.endswith("\\") or "(" in stripped_line:
-                    is_multiline_import = True
-
-        return last_import_index
 
     @staticmethod
     def extract_log_variables(cell: dict) -> list[str]:
