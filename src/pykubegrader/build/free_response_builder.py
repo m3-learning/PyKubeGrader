@@ -9,6 +9,7 @@ from typing import Any, Optional
 from pykubegrader.build.notebooks.io import modify_notebook_cell
 from pykubegrader.build.notebooks.search import find_first_cell_with
 from pykubegrader.build.notebooks.writers import insert_into_source
+from pykubegrader.build.notebooks.writers import add_text_after_octothorpe
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 from pykubegrader.build.notebooks.io import get_cell_source
 
@@ -25,10 +26,8 @@ class OtterNotebookBuilder(Logger):
 
     def __post_init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-
         self.root_path, self.filename = self.get_filename_and_root(self.notebook_path)
         self.total_points = 0.0
-
         self.max_question_points: dict[str, float] = {}
         self.run()
 
@@ -100,7 +99,7 @@ class OtterNotebookBuilder(Logger):
                 continue
 
             source = get_cell_source(self.temp_notebook, index)
-            modified_source = OtterNotebookBuilder.add_text_after_octothorpe(
+            modified_source = add_text_after_octothorpe(
                 source,
                 f"Question {points['question_number']} (Points: {points['total_points']:.2f}):",
             )
@@ -133,7 +132,7 @@ class OtterNotebookBuilder(Logger):
                     continue
 
                 source = get_cell_source(self.temp_notebook, index)
-                modified_source = OtterNotebookBuilder.add_text_after_octothorpe(
+                modified_source = add_text_after_octothorpe(
                     source,
                     f"Question {points['question_number']}-Part {points['question_part_number']} (Points: {points['total_points']:.2f}):",
                     "### ",
@@ -382,32 +381,6 @@ class OtterNotebookBuilder(Logger):
             for cell in self.assertion_tests_dict.values()
             if cell["question"] == cell_dict["question"]
         )
-
-    @staticmethod
-    def add_text_after_octothorpe(markdown_source, insert_text, hash_prefix="## "):
-        """
-        Adds insert_text immediately after the first '##' in the first line that starts with '##'.
-
-        Args:
-        - markdown_source (list of str): The list of lines in the markdown cell.
-        - insert_text (str): The text to be inserted.
-
-        Returns:
-        - list of str: The modified markdown cell content.
-        """
-        modified_source = []
-        inserted = False
-
-        for line in markdown_source:
-            if not inserted and line.startswith(hash_prefix):
-                modified_source.append(
-                    f"{hash_prefix}{insert_text} {line[len(hash_prefix) :]}"
-                )  # Insert text after hash_prefix
-                inserted = True  # Ensure it only happens once
-            else:
-                modified_source.append(line)
-
-        return modified_source
 
     def compute_max_points_free_response(self) -> None:
         """

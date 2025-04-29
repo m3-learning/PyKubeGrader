@@ -352,3 +352,29 @@ def insert_into_source(
             return cell_source  # Exit the loop once the imports are inserted
 
     raise ValueError("End of test configuration not found")
+
+
+def add_text_after_octothorpe(markdown_source, insert_text, hash_prefix="## "):
+    """
+    Adds insert_text immediately after the first '##' in the first line that starts with '##'.
+
+    Args:
+    - markdown_source (list of str): The list of lines in the markdown cell.
+    - insert_text (str): The text to be inserted.
+
+    Returns:
+    - list of str: The modified markdown cell content.
+    """
+    modified_source = []
+    inserted = False
+
+    for line in markdown_source:
+        if not inserted and line.startswith(hash_prefix):
+            modified_source.append(
+                f"{hash_prefix}{insert_text} {line[len(hash_prefix) :]}"
+            )  # Insert text after hash_prefix
+            inserted = True  # Ensure it only happens once
+        else:
+            modified_source.append(line)
+
+    return modified_source
