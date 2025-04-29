@@ -125,7 +125,15 @@ class OtterConfigSettings(ABC):
             os.environ['TOTAL_POINTS_FREE_RESPONSE'] = str({self.total_points})
             log_variable("total-points",f"{self.assignment_tag}, {filename}", {self.total_points})
         """).strip().split("\n")
-    
+        
+    def question_information(self, cell_dict: dict) -> str:
+        question_info = dedent(f"""
+            question_id = {cell_dict["question"]} + "-" + {str(cell_dict["test_number"])}   
+            max_score = {cell_dict['points']}
+            score = 0
+        """).strip().split("\n")
+        return question_info
+        
     @property
     def test_required_imports(self) -> str:
         return self.format_imports(self._test_required_imports)

@@ -339,7 +339,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
                 
             updated_cell_source.extend(["\n"])
             updated_cell_source.extend(
-                OtterNotebookBuilder.construct_question_info(cell_dict)
+                self.question_information(cell_dict)
             )
 
             updated_cell_source.extend(cell_source[last_import_line_ind + 1 :])
@@ -508,18 +508,6 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         added_code.append(f"    score = {cell_dict['points']}\n")
 
         return added_code
-
-    @staticmethod
-    def construct_question_info(cell_dict: dict) -> list[str]:
-        question_info = []
-
-        question_id = cell_dict["question"] + "-" + str(cell_dict["test_number"])
-
-        question_info.append(f'question_id = "{question_id}"' + "\n")
-        question_info.append(f"max_score = {cell_dict['points']}\n")
-        question_info.append("score = 0\n")
-
-        return question_info
 
     @staticmethod
     def insert_list_at_index(
