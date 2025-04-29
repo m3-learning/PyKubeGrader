@@ -120,8 +120,6 @@ class OtterConfigSettings:
     def test_required_imports(self) -> str:
         return self.format_imports(self._test_required_imports)
     
-
-    
     @staticmethod
     def format_imports(imports: list[str]) -> str:
         return imports.strip() + "\n"

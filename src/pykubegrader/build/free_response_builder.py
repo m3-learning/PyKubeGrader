@@ -30,9 +30,9 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         self.root_path, self.filename = self.get_filename_and_root(self.notebook_path)
         self.total_points = 0.0
         self.max_question_points: dict[str, float] = {}
-        self.run()
+        self.run(**kwargs)
 
-    def run(self) -> None:
+    def run(self, **kwargs) -> None:
         # here for easy debugging
         self.make_temp_notebook()
 
@@ -42,7 +42,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         )
 
         self.add_points_to_notebook()
-        self.add_api_code()
+        self.add_api_code(**kwargs)
 
     def make_temp_notebook(self):
         """
@@ -259,32 +259,49 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         return question_sums
 
     @staticmethod
-    def conceal_tests(cell_source):
+    def conceal_tests(cell_source: list[str], **kwargs) -> list[str]:
         """
-        Takes a list of code lines, detects blocks between `# BEGIN HIDE` and `# END HIDE`,
-        encodes them in Base64, and replaces them with an `exec()` statement.
+        Conceals code blocks in a cell by encoding them in Base64 and replacing them with exec() statements.
 
-        Returns a new list of lines with the concealed blocks.
+        This method processes a list of code lines, identifying blocks between specified markers,
+        encoding them in Base64, and replacing them with an exec() statement that will decode and
+        execute the concealed code at runtime.
+
+        Args:
+            cell_source (list[str]): A list of strings representing the source code lines.
+            **kwargs: Optional keyword arguments:
+                - start_hide_line (str): The marker indicating the start of a hidden block. Defaults to "# BEGIN HIDE".
+                - end_hide_line (str): The marker indicating the end of a hidden block. Defaults to "# END HIDE".
+                - encoder: The encoding function to use. Defaults to base64.b64encode.
+                - decoder: The decoding function to use. Defaults to base64.b64decode.
+
+        Returns:
+            list[str]: A new list of code lines with concealed blocks replaced by exec() statements.
         """
+        
+        start_hide_line = kwargs.get("start_hide_line", "# BEGIN HIDE")
+        end_hide_line = kwargs.get("end_hide_line", "# END HIDE")
+        encoder = kwargs.get("encoder", base64.b64encode)
+        decoder = kwargs.get("decoder", base64.b64decode)
 
         concealed_lines = []
         hide_mode = False
         hidden_code = []
 
         for line in cell_source:
-            if "# BEGIN HIDE" in line:
+            if start_hide_line in line:
                 hide_mode = True
                 hidden_code = []  # Start a new hidden block
                 concealed_lines.append(line)  # Keep the marker for clarity
                 continue
-            elif "# END HIDE" in line:
+            elif end_hide_line in line:
                 hide_mode = False
                 # Encode the entire block
-                encoded_block = base64.b64encode(
+                encoded_block = encoder(
                     "\n".join(hidden_code).encode()
                 ).decode()
                 concealed_lines.append(
-                    f'exec(base64.b64decode("{encoded_block}").decode())  # Obfuscated\n'
+                    f'exec({decoder}("{encoded_block}").decode())  # Obfuscated\n'
                 )
                 concealed_lines.append(line)  # Keep the marker for clarity
                 continue
@@ -296,7 +313,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
         return concealed_lines
 
-    def add_api_code(self) -> None:
+    def add_api_code(self, **kwargs) -> None:
         self.compute_max_points_free_response()
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
@@ -305,13 +322,11 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
             )
 
             cell = get_cell_source(self.temp_notebook, cell_index)
-            cell_source = OtterNotebookBuilder.add_import_statements_to_tests(
+            cell_source = self.add_import_statements_to_tests(
                 cell["source"],
-                require_key=self.require_key,
-                assignment_tag=self.assignment_tag,
             )
 
-            cell_source = OtterNotebookBuilder.conceal_tests(cell_source)
+            cell_source = OtterNotebookBuilder.conceal_tests(cell_source, **kwargs)
 
             last_import_line_ind = OtterNotebookBuilder.find_last_import_line(
                 cell_source
@@ -536,38 +551,37 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
         return original_list[:index] + insert_list + original_list[index:]
 
-    # TODO: make this in the config as a class
-    @staticmethod
     def add_import_statements_to_tests(
-        cell_source: list[str], require_key: bool = False, assignment_tag=None
+        self, cell_source: list[str],
     ) -> list[str]:
         """
-        Adds the necessary import statements to the first cell of the notebook.
+        Adds the necessary import statements and optional key validation to the first cell of the notebook.
+
+        This method inserts required import statements and, if specified, a key validation line into the notebook's
+        first cell. The imports are inserted before a specified end marker line.
+
+        Args:
+            cell_source (list[str]): The source code lines of the cell to modify.
+            require_key (bool, optional): Whether to include key validation. Defaults to False.
+            assignment_tag (str, optional): The assignment tag to use for key validation. Defaults to None.
+
+        Returns:
+            list[str]: The modified cell source with imports and optional key validation inserted.
+
+        Note:
+            The imports are inserted before the line containing the end_test_config_line marker.
         """
 
-        flag_to_insert = "# END TEST CONFIG"
+        lines_to_insert = self.test_required_imports
 
-        # Imports to add
-        lines_to_insert = [
-            "from pykubegrader.telemetry import (\n",
-            "    ensure_responses,\n",
-            "    log_variable,\n",
-            "    score_question,\n",
-            "    submit_question,\n",
-            "    telemetry,\n",
-            "    update_responses,\n",
-            ")\n",
-            "import os\n",
-            "import base64\n",
-            "import matplotlib\n",
-        ]
+        if self.require_key:
+            lines_to_insert.append(self.get_key_validation_line(self.assignment_tag))
 
-        if require_key:
-            lines_to_insert.append(
-                f"from pykubegrader.tokens.validate_token import validate_token\nvalidate_token(assignment='{assignment_tag}')\n"
-            )
-
-        cell_source = insert_into_source(cell_source, lines_to_insert, flag_to_insert)
+        cell_source = insert_into_source(
+            cell_source,
+            lines_to_insert=lines_to_insert,
+            flag_to_insert=self.end_test_config_line,
+        )
 
         return cell_source
 
