@@ -19,18 +19,18 @@ def remove_file_suffix(dist_folder, suffix="_temp", logger = None):
 
 def get_notebooks_recursively(root_folder, **kwargs):
     """
-    Recursively retrieves all files with a specified extension from the root folder and its subfolders.
+    Recursively retrieves files with a specified extension from a directory and its subdirectories.
 
-    This function traverses the directory tree starting from the root folder, identifies all files
-    with the specified extension (default is .ipynb), and collects their paths in a list.
+    This function explores the directory tree starting from the given root folder, finds all files
+    with the specified extension (default is .ipynb), and compiles their paths into a list.
 
     Args:
-        root_folder (str): The root directory to start the search from.
-        **kwargs: Arbitrary keyword arguments.
-            - extension (str): The file extension to search for (default is ".ipynb").
+        root_folder (str): The root directory to initiate the search.
+        **kwargs: Additional keyword arguments.
+            - extension (str): The file extension to look for (default is ".ipynb").
 
     Returns:
-        list: A list of file paths to files with the specified extension found within the root folder and its subfolders.
+        list: A list containing paths to files with the specified extension located within the root folder and its subdirectories.
     """
     extension = kwargs.get("extension", ".ipynb")
 
