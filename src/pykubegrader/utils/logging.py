@@ -28,21 +28,28 @@ class Logger:
         """
         Logs a message and optionally prints it to the console.
 
-        This method is used for logging important information and optionally
-        displaying it in the console based on the `verbose` and `log` attributes.
+        This method is designed to log messages that are crucial for tracking the flow of execution
+        and debugging. It provides flexibility in how messages are handled, allowing them to be
+        printed to the console and/or logged to a file or other logging handlers.
 
         Args:
-            message (str): The message to be logged and/or printed.
+            message (str): The message to be logged and/or printed. This should be a clear and concise
+                           description of the event or state being logged.
 
         Behavior:
-            - If `self.verbose` is True, the message will be printed to the console.
-            - If `self.log` is True, the message will be logged using the instance's logger.
+            - If `self.verbose` is True or the `verbose` parameter is set to True, the message will be
+              printed to the console. This is useful for real-time monitoring of the program's execution.
+            - If `self.log` is True or the `log` parameter is set to True, the message will be logged
+              using the instance's logger. This ensures that the message is recorded in the log file
+              or any other configured logging destination.
 
         Example:
-            self.print_and_log("Processing completed successfully.")
+            To log a message and print it to the console:
+            self.print_and_log("Processing completed successfully.", verbose=True, log=True)
 
         Raises:
-            None: This method handles exceptions internally, if any arise from logging or printing.
+            None: This method is designed to handle exceptions internally, ensuring that any issues
+                  arising from logging or printing do not disrupt the program's execution.
         """
 
         # Print the message to the console if verbosity is enabled
