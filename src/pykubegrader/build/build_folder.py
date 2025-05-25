@@ -177,15 +177,15 @@ class NotebookProcessor(
         """
         Initializes the NotebookProcessor instance using the 'assignment_config.yaml' file.
 
-        This method executes the following steps:
-        1. Opens and reads the 'assignment_config.yaml' file found in the root folder.
-        2. Parses the YAML content to retrieve assignment details.
-        3. Configures the instance attributes: week number, assignment type, bonus points,
-           requirement key, final submission flag, and assignment tag based on the parsed data.
+        This method performs the following operations:
+        1. Opens and reads the 'assignment_config.yaml' file located in the root folder.
+        2. Parses the YAML content to extract assignment-related information.
+        3. Sets the instance attributes such as week number, assignment type, bonus points,
+           requirement key, final submission flag, and assignment tag based on the extracted data.
 
-        Raises:
-            FileNotFoundError: Raised if the 'assignment_config.yaml' file is not found.
-            yaml.YAMLError: Raised if there is an error while parsing the YAML content.
+        Exceptions:
+            FileNotFoundError: Thrown if the 'assignment_config.yaml' file is not found.
+            yaml.YAMLError: Thrown if an error occurs while parsing the YAML content.
         """
 
         with open(f"{self.root_folder}/assignment_config.yaml", "r") as file:
@@ -205,19 +205,19 @@ class NotebookProcessor(
 
     def process_notebooks(self):
         """
-        Processes Jupyter notebooks within the root folder and its subfolders.
+        Processes Jupyter notebooks located in the root folder and its subdirectories.
 
-        This method performs the following actions:
-        1. Collects all Jupyter notebook files (.ipynb) from the root folder and its subdirectories.
-        2. Verifies if each notebook contains the necessary assignment configuration metadata.
+        This method executes the following steps:
+        1. Gathers all Jupyter notebook files (.ipynb) from the root folder and its subdirectories.
+        2. Checks each notebook for the presence of required assignment configuration metadata.
         3. Processes notebooks that meet the criteria using the `_process_single_notebook` method.
 
-        Prerequisites:
-            - The `has_assignment` method must be implemented to verify the presence of assignment configuration in a notebook.
-            - The `_process_single_notebook` method should be defined to handle the processing of individual notebooks.
+        Requirements:
+            - The `has_assignment` method must be implemented to check for assignment configuration in a notebook.
+            - The `_process_single_notebook` method should be defined to process individual notebooks.
 
-        Raises:
-            - OSError: If there is an error accessing files or directories.
+        Exceptions:
+            - OSError: Raised if there is an issue accessing files or directories.
         """
         # 1. Collects all Jupyter notebook files (.ipynb) from the root folder and its subdirectories.
         ipynb_files = get_notebooks_recursively(self.root_folder, extension=".ipynb")
