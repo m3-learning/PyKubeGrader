@@ -66,6 +66,9 @@ class NotebookProcessor(
     """
     A class for processing Jupyter notebooks within a directory and its subdirectories.
 
+    This class provides functionality to manage and process Jupyter notebooks for assignments,
+    including adding submission cells, logging, and handling assignment metadata.
+
     Attributes:
         root_folder (str): The root directory containing notebooks to be processed.
         assignment_tag (str): Identifier for the assignment being processed.
@@ -74,30 +77,25 @@ class NotebookProcessor(
         log (bool): Enables logging if set to True.
         require_key (bool): Requires a key for processing if set to True.
         bonus_points (float): Additional points to be added to the assignment score.
-        kwargs:
-            log_name (str): The name of the log file, if logging is enabled.
 
     Methods:
         __post_init__(self, **kwargs):
-            Initializes the `NotebookProcessor` instance after creation.
-
-        initialize_logger(self, **kwargs):
-            Sets up the logger for the NotebookProcessor class.
+            Initializes the `NotebookProcessor` instance after creation, setting up logging and assignment information.
 
         initialize_info(self):
-            Sets up the information for the NotebookProcessor instance.
+            Configures the NotebookProcessor instance with assignment details, either from a YAML file or the assignment tag.
 
         add_notebook(self, notebook_name, total_points):
-            Records a notebook entry in the database.
+            Records a notebook entry in the database with its total points.
 
         add_submission_cells(self, notebook_path, output_path):
-            Inserts submission cells into the notebook.
+            Inserts submission cells into the specified notebook.
 
         add_final_submission_cells(self, notebook_path, output_path):
-            Inserts final submission cells into the notebook.
+            Inserts final submission cells into the specified notebook.
 
         remove_empty_cells(notebook_path):
-            Deletes empty cells from the notebook.
+            Deletes empty cells from the specified notebook.
 
         duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
             Copies a Jupyter notebook to a specified solution directory, creating necessary subdirectories and temporary files for further processing.
