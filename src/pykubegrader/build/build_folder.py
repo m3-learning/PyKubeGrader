@@ -142,15 +142,15 @@ class NotebookProcessor(
 
     def initialize_info(self):
         """
-        Initializes the NotebookProcessor instance with assignment information.
+        Initializes the NotebookProcessor instance with assignment-related settings.
 
-        This method performs the following tasks:
-        1. Checks if an 'assignment_config.yaml' file exists in the root folder.
-        2. If the YAML file exists, it initializes the instance using the YAML content.
-        3. If the YAML file does not exist, it initializes the instance using the assignment tag.
-        4. Sets the week number and week string based on the assignment tag.
-        5. Defines the folder to store solutions and ensures it exists.
-        6. Initializes the total points for the assignment and a log for total points.
+        This method executes the following operations:
+        1. Verifies the presence of 'assignment_config.yaml' in the root directory.
+        2. If the YAML file is found, initializes the instance using its content.
+        3. If the YAML file is absent, initializes the instance using the assignment tag.
+        4. Configures the week number and assignment type based on the assignment tag.
+        5. Establishes the directory for storing solutions and ensures its existence.
+        6. Sets up the total points for the assignment and initializes a log for tracking points.
 
         Raises:
             None

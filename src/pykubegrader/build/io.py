@@ -77,16 +77,18 @@ def write_JSON(**kwargs):
 
 def check_if_file_in_folder(folder, file):
     """
-    Checks if a specific file exists within a given folder or its subdirectories.
+    Determines the presence of a specified file within a directory or its subdirectories.
 
-    This method traverses the directory tree starting from the specified folder and searches for the specified file.
+    This function navigates through the directory structure starting from the given folder
+    to locate the specified file.
 
     Args:
-        folder (str): The path to the folder to search within.
-        file (str): The name of the file to search for.
+        folder (str): The directory path to begin the search.
+        file (str): The filename to look for.
 
     Returns:
-        bool: True if the file is found within the folder or its subdirectories, False otherwise.
+        bool: Returns True if the file is located within the folder or any of its subdirectories; 
+              otherwise, returns False.
     """
     for _, _, files in os.walk(folder):
         if file in files:
