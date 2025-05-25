@@ -387,25 +387,26 @@ class NotebookProcessor(
 
     def _process_single_notebook(self, notebook_path):
         """
-        Processes a single Jupyter notebook.
+        Processes a single Jupyter notebook for assignment preparation and grading.
 
-        This method handles the preparation, validation, and processing of a given notebook. It:
-        1. Moves the notebook to a subfolder within the solutions folder.
-        2. Creates temporary and destination folders for autograder and student files.
-        3. Identifies and processes multiple-choice questions (MCQs).
-        4. Runs assignment-specific tasks like executing `otter assign` and cleaning notebooks.
-        5. Generates solution and question files and moves them to appropriate folders.
+        This method performs a comprehensive set of operations to prepare, validate, and process a Jupyter notebook for educational purposes. The steps include:
+        
+        1. **Relocation**: Moves the notebook to a designated subfolder within the solutions directory to organize files systematically.
+        2. **Folder Creation**: Establishes temporary and destination folders specifically for autograder and student files, ensuring a clear separation of resources.
+        3. **MCQ Processing**: Identifies and processes multiple-choice questions (MCQs) within the notebook, preparing them for automated grading.
+        4. **Assignment Execution**: Executes assignment-specific tasks such as running `otter assign` to configure the notebook for grading and cleaning up the notebook to remove unnecessary content.
+        5. **File Generation**: Generates solution and question files, which are then moved to their respective folders for further use in grading and student distribution.
 
         Args:
-            notebook_path (str): The file path to the Jupyter notebook to be processed.
+            notebook_path (str): The file path to the Jupyter notebook to be processed. This path is used to locate and manipulate the notebook file.
 
         Raises:
-            FileNotFoundError: If the notebook file or intermediate files are not found.
-            OSError: If there are issues creating or moving files/directories.
-            Exception: For unexpected errors during processing.
+            FileNotFoundError: Raised if the specified notebook file or any required intermediate files are not found during processing.
+            OSError: Raised if there are issues encountered while creating or moving files and directories, such as permission errors or invalid paths.
+            Exception: Raised for any unexpected errors that occur during the processing of the notebook, providing a general catch-all for unforeseen issues.
 
         Returns:
-            None
+            None: This method does not return any value. It performs operations that modify the file system and prepare the notebook for grading.
         """
 
         # 1. Initialize variables
