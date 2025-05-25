@@ -122,22 +122,22 @@ class NotebookProcessor(
 
     def __post_init__(self, **kwargs):
         """
-        Post-initialization method for setting up the `NotebookProcessor` instance.
+        Post-initialization method for configuring the `NotebookProcessor` instance.
 
-        This method is automatically called after the instance is created. It performs the following tasks:
-            1. Creates a solutions folder within the root directory to store processed outputs.
-            2. Configures logging to capture detailed information about the processing.
+        This method is invoked automatically after the instance is created. It performs the following operations:
+            1. Establishes a solutions directory within the root folder to store processed outputs.
+            2. Sets up logging to record detailed information about the processing activities.
 
         Raises:
-            OSError: If the solutions folder cannot be created due to permissions or other filesystem issues.
+            OSError: Raised if there are issues with creating the solutions folder, such as permission errors or other filesystem constraints.
         """
 
-        # Initialize Logger with the required parameters
+        # Initialize Logger with the specified parameters
         super().__post_init__(verbose=self.verbose, log=self.log, **kwargs)
 
         self.assignment_tag = kwargs.get("assignment_tag", None)
 
-        # Initialize the info for the class
+        # Initialize the class with assignment information
         self.initialize_info()
 
     def initialize_info(self):
