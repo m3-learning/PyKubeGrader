@@ -1,8 +1,9 @@
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 import json
 import os
 import nbformat
 
-from pykubegrader.build.build_folder import NotebookProcessor
 from pykubegrader.build.config import DisplayQuestionCode
 from pykubegrader.build.notebooks.search import find_first_code_cell
 from pykubegrader.build.widget_questions.utils import sanitize_string_for_python_variable
