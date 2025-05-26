@@ -547,6 +547,21 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
     @staticmethod
     def construct_graders(cell_dict: dict) -> list[str]:
+        """
+        Constructs grader code for a given cell dictionary.
+
+        This function generates a list of Python code strings that represent
+        the grading logic for a cell. It creates an 'if' statement that checks
+        all assertions in the cell dictionary and assigns the specified points
+        if all assertions are true.
+
+        Args:
+            cell_dict (dict): A dictionary containing the cell's grading information,
+                              including assertions and points.
+
+        Returns:
+            list[str]: A list of strings representing the Python code for grading.
+        """
         # Generate Python code
         added_code = [
             "if "
