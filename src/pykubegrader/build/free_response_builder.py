@@ -83,7 +83,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         # here for easy debugging
         self.make_temp_notebook()
 
-        self.assertion_tests_dict = self.question_dict()
+        self.assertion_tests_dict = self.build_question_dictionary()
         self.question_points_by_part = self.construct_question_points_by_part(
             self.assertion_tests_dict
         )
@@ -214,7 +214,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         return result
 
     @staticmethod
-    def parts_points(question_dict):
+    def parts_points(question_dict: dict) -> dict:
         """
         Calculate the total points for each part of a question.
 
@@ -262,7 +262,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         return part_sums
 
     @staticmethod
-    def question_points(question_dict):
+    def question_points(question_dict: dict) -> dict:
         """
         Calculate the total points for each question.
 
@@ -791,12 +791,32 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
         return question_name, question_number, question_part
 
-    def question_dict(self) -> dict:
+    def build_question_dictionary(self) -> dict:
         """
-        Builds a dictionary of question information from the notebook.
+        Constructs a comprehensive dictionary of question information extracted from the notebook.
+
+        This method processes the notebook to identify and extract detailed information about each question
+        present in the notebook. It scans through the notebook cells, identifying those that contain question
+        metadata and test configurations. The extracted information includes question names, numbers, parts,
+        assertions, comments, points, and logging variables.
+
+        The method ensures that the notebook file exists and is accessible before attempting to read and process it.
+        It handles both raw and code cells, extracting relevant data based on specific markers and patterns.
 
         Returns:
-            dict: A dictionary containing question information.
+            dict: A dictionary where each key is the index of a code cell containing test configurations, and
+                  each value is another dictionary with the following keys:
+                  - "assertions": A list of assertions extracted from the test configuration.
+                  - "comments": Comments associated with the test configuration.
+                  - "question": The name of the question associated with the test configuration.
+                  - "question_number": The number of the question.
+                  - "question_part": The part of the question.
+                  - "points": The point value assigned to the question or test.
+                  - "logging_variables": A list of variables to be logged, extracted from the test configuration.
+
+        Raises:
+            ValueError: If the temporary notebook file path is not provided.
+            FileNotFoundError: If the specified notebook file does not exist.
         """
 
         # Check if the temporary notebook file path is provided
