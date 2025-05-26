@@ -5,11 +5,12 @@ import os
 import nbformat
 
 from pykubegrader.build.config import DisplayQuestionCode
+from pykubegrader.build.notebooks.io import read_notebook, write_notebook
 from pykubegrader.build.notebooks.search import find_first_code_cell
 from pykubegrader.build.widget_questions.utils import sanitize_string_for_python_variable
 
 
-def remove_assignment_config_cells(notebook_path):
+def remove_assignment_config_cells(notebook_path: str) -> None:
     """
     Remove cells containing "# ASSIGNMENT CONFIG" from a Jupyter notebook.
 
@@ -27,8 +28,7 @@ def remove_assignment_config_cells(notebook_path):
         remove_assignment_config_cells("path/to/notebook.ipynb")
     """
     # Read the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
-        notebook = nbformat.read(f, as_version=nbformat.NO_CONVERT)
+    notebook = read_notebook(notebook_path)
 
     # Filter out cells containing "# ASSIGNMENT CONFIG"
     notebook.cells = [
@@ -38,8 +38,7 @@ def remove_assignment_config_cells(notebook_path):
     ]
 
     # Save the updated notebook
-    with open(notebook_path, "w", encoding="utf-8") as f:
-        nbformat.write(notebook, f)
+    write_notebook(notebook, notebook_path)
 
 
 def write_validation_token_cell(
@@ -86,8 +85,7 @@ def write_validation_token_cell(
     )
 
     # Load the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
-        notebook = nbformat.read(f, as_version=4)
+    notebook = read_notebook(notebook_path)
 
     # Create the new code cell
     if kwargs.get("assignment_tag", None):
@@ -105,8 +103,7 @@ def write_validation_token_cell(
     notebook.cells.insert(0, new_cell)
 
     # Save the modified notebook
-    with open(notebook_path, "w", encoding="utf-8") as f:
-        nbformat.write(notebook, f)
+    write_notebook(notebook, notebook_path)
 
 
 def write_validation_block(
@@ -126,8 +123,7 @@ def write_validation_block(
         return
 
     # Load the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
-        notebook = nbformat.read(f, as_version=4)
+    notebook = read_notebook(notebook_path)
 
     # Prepare the validation code
     validation_code = f"validate_token(assignment = '{assignment_tag}')\n"
@@ -140,8 +136,7 @@ def write_validation_block(
         notebook.cells.insert(0, new_cell)
 
     # Save the modified notebook
-    with open(notebook_path, "w", encoding="utf-8") as f:
-        nbformat.write(notebook, f)
+    write_notebook(notebook, notebook_path)
 
 
 def replace_cell_source(notebook_path, cell_index, new_source):
@@ -153,8 +148,7 @@ def replace_cell_source(notebook_path, cell_index, new_source):
         new_source (str): New source code to replace the cell's content.
     """
     # Load the notebook
-    with open(notebook_path, "r", encoding="utf-8") as f:
-        notebook = nbformat.read(f, as_version=4)
+    notebook = read_notebook(notebook_path)
 
     # Check if the cell index is valid
     if cell_index >= len(notebook.cells) or cell_index < 0:
@@ -164,8 +158,7 @@ def replace_cell_source(notebook_path, cell_index, new_source):
     notebook.cells[cell_index]["source"] = new_source
 
     # Save the notebook
-    with open(notebook_path, "w", encoding="utf-8") as f:
-        nbformat.write(notebook, f)
+    write_notebook(notebook, notebook_path)
 
 
 def write_initialization_code(
