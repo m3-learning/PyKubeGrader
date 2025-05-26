@@ -20,8 +20,7 @@ import nbformat
 
 
 @dataclass
-@dataclass
-class OtterNotebookBuilder(Logger: Logger, OtterConfigSettings: OtterConfigSettings):
+class OtterNotebookBuilder(Logger, OtterConfigSettings):
     """
     A class for building and processing Otter notebooks.
 
@@ -43,18 +42,36 @@ class OtterNotebookBuilder(Logger: Logger, OtterConfigSettings: OtterConfigSetti
 
     def __post_init__(self, **kwargs) -> None:
         """
-        Post-initialization method for setting up the OtterNotebookBuilder instance.
+        Post-initialization method for configuring the OtterNotebookBuilder instance.
 
-        This method is automatically called after the instance is created. It performs
-        the following operations:
-        1. Initializes the Logger and OtterConfigSettings with any provided keyword arguments.
-        2. Extracts the root path and filename from the given notebook path.
-        3. Initializes the total points to zero and prepares a dictionary to store the maximum
-           points for each question.
-        4. Executes the main processing routine by calling the run method.
+        This method is automatically invoked after the instance is created. It performs
+        several key setup tasks essential for the functionality of the OtterNotebookBuilder:
+
+        1. **Initialization of Base Classes**: 
+           - Calls the `__init__` methods of the `Logger` and `OtterConfigSettings` base classes.
+           - Passes any additional keyword arguments (`**kwargs`) to these initializers to ensure
+             that any configuration settings or logging parameters are properly set up.
+
+        2. **Path Extraction**:
+           - Utilizes the `get_filename_and_root` function to derive the root directory and filename
+             from the provided `notebook_path`.
+           - This is crucial for managing file operations and ensuring that the notebook is accessed
+             correctly within its directory structure.
+
+        3. **Points Initialization**:
+           - Sets `total_points` to `0.0`, establishing a baseline for accumulating the total score
+             across all questions in the notebook.
+           - Initializes `max_question_points` as an empty dictionary (`dict[str, float]`), which will
+             be used to store the maximum possible points for each question, identified by a string key.
+
+        4. **Main Processing Routine**:
+           - Invokes the `run` method, passing any additional keyword arguments (`**kwargs`).
+           - The `run` method orchestrates the main processing tasks, such as parsing the notebook,
+             extracting questions, and calculating points.
 
         Args:
-            **kwargs: Additional keyword arguments that may be used for initialization.
+            **kwargs: Additional keyword arguments that may be used for initialization, allowing
+                      for flexible configuration and extension of the base class functionalities.
         """
         super(Logger, OtterConfigSettings, self).__init__(**kwargs)
         self.root_path, self.filename = get_filename_and_root(self.notebook_path)
@@ -76,14 +93,14 @@ class OtterNotebookBuilder(Logger: Logger, OtterConfigSettings: OtterConfigSetti
 
     def make_temp_notebook(self):
         """
-        Creates a temporary copy of the notebook for processing.
+        Generate a temporary version of the notebook for further processing.
 
-        If a temporary notebook path is provided, this method copies the original
-        notebook to a new file with '_temp' appended to its name. If no temporary
-        path is provided, the original notebook path is used as the temporary path.
+        This method creates a duplicate of the original notebook file, appending '_temp'
+        to its name, if a temporary notebook path is specified. If no temporary path is
+        specified, the original notebook path is used as the temporary path.
 
         Raises:
-            IOError: If the file copy operation fails.
+            IOError: Raised if there is an error during the file copy operation.
         """
         if self.temp_notebook is not None:
             shutil.copy(
