@@ -288,28 +288,30 @@ class QuestionProcessorBaseClass(Logger):
     @staticmethod
     def write_solutions(output_file, solutions, total_points):
         """
-        Writes the solutions and total points to a Python file.
+        Writes the solutions and total points to a specified Python file.
 
-        This method creates a Python file that contains the total points and a dictionary
-        of solutions. If the file already exists, it will be overwritten.
+        This method generates a Python file that includes the total points and a dictionary
+        of solutions, where each solution is associated with a unique question key. The file
+        will be overwritten if it already exists, ensuring that the latest solutions and points
+        are saved.
 
         Args:
-            output_file (str): Path to the output Python file.
-            solutions (dict): A dictionary containing question keys and their corresponding solutions.
-            total_points (float): The total points for the questions.
+            output_file (str): The file path where the solutions and total points will be written.
+            solutions (dict): A dictionary mapping question keys to their corresponding solutions.
+            total_points (float): The aggregate total points for all questions.
 
         Returns:
             None
         """
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write("from typing import Any\n\n")
-            f.write(f"total_points: float = {total_points}\n\n")
+        with open(output_file, "w", encoding="utf-8") as file:
+            file.write("from typing import Any\n\n")
+            file.write(f"total_points: float = {total_points}\n\n")
 
-            f.write("solutions: dict[str, Any] = {\n")
+            file.write("solutions: dict[str, Any] = {\n")
             for key, solution in solutions.items():
-                # For safety, we assume solutions are strings, but if not, repr would be safer
-                f.write(f'    "{key}": {repr(solution)},\n')
-            f.write("}\n")
+                # Use repr to safely handle solutions that may not be strings
+                file.write(f'    "{key}": {repr(solution)},\n')
+            file.write("}\n")
 
     @staticmethod
     def read_existing_solution(output_file, solutions, total_points):
