@@ -244,8 +244,7 @@ def replace_cells_between_markers(data, markers, ipynb_file, output_file):
         done = False
 
         # Load the notebook data
-        with open(ipynb_file, "r", encoding="utf-8") as f:
-            notebook_data = json.load(f)
+        notebook_data = read_notebook(ipynb_file)
 
         # Iterate over each cell in the notebook
         for cell in notebook_data["cells"]:
@@ -282,8 +281,7 @@ def replace_cells_between_markers(data, markers, ipynb_file, output_file):
         notebook_data["cells"] = new_cells
 
         # Write the modified notebook to the output file
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(notebook_data, f, indent=2)
+        write_notebook(notebook_data, output_file)
 
 
 @dataclass
