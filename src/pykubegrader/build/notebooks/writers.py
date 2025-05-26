@@ -351,16 +351,25 @@ def insert_into_source(
     raise ValueError("End of test configuration not found")
 
 
-def add_text_after_octothorpe(markdown_source, insert_text, hash_prefix="## "):
+def add_text_after_octothorpe(markdown_source: list[str], insert_text: str, hash_prefix: str = "## ") -> list[str]:
     """
-    Adds insert_text immediately after the first '##' in the first line that starts with '##'.
+    Inserts the specified text immediately after the first occurrence of the given hash prefix
+    in the first line of the markdown source that starts with the hash prefix.
+
+    This function is useful for modifying markdown cells by appending additional information
+    to headings or subheadings.
 
     Args:
-    - markdown_source (list of str): The list of lines in the markdown cell.
-    - insert_text (str): The text to be inserted.
+    - markdown_source (list of str): A list of strings representing the lines of a markdown cell.
+    - insert_text (str): The text to be inserted after the hash prefix.
+    - hash_prefix (str, optional): The prefix to look for at the start of a line. Defaults to "## ".
 
     Returns:
-    - list of str: The modified markdown cell content.
+    - list of str: The modified markdown cell content with the inserted text.
+
+    Example:
+    Given a markdown source with lines starting with "##", this function will add the insert_text
+    immediately after the first "##" in the first such line.
     """
     modified_source = []
     inserted = False
