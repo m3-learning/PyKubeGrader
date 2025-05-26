@@ -142,40 +142,38 @@ def has_assignment(notebook_path, *tags):
     return check_for_heading(notebook_path, list(tags))
 
 
-def extract_question_points(raw, i, _data, grade_=None):
+def extract_question_points(raw_metadata, index, question_data, grade_info=None):
     """
-    Extracts point values and grade information from raw metadata.
+    Extracts point values and grade information from raw metadata for a specific question.
 
-    This method processes the 'points' field from raw metadata and converts it
-    to a list of point values that can be assigned to individual questions.
-    It also extracts grade information if present.
+    This function processes the 'points' field from the raw metadata and converts it
+    into a list of point values that can be assigned to individual questions. It also
+    extracts grade information if it is present in the metadata.
 
     Args:
-        raw (list): A list of dictionaries containing raw metadata.
-        i (int): The index of the current metadata entry in the raw list.
-        _data (dict): A dictionary containing question data.
-        grade_ (list, optional): A list to store grade information. Defaults to None.
+        raw_metadata (list of dict): A list of dictionaries containing raw metadata for questions.
+        index (int): The index of the current metadata entry in the raw_metadata list.
+        question_data (dict): A dictionary containing data for the questions.
+        grade_info (list, optional): A list to store grade information. Defaults to None.
 
     Returns:
         tuple: A tuple containing:
-            - points_ (list): A list of point values for each question.
-            - grade_ (list or None): A list containing grade information if present,
+            - points_list (list): A list of point values for each question.
+            - grade_info (list or None): A list containing grade information if present,
                 otherwise None.
     """
-    if isinstance(raw[i]["points"], str):
-        points_ = [float(raw[i]["points"])] * len(
-            _data
-        )  # Distribute the same point value
+    if isinstance(raw_metadata[index]["points"], str):
+        points_list = [float(raw_metadata[index]["points"])] * len(question_data)
     else:
-        points_ = raw[i]["points"]  # Use provided list of points
+        points_list = raw_metadata[index]["points"]
 
-    # Remove 'points' from raw metadata to avoid overwriting
-    raw[i].pop("points", None)
+    # Remove 'points' from raw metadata to prevent overwriting
+    raw_metadata[index].pop("points", None)
 
-    # Handle 'grade' from raw metadata
-    if "grade" in raw[i]:
-        grade_ = [raw[i]["grade"]]
-    return points_, grade_
+    # Extract 'grade' from raw metadata if available
+    if "grade" in raw_metadata[index]:
+        grade_info = [raw_metadata[index]["grade"]]
+    return points_list, grade_info
 
 
 def find_last_import_line(cell_source: list[str]) -> int:

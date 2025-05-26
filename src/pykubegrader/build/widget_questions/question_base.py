@@ -211,26 +211,26 @@ class QuestionProcessorBaseClass(Logger):
     @staticmethod
     def merge_metadata(raw, data):
         """
-        Merges raw metadata with extracted question data.
+        Integrates raw metadata with question data.
 
-        This method combines metadata from two sources: raw metadata and question data.
-        It ensures that the points associated with each question are appropriately distributed
-        and added to the final merged metadata.
+        This function merges metadata from two sources: raw metadata and question data.
+        It ensures that the points for each question are correctly allocated and included
+        in the final merged metadata.
 
         Args:
             raw (list): A list of dictionaries containing raw metadata.
-                        Each dictionary must have a 'points' key with a value
-                        that can be either a list of points or a string representing a single point value.
+                        Each dictionary should include a 'points' key, which can be a list
+                        of points or a string representing a single point value.
             data (list): A list of dictionaries containing extracted question data.
-                        Each dictionary represents a set of questions and their details.
+                        Each dictionary corresponds to a set of questions and their details.
 
         Returns:
-            list: A list of dictionaries where each dictionary represents a question
-                with merged metadata and associated points.
+            list: A list of dictionaries, each representing a question with combined metadata
+                and associated points.
 
         Raises:
-            KeyError: If 'points' is missing from any raw metadata entry.
-            IndexError: If the number of items in `raw` and `data` do not match.
+            KeyError: Raised if 'points' is missing from any raw metadata entry.
+            IndexError: Raised if the number of items in `raw` and `data` do not match.
         """
 
         # Loop through each question set in the data

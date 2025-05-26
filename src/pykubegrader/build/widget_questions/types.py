@@ -57,21 +57,21 @@ class TrueFalse(QuestionProcessorBaseClass):
     
     def make_question_file(self, data_dict, **kwargs):
         """
-        Generates a Python file defining true/false question classes from a dictionary.
+        Creates a Python file for true/false question classes using provided metadata.
 
-        This method creates a Python file containing the necessary class definitions
-        for the true/false questions provided in the data dictionary. It ensures
-        that the required header lines are present and writes the class definitions
-        and their attributes.
+        This function generates a Python file that includes class definitions for
+        true/false questions based on the metadata in the data dictionary. It ensures
+        the inclusion of necessary import statements and writes the class definitions
+        along with their attributes to the file.
 
         Args:
-            data_dict (dict): A nested dictionary containing question metadata.
-            **kwargs: Additional keyword arguments.
+            data_dict (dict): A dictionary containing metadata for each question.
+            **kwargs: Additional keyword arguments for further customization.
         """
         self.additional_header_lines = ["from pykubegrader.widgets.true_false import TFQuestion, TFStyle\n",]
         
-        # Make the question file
-        self.make_question_py_file(data_dict, output_file = self.question_path)
+        # Generate the question file
+        self.make_question_py_file(data_dict, output_file=self.question_path)
 @dataclass
 class SelectMany(QuestionProcessorBaseClass):
     """
@@ -90,16 +90,16 @@ class SelectMany(QuestionProcessorBaseClass):
     
     def make_question_file(self, data_dict, **kwargs):
         """
-        Generates a Python file defining select many question classes from a dictionary.
+        Creates a Python file with class definitions for select many questions.
 
-        This method creates a Python file containing the necessary class definitions
-        for the select many questions provided in the data dictionary. It ensures
-        that the required header lines are present and writes the class definitions
-        and their attributes.
+        This function generates a Python file that includes class definitions for
+        select many questions based on the metadata provided in the data dictionary.
+        It ensures that all necessary import statements are included and writes the
+        class definitions along with their attributes to the file.
 
         Args:
-            data_dict (dict): A nested dictionary containing question metadata.
-            **kwargs: Additional keyword arguments.
+            data_dict (dict): A dictionary containing metadata for each question.
+            **kwargs: Additional keyword arguments for customization.
         """
         # Define the additional header lines for the SelectManyQuestion class imports
         self.additional_header_lines = ["from pykubegrader.widgets.select_many import MultiSelect, SelectMany\n",]
