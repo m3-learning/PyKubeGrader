@@ -123,16 +123,16 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
     def add_question_points_to_notebook(self) -> None:
         """
-        Updates the notebook with total points for each question.
+        Update the notebook with the total points for each question.
 
-        This method iterates over each question in the notebook, finds the corresponding
-        markdown cell, and appends the total points information to the question description.
+        This method processes each question in the notebook to locate the corresponding
+        markdown cell and appends the total points information to the question's description.
 
-        The method uses the `question_points_by_part` attribute to retrieve the points
-        information and modifies the notebook cells accordingly.
+        It utilizes the `question_points_by_part` attribute to access the points data
+        and updates the notebook cells to reflect this information.
 
         Raises:
-            ValueError: If the notebook cell cannot be found or modified.
+            ValueError: If the notebook cell cannot be located or updated.
         """
         for question, points in self.question_points_by_part["question_sums"].items():
             index, source = find_first_cell_with(

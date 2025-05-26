@@ -340,7 +340,25 @@ def ensure_imports(output_file, header_lines):
 
 def insert_into_source(
     cell_source: list[str], lines_to_insert: list[str], flag_to_insert: str
-):
+) -> list[str]:
+    """
+    Inserts a list of lines into a source list at a specified flag.
+
+    This function searches for a specific flag within the cell source and inserts
+    the provided lines immediately after the line containing the flag. If the flag
+    is not found, a ValueError is raised.
+
+    Args:
+        cell_source (list[str]): The original list of source lines where the insertion will occur.
+        lines_to_insert (list[str]): The lines to be inserted into the source.
+        flag_to_insert (str): The flag indicating where to insert the lines.
+
+    Returns:
+        list[str]: The modified list of source lines with the new lines inserted.
+
+    Raises:
+        ValueError: If the flag is not found in the cell source.
+    """
     for i, line in enumerate(cell_source):
         if flag_to_insert in line:
             # Insert the imports immediately after the current line

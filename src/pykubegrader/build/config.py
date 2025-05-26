@@ -125,6 +125,21 @@ class OtterConfigSettings(ABC):
         )
         
     def first_test_header(self, cell_dict: dict, max_question_points: float, filename: str) -> list[str]:
+        """
+        Constructs the header for the first test cell in a notebook.
+
+        This method generates a list of strings that form the header for the first test cell.
+        It initializes environment variables for tracking earned and total points, and logs
+        the total points for the assignment.
+
+        Args:
+            cell_dict (dict): A dictionary containing information about the test cell.
+            max_question_points (float): The maximum points available for the question.
+            filename (str): The name of the file where the test is located.
+
+        Returns:
+            list[str]: A list of strings representing the header lines for the test cell.
+        """
         return dedent(f"""
             max_question_points = str({max_question_points})
             earned_points = 0

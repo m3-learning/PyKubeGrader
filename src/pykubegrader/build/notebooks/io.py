@@ -34,7 +34,7 @@ def get_cell_source(notebook_path, cell_index):
         return None
 
 
-def modify_notebook_cell(notebook_path, cell_index, new_source):
+def modify_notebook_cell(notebook_path: str, cell_index: int, new_source: str | list[str]) -> None:
     """
     Modifies the source code of a specific cell in a Jupyter notebook.
 
