@@ -499,25 +499,25 @@ class QuestionProcessorBaseClass(Logger):
 
         f.write(f"            options={options},\n")
 
-    def write_keys(self, question_dict, f):
+    def write_keys(self, question_dict, file_obj):
         """
-        Writes the keys for each question to the provided file.
+        Constructs and writes unique keys for each question to the specified file.
 
-        This method iterates through the question dictionary, constructs the keys for each question,
-        and writes them to the specified file.
+        This method generates a unique key for each question by combining its number, subquestion number,
+        and name. These keys are then written to the provided file object.
 
         Args:
-            question_dict (dict): A dictionary containing question metadata.
-            f (file object): The file object to write the keys to.
+            question_dict (dict): A dictionary containing metadata for each question. Each key-value pair
+                                  represents a question, where the key is the question identifier and the
+                                  value is a dictionary with question details.
+            file_obj (file object): The file object where the constructed keys will be written.
         """
-        keys = []
-        for i, (q_key, q_value) in enumerate(question_dict.items()):
-            # Construct and append keys
-            keys.append(
-                f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
-            )
+        keys = [
+            f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
+            for q_value in question_dict.values()
+        ]
 
-        f.write(f"            keys={keys},\n")
+        file_obj.write(f"            keys={keys},\n")
 
     def run(self, **kwargs):
         """
