@@ -342,25 +342,29 @@ class QuestionProcessorBaseClass(Logger):
     @staticmethod
     def build_solutions(data_list, solutions, total_points):
         """
-        Processes new question data and updates solutions and total points.
+        Updates the solutions dictionary and total points list with new question data.
 
-        This method iterates through the provided data list, extracts question information,
-        and updates the solutions dictionary and total points list accordingly.
+        This function processes each question in the provided data list, constructs a unique
+        key for each question, and updates the solutions dictionary with the corresponding
+        solution. It also accumulates the total points for all questions processed.
 
         Args:
-            data_list (list): A list of dictionaries containing question metadata.
+            data_list (list of dict): A list where each element is a dictionary containing
+                                      metadata for a set of questions.
             solutions (dict): A dictionary to be updated with question keys and their corresponding solutions.
-            total_points (list): A list to be extended with points for each question.
+            total_points (list of float): A list to be extended with the points for each question.
 
         Returns:
-            float: The total points for the questions processed in this method.
+            float: The cumulative total points for all questions processed in this function.
         """
-        question_points = 0
+        question_points = 0.0
 
-        # Process new question data and update solutions and total_points
+        # Iterate over each set of question data
         for question_set in data_list:
             for key, question_data in question_set.items():
+                # Construct a unique key for each question
                 solution_key = f"q{question_data['question number']}-{question_data['subquestion_number']}-{key}"
+                # Update the solutions dictionary
                 solutions[solution_key] = question_data["solution"]
                 total_points.extend([question_data["points"]])
                 question_points += question_data["points"]
