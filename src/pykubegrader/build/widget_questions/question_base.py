@@ -445,24 +445,22 @@ class QuestionProcessorBaseClass(Logger):
                 self.write_points(question_dict, f)
             
 
-    def write_points(self, question_dict, f):
+    def write_points(self, question_dict, file_obj):
         """
-        Writes the points for each question to the provided file.
+        Extracts and writes the points for each question to the specified file object.
 
-        This method iterates through the question dictionary, extracts the points for each question,
-        and writes them to the specified file.
+        This method processes a dictionary containing question metadata, retrieves the points for each question,
+        and writes them in a structured format to the provided file object. The points are collected into a list
+        and then written as part of the class definition in the file.
 
         Args:
-            question_dict (dict): A dictionary containing question metadata.
-            f (file object): The file object to write the points to.
+            question_dict (dict): A dictionary where each key is a question identifier and each value is a dictionary
+                                  containing details about the question, including its points.
+            file_obj (file object): The file object where the extracted points will be written.
         """
-        points = []
-        for i, (q_key, q_value) in enumerate(question_dict.items()):
-            # Extract and append points
-            points.append(q_value["points"])
-
-        f.write(f"            points={points},\n")
-        f.write("        )\n")
+        points = [q_value["points"] for q_value in question_dict.values()]
+        file_obj.write(f"            points={points},\n")
+        file_obj.write("        )\n")
 
     def write_descriptions(self, question_dict, file_obj):
         """
