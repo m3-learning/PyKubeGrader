@@ -66,7 +66,7 @@ from pykubegrader.build.notebooks.writers import (
     replace_cell_source,
     replace_cells_between_markers,
 )
-from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string
+from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string_for_python_variable
 from pykubegrader.graders import (
     calculate_late_submission,
     late_assignments,
@@ -201,7 +201,7 @@ __all__ = [
     "replace_cell_source",
     "replace_cells_between_markers",
     "responses",
-    "sanitize_string",
+    "sanitize_string_for_python_variable",
     "score_question",
     "scoring",
     "select",

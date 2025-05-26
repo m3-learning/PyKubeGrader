@@ -1,10 +1,11 @@
+import json
 import os
 import nbformat
 
 from pykubegrader.build.build_folder import NotebookProcessor
 from pykubegrader.build.config import DisplayQuestionCode
 from pykubegrader.build.notebooks.search import find_first_code_cell
-from pykubegrader.build.widget_questions.utils import sanitize_string
+from pykubegrader.build.widget_questions.utils import sanitize_string_for_python_variable
 
 
 def remove_assignment_config_cells(notebook_path):
@@ -210,22 +211,25 @@ def write_initialization_code(
 
 def replace_cells_between_markers(data, markers, ipynb_file, output_file):
     """
-    Replaces the cells between specified markers in a Jupyter Notebook (.ipynb file)
-    with provided replacement cells and writes the result to the output file.
+    Replace cells between specified markers in a Jupyter Notebook (.ipynb file) with new content.
 
-    Parameters:
-    data (list): A list of dictionaries with data for creating replacement cells.
-    markers (tuple): A tuple containing two strings: the BEGIN and END markers.
-    ipynb_file (str): Path to the input Jupyter Notebook file.
-    output_file (str): Path to the output Jupyter Notebook file.
+    This function identifies a block of cells in a Jupyter Notebook that are enclosed between
+    specified BEGIN and END markers. It replaces these cells with new content provided in the
+    form of replacement cells and writes the updated notebook to the specified output file.
+
+    Args:
+        data (list): A list of dictionaries, each containing data for constructing replacement cells.
+        markers (tuple): A tuple containing two strings that denote the BEGIN and END markers.
+        ipynb_file (str): The file path to the input Jupyter Notebook.
+        output_file (str): The file path where the modified Jupyter Notebook will be saved.
 
     Returns:
-    None: Writes the modified notebook to the output file.
+        None: The function writes the modified notebook to the output file and does not return a value.
     """
     begin_marker, end_marker = markers
     file_name_ipynb = ipynb_file.split("/")[-1].replace("_temp.ipynb", "")
 
-    file_name_ipynb = sanitize_string(file_name_ipynb)
+    file_name_ipynb = sanitize_string_for_python_variable(file_name_ipynb)
 
     # Iterate over each set of replacement data
     for data_ in data:

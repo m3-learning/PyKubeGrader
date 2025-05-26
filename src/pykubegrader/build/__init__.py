@@ -52,7 +52,7 @@ from pykubegrader.build.passwords import (
     student_ids,
     user,
 )
-from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string
+from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string_for_python_variable
 
 __all__ = [
     "OtterNotebookBuilder",
@@ -88,7 +88,7 @@ __all__ = [
     "passwords",
     "replace_cell_source",
     "replace_cells_between_markers",
-    "sanitize_string",
+    "sanitize_string_for_python_variable",
     "student_ids",
     "update_initialize_assignment",
     "user",

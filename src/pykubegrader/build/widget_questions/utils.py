@@ -182,15 +182,18 @@ def process_widget_questions(ipynb_file, start_tag, end_tag):
         return []
 
 
-def sanitize_string(input_string):
+def sanitize_string_for_python_variable(input_string):
     """
-    Converts a string into a valid Python variable name.
+    Transforms a given string into a format suitable for use as a Python variable name.
+
+    This function replaces any non-alphanumeric characters or leading digits with underscores,
+    ensuring the resulting string adheres to Python's variable naming conventions.
 
     Args:
-        input_string (str): The string to convert.
+        input_string (str): The original string intended for conversion.
 
     Returns:
-        str: A valid Python variable name.
+        str: A sanitized string that can be safely used as a Python variable name.
     """
     # Replace invalid characters with underscores
     sanitized = re.sub(r"\W|^(?=\d)", "_", input_string)

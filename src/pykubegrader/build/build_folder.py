@@ -40,7 +40,7 @@ from pykubegrader.build.widget_questions.types import (
     TrueFalse,
 )
 
-from pykubegrader.build.widget_questions.utils import sanitize_string
+from pykubegrader.build.widget_questions.utils import sanitize_string_for_python_variable
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 
 try:
@@ -459,7 +459,7 @@ class NotebookProcessor(
         # Move the solution file to the autograder folder
         if solution_path is not None:
             # gets importable file name
-            importable_file_name = sanitize_string(
+            importable_file_name = sanitize_string_for_python_variable(
                 os.path.splitext(os.path.basename(solution_path))[0]
             )
 
@@ -519,7 +519,7 @@ class NotebookProcessor(
         """
         if question_path is not None:
             question_file_name = os.path.basename(question_path)
-            question_file_name_sanitized = sanitize_string(
+            question_file_name_sanitized = sanitize_string_for_python_variable(
                 question_file_name.replace("_questions", "")
             )
             if question_file_name_sanitized.endswith("_py"):
