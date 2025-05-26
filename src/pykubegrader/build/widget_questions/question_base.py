@@ -396,15 +396,15 @@ class QuestionProcessorBaseClass(Logger):
         
     def make_question_py_file(self, data_dict, **kwargs):
         """
-        Generates a Python file defining question classes from a dictionary.
+        Generates a Python file with class definitions for questions from a given dictionary.
 
-        This method creates a Python file containing the necessary class definitions
-        for the questions provided in the data dictionary. It ensures that the required
-        header lines are present and writes the class definitions and their attributes.
+        This method writes a Python file that includes class definitions for each question
+        specified in the data dictionary. It ensures that all necessary header lines are
+        included and writes the class definitions along with their attributes.
 
         Args:
-            data_dict (dict): A nested dictionary containing question metadata.
-            **kwargs: Additional keyword arguments.
+            data_dict (dict): A dictionary containing metadata for each question.
+            **kwargs: Additional keyword arguments that may be used for customization.
         """
         header_lines = self.additional_header_lines + self.header_lines
 

@@ -1,3 +1,4 @@
+import os
 import nbformat
 
 from pykubegrader.build.build_folder import NotebookProcessor
@@ -313,14 +314,14 @@ class AddKeyRequirementImportBaseClass(ABC):
 
 def ensure_imports(output_file, header_lines):
     """
-    Ensures specified header lines are present at the top of the file.
+    Ensures that the specified header lines are included at the beginning of the file.
 
-    Args:
-        output_file (str): The path of the file to check and modify.
-        header_lines (list of str): Lines to ensure are present at the top.
+    Parameters:
+        output_file (str): The file path to be checked and potentially modified.
+        header_lines (list of str): The lines that need to be present at the start of the file.
 
     Returns:
-        str: The existing content of the file (without the header).
+        str: The content of the file excluding the header lines.
     """
     existing_content = ""
     if os.path.exists(output_file):
