@@ -684,14 +684,18 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
     @staticmethod
     def tag_questions(cells_dict: dict) -> dict:
         """
-        Adds 'is_first' and 'is_last' boolean flags to the cells based on their position
-        within the group of the same question. All cells will have both flags.
+        Annotates each cell in the dictionary with 'is_first' and 'is_last' flags.
+
+        This method examines the position of each cell within its respective question group
+        and assigns boolean flags 'is_first' and 'is_last' to indicate whether a cell is the
+        first or last in its group. These flags are added to all cells in the dictionary.
 
         Args:
-            cells_dict (dict): A dictionary where keys are cell IDs and values are cell details.
+            cells_dict (dict): A dictionary where each key is a cell ID and each value is a
+                               dictionary containing details about the cell.
 
         Returns:
-            dict: The modified dictionary with 'is_first' and 'is_last' flags added.
+            dict: The input dictionary with added 'is_first' and 'is_last' flags for each cell.
         """
         if not isinstance(cells_dict, dict):
             raise ValueError("Input must be a dictionary.")
@@ -712,7 +716,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         return cells_dict
 
     @staticmethod
-    def add_cell_first_last_tag(cells_dict, question_groups):
+    def add_cell_first_last_tag(cells_dict: dict, question_groups: dict) -> None:
         """
         Adds 'is_first', 'is_last', and 'test_number' attributes to each cell in the cells_dict.
 
@@ -739,24 +743,21 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
     @staticmethod
     def group_keys_by_question_name(cells_dict):
         """
-        Groups cell keys by their associated question name.
+        Organizes cell keys by their associated question names.
 
-        This method organizes the keys of a dictionary of cells into groups based on the
-        'question' attribute of each cell. It returns a dictionary where each key is a
-        question name and the corresponding value is a list of keys from the original
-        dictionary that are associated with that question.
+        This function takes a dictionary of cells and groups the keys based on the 'question'
+        attribute found in each cell. It returns a new dictionary where each key is a question
+        name, and the corresponding value is a list of cell IDs that are linked to that question.
 
         Args:
-            cells_dict (dict): A dictionary where keys are cell IDs and values are cell details.
+            cells_dict (dict): A dictionary with cell IDs as keys and cell details as values.
 
         Returns:
-            dict: A dictionary with question names as keys and lists of cell IDs as values.
+            dict: A dictionary mapping question names to lists of associated cell IDs.
         """
         question_groups: dict = {}
         for key, cell in cells_dict.items():
-            question = cell.get(
-                "question"
-            )  # Use .get() to avoid errors if key is missing
+            question = cell.get("question")  # Safely retrieve the 'question' attribute
             if question not in question_groups:
                 question_groups[question] = []
             question_groups[question].append(key)
