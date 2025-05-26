@@ -80,6 +80,26 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         self.run(**kwargs)
 
     def run(self, **kwargs) -> None:
+        """
+        Execute the main processing routine for the notebook.
+
+        This method orchestrates the primary tasks required to process the notebook,
+        including creating a temporary version of the notebook, building a dictionary
+        of assertion tests, constructing a mapping of question points, and integrating
+        point and API-related code into the notebook.
+
+        Steps:
+        1. Create a temporary version of the notebook for processing.
+        2. Build a dictionary of assertion tests from the notebook.
+        3. Construct a mapping of question points by part using the assertion tests.
+        4. Add point information to the notebook.
+        5. Integrate API-related code into the notebook.
+
+        Args:
+            **kwargs: Additional keyword arguments that may be used for processing,
+                      allowing for flexible configuration and extension of the method's
+                      functionalities.
+        """
         # here for easy debugging
         self.make_temp_notebook()
 
@@ -359,6 +379,20 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         return concealed_lines
 
     def add_api_code(self, **kwargs) -> None:
+        """
+        Integrates API-related code into the notebook cells.
+
+        This method processes each cell in the assertion tests dictionary, adding necessary
+        import statements, concealing test code, and appending API-related code for logging
+        and scoring. It updates the cell source with these modifications.
+
+        Args:
+            **kwargs: Optional keyword arguments that may include:
+                - start_hide_line (str): Marker for the start of a hidden block.
+                - end_hide_line (str): Marker for the end of a hidden block.
+                - encoder: Function for encoding hidden code.
+                - decoder: Function for decoding hidden code.
+        """
         self.compute_max_points_free_response()
 
         for i, (cell_index, cell_dict) in enumerate(self.assertion_tests_dict.items()):
@@ -366,18 +400,23 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
                 f"Processing cell {cell_index + 1}, {i} of {len(self.assertion_tests_dict)}"
             )
 
+            # Retrieve the source code of the current cell
             cell = get_cell_source(self.temp_notebook, cell_index)
             cell_source = self.add_import_statements_to_tests(
                 cell["source"],
             )
 
+            # Conceal test code within the cell
             cell_source = self.conceal_tests(cell_source, **kwargs)
 
+            # Find the last import line index
             last_import_line_ind = find_last_import_line(cell_source)
 
+            # Prepare the updated cell source
             updated_cell_source = []
             updated_cell_source.extend(cell_source[: last_import_line_ind + 1])
             
+            # Add question header if the cell is the first in its question group
             if cell_dict["is_first"]:
                 updated_cell_source.extend(
                     self.construct_first_cell_question_header(cell_dict)
@@ -392,7 +431,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
             updated_cell_source.extend(["\n"])
 
 
-            #TODO: Here
+            #TODO: make these in config
             updated_cell_source.extend(
                 OtterNotebookBuilder.construct_graders(cell_dict)
             )
@@ -402,6 +441,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
             )
             updated_cell_source.extend(["earned_points += score\n"])
 
+            # Log the score and update environment variables
             short_filename = self.filename.split(".")[0].replace("_temp", "")
             updated_cell_source.extend(
                 [
@@ -412,31 +452,33 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
                 ["os.environ['EARNED_POINTS'] = str(earned_points)\n"]
             )
 
+            # Update responses in the notebook
             updated_cell_source.extend(
                 OtterNotebookBuilder.construct_update_responses(cell_dict)
             )
 
+            # Replace the cell source with the updated content
             self.replace_cell_source(cell_index, updated_cell_source)
 
-    def find_question_description(self, search_string):
-        with open(self.temp_notebook, "r", encoding="utf-8") as f:
-            nb_data = json.load(f)
+    # def find_question_description(self, search_string):
+    #     with open(self.temp_notebook, "r", encoding="utf-8") as f:
+    #         nb_data = json.load(f)
 
-        found_raw = False
+    #     found_raw = False
 
-        for idx, cell in enumerate(nb_data.get("cells", [])):
-            if (
-                cell["cell_type"] == "raw"
-                and any("# BEGIN QUESTION" in line for line in cell.get("source", []))
-                and any(search_string in line for line in cell.get("source", []))
-            ):
-                found_raw = True
-            elif found_raw and cell["cell_type"] == "markdown":
-                return idx, cell.get(
-                    "source", []
-                )  # Return the index of the first matching markdown cell
+    #     for idx, cell in enumerate(nb_data.get("cells", [])):
+    #         if (
+    #             cell["cell_type"] == "raw"
+    #             and any("# BEGIN QUESTION" in line for line in cell.get("source", []))
+    #             and any(search_string in line for line in cell.get("source", []))
+    #         ):
+    #             found_raw = True
+    #         elif found_raw and cell["cell_type"] == "markdown":
+    #             return idx, cell.get(
+    #                 "source", []
+    #             )  # Return the index of the first matching markdown cell
 
-        return None, None  # Return None if no such markdown cell is found
+    #     return None, None  # Return None if no such markdown cell is found
 
     def get_max_question_points(self, cell_dict) -> float:
         """
@@ -509,6 +551,21 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
     @staticmethod
     def construct_update_responses(cell_dict: dict) -> list[str]:
+        """
+        Constructs a list of update response statements for logging variables.
+
+        This method iterates over the logging variables specified in the cell dictionary
+        and generates a list of strings. Each string is a Python statement that updates
+        the responses for a given question ID with the value of the logging variable.
+
+        Args:
+            cell_dict (dict): A dictionary containing information about the cell, including
+                              a list of logging variables under the key 'logging_variables'.
+
+        Returns:
+            list[str]: A list of strings, each representing a Python statement to update
+                       responses with the logging variable values.
+        """
         update_responses = []
 
         logging_variables = cell_dict["logging_variables"]
@@ -572,36 +629,36 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
         return added_code
 
-    @staticmethod
-    def insert_list_at_index(
-        original_list: list[str],
-        insert_list: list[str],
-        index: int,
-        line_break: bool = True,
-        inplace_line_break: bool = True,
-    ) -> list[str]:
-        """
-        Inserts a list into another list at a specific index.
+    # @staticmethod
+    # def insert_list_at_index(
+    #     original_list: list[str],
+    #     insert_list: list[str],
+    #     index: int,
+    #     line_break: bool = True,
+    #     inplace_line_break: bool = True,
+    # ) -> list[str]:
+    #     """
+    #     Inserts a list into another list at a specific index.
 
-        Args:
-            original_list (list): The original list.
-            insert_list (list): The list to insert.
-            index (int): The position at which to insert the new list.
+    #     Args:
+    #         original_list (list): The original list.
+    #         insert_list (list): The list to insert.
+    #         index (int): The position at which to insert the new list.
 
-        Returns:
-            list: A single combined list with the second list inserted at the specified index.
-        """
+    #     Returns:
+    #         list: A single combined list with the second list inserted at the specified index.
+    #     """
 
-        if inplace_line_break:
-            insert_list = [s + "\n" for s in insert_list]
+    #     if inplace_line_break:
+    #         insert_list = [s + "\n" for s in insert_list]
 
-        if line_break:
-            if inplace_line_break:
-                insert_list = ["\n"] + insert_list
-            else:
-                insert_list = ["\n"] + insert_list + ["\n"]
+    #     if line_break:
+    #         if inplace_line_break:
+    #             insert_list = ["\n"] + insert_list
+    #         else:
+    #             insert_list = ["\n"] + insert_list + ["\n"]
 
-        return original_list[:index] + insert_list + original_list[index:]
+    #     return original_list[:index] + insert_list + original_list[index:]
 
     def add_import_statements_to_tests(
         self,
