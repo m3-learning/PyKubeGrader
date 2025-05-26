@@ -1,6 +1,5 @@
 import ast
 import base64
-import json
 import re
 import shutil
 from dataclasses import dataclass
@@ -15,8 +14,6 @@ from pykubegrader.build.notebooks.writers import add_text_after_octothorpe
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
 from pykubegrader.build.notebooks.io import get_cell_source
 from pykubegrader.build.config import OtterConfigSettings
-
-import nbformat
 
 
 @dataclass
@@ -577,30 +574,30 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
         return update_responses
 
-    @staticmethod
-    def split_list_at_marker(
-        input_list: list[str], marker: str = """# END TEST CONFIG"""
-    ) -> tuple[list[str], list[str]]:
-        """
-        Splits a list into two parts at the specified marker string.
+    # @staticmethod
+    # def split_list_at_marker(
+    #     input_list: list[str], marker: str = """# END TEST CONFIG"""
+    # ) -> tuple[list[str], list[str]]:
+    #     """
+    #     Splits a list into two parts at the specified marker string.
 
-        Args:
-            input_list (list): The list to split.
-            marker (str): The string at which to split the list.
+    #     Args:
+    #         input_list (list): The list to split.
+    #         marker (str): The string at which to split the list.
 
-        Returns:
-            tuple: A tuple containing two lists. The first list contains the elements
-                before the marker, and the second list contains the elements after
-                the marker (excluding the marker itself).
-        """
-        if marker in input_list:
-            index = input_list.index(marker)
-            return input_list[: index + 1], input_list[index + 2 :]
-        else:
-            return (
-                input_list,
-                [],
-            )  # If the marker is not in the list, return the original list and an empty list
+    #     Returns:
+    #         tuple: A tuple containing two lists. The first list contains the elements
+    #             before the marker, and the second list contains the elements after
+    #             the marker (excluding the marker itself).
+    #     """
+    #     if marker in input_list:
+    #         index = input_list.index(marker)
+    #         return input_list[: index + 1], input_list[index + 2 :]
+    #     else:
+    #         return (
+    #             input_list,
+    #             [],
+    #         )  # If the marker is not in the list, return the original list and an empty list
 
     @staticmethod
     def construct_graders(cell_dict: dict) -> list[str]:
@@ -695,16 +692,16 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
         return cell_source
 
-    # TODO: `Any` return not good; would be better to specify return type(s)
-    def extract_first_cell(self) -> Any:
-        if not self.temp_notebook:
-            raise ValueError("No temporary notebook file path provided")
-        with open(self.temp_notebook, "r", encoding="utf-8") as f:
-            notebook = json.load(f)
-        if "cells" in notebook and len(notebook["cells"]) > 0:
-            return notebook["cells"][0]
-        else:
-            return None    
+    # # TODO: `Any` return not good; would be better to specify return type(s)
+    # def extract_first_cell(self) -> Any:
+    #     if not self.temp_notebook:
+    #         raise ValueError("No temporary notebook file path provided")
+    #     with open(self.temp_notebook, "r", encoding="utf-8") as f:
+    #         notebook = json.load(f)
+    #     if "cells" in notebook and len(notebook["cells"]) > 0:
+    #         return notebook["cells"][0]
+    #     else:
+    #         return None    
 
     def replace_cell_source(self, cell_index: int, new_source: str | list[str]) -> None:
         """
