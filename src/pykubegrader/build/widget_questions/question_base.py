@@ -481,23 +481,24 @@ class QuestionProcessorBaseClass(Logger):
             descriptions.append(q_value["question_text"])
         f.write(f"            descriptions={descriptions},\n")
 
-    def write_options(self, question_dict, f):
+    def write_options(self, question_dict, file_obj):
         """
-        Writes the options for each question to the provided file.
+        Extracts and writes the options for each question to a specified file.
 
-        This method iterates through the question dictionary, extracts the options for each question,
-        and writes them to the specified file.
+        This method processes a dictionary containing question metadata, retrieves the options for each question,
+        and writes them in a structured format to the provided file object. If a question does not have specified
+        options, a default value of [None] is used.
 
         Args:
-            question_dict (dict): A dictionary containing question metadata.
-            f (file object): The file object to write the options to.
+            question_dict (dict): A dictionary where each key is a question identifier and each value is a dictionary
+                                  containing details about the question, including its options.
+            file_obj (file object): The file object where the extracted options will be written.
         """
-        options = []
-        for i, (q_key, q_value) in enumerate(question_dict.items()):
-            # Extract and append options
-            options.append(q_value.get("OPTIONS", [None]))
+        options = [
+            q_value.get("OPTIONS", [None]) for q_value in question_dict.values()
+        ]
 
-        f.write(f"            options={options},\n")
+        file_obj.write(f"            options={options},\n")
 
     def write_keys(self, question_dict, file_obj):
         """
