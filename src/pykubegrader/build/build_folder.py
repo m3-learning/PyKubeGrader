@@ -39,6 +39,8 @@ from pykubegrader.build.widget_questions.types import (
     SelectMany,
     TrueFalse,
 )
+from pykubegrader.build.config import question_class_type
+
 
 from pykubegrader.build.widget_questions.utils import sanitize_string_for_python_variable
 from pykubegrader.utils.logging import Logger  # For robust datetime parsing
@@ -559,23 +561,20 @@ class NotebookProcessor(
             tuple: A tuple consisting of the path to the solution file and the path to the question file.
                    If no questions are detected, both paths will be returned as None.
         """
+        solution_path, question_path = None, None
 
-        # TODO: Make it so we can have a list of objects in config to loop through
-        solution_path_1, question_path_1 = MultipleChoice(
-            ipynb_file=new_notebook_path, temp_notebook_path=temp_notebook_path
-        ).run()
+        # Iterate over each question type in the dictionary and run the process
+        for question_key, question_info in question_class_type.items():
+            question_class = globals().get(question_info.class_type)
+            if question_class:
+                sol_path, ques_path = question_class(
+                    ipynb_file=new_notebook_path, temp_notebook_path=temp_notebook_path
+                ).run()
 
-        solution_path_2, question_path_2 = TrueFalse(
-            ipynb_file=new_notebook_path, temp_notebook_path=temp_notebook_path
-        ).run()
-
-        solution_path_3, question_path_3 = SelectMany(
-            ipynb_file=new_notebook_path, temp_notebook_path=temp_notebook_path
-        ).run()
-
-        if any([solution_path_1, solution_path_2, solution_path_3]) is not None:
-            solution_path = solution_path_1 or solution_path_2 or solution_path_3
-            question_path = question_path_1 or question_path_2 or question_path_3
+                # Update solution_path and question_path if any are found
+                if sol_path or ques_path:
+                    solution_path = sol_path or solution_path
+                    question_path = ques_path or question_path
 
         return solution_path, question_path
 

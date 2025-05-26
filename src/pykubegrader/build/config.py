@@ -20,10 +20,17 @@ class DisplayQuestionCode:
 
 
 
+from dataclasses import dataclass
+
+@dataclass
+class QuestionClassType:
+    class_type: str
+    style: str
+
 question_class_type = {
-    "MCQuestion": {"class_type": "MCQuestion", "style": "MCQ"},
-    "SelectMany": {"class_type": "SelectMany", "style": "MultiSelect"},
-    "TFQuestion": {"class_type": "TFQuestion", "style": "TFStyle"},
+    "MCQuestion": QuestionClassType(class_type="MCQuestion", style="MCQ"),
+    "SelectMany": QuestionClassType(class_type="SelectMany", style="MultiSelect"),
+    "TFQuestion": QuestionClassType(class_type="TFQuestion", style="TFStyle"),
 }
 
 
