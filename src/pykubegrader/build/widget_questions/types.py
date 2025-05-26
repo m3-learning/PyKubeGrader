@@ -3,13 +3,17 @@ from dataclasses import dataclass
 @dataclass
 class MultipleChoice(QuestionProcessorBaseClass):
     """
-    A class to process multiple choice questions in a Jupyter notebook.
+    A dataclass for processing multiple choice questions within a Jupyter notebook.
+
+    This class is designed to identify and handle multiple choice questions by using
+    specific start and end tags. It categorizes the questions and associates them with
+    a particular class name for further processing.
 
     Attributes:
-        start_tag (str): The start tag to identify the beginning of multiple choice questions.
-        end_tag (str): The end tag to identify the end of multiple choice questions.
-        question_type (str): The type of question being processed.
-        class_name (str): The name of the class being processed.
+        start_tag (str): A string that marks the beginning of a multiple choice question block.
+        end_tag (str): A string that marks the end of a multiple choice question block.
+        question_type (str): A descriptor for the type of question, set to "multiple choice".
+        class_name (str): The name of the class used for processing multiple choice questions.
     """
     start_tag: str = "# BEGIN MULTIPLE CHOICE"
     end_tag: str = "# END MULTIPLE CHOICE"

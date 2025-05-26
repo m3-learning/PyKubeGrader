@@ -545,18 +545,19 @@ class NotebookProcessor(
 
     def widget_question_parser(self, new_notebook_path, temp_notebook_path):
         """
-        Parses widget questions from a temporary notebook and returns paths to solution and question files.
+        Extracts widget questions from a temporary notebook and provides paths to the generated solution and question files.
 
-        This method processes multiple choice, true/false, and select-many type questions from the given
-        temporary notebook path and generates corresponding solution and question files in the new notebook path.
+        This function handles the extraction of multiple choice, true/false, and select-many type questions
+        from the specified temporary notebook. It then creates the corresponding solution and question files
+        in the directory of the new notebook.
 
-        Parameters:
-            new_notebook_path (str): The path where the new notebook is located.
-            temp_notebook_path (str): The path to the temporary notebook containing widget questions.
+        Args:
+            new_notebook_path (str): The directory path where the new notebook is stored.
+            temp_notebook_path (str): The directory path to the temporary notebook that includes widget questions.
 
         Returns:
-            tuple: A tuple containing the path to the solution file and the path to the question file.
-                   If no questions are found, both paths will be None.
+            tuple: A tuple consisting of the path to the solution file and the path to the question file.
+                   If no questions are detected, both paths will be returned as None.
         """
 
         # TODO: Make it so we can have a list of objects in config to loop through
@@ -580,16 +581,16 @@ class NotebookProcessor(
 
     def duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
         """
-        Duplicates a Jupyter notebook into a specified solution directory, creating necessary subdirectories
-        and temporary files for further processing.
+        Copies a Jupyter notebook to a designated solution directory, setting up necessary subdirectories
+        and temporary files for subsequent processing.
 
-        Parameters:
-            notebook_path (str): The path to the original Jupyter notebook.
-            notebook_name (str): The name of the notebook, used for naming temporary files.
-            solution_notebook_path (str): The path where the solution and related directories will be created.
+        Args:
+            notebook_path (str): The file path to the original Jupyter notebook.
+            notebook_name (str): The base name of the notebook, utilized for naming temporary files.
+            solution_notebook_path (str): The directory path where the solution and associated directories will be established.
 
         Returns:
-            tuple: A tuple containing paths to the new notebook, temporary notebook, autograder directory,
+            tuple: A tuple containing the paths to the new notebook, temporary notebook, autograder directory,
                    and student directory.
         """
 
