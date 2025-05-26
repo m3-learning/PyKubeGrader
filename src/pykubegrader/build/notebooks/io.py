@@ -8,7 +8,7 @@ def write_notebook(notebook, save_path):
 
 def read_notebook(input_file):
     with open(input_file, "r", encoding="utf-8") as f:
-        notebook = nbformat.read(f, as_version=4)
+        notebook = nbformat.read(f, as_version=nbformat.NO_CONVERT)
     return notebook
 
 
