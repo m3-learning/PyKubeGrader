@@ -211,26 +211,25 @@ class QuestionProcessorBaseClass(Logger):
     @staticmethod
     def merge_metadata(raw, data):
         """
-        Integrates raw metadata with question data.
+        Merges raw metadata with question data to form a comprehensive dataset.
 
-        This function merges metadata from two sources: raw metadata and question data.
-        It ensures that the points for each question are correctly allocated and included
-        in the final merged metadata.
+        This method combines metadata from raw sources and question data, ensuring that
+        each question is assigned the correct point values and any additional metadata.
 
         Args:
-            raw (list): A list of dictionaries containing raw metadata.
-                        Each dictionary should include a 'points' key, which can be a list
-                        of points or a string representing a single point value.
-            data (list): A list of dictionaries containing extracted question data.
-                        Each dictionary corresponds to a set of questions and their details.
+            raw (list of dict): Contains raw metadata for questions. Each dictionary must
+                                have a 'points' key, which can be a list of point values
+                                or a single string value representing points.
+            data (list of dict): Contains extracted question data. Each dictionary represents
+                                 a set of questions with their respective details.
 
         Returns:
-            list: A list of dictionaries, each representing a question with combined metadata
-                and associated points.
+            list of dict: A list where each dictionary represents a question with integrated
+                          metadata and assigned points.
 
         Raises:
-            KeyError: Raised if 'points' is missing from any raw metadata entry.
-            IndexError: Raised if the number of items in `raw` and `data` do not match.
+            KeyError: If any raw metadata entry lacks the 'points' key.
+            IndexError: If the lengths of `raw` and `data` lists do not match.
         """
 
         # Loop through each question set in the data
@@ -256,19 +255,19 @@ class QuestionProcessorBaseClass(Logger):
     @staticmethod
     def generate_widget_solutions(data_list, **kwargs):
         """
-        Generates a Python file with solutions and total points based on the input data.
+        Creates a Python file with solutions and calculates total points from the provided data.
 
-        This method processes a list of question metadata dictionaries, calculates the total points,
-        and generates a Python file containing the solutions and total points. If the output file
-        already exists, it appends new solutions to the existing solution dictionary.
+        This function takes a list of dictionaries containing question metadata, computes the total
+        points, and writes a Python file with the solutions and total points. If the specified output
+        file already exists, it updates the existing solution dictionary with new solutions.
 
         Args:
-            data_list (list): A list of dictionaries containing question metadata.
-            **kwargs: Additional keyword arguments, including:
-                - output_file (str): Path to the output Python file. Defaults to "output.py".
+            data_list (list): A list of dictionaries, each containing metadata for questions.
+            **kwargs: Additional keyword arguments, such as:
+                - output_file (str): The file path for the output Python file. Defaults to "output.py".
 
         Returns:
-            float: The total points for the questions.
+            float: The computed total points for all questions.
         """
 
         output_file = kwargs.get("output_file", "output.py")
@@ -315,32 +314,30 @@ class QuestionProcessorBaseClass(Logger):
     @staticmethod
     def read_existing_solution(output_file, solutions, total_points):
         """
-        Reads existing solutions and total points from a given output file.
+        Loads existing solutions and total points from a specified Python file.
 
-        This method dynamically loads a Python module from the specified output file
-        and updates the provided solutions dictionary and total_points list with the
-        existing data from the module.
+        This function imports a Python module from the given output file path and
+        updates the provided solutions dictionary and total_points list with data
+        from the module, if available.
 
         Args:
-            output_file (str): Path to the output Python file containing existing solutions and total points.
-            solutions (dict): A dictionary to be updated with existing solutions from the output file.
-            total_points (list): A list to be extended with existing total points from the output file.
+            output_file (str): The file path to the Python file containing existing solutions and total points.
+            solutions (dict): A dictionary to be updated with solutions from the file.
+            total_points (list): A list to be updated with total points from the file.
 
         Returns:
             None
         """
-        if os.path.exists(output_file):
-            spec = importlib.util.spec_from_file_location(
-                "existing_module", output_file
-            )
+        if os.path.isfile(output_file):
+            spec = importlib.util.spec_from_file_location("existing_module", output_file)
             existing_module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(existing_module)  # Load the module dynamically
+            spec.loader.exec_module(existing_module)  # Execute the module
 
-            # Attempt to read existing solutions and total_points
+            # Update solutions and total_points if they exist in the module
             if hasattr(existing_module, "solutions"):
                 solutions.update(existing_module.solutions)
             if hasattr(existing_module, "total_points"):
-                total_points.extend(existing_module.total_points)
+                total_points.append(existing_module.total_points)
 
     @staticmethod
     def build_solutions(data_list, solutions, total_points):
