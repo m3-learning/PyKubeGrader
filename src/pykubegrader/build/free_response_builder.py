@@ -6,6 +6,7 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
+from pykubegrader.build.io import get_filename_and_root
 from pykubegrader.build.notebooks.io import modify_notebook_cell
 from pykubegrader.build.notebooks.search import find_first_cell_with
 from pykubegrader.build.notebooks.search import find_last_import_line
@@ -19,7 +20,21 @@ import nbformat
 
 
 @dataclass
-class OtterNotebookBuilder(Logger, OtterConfigSettings):
+@dataclass
+class OtterNotebookBuilder(Logger: Logger, OtterConfigSettings: OtterConfigSettings):
+    """
+    A class for building and processing Otter notebooks.
+
+    This class extends Logger and OtterConfigSettings to provide functionality for
+    managing and processing Jupyter notebooks specifically for Otter assignments.
+
+    Attributes:
+        notebook_path (str): The file path to the original Jupyter notebook.
+        temp_notebook (Optional[str]): The file path to a temporary notebook used for processing.
+        assignment_tag (str): A tag identifying the assignment.
+        require_key (bool): A flag indicating whether a key is required for processing.
+        verbose (bool): A flag indicating whether verbose output is enabled.
+    """
     notebook_path: str
     temp_notebook: Optional[str] = None
     assignment_tag: str = ""
@@ -27,8 +42,22 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
     verbose: bool = False
 
     def __post_init__(self, **kwargs) -> None:
+        """
+        Post-initialization method for setting up the OtterNotebookBuilder instance.
+
+        This method is automatically called after the instance is created. It performs
+        the following operations:
+        1. Initializes the Logger and OtterConfigSettings with any provided keyword arguments.
+        2. Extracts the root path and filename from the given notebook path.
+        3. Initializes the total points to zero and prepares a dictionary to store the maximum
+           points for each question.
+        4. Executes the main processing routine by calling the run method.
+
+        Args:
+            **kwargs: Additional keyword arguments that may be used for initialization.
+        """
         super(Logger, OtterConfigSettings, self).__init__(**kwargs)
-        self.root_path, self.filename = self.get_filename_and_root(self.notebook_path)
+        self.root_path, self.filename = get_filename_and_root(self.notebook_path)
         self.total_points = 0.0
         self.max_question_points: dict[str, float] = {}
         self.run(**kwargs)
@@ -586,23 +615,7 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
         if "cells" in notebook and len(notebook["cells"]) > 0:
             return notebook["cells"][0]
         else:
-            return None
-
-    @staticmethod
-    def get_filename_and_root(path: str) -> tuple[Path, str]:
-        """
-        Extracts the root directory and filename from a given file path.
-
-        Args:
-            path (str): The file path to process.
-
-        Returns:
-            tuple[Path, str]: A tuple containing the root directory as a Path object and the filename as a string.
-        """
-        path_obj = Path(path).resolve()  # Resolve the path to get an absolute path
-        root_path = path_obj.parent  # Get the parent directory
-        filename = path_obj.name  # Get the filename
-        return root_path, filename
+            return None    
 
     def replace_cell_source(self, cell_index: int, new_source: str | list[str]) -> None:
         """
@@ -911,3 +924,5 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
             except ValueError:
                 points_value = None
         return logging_variables, assertions, comments, points_value
+
+
