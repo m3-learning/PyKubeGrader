@@ -464,22 +464,20 @@ class QuestionProcessorBaseClass(Logger):
         f.write(f"            points={points},\n")
         f.write("        )\n")
 
-    def write_descriptions(self, question_dict, f):
+    def write_descriptions(self, question_dict, file_obj):
         """
-        Writes the descriptions for each question to the provided file.
+        Extracts and writes the descriptions for each question to a specified file.
 
-        This method iterates through the question dictionary, extracts the descriptions for each question,
-        and writes them to the specified file.
+        This method processes a dictionary containing question metadata, retrieves the description text for each question,
+        and writes them in a structured format to the provided file object.
 
         Args:
-            question_dict (dict): A dictionary containing question metadata.
-            f (file object): The file object to write the descriptions to.
+            question_dict (dict): A dictionary where each key is a question identifier and each value is a dictionary
+                                  containing details about the question, including its description text.
+            file_obj (file object): The file object where the extracted descriptions will be written.
         """
-        descriptions = []
-        for i, (q_key, q_value) in enumerate(question_dict.items()):
-            # Extract and append descriptions
-            descriptions.append(q_value["question_text"])
-        f.write(f"            descriptions={descriptions},\n")
+        descriptions = [q_value.get("question_text", "") for q_value in question_dict.values()]
+        file_obj.write(f"            descriptions={descriptions},\n")
 
     def write_options(self, question_dict, file_obj):
         """
