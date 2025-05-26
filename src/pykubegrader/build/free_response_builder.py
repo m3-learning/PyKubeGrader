@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 from pykubegrader.build.io import get_filename_and_root
-from pykubegrader.build.notebooks.io import modify_notebook_cell
+from pykubegrader.build.notebooks.io import modify_notebook_cell, read_notebook
 from pykubegrader.build.notebooks.search import find_first_cell_with
 from pykubegrader.build.notebooks.search import find_last_import_line
 from pykubegrader.build.notebooks.writers import insert_into_source
@@ -758,13 +758,21 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
     @staticmethod
     def extract_question_information(source: str) -> tuple[str, str, str]:
         """
-        Extracts question information from the given source string.
+        Extracts detailed question information from a source string.
+
+        This function parses the provided source string to extract the question name,
+        question number, and question part. It uses regular expressions to search for
+        specific patterns within the string and returns the extracted information as a tuple.
 
         Args:
-            source (str): The source string containing question information.
+            source (str): A string containing the question metadata, typically formatted
+                          with specific tags like 'name:', 'question:', and 'part:'.
 
         Returns:
-            tuple[str, str, str]: A tuple containing the question name, question number, and question part.
+            tuple[str, str, str]: A tuple consisting of:
+                - question_name (str): The name of the question, or None if not found.
+                - question_number (str): The number of the question, or None if not found.
+                - question_part (str): The part of the question, or None if not found.
         """
         name_match = re.search(r"name:\s*(.*)", source, re.MULTILINE)
         question_name = name_match.group(1).strip() if name_match else None
