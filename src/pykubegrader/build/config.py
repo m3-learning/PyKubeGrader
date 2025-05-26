@@ -161,6 +161,20 @@ class OtterConfigSettings(ABC):
         """).strip().split("\n")
         
     def question_information(self, cell_dict: dict) -> str:
+        """
+        Generates a string containing information about a question.
+
+        This method constructs a formatted string that includes the question ID,
+        maximum score, and initializes the score for a given test cell. The question
+        ID is a combination of the question identifier and the test number.
+
+        Args:
+            cell_dict (dict): A dictionary containing details about the test cell,
+                              including the question identifier, test number, and points.
+
+        Returns:
+            str: A formatted string with the question ID, maximum score, and initialized score.
+        """
         question_info = dedent(f"""
             question_id = {cell_dict["question"]} + "-" + {str(cell_dict["test_number"])}   
             max_score = {cell_dict['points']}
