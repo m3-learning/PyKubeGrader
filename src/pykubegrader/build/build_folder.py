@@ -545,7 +545,7 @@ class NotebookProcessor(
                 os.path.join(questions_folder_jbook, question_file_name_sanitized),
             )
 
-    def widget_question_parser(self, new_notebook_path, temp_notebook_path):
+    def widget_question_parser(self, new_notebook_path: str, temp_notebook_path: str) -> tuple[str, str]:
         """
         Extracts widget questions from a temporary notebook and provides paths to the generated solution and question files.
 
