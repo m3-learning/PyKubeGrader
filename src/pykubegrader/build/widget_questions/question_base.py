@@ -383,16 +383,36 @@ class QuestionProcessorBaseClass(Logger):
 
     @staticmethod
     def write_question_class(f, q_value, class_name):
-        class_type_ = question_class_type[class_name]
+        """
+        Writes a Python class definition for a question to a file.
 
-        f.write(
+        This function generates a class definition for a question based on the provided
+        question metadata and writes it to the specified file. The class inherits from
+        a base class determined by the question type.
+
+        Args:
+            f (file object): The file object to write the class definition to.
+            q_value (dict): A dictionary containing metadata for the question, including
+                            'question number' and 'title'.
+            class_name (str): The name of the class type to determine the base class and style.
+
+        Raises:
+            KeyError: If the class_name is not found in the question_class_type dictionary.
+        """
+        try:
+            class_type_ = question_class_type[class_name]
+        except KeyError:
+            raise KeyError(f"Class name '{class_name}' not found in question_class_type.")
+
+        class_definition = (
             f"class Question{q_value['question number']}({class_type_['class_type']}):\n"
+            "    def __init__(self):\n"
+            "        super().__init__(\n"
+            f'            title=f"{q_value["title"]}",\n'
+            f"            style={class_type_['style']},\n"
+            f"            question_number={q_value['question number']},\n"
         )
-        f.write("    def __init__(self):\n")
-        f.write("        super().__init__(\n")
-        f.write(f'            title=f"{q_value["title"]}",\n')
-        f.write(f"            style={class_type_['style']},\n")
-        f.write(f"            question_number={q_value['question number']},\n")
+        f.write(class_definition)
         
     def make_question_py_file(self, data_dict, **kwargs):
         """
