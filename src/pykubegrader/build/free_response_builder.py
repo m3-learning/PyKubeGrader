@@ -652,13 +652,20 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
     @staticmethod
     def extract_log_variables(cell: dict) -> list[str]:
         """
-        Extracts log variables from the first cell.
+        Extract log variable names from a notebook cell.
+
+        This method scans the provided cell for a pattern indicating log variables,
+        specifically looking for a line containing 'log_variables: [<variables>]'.
+        It safely evaluates the list of variables using `ast.literal_eval` to ensure
+        that the content is a valid Python list.
 
         Args:
-            cell (dict): A dictionary representing a notebook cell.
+            cell (dict): A dictionary representing a Jupyter notebook cell, expected
+                         to contain a 'source' key with the cell's code as a list of strings.
 
         Returns:
-            list[str]: A list of log variable names extracted from the cell.
+            list[str]: A list of log variable names extracted from the cell. If no
+                       log variables are found, an empty list is returned.
         """
         if "source" in cell:
             for line in cell["source"]:
@@ -840,28 +847,29 @@ class OtterNotebookBuilder(Logger, OtterConfigSettings):
 
         return results_dict
 
-    def extract_assertion_test_source(self, cell, source):
+    def extract_assertion_test_source(self, cell: dict, source: str) -> tuple[list[str], list[str], list[str], float]:
         """
-        Extracts assertion test information from a given code cell source.
+        Extract assertion test details from a Jupyter notebook code cell.
 
-        This method processes the source code of a Jupyter notebook cell to extract
-        logging variables, assertions, comments, and point values associated with
-        test configurations. It identifies and processes assertion statements,
-        ensuring proper handling of multi-line assertions and comments.
+        This method analyzes the source code of a Jupyter notebook cell to extract
+        information related to logging variables, assertions, comments, and point values
+        associated with test configurations. It efficiently identifies and processes
+        assertion statements, including handling multi-line assertions and associated comments.
 
         Args:
-            cell (dict): A dictionary representing a Jupyter notebook cell.
-            source (str): The source code of the cell as a string.
+            cell (dict): A dictionary representing a Jupyter notebook cell, containing
+                         metadata and source code.
+            source (str): The complete source code of the cell as a single string.
 
         Returns:
             tuple: A tuple containing:
-                - logging_variables (list): A list of variables used for logging.
-                - assertions (list): A list of assertion statements extracted from the source.
-                - comments (list): A list of comments associated with the assertions.
+                - logging_variables (list[str]): A list of variable names used for logging.
+                - assertions (list[str]): A list of assertion statements extracted from the source.
+                - comments (list[str]): A list of comments associated with the assertions.
                 - points_value (float or None): The point value extracted from the source, or None if not found.
 
         Raises:
-            ValueError: If the points value cannot be converted to a float.
+            ValueError: Raised if the points value cannot be converted to a float.
         """
         logging_variables = OtterNotebookBuilder.extract_log_variables(cell)
 
