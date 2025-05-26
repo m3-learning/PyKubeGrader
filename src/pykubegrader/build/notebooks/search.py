@@ -58,8 +58,8 @@ def find_first_cell_with(
 
 
 def check_for_heading(
-    notebook_path, search_strings, logger=None, cell_type="raw", return_cell=False
-):
+    notebook_path: str, search_strings: list[str], logger: None = None, cell_type: str = "raw", return_cell: bool = False
+) -> bool:
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
 

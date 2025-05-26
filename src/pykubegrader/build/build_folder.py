@@ -22,6 +22,7 @@ from pykubegrader.build.config import (
 )
 from pykubegrader.build.io import (
     check_if_file_in_folder,
+    copy_files,
     get_notebooks_recursively,
     remove_file_suffix,
     write_JSON,
@@ -722,8 +723,9 @@ class NotebookProcessor(
         write_notebook(notebook, output_path)
 
     def free_response_parser(
-        self, temp_notebook_path, notebook_subfolder, notebook_name
-    ):
+        self, temp_notebook_path: str, notebook_subfolder: str, notebook_name: str
+    ) -> None:
+        
         if has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
             client_private_key, server_public_key = self.transfer_encryption_keys(
                 temp_notebook_path
@@ -737,9 +739,9 @@ class NotebookProcessor(
                 return_cell=True,
             )
 
-            files = self.get_files(config)
+            files = self.get_non_bin_files(config)
 
-            self.copy_files(notebook_subfolder, files)
+            copy_files(notebook_subfolder, files)
 
             client_private_key, server_public_key = self.transfer_encryption_keys(
                 notebook_subfolder
@@ -814,28 +816,6 @@ class NotebookProcessor(
             )
             return None, 0
 
-    def copy_files(self, notebook_subfolder, files):
-        """
-        Copies specified files from the root folder to a given notebook subfolder.
-
-        This method iterates over a list of files and copies each file from the root folder
-        to the specified notebook subfolder. It prints a message for each file being copied.
-
-        Args:
-            notebook_subfolder (str): The destination subfolder where files will be copied.
-            files (list): A list of file names to be copied.
-
-        Returns:
-            None
-        """
-        if files:
-            for file in files:
-                print(f"Copying {file} to {os.path.join(notebook_subfolder, file)}")
-                shutil.copy(
-                    os.path.join(self.root_folder, file),
-                    os.path.join(notebook_subfolder, file),
-                )
-
     # TODO: Check if we can combine this with replace_temp_in_notebook
     @staticmethod
     def replace_temp_no_otter(input_file, output_file):
@@ -901,7 +881,7 @@ class NotebookProcessor(
             )
 
     @staticmethod
-    def get_files(config_text):
+    def get_non_bin_files(config_text: str) -> list[str]:
         """
         Extract the list of files from the given configuration text, excluding .bin files.
 
@@ -1247,3 +1227,4 @@ if __name__ == "__main__":
 #                 f.write(f"            grade={grade},\n")
 
 #             f.write("        )\n")
+

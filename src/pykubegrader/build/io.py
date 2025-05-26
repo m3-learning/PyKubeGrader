@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 
 
 def remove_file_suffix(dist_folder, suffix="_temp", logger = None):
@@ -94,3 +95,27 @@ def check_if_file_in_folder(folder, file):
         if file in files:
             return True
     return False
+
+
+def copy_files(root_folder: str, notebook_subfolder: str, files: list[str], logger: None = None) -> None:
+    """
+    Copies specified files from the root folder to a given notebook subfolder.
+
+    This method iterates over a list of files and copies each file from the root folder
+    to the specified notebook subfolder. It prints a message for each file being copied.
+
+    Args:
+        notebook_subfolder (str): The destination subfolder where files will be copied.
+        files (list): A list of file names to be copied.
+
+    Returns:
+        None
+    """
+    if files:
+        for file in files:
+            if logger is not None:
+                logger.print_and_log(f"Copying {file} to {os.path.join(notebook_subfolder, file)}")
+            shutil.copy(
+                os.path.join(root_folder, file),
+                os.path.join(notebook_subfolder, file),
+            )
