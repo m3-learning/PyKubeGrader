@@ -119,11 +119,23 @@ class OtterConfigSettings(ABC):
     end_test_config_line = "# END TEST CONFIG"
     
     def get_key_validation_line(self, assignment_tag: str) -> str:
+        """
+        Generates a line of code for validating an assignment key.
+
+        This method constructs a string that includes the necessary import statement
+        and function call to validate an assignment key using the provided assignment tag.
+
+        Args:
+            assignment_tag (str): The tag associated with the assignment to be validated.
+
+        Returns:
+            str: A string containing the import statement and the function call to validate
+                 the assignment key.
+        """
         return (
             "from pykubegrader.tokens.validate_token import validate_token\n"
             f"validate_token(assignment='{assignment_tag}')\n"
         )
-        
     def first_test_header(self, cell_dict: dict, max_question_points: float, filename: str) -> list[str]:
         """
         Constructs the header for the first test cell in a notebook.
