@@ -125,14 +125,19 @@ class QuestionProcessorBaseClass(Logger):
 
     def extract_raw_cells(self, **kwargs):
         """
-        Extracts all metadata from value cells in a Jupyter Notebook file for a specified heading.
+        Extracts metadata from raw cells in a Jupyter Notebook file.
+
+        This method processes all raw cells in the specified Jupyter Notebook file
+        and extracts metadata based on a given heading. The metadata is collected
+        from each raw cell and returned as a list of dictionaries.
 
         Args:
-            ipynb_file (str): Path to the .ipynb file.
-            heading (str): The heading to search for in value cells.
+            **kwargs: Additional keyword arguments.
+                - logger (optional): A logger instance for logging errors.
 
         Returns:
-            list of dict: A list of dictionaries containing extracted metadata for each heading occurrence.
+            list of dict: A list of dictionaries, each containing metadata extracted
+                          from the raw cells in the notebook.
         """
         
         logger = kwargs.get("logger", None)
@@ -140,7 +145,7 @@ class QuestionProcessorBaseClass(Logger):
         try:
             notebook_data = read_notebook(self.ipynb_file)
 
-            # Extract value cell content
+            # Extract content from raw cells
             raw_cells = [
                 "".join(
                     cell.get("source", [])
@@ -149,7 +154,7 @@ class QuestionProcessorBaseClass(Logger):
                 if cell.get("cell_type") == "raw"
             ]
 
-            # Process each value cell to extract metadata
+            # Process each raw cell to extract metadata
             metadata_list = []
             for raw_cell in raw_cells:
                 metadata_list.extend(self._extract_metadata_from_heading(raw_cell, **kwargs))
@@ -518,17 +523,18 @@ class QuestionProcessorBaseClass(Logger):
 
     def run(self, **kwargs):
         """
-        Executes the question processing workflow for the Jupyter notebook.
+        Executes the workflow for processing questions in a Jupyter notebook.
 
-        This method checks if the notebook contains assignments, processes the questions,
-        generates solution and question files, and updates the notebook with the processed data.
+        This method verifies the presence of assignments in the notebook, processes the questions,
+        and generates corresponding solution and question files. It also updates the notebook
+        with the processed data.
 
         Args:
-            **kwargs: Additional keyword arguments for processing.
+            **kwargs: Additional keyword arguments that may be required for processing.
 
         Returns:
             tuple: A tuple containing the paths to the solution and question files if assignments
-                   are present, otherwise (None, None).
+                   are detected; otherwise, returns (None, None).
         """
         if has_assignment(self.temp_notebook_path, self.start_tag, self.end_tag):
             # Define the markers for the questions
