@@ -27,6 +27,7 @@ def remove_assignment_config_cells(notebook_path: str) -> None:
     Example:
         remove_assignment_config_cells("path/to/notebook.ipynb")
     """
+    
     # Read the notebook
     notebook = read_notebook(notebook_path)
 
@@ -189,9 +190,7 @@ def write_initialization_code(
     # Find the first code cell
     index, cell = find_first_code_cell(notebook_path)
     cell = cell["source"]
-    import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
-    import_text += "from pykubegrader.initialize import initialize_assignment\n"
-    import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
+    import_text = initialization_cell(notebook_path, week, assignment_type)
     cell = f"{import_text}\n" + cell
     replace_cell_source(notebook_path, index, cell)
 
@@ -201,6 +200,12 @@ def write_initialization_code(
             require_key,
             assignment_tag=kwargs.get("assignment_tag", None),
         )
+
+def initialization_cell(notebook_path, week, assignment_type):
+    import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
+    import_text += "from pykubegrader.initialize import initialize_assignment\n"
+    import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
+    return import_text
 
 
 def replace_cells_between_markers(data, markers, ipynb_file, output_file):

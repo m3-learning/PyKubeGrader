@@ -1,12 +1,36 @@
 import nbformat
 
+def write_notebook(notebook: nbformat.NotebookNode, save_path: str) -> None:
+    """
+    Writes a Jupyter notebook to a specified file path.
 
-def write_notebook(notebook, save_path):
+    This function takes a notebook object and writes it to the given file path
+    in the Jupyter notebook format.
+
+    Args:
+        notebook (nbformat.NotebookNode): The notebook object to be written to a file.
+        save_path (str): The file path where the notebook will be saved.
+
+    Returns:
+        None
+    """
     with open(save_path, "w") as nb_file:
         nbformat.write(notebook, nb_file)
 
 
-def read_notebook(input_file):
+def read_notebook(input_file: str) -> nbformat.NotebookNode:
+    """
+    Reads a Jupyter notebook from a specified file path and returns it as a notebook object.
+
+    This function opens the specified file, reads its contents, and converts them into a
+    Jupyter notebook object using the nbformat library.
+
+    Args:
+        input_file (str): The file path to the Jupyter notebook to be read.
+
+    Returns:
+        nbformat.NotebookNode: The notebook object representing the contents of the file.
+    """
     with open(input_file, "r", encoding="utf-8") as f:
         notebook = nbformat.read(f, as_version=nbformat.NO_CONVERT)
     return notebook
