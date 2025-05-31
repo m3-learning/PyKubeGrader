@@ -268,7 +268,30 @@ class NotebookProcessor(
                 assignment_tag=self.assignment_tag,
             )
 
-    def mod_build_payload(self, yaml_content, **kwargs):
+    def build_payload(self, yaml_content: str, **kwargs) -> dict:
+        """
+        Constructs a payload dictionary for a notebook assignment using YAML content and additional parameters.
+
+        This method reads the YAML content to extract assignment details and combines them with additional
+        parameters provided through keyword arguments to form a comprehensive payload dictionary.
+
+        Args:
+            yaml_content (str): The file path to the YAML configuration file.
+            **kwargs: Additional keyword arguments that may include:
+                - notebook_title (str): The title of the notebook.
+                - total_points (int): The total points available for the assignment.
+
+        Returns:
+            dict: A dictionary containing the constructed payload with keys:
+                - title (str): The title of the notebook.
+                - week_number (int): The week number of the assignment.
+                - assignment_type (str): The type of the assignment.
+                - due_date (str): The due date of the assignment.
+                - max_points (int): The maximum points excluding bonus points.
+                - total_points (int): The total points including bonus points.
+                - bonus_points (int): The bonus points available.
+                - description (str): A description of the assignment, typically the week number.
+        """
         notebook_title = kwargs.get("notebook_title", None)
         total_points = kwargs.get("total_points", None)
 
@@ -285,64 +308,39 @@ class NotebookProcessor(
             "week_number": self.week_num,
             "assignment_type": self.assignment_type,
             "due_date": due_date,
-            "max_points": total_points
-            - self.bonus_points,  # TODO: need a fix here for the total points
-            "total_points": total_points,  # Added total points to the payload
-            "bonus_points": self.bonus_points,  # Added bonus points to the payload
-            "description": str(
-                self.week_num
-            ),  # Added description to the payload TODO: should fix this to be better.
+            "max_points": total_points - self.bonus_points,
+            "total_points": total_points,
+            "bonus_points": self.bonus_points,
+            "description": str(self.week_num),
         }
 
-    # TODO: passthrough remove soon.
-    def build_payload(self, yaml_content):
-        self.mod_build_payload(yaml_content)
-        """
-        Reads YAML content for an assignment and returns Python variables.
 
-        Args:
-            yaml_content (str): The YAML file path to parse.
-
-        Returns:
-            dict: A dictionary containing the parsed assignment data.
-        """
-        # # Parse the YAML content
-        # with open(yaml_content, "r") as file:
-        #     data = yaml.safe_load(file)
-
-        # # Extract assignment details
-        # assignment = data.get("assignment", {})
-        # week = assignment.get("week")
-        # assignment_type = assignment.get("assignment_type")
-        # due_date = get_due_date(assignment)
-
-        # title = f"Week {week} - {assignment_type}"
-
-        # # Return the extracted details as a dictionary
-        # return {
-        #     "title": title,
-        #     "description": str(week),
-        #     "week_number": week,
-        #     "assignment_type": assignment_type,
-        #     "due_date": due_date,
-        #     "max_score": self.assignment_total_points - self.bonus_points,
-        # }
-
-    def put_notebook(self, notebook_title, total_points):
+    def put_notebook(self, notebook_title: str, total_points: int) -> None:
         """
         Sends a POST request to add a notebook.
+
+        This method constructs a payload using the provided notebook title and total points,
+        and sends it to the server to register a new notebook entry. The payload is built
+        from a YAML configuration file located in the root folder of the assignment.
+
+        Args:
+            notebook_title (str): The title of the notebook to be added.
+            total_points (int): The total points associated with the notebook.
+
+        Raises:
+            Exception: If the POST request fails or encounters an error.
         """
-        # Define the URL
+        # Define the URL for the notebook endpoint
         url = os.path.join(self.api_url, "notebook")
 
-        # Build the payload
-        payload = self.mod_build_payload(
+        # Build the payload using the modified build payload method
+        payload = self.build_payload(
             yaml_content=f"{self.root_folder}/assignment_config.yaml",
             notebook_title=notebook_title,
             total_points=total_points,
         )
 
-        # Define HTTP Basic Authentication
+        # Send the POST request with the constructed payload
         self.post_request(
             url,
             payload,
@@ -485,8 +483,7 @@ class NotebookProcessor(
         remove_file_suffix(student_path, "_questions", logger=self.logger)
         remove_file_suffix(self.root_folder, "_temp", logger=self.logger)
 
-        ### CODE TO ENSURE THAT STUDENT NOTEBOOK IS IMPORTABLE
-
+        # Code to ensure that student notebook is importable
         self.importable_file_name(student_path, question_path)
 
         total_points = (
@@ -508,7 +505,7 @@ class NotebookProcessor(
         self.add_final_submission_cells(student_file_path, student_file_path)
         self.remove_empty_cells(student_file_path)
 
-    def importable_file_name(self, student_path, question_path):
+    def importable_file_name(self, student_path: str, question_path: str) -> None:
         """
         Ensures that the question file is importable by sanitizing its name and moving it to the appropriate directory.
 
