@@ -4,13 +4,27 @@ from pathlib import Path
 import shutil
 
 
-def remove_file_suffix(dist_folder, suffix="_temp", logger = None):
+def remove_file_suffix(dist_folder: str, suffix: str = "_temp", logger: None = None) -> None:
+    """
+    Removes a specified suffix from filenames within a given directory and its subdirectories.
+
+    This function traverses the directory tree starting from the specified distribution folder,
+    identifies files with the given suffix in their names, and renames them by removing the suffix.
+    If a logger is provided, it logs the actions performed.
+
+    Args:
+        dist_folder (str): The root directory where the search and rename operation will be performed.
+        suffix (str, optional): The suffix to be removed from filenames. Defaults to "_temp".
+        logger (optional): An object with a `print_and_log` method for logging actions. Defaults to None.
+
+    Returns:
+        None
+    """
     if logger is not None:
         logger.print_and_log(f"Removing postfix '{suffix}' from filenames in {dist_folder}")
     for root, _, files in os.walk(dist_folder):
         for file in files:
             if suffix in file:
-
                 old_file_path = os.path.join(root, file)
                 new_file_path = os.path.join(root, file.replace(suffix, ""))
                 os.rename(old_file_path, new_file_path)
