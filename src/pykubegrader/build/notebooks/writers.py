@@ -408,3 +408,26 @@ def add_text_after_octothorpe(markdown_source: list[str], insert_text: str, hash
             modified_source.append(line)
 
     return modified_source
+
+
+def replace_notebook_cell_text(notebook_data: nbformat.NotebookNode, old_text: str, new_text: str) -> None:
+    """
+    Replaces occurrences of a specified text within the source of each cell in a Jupyter Notebook.
+
+    This function iterates over all cells in the provided notebook data and replaces all instances
+    of `old_text` with `new_text` in the cell's source code.
+
+    Args:
+    - notebook_data (nbformat.NotebookNode): The notebook data containing cells to be processed.
+    - old_text (str): The text to be replaced in the cell sources.
+    - new_text (str): The text to replace the old text with in the cell sources.
+
+    Returns:
+    - None: This function modifies the notebook data in place and does not return a value.
+    """
+    for cell in notebook_data.get("cells", []):
+        if "source" in cell:
+            # Replace occurrences of old_text in the cell source
+            cell["source"] = [
+                line.replace(old_text, new_text) for line in cell["source"]
+            ]

@@ -33,6 +33,7 @@ from pykubegrader.build.notebooks.metadata import lock_cells_from_students
 from pykubegrader.build.notebooks.search import check_for_heading, has_assignment
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
+from pykubegrader.build.notebooks.writers import replace_notebook_cell_text
 from pykubegrader.build.util import get_due_date, json_serial
 from pykubegrader.build.config import EncryptionKeyTransfer
 from pykubegrader.build.widget_questions.types import (
@@ -832,7 +833,7 @@ class NotebookProcessor(
         write_notebook(notebook, output_file)
 
     @staticmethod
-    def replace_temp_in_notebook(input_file, output_file):
+    def replace_temp_in_notebook(input_file: str, output_file: str) -> None:
         """
         Replaces occurrences of '_temp.ipynb' with '.ipynb' in a Jupyter Notebook.
 
@@ -843,17 +844,12 @@ class NotebookProcessor(
         Returns:
         None: Writes the modified notebook to the output file.
         """
+        
         # Load the notebook data
-        with open(input_file, "r", encoding="utf-8") as f:
-            notebook_data = json.load(f)
+        notebook_data = read_notebook(input_file)
 
         # Iterate through each cell and update its content
-        for cell in notebook_data.get("cells", []):
-            if "source" in cell:
-                # Replace occurrences of '_temp.ipynb' in the cell source
-                cell["source"] = [
-                    line.replace("_temp.ipynb", ".ipynb") for line in cell["source"]
-                ]
+        replace_notebook_cell_text(notebook_data, "_temp.ipynb", ".ipynb")
 
         # Write the updated notebook to the output file
         write_notebook(notebook_data, output_file)
