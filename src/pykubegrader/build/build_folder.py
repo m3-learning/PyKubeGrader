@@ -445,6 +445,7 @@ class NotebookProcessor(
         # TODO: might want to refactor this
         # If Otter does not run, move the student file to the main directory
         if student_notebook is None:
+            
             lock_cells_from_students(temp_notebook_path, self.logger)
             path_ = shutil.copy(temp_notebook_path, self.root_folder)
             path_2 = shutil.move(
