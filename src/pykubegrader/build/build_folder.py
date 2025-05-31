@@ -785,9 +785,11 @@ class NotebookProcessor(
             NotebookProcessor.replace_temp_in_notebook(
                 student_notebook, student_notebook
             )
+            
             autograder_notebook = os.path.join(
                 notebook_subfolder, "dist", "autograder", f"{notebook_name}.ipynb"
             )
+            
             NotebookProcessor.replace_temp_in_notebook(
                 autograder_notebook, autograder_notebook
             )

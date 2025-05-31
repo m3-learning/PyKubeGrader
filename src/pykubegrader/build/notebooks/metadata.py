@@ -1,13 +1,23 @@
-import nbformat
+from pykubegrader.build.notebooks.io import read_notebook, write_notebook
 
 
-def lock_cells_from_students(notebook_path, logger = None):
+def lock_cells_from_students(notebook_path: str, logger=None) -> None:
     """
-    Removes specific cells and makes Markdown cells non-editable and non-deletable by updating their metadata.
+    Processes a Jupyter notebook to remove specific cells and update the metadata of Markdown and code cells.
+
+    This function reads a notebook from the given path, removes cells containing specific submission-related
+    text, and updates the metadata of Markdown cells to make them non-editable and non-deletable. It also
+    tags code cells to skip execution. The modified notebook is then saved back to the original path.
+
+    Args:
+        notebook_path (str): The file path to the Jupyter notebook to be processed.
+        logger (optional): A logger object for logging messages. If not provided, messages will be printed.
+
+    Raises:
+        Exception: If an error occurs during the processing of the notebook, it will be logged or printed.
     """
     try:
-        with open(notebook_path, "r", encoding="utf-8") as f:
-            notebook = nbformat.read(f, as_version=4)
+        notebook = read_notebook(notebook_path)
 
         cleaned_cells = []
         for cell in notebook.cells:
@@ -32,8 +42,7 @@ def lock_cells_from_students(notebook_path, logger = None):
 
         notebook.cells = cleaned_cells
 
-        with open(notebook_path, "w", encoding="utf-8") as f:
-            nbformat.write(notebook, f)
+        write_notebook(notebook, notebook_path)
 
         if logger is not None:
             logger.print_and_log(f"Cleaned notebook: {notebook_path}")
