@@ -347,6 +347,26 @@ class NotebookProcessor(
         )
 
     def post_request(self, url, payload, **kwargs):
+        """
+        Sends a POST request to the specified URL with the given payload.
+
+        This method constructs and sends a POST request using the provided URL and payload.
+        It supports optional authentication and custom headers through keyword arguments.
+
+        Args:
+            url (str): The endpoint URL to which the POST request is sent.
+            payload (dict): The data to be serialized and sent in the request body.
+            **kwargs: Optional keyword arguments for additional configurations:
+                - user (str): Username for authentication.
+                - password (str): Password for authentication.
+                - headers (dict): Custom headers to include in the request.
+
+        Raises:
+            ValueError: If the response cannot be parsed as JSON.
+
+        Returns:
+            None: This method logs the status code and response content.
+        """
         # Get user and password from kwargs if provided, otherwise use default credentials
         if "user" in kwargs and "password" in kwargs:
             auth = (kwargs["user"], kwargs["password"])
