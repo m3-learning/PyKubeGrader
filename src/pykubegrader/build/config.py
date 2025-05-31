@@ -19,10 +19,6 @@ class DisplayQuestionCode:
                 f"Question{dict_['question number']}().show()\n",
             ]
 
-
-
-from dataclasses import dataclass
-
 @dataclass
 class QuestionClassType:
     class_type: str

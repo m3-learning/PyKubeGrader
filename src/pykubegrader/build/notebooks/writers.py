@@ -141,13 +141,20 @@ def write_validation_block(
     write_notebook(notebook, notebook_path)
 
 
-def replace_cell_source(notebook_path, cell_index, new_source):
+def replace_cell_source(notebook_path: str, cell_index: int, new_source: str) -> None:
     """
     Replace the source code of a specific Jupyter notebook cell.
 
     Args:
+        notebook_path (str): The path to the Jupyter notebook file.
         cell_index (int): Index of the cell to be modified (0-based).
         new_source (str): New source code to replace the cell's content.
+
+    Returns:
+        None
+
+    Raises:
+        IndexError: If the cell index is out of range for the notebook.
     """
     # Load the notebook
     notebook = read_notebook(notebook_path)
@@ -164,11 +171,11 @@ def replace_cell_source(notebook_path, cell_index, new_source):
 
 
 def write_initialization_code(
-    notebook_path,
-    week,
-    assignment_type,
-    require_key=False,
-    **kwargs,
+    notebook_path: str,
+    week: str,
+    assignment_type: str,
+    require_key: bool = False,
+    **kwargs: dict,
 ):
     """
     Inserts initialization code into the first code cell of a Jupyter notebook.
