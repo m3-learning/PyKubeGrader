@@ -5,15 +5,22 @@ from dateutil import parser
 import os
 
 
-def get_due_date(assignment):
+def get_due_date(assignment: dict) -> datetime:
     """
     Extracts and parses the due date from an assignment dictionary.
 
+    This function retrieves the due date string from the provided assignment dictionary
+    and attempts to convert it into a datetime object. The conversion process automatically
+    handles timezones if present in the due date string. If the due date string is not
+    available or cannot be parsed, the function returns None.
+
     Args:
-        assignment (dict): A dictionary containing assignment details, including the due date.
+        assignment (dict): A dictionary containing assignment details, which should include
+                           a 'due_date' key with the due date as a string.
 
     Returns:
-        datetime or None: A datetime object representing the due date if parsing is successful, otherwise None.
+        datetime or None: A datetime object representing the due date if parsing is successful;
+                          otherwise, None if the due date is missing or cannot be parsed.
     """
     due_date_str = assignment.get("due_date")
 
