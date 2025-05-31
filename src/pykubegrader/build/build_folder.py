@@ -314,7 +314,6 @@ class NotebookProcessor(
             "description": str(self.week_num),
         }
 
-
     def put_notebook(self, notebook_title: str, total_points: int) -> None:
         """
         Sends a POST request to add a notebook.
@@ -521,6 +520,7 @@ class NotebookProcessor(
         self.total_point_log.update({notebook_name: total_points})
 
         student_file_path = os.path.join(self.root_folder, notebook_name + ".ipynb")
+        #TODO: HERE
         self.add_submission_cells(student_file_path, student_file_path)
         self.add_final_submission_cells(student_file_path, student_file_path)
         self.remove_empty_cells(student_file_path)
