@@ -797,6 +797,7 @@ class NotebookProcessor(
             lock_cells_from_students(student_notebook, self.logger)
 
             shutil.copy(student_notebook, self.root_folder)
+            
             self.print_and_log(
                 f"Copied and cleaned student notebook: {student_notebook} -> {self.root_folder}"
             )
@@ -814,25 +815,10 @@ class NotebookProcessor(
                 require_key=self.require_key,
                 assignment_tag=self.assignment_tag,
             )
-            NotebookProcessor.replace_temp_no_otter(
+            NotebookProcessor.replace_temp_in_notebook(
                 temp_notebook_path, temp_notebook_path
             )
             return None, 0
-
-    # TODO: Check if we can combine this with replace_temp_in_notebook
-    @staticmethod
-    def replace_temp_no_otter(input_file, output_file):
-        # Load the notebook
-        notebook = read_notebook(input_file)
-
-        # Iterate through the cells and modify `cell.source`
-        for cell in notebook.cells:
-            if cell.cell_type == "code":  # Only process code cells
-                if "responses = initialize_assignment(" in cell.source:
-                    cell.source = cell.source.replace("_temp", "")
-
-        # Save the modified notebook
-        write_notebook(notebook, output_file)
 
     @staticmethod
     def replace_temp_in_notebook(input_file: str, output_file: str) -> None:
