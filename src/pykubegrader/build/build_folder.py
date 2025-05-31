@@ -760,8 +760,6 @@ class NotebookProcessor(
                 os.path.basename(temp_notebook_path).replace("_temp", "_debugger"),
             )
 
-
-            #TODO: Here
             self.run_otter_assign(
                 temp_notebook_path, os.path.join(notebook_subfolder, "dist")
             )
@@ -860,9 +858,23 @@ class NotebookProcessor(
         # Write the updated notebook to the output file
         write_notebook(notebook_data, output_file)
 
-    def run_otter_assign(self, notebook_path, dist_folder):
+    def run_otter_assign(self, notebook_path: str, dist_folder: str) -> None:
         """
-        Runs `otter assign` on the given notebook and outputs to the specified distribution folder.
+        Executes the `otter assign` command on a specified Jupyter notebook.
+
+        This method processes the given notebook using the `otter assign` tool, 
+        which prepares the notebook for distribution by generating necessary files 
+        in the specified distribution folder. It ensures the distribution folder 
+        exists, runs the command, and logs the outcome. Additionally, it removes 
+        any '_test' suffixes from filenames in the distribution folder.
+
+        Args:
+            notebook_path (str): The path to the Jupyter notebook to be processed.
+            dist_folder (str): The directory where the processed files will be stored.
+
+        Raises:
+            subprocess.CalledProcessError: If the `otter assign` command fails.
+            Exception: For any unexpected errors during the process.
         """
         try:
             os.makedirs(dist_folder, exist_ok=True)
