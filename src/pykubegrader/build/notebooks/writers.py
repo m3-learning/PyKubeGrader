@@ -4,7 +4,8 @@ import json
 import os
 import nbformat
 
-from pykubegrader.build.config import DisplayQuestionCode
+from pykubegrader.build.config import DisplayQuestionCode, InitializationCell
+from pykubegrader.build.config import initialization_cell
 from pykubegrader.build.notebooks.io import read_notebook, write_notebook
 from pykubegrader.build.notebooks.search import find_first_code_cell
 from pykubegrader.build.widget_questions.utils import sanitize_string_for_python_variable
@@ -190,7 +191,7 @@ def write_initialization_code(
     # Find the first code cell
     index, cell = find_first_code_cell(notebook_path)
     cell = cell["source"]
-    import_text = initialization_cell(notebook_path, week, assignment_type)
+    import_text = InitializationCell(notebook_path, week, assignment_type).initialization_cell
     cell = f"{import_text}\n" + cell
     replace_cell_source(notebook_path, index, cell)
 
@@ -200,13 +201,6 @@ def write_initialization_code(
             require_key,
             assignment_tag=kwargs.get("assignment_tag", None),
         )
-
-def initialization_cell(notebook_path, week, assignment_type):
-    import_text = "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
-    import_text += "from pykubegrader.initialize import initialize_assignment\n"
-    import_text += f'\nresponses = initialize_assignment("{os.path.splitext(os.path.basename(notebook_path))[0]}", "{week}", "{assignment_type}" )\n'
-    return import_text
-
 
 def replace_cells_between_markers(data, markers, ipynb_file, output_file):
     """

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import os
 from pathlib import Path
 from abc import abstractmethod
 from abc import ABC
@@ -194,3 +195,42 @@ class OtterConfigSettings(ABC):
     @property
     def total_points(self) -> float:
         pass
+
+@dataclass
+class InitializationCell:
+    """
+    A data class representing the initialization cell for a Jupyter notebook.
+
+    This class holds the necessary information to construct the initialization
+    code for a Jupyter notebook, which includes the path to the notebook, the
+    week identifier, and the type of assignment.
+
+    Attributes:
+        notebook_path (str): The file path to the Jupyter notebook.
+        week (str): The week identifier for the assignment.
+        assignment_type (str): The type of the assignment.
+    """
+    notebook_path: str
+    week: str
+    assignment_type: str
+
+    @property
+    def initialization_cell(self) -> str:
+        """
+        Constructs the initialization code for the Jupyter notebook.
+
+        This property generates a string containing the necessary import statements
+        and initialization function call required to set up the assignment environment
+        in the notebook. It ensures that users are reminded to execute all cells in
+        sequence to avoid errors.
+
+        Returns:
+            str: A formatted string with import statements and initialization code.
+        """
+        notebook_name = os.path.splitext(os.path.basename(self.notebook_path))[0]
+        import_statements = (
+            "# You must make sure to run all cells in sequence using shift + enter or you might encounter errors\n"
+            "from pykubegrader.initialize import initialize_assignment\n"
+        )
+        initialization_code = f'responses = initialize_assignment("{notebook_name}", "{self.week}", "{self.assignment_type}")\n'
+        return import_statements + initialization_code
