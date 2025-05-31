@@ -726,6 +726,24 @@ class NotebookProcessor(
     def free_response_parser(
         self, temp_notebook_path: str, notebook_subfolder: str, notebook_name: str
     ) -> None:
+        """
+        Parses a free response notebook, processes it for assignment distribution, 
+        and prepares both student and autograder versions.
+
+        This function checks for an assignment configuration within the notebook, 
+        extracts necessary files, and processes the notebook using Otter tools. 
+        It also handles encryption keys, copies files, and locks cells for students.
+
+        Args:
+            temp_notebook_path (str): Path to the temporary notebook file.
+            notebook_subfolder (str): Subfolder where the notebook and related files are stored.
+            notebook_name (str): Name of the notebook file.
+
+        Returns:
+            tuple: A tuple containing the path to the student notebook and the total points 
+                   for the assignment if the assignment configuration is present, 
+                   otherwise returns (None, 0).
+        """
         
         if has_assignment(temp_notebook_path, "# ASSIGNMENT CONFIG"):
             client_private_key, server_public_key = self.transfer_encryption_keys(
