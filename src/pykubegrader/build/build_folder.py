@@ -691,8 +691,7 @@ class NotebookProcessor(
         code_cell = self.add_key_requirement_import(notebook_path)
 
         # Make the code cell non-editable and non-deletable
-        code_cell.metadata = {"editable": True, "deletable": False}
-        code_cell.metadata["tags"] = ["skip-execution"]
+        code_cell = tag_cells(code_cell)
 
         # Add the cells to the notebook
         notebook.cells.append(markdown_cell)
@@ -700,6 +699,7 @@ class NotebookProcessor(
 
         # Save the modified notebook
         write_notebook(notebook, output_path)
+
 
     def add_final_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
@@ -729,8 +729,7 @@ class NotebookProcessor(
         )
 
         # Make the code cell non-editable and non-deletable
-        code_cell.metadata = {"editable": True, "deletable": False}
-        code_cell.metadata["tags"] = ["skip-execution"]
+        code_cell = tag_cells(code_cell)
 
         # Add the cells to the notebook
         notebook.cells.append(markdown_cell)
@@ -1260,3 +1259,20 @@ if __name__ == "__main__":
 
 #             f.write("        )\n")
 
+def tag_cells(cell, editable: bool = True, deletable: bool = False, tags: list[str] = ["skip-execution"]):
+    """
+    Tags a Jupyter notebook code cell with metadata for editability, deletability, and execution skipping.
+
+    This method updates the metadata of a given code cell to control its editability and deletability,
+    and to add specific tags that can be used to manage cell execution behavior.
+
+    Args:
+        code_cell: The Jupyter notebook code cell to be tagged.
+        editable (bool, optional): Determines if the cell is editable. Defaults to True.
+        deletable (bool, optional): Determines if the cell is deletable. Defaults to False.
+        tags (list[str], optional): A list of tags to be added to the cell metadata. Defaults to ["skip-execution"].
+
+    """
+    cell.metadata = {"editable": editable, "deletable": deletable}
+    cell.metadata["tags"] = tags
+    return cell
