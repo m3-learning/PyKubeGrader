@@ -62,7 +62,7 @@ def get_notebooks_recursively(root_folder, **kwargs):
     return files
 
 
-def write_JSON(**kwargs):
+def write_JSON(**kwargs: dict) -> None:
     """
     Writes the provided information to a JSON file.
 

@@ -395,20 +395,34 @@ class NotebookProcessor(
         except ValueError:
             self.print_and_log(f"Response: {response.text}", verbose=True)
 
-    def post_assignment(self):
+    def post_assignment(self) -> None:
         """
-        Sends a POST request to add an assignment.
+        Sends a POST request to create a new assignment on the server.
+
+        This method constructs the URL for the assignment endpoint and builds the payload
+        using the assignment configuration file. It then sends the payload to the server
+        to add the assignment.
+
+        The method relies on the `post_request` function to handle the actual sending of
+        the request and logging of the response.
+
+        Raises:
+            Exception: If there is an error in building the payload or sending the request.
+
+        Returns:
+            None: This method does not return any value. It logs the response status and content.
         """
 
-        # Define the URL
+        # Construct the URL for the assignment endpoint
         url = os.path.join(self.api_url, "assignments")
 
-        # Build the payload
+        # Build the payload from the assignment configuration file
         payload = self.build_payload(f"{self.root_folder}/assignment_config.yaml")
 
+        # Send the POST request with the constructed URL and payload
         self.post_request(url, payload)
 
-    def _process_single_notebook(self, notebook_path):
+    def _process_single_notebook(self, notebook_path: str) -> None:
         """
         Processes a single Jupyter notebook for assignment preparation and grading.
 
@@ -461,7 +475,6 @@ class NotebookProcessor(
             temp_notebook_path, solution_notebook_folder_path, notebook_name
         )
 
-        # TODO: might want to refactor this
         # If Otter does not run, move the student file to the main directory
         if student_notebook is None:
             
@@ -644,13 +657,17 @@ class NotebookProcessor(
             self.print_and_log(f"Notebook already in destination: {new_notebook_path}")
         return new_notebook_path, temp_notebook_path, autograder_path, student_path
 
-    def remove_empty_cells(self, notebook_path, output_path=None):
+    def remove_empty_cells(self, notebook_path: str, output_path: str = None) -> None:
         """
-        Removes empty cells from a Jupyter Notebook and saves the updated notebook.
+        Removes all empty cells from a Jupyter Notebook and saves the modified notebook.
 
-        Parameters:
-            notebook_path (str): Path to the input Jupyter Notebook.
-            output_path (str): Path to save the updated Jupyter Notebook. If None, it overwrites the original file.
+        Args:
+            notebook_path (str): The file path to the Jupyter Notebook to be processed.
+            output_path (str, optional): The file path where the updated notebook will be saved. 
+                                         If not provided, the original notebook will be overwritten.
+
+        Raises:
+            Exception: If an error occurs during the process, it will be logged.
         """
         try:
             # Load the notebook
@@ -978,7 +995,7 @@ class NotebookProcessor(
         return f"week_{self.week_num}"
 
     @assignment_tag.setter
-    def assignment_tag(self, value):
+    def assignment_tag(self, value: str) -> None:
         """
         Sets the assignment tag.
 
