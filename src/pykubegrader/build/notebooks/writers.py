@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import os
 import nbformat
 
-from pykubegrader.build.config import DisplayQuestionCode, InitializationCell
+from pykubegrader.build.config import DisplayQuestionCode, InitializationCell, ValidateToken
 from pykubegrader.build.notebooks.io import read_notebook, write_notebook
 from pykubegrader.build.notebooks.search import find_first_code_cell
 from pykubegrader.build.widget_questions.utils import (
