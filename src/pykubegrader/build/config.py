@@ -233,11 +233,59 @@ class InitializationCell:
     
 @dataclass
 class SubmissionCell:
+    """
+    A data class representing the submission cell for a Jupyter notebook.
+
+    This class provides the necessary information and methods to construct
+    the submission and final submission cells for a Jupyter notebook assignment.
+
+    Attributes:
+        assignment_tag (str): A unique identifier for the assignment.
+        assignment_type (str): The type of the assignment.
+        week_num (int): The week number associated with the assignment.
+    """
+    assignment_tag: str
+    assignment_type: str
+    week_num: int
+    
     @property
     def submission_cell(self):
+        """
+        Constructs the submission cell content for the Jupyter notebook.
+
+        This property generates a string that instructs users on how to submit
+        their assignment by running the provided code block.
+
+        Returns:
+            list[str]: A list containing the markdown string for the submission instructions.
+        """
         string = [
             "## Submitting Assignment\n\n"
             "Please run the following block of code using `shift + enter` to submit your assignment, "
             "you should see your score."
         ]
         return string
+    
+    @property
+    def final_submission_cell(self):
+        """
+        Constructs the final submission cell content for the Jupyter notebook.
+
+        This property generates a markdown string and a code string that guide
+        users on how to mark their submission as final using a token.
+
+        Returns:
+            tuple: A tuple containing the markdown string and the code string for final submission.
+        """
+        markdown_cell = (
+            "## Submitting Final Assignment\n\n"
+            "Please run this cell with the provided token to identify your submission as final. "
+            "Once your submission is final, you will not be able to make any changes to your assignment."
+        )
+        
+        code_cell = (
+            "from pykubegrader.submit.final_submission import final_submission\n\n"
+            f"final_submission(assignment='{self.assignment_tag}', assignment_type='{self.assignment_type}', token='replace your token here', week_number = {self.week_num})"
+        )
+        return markdown_cell, code_cell
+    

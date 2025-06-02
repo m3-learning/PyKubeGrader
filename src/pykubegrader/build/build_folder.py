@@ -31,6 +31,7 @@ from pykubegrader.build.io import (
 from pykubegrader.build.notebooks.io import write_notebook
 from pykubegrader.build.notebooks.io import read_notebook
 from pykubegrader.build.notebooks.metadata import lock_cells_from_students
+from pykubegrader.build.notebooks.metadata import tag_cells
 from pykubegrader.build.notebooks.search import check_for_heading, has_assignment
 from pykubegrader.build.notebooks.writers import remove_assignment_config_cells
 from pykubegrader.build.notebooks.writers import write_initialization_code
@@ -703,40 +704,53 @@ class NotebookProcessor(
 
     def add_final_submission_cells(self, notebook_path: str, output_path: str) -> None:
         """
-        Adds final submission cells to the end of a Jupyter notebook.
+        Appends final submission cells to a Jupyter notebook.
+
+        This method adds a markdown cell and a code cell to the end of the specified notebook,
+        which are necessary for marking the assignment as a final submission. The code cell
+        is configured to be non-editable and non-deletable to maintain integrity.
 
         Args:
-            notebook_path (str): Path to the input notebook.
-            output_path (str): Path to save the modified notebook.
+            notebook_path (str): The file path to the input Jupyter notebook.
+            output_path (str): The file path where the modified notebook will be saved.
+
+        Returns:
+            None: This function does not return any value.
+
+        Note:
+            If the assignment is not marked for final submission, the function exits without
+            making any changes to the notebook.
         """
-        # If the assignment is not a final submission, do not add the cells
+        # Exit if the assignment is not a final submission
         if not self.final_submission:
             return
 
-        # Load the notebook
+        # Load the notebook from the specified path
         notebook = read_notebook(notebook_path)
+        
+        # Retrieve the final submission cells from the SubmissionCell class
+        markdown_cell_content, code_cell_content = SubmissionCell(
+            assignment_tag=self.assignment_tag,
+            assignment_type=self.assignment_type,
+            week_num=self.week_num
+        ).final_submission_cell
 
-        # Define the Markdown cell
-        markdown_cell = nbformat.v4.new_markdown_cell(
-            "## Submitting Final Assignment\n\n"
-            "Please run this cell with the provided token to identify your submission as final. Once your submission is final, you will not be able to make any changes to your assignment. "
-        )
+        # Create a new markdown cell with the retrieved content
+        markdown_cell = nbformat.v4.new_markdown_cell(markdown_cell_content)
 
-        # Define the Code cell
-        code_cell = nbformat.v4.new_code_cell(
-            "from pykubegrader.submit.final_submission import final_submission\n\n"
-            f"final_submission(assignment='{self.assignment_tag}', assignment_type='{self.assignment_type}', token='replace your token here', week_number = {self.week_num})"
-        )
+        # Create a new code cell with the retrieved content
+        code_cell = nbformat.v4.new_code_cell(code_cell_content)
 
-        # Make the code cell non-editable and non-deletable
+        # Tag the code cell to make it non-editable and non-deletable
         code_cell = tag_cells(code_cell)
 
-        # Add the cells to the notebook
+        # Append the new cells to the notebook
         notebook.cells.append(markdown_cell)
         notebook.cells.append(code_cell)
 
-        # Save the modified notebook
+        # Save the updated notebook to the specified output path
         write_notebook(notebook, output_path)
+
 
     def free_response_parser(
         self, temp_notebook_path: str, notebook_subfolder: str, notebook_name: str
@@ -1259,20 +1273,3 @@ if __name__ == "__main__":
 
 #             f.write("        )\n")
 
-def tag_cells(cell, editable: bool = True, deletable: bool = False, tags: list[str] = ["skip-execution"]):
-    """
-    Tags a Jupyter notebook code cell with metadata for editability, deletability, and execution skipping.
-
-    This method updates the metadata of a given code cell to control its editability and deletability,
-    and to add specific tags that can be used to manage cell execution behavior.
-
-    Args:
-        code_cell: The Jupyter notebook code cell to be tagged.
-        editable (bool, optional): Determines if the cell is editable. Defaults to True.
-        deletable (bool, optional): Determines if the cell is deletable. Defaults to False.
-        tags (list[str], optional): A list of tags to be added to the cell metadata. Defaults to ["skip-execution"].
-
-    """
-    cell.metadata = {"editable": editable, "deletable": deletable}
-    cell.metadata["tags"] = tags
-    return cell

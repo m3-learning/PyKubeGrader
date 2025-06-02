@@ -54,3 +54,22 @@ def lock_cells_from_students(notebook_path: str, logger=None) -> None:
             logger.print_and_log(f"Error cleaning notebook {notebook_path}: {e}")
         else:
             print(f"Error cleaning notebook {notebook_path}: {e}")
+
+
+def tag_cells(cell, editable: bool = True, deletable: bool = False, tags: list[str] = ["skip-execution"]):
+    """
+    Tags a Jupyter notebook code cell with metadata for editability, deletability, and execution skipping.
+
+    This method updates the metadata of a given code cell to control its editability and deletability,
+    and to add specific tags that can be used to manage cell execution behavior.
+
+    Args:
+        code_cell: The Jupyter notebook code cell to be tagged.
+        editable (bool, optional): Determines if the cell is editable. Defaults to True.
+        deletable (bool, optional): Determines if the cell is deletable. Defaults to False.
+        tags (list[str], optional): A list of tags to be added to the cell metadata. Defaults to ["skip-execution"].
+
+    """
+    cell.metadata = {"editable": editable, "deletable": deletable}
+    cell.metadata["tags"] = tags
+    return cell
