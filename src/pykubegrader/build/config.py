@@ -230,3 +230,14 @@ class InitializationCell:
         )
         initialization_code = f'responses = initialize_assignment("{notebook_name}", "{self.week}", "{self.assignment_type}")\n'
         return import_statements + initialization_code
+    
+@dataclass
+class SubmissionCell:
+    @property
+    def submission_cell(self):
+        string = [
+            "## Submitting Assignment\n\n"
+            "Please run the following block of code using `shift + enter` to submit your assignment, "
+            "you should see your score."
+        ]
+        return string

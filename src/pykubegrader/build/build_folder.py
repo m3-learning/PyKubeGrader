@@ -16,6 +16,7 @@ import requests
 import yaml
 
 from pykubegrader.build.config import (
+    SubmissionCell,
     SubmissionCodeBaseClass,
     question_class_type,
     EnvironmentVariables,
@@ -520,7 +521,6 @@ class NotebookProcessor(
         self.total_point_log.update({notebook_name: total_points})
 
         student_file_path = os.path.join(self.root_folder, notebook_name + ".ipynb")
-        #TODO: HERE
         self.add_submission_cells(student_file_path, student_file_path)
         self.add_final_submission_cells(student_file_path, student_file_path)
         self.remove_empty_cells(student_file_path)
@@ -685,9 +685,7 @@ class NotebookProcessor(
 
         # Define the Markdown cell
         markdown_cell = nbformat.v4.new_markdown_cell(
-            "## Submitting Assignment\n\n"
-            "Please run the following block of code using `shift + enter` to submit your assignment, "
-            "you should see your score."
+            SubmissionCell().submission_cell
         )
 
         code_cell = self.add_key_requirement_import(notebook_path)
