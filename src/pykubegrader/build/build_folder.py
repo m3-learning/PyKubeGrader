@@ -3,7 +3,6 @@
 
 import argparse
 import json
-import logging
 import os
 from pathlib import Path
 import re
@@ -38,12 +37,6 @@ from pykubegrader.build.notebooks.writers import write_initialization_code
 from pykubegrader.build.notebooks.writers import replace_notebook_cell_text
 from pykubegrader.build.util import get_due_date, json_serial
 from pykubegrader.build.config import EncryptionKeyTransfer
-from pykubegrader.build.widget_questions.types import (
-    MultipleChoice,
-    SelectMany,
-    TrueFalse,
-)
-from pykubegrader.build.config import question_class_type
 
 
 from pykubegrader.build.widget_questions.utils import sanitize_string_for_python_variable

@@ -1,6 +1,5 @@
-from pykubegrader.build.build_folder import NotebookProcessor
 from pykubegrader.build.notebooks.io import read_notebook
-from pykubegrader.build.notebooks.search import check_for_heading, extract_question_points, has_assignment
+from pykubegrader.build.notebooks.search import extract_question_points, has_assignment
 from pykubegrader.build.widget_questions.utils import process_widget_questions
 from pykubegrader.build.notebooks.writers import ensure_imports, replace_cells_between_markers
 from pykubegrader.utils.logging import Logger
