@@ -36,24 +36,25 @@ def read_notebook(input_file: str) -> nbformat.NotebookNode:
     return notebook
 
 
-def get_cell_source(notebook_path, cell_index):
+def get_cell_source(notebook_path: str, cell_index: int) -> str | None:
     """
-    Retrieves the source code of a specific cell from a Jupyter notebook.
+    Retrieve the source code of a specific cell from a Jupyter notebook.
 
-    This function reads a Jupyter notebook from the given path and returns the source code
-    of the cell at the specified index.
+    This function opens a Jupyter notebook from the specified file path and extracts the
+    source code of the cell located at the given index. If the index is out of range or
+    the notebook does not contain any cells, the function returns None.
 
     Args:
         notebook_path (str): The file path to the Jupyter notebook.
-        cell_index (int): The index of the cell whose source code is to be retrieved.
+        cell_index (int): The zero-based index of the cell whose source code is to be retrieved.
 
     Returns:
-        str: The source code of the specified cell.
+        str | None: The source code of the specified cell if it exists, otherwise None.
     """
     notebook = read_notebook(notebook_path)
     
     if "cells" in notebook and len(notebook["cells"]) > cell_index:
-            return notebook["cells"][cell_index]
+        return notebook["cells"][cell_index]
     else:
         return None
 
