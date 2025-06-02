@@ -241,11 +241,12 @@ class NotebookProcessor(
         if check_if_file_in_folder(self.root_folder, "assignment_config.yaml"):
             self.post_assignment()
 
-        self.update_initialize_function(
-            base_folder=self.solutions_folder,
-            total_point_log=self.total_point_log,
-            indent=4,
-        )
+        # self.update_initialize_function(
+        #     base_folder=self.solutions_folder,
+        #     total_point_log=self.total_point_log,
+        #     indent=4,
+        # )
+        self.update_initialize_function()
 
     def update_initialize_function(self):
         """
@@ -612,19 +613,19 @@ class NotebookProcessor(
 
         return solution_path, question_path
 
-    def duplicate_files(self, notebook_path, notebook_name, solution_notebook_path):
+    def duplicate_files(self, notebook_path: str, notebook_name: str, solution_notebook_path: str) -> tuple[str, str, str, str]:
         """
-        Copies a Jupyter notebook to a designated solution directory, setting up necessary subdirectories
-        and temporary files for subsequent processing.
+        Duplicates a Jupyter notebook into a specified solution directory, creating necessary subdirectories
+        and temporary files for further processing.
 
         Args:
-            notebook_path (str): The file path to the original Jupyter notebook.
-            notebook_name (str): The base name of the notebook, utilized for naming temporary files.
-            solution_notebook_path (str): The directory path where the solution and associated directories will be established.
+            notebook_path (str): The path to the original Jupyter notebook file.
+            notebook_name (str): The base name of the notebook, used for naming temporary files.
+            solution_notebook_path (str): The path to the directory where the solution and related directories will be created.
 
         Returns:
-            tuple: A tuple containing the paths to the new notebook, temporary notebook, autograder directory,
-                   and student directory.
+            tuple: A tuple containing the paths to the new notebook, the temporary notebook, the autograder directory,
+                   and the student directory.
         """
 
         # 1. Create the subfolder if it doesn't exist
@@ -1157,7 +1158,22 @@ def update_initialize_assignment(
         print(f"No matching lines found in '{notebook_path}'.")
 
 
-def extract_additional_variables(assignment_points, assignment_tag, kwargs):
+def extract_additional_variables(assignment_points: Optional[float], assignment_tag: Optional[str], kwargs: dict) -> str:
+    """
+    Constructs a string of additional variables for assignment initialization.
+
+    This function extracts additional variables from the provided arguments and keyword arguments,
+    formats them as a string suitable for inclusion in a function call.
+
+    Args:
+        assignment_points (Optional[float]): The points assigned to the assignment. If None, it is not included.
+        assignment_tag (Optional[str]): The tag associated with the assignment. If None, it is not included.
+        kwargs (dict): A dictionary of additional keyword arguments. It may contain:
+            - additional_variables (dict): A dictionary of additional variables to include.
+
+    Returns:
+        str: A string representation of the additional variables, formatted as key-value pairs.
+    """
     additional_variables_dict = kwargs.get("additional_variables", {})
     additional_variables_ = add_variables_from_dict(additional_variables_dict)
 
@@ -1172,7 +1188,23 @@ def extract_additional_variables(assignment_points, assignment_tag, kwargs):
     return additional_variables_str
 
 
-def add_variables_from_dict(additional_variables_dict):
+def add_variables_from_dict(additional_variables_dict: dict) -> list[str]:
+    """
+    Converts a dictionary of additional variables into a list of formatted strings.
+
+    This function iterates over the provided dictionary and constructs a list of strings,
+    each representing a key-value pair formatted for inclusion in a function call.
+
+    Args:
+        additional_variables_dict (dict): A dictionary containing additional variables
+                                          to be formatted. Keys are variable names and
+                                          values are their corresponding values.
+
+    Returns:
+        list: A list of strings, each formatted as 'key = value', where 'key' is the
+              variable name and 'value' is its corresponding value from the dictionary.
+              Only non-None values are included in the list.
+    """
     additional_variables_ = []
     for key, value in additional_variables_dict.items():
         if value is not None:
@@ -1213,80 +1245,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
-# # def generate_select_many_file(data_dict, output_file="select_many_questions.py"):
-#     """
-#     Generates a Python file defining an MCQuestion class from a dictionary.
-
-#     Args:
-#         data_dict (dict): A nested dictionary containing question metadata.
-#         output_file (str): The path for the output Python file.
-
-#     Returns:
-#         None
-#     """
-
-#     # Define header lines
-#     header_lines = [
-#         "from pykubegrader.widgets.select_many import MultiSelect, SelectMany\n",
-#         "import pykubegrader.initialize\n",
-#         "import panel as pn\n\n",
-#         "pn.extension()\n\n",
-#     ]
-
-#     # Ensure header lines are present
-#     _existing_content = ensure_imports(output_file, header_lines)
-
-#     for question_dict in data_dict:
-#         with open(output_file, "a", encoding="utf-8") as f:
-#             for i, (q_key, q_value) in enumerate(question_dict.items()):
-#                 if i == 0:
-#                     # Write the MCQuestion class
-#                     f.write(
-#                         f"class Question{q_value['question number']}(SelectMany):\n"
-#                     )
-#                     f.write("    def __init__(self):\n")
-#                     f.write("        super().__init__(\n")
-#                     f.write(f'            title=f"{q_value["title"]}",\n')
-#                     f.write("            style=MultiSelect,\n")
-#                     f.write(
-#                         f"            question_number={q_value['question number']},\n"
-#                     )
-#                 break
-
-#             keys = []
-#             for i, (q_key, q_value) in enumerate(question_dict.items()):
-#                 # Write keys
-#                 keys.append(
-#                     f"q{q_value['question number']}-{q_value['subquestion_number']}-{q_value['name']}"
-#                 )
-
-#             f.write(f"            keys={keys},\n")
-
-#             descriptions = []
-#             for i, (q_key, q_value) in enumerate(question_dict.items()):
-#                 # Write descriptions
-#                 descriptions.append(q_value["question_text"])
-#             f.write(f"            descriptions={descriptions},\n")
-
-#             options = []
-#             for i, (q_key, q_value) in enumerate(question_dict.items()):
-#                 # Write options
-#                 options.append(q_value["OPTIONS"])
-
-#             f.write(f"            options={options},\n")
-
-#             points = []
-#             for i, (q_key, q_value) in enumerate(question_dict.items()):
-#                 # Write points
-#                 points.append(q_value["points"])
-
-#             f.write(f"            points={points},\n")
-
-#             first_key = next(iter(question_dict))
-#             if "grade" in question_dict[first_key]:
-#                 grade = question_dict[first_key]["grade"]
-#                 f.write(f"            grade={grade},\n")
-
-#             f.write("        )\n")
-
