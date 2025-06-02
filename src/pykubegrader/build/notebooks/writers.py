@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-import json
 import os
 import nbformat
 
 from pykubegrader.build.config import DisplayQuestionCode, InitializationCell
-from pykubegrader.build.config import initialization_cell
 from pykubegrader.build.notebooks.io import read_notebook, write_notebook
 from pykubegrader.build.notebooks.search import find_first_code_cell
-from pykubegrader.build.widget_questions.utils import sanitize_string_for_python_variable
+from pykubegrader.build.widget_questions.utils import (
+    sanitize_string_for_python_variable,
+)
 
 
 def remove_assignment_config_cells(notebook_path: str) -> None:
@@ -28,7 +28,7 @@ def remove_assignment_config_cells(notebook_path: str) -> None:
     Example:
         remove_assignment_config_cells("path/to/notebook.ipynb")
     """
-    
+
     # Read the notebook
     notebook = read_notebook(notebook_path)
 
@@ -88,18 +88,10 @@ def write_validation_token_cell(
 
     # Load the notebook
     notebook = read_notebook(notebook_path)
+    
+    validate_token = ValidateToken(kwargs).validate_token_line
 
-    # Create the new code cell
-    if kwargs.get("assignment_tag", None):
-        new_cell = nbformat.v4.new_code_cell(
-            "from pykubegrader.tokens.validate_token import validate_token\n"
-            f"validate_token('type the key provided by your instructor here', assignment = '{kwargs.get('assignment_tag')}')\n"
-        )
-    else:
-        new_cell = nbformat.v4.new_code_cell(
-            "from pykubegrader.tokens.validate_token import validate_token\n"
-            "validate_token('type the key provided by your instructor here')\n"
-        )
+    new_cell = nbformat.v4.new_code_cell(validate_token)
 
     # Add the new cell to the top of the notebook
     notebook.cells.insert(0, new_cell)
@@ -198,7 +190,9 @@ def write_initialization_code(
     # Find the first code cell
     index, cell = find_first_code_cell(notebook_path)
     cell = cell["source"]
-    import_text = InitializationCell(notebook_path, week, assignment_type).initialization_cell
+    import_text = InitializationCell(
+        notebook_path, week, assignment_type
+    ).initialization_cell
     cell = f"{import_text}\n" + cell
     replace_cell_source(notebook_path, index, cell)
 
@@ -208,6 +202,7 @@ def write_initialization_code(
             require_key,
             assignment_tag=kwargs.get("assignment_tag", None),
         )
+
 
 def replace_cells_between_markers(data, markers, ipynb_file, output_file):
     """
@@ -375,7 +370,9 @@ def insert_into_source(
     raise ValueError("End of test configuration not found")
 
 
-def add_text_after_octothorpe(markdown_source: list[str], insert_text: str, hash_prefix: str = "## ") -> list[str]:
+def add_text_after_octothorpe(
+    markdown_source: list[str], insert_text: str, hash_prefix: str = "## "
+) -> list[str]:
     """
     Inserts the specified text immediately after the first occurrence of the given hash prefix
     in the first line of the markdown source that starts with the hash prefix.
@@ -410,7 +407,9 @@ def add_text_after_octothorpe(markdown_source: list[str], insert_text: str, hash
     return modified_source
 
 
-def replace_notebook_cell_text(notebook_data: nbformat.NotebookNode, old_text: str, new_text: str) -> None:
+def replace_notebook_cell_text(
+    notebook_data: nbformat.NotebookNode, old_text: str, new_text: str
+) -> None:
     """
     Replaces occurrences of a specified text within the source of each cell in a Jupyter Notebook.
 

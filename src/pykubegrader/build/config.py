@@ -289,3 +289,16 @@ class SubmissionCell:
         )
         return markdown_cell, code_cell
     
+    
+@dataclass
+class ValidateToken:
+    kwargs: dict = None
+    
+    @property
+    def validate_token_line(self):
+        if self.kwargs.get("assignment_tag", None):
+            return f"from pykubegrader.tokens.validate_token import validate_token\n" \
+                f"validate_token('type the key provided by your instructor here', assignment = '{self.kwargs.get('assignment_tag')}')\n"
+        else:
+            return "from pykubegrader.tokens.validate_token import validate_token\n" \
+                "validate_token('type the key provided by your instructor here')\n"

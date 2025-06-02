@@ -1,9 +1,7 @@
-import nbformat
-
 from pykubegrader.build.notebooks.io import read_notebook
 
 
-def find_first_code_cell(notebook_path):
+def find_first_code_cell(notebook_path: str) -> tuple[int, dict] | tuple[None, None]:
     """
     Finds the first Python code cell in a Jupyter notebook and its index.
 
@@ -58,7 +56,11 @@ def find_first_cell_with(
 
 
 def check_for_heading(
-    notebook_path: str, search_strings: list[str], logger: None = None, cell_type: str = "raw", return_cell: bool = False
+    notebook_path: str,
+    search_strings: list[str],
+    logger: None = None,
+    cell_type: str = "raw",
+    return_cell: bool = False,
 ) -> bool:
     """
     Checks if a Jupyter notebook contains a heading cell whose source matches any of the given strings.
