@@ -146,7 +146,7 @@ class NotebookProcessor(
         # Initialize the class with assignment information
         self.initialize_info()
 
-    def initialize_info(self):
+    def initialize_info(self) -> None:
         """
         Initializes the NotebookProcessor instance with assignment-related settings.
 
@@ -179,7 +179,7 @@ class NotebookProcessor(
             self.solutions_folder, exist_ok=True
         )  # Create the folder if it doesn't exist
 
-    def initialize_from_assignment_yaml(self):
+    def initialize_from_assignment_yaml(self) -> None:
         """
         Initializes the NotebookProcessor instance using the 'assignment_config.yaml' file.
 
@@ -970,7 +970,7 @@ class NotebookProcessor(
             return []
 
     @property
-    def assignment_tag(self):
+    def assignment_tag(self) -> str:
         """
         Returns the assignment tag.
 
@@ -984,7 +984,7 @@ class NotebookProcessor(
         return self._assignment_tag
 
     @property
-    def week(self):
+    def week(self) -> str:
         """
         Returns the week string.
 
