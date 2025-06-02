@@ -61,17 +61,21 @@ def extract_options(markdown_content, regex = r"####\s*options\s*(.+?)(?=####|$)
 
     return options
 
-def extract_title(markdown_content, title_regex = r"^##\s*(.+)"):
+def extract_title(markdown_content: str, title_regex: str = r"^##\s*(.+)") -> str:
     """
-    Extracts the title from the given markdown content.
+    Extract the title from markdown content using a regular expression.
+
+    This function searches for a title in the provided markdown content using a specified
+    regular expression pattern. The default pattern looks for lines starting with '##' 
+    followed by the title text.
 
     Args:
         markdown_content (str): The markdown content to search for the title.
-        title_regex (str, optional): Regular expression pattern to match the title.
-            Defaults to r"^##\s*(.+)".
+        title_regex (str, optional): A regular expression pattern to match the title.
+            Defaults to r"^##\s*(.+)", which captures any text following '##' at the start of a line.
 
     Returns:
-        str: The extracted title if found, otherwise None.
+        str: The extracted title if found. Returns None if no title is matched.
     """
     title_match = re.search(title_regex, markdown_content, re.MULTILINE)
     title = title_match.group(1).strip() if title_match else None

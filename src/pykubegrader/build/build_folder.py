@@ -1042,7 +1042,7 @@ class WidgetQuestionParser:
     start_label: str = "# BEGIN MULTIPLE CHOICE"
     end_label: str = "# END MULTIPLE CHOICE"
 
-    def process_raw_cell(self, raw_content):
+    def process_raw_cell(self, raw_content: str) -> bool:
         """
         Processes a raw cell from a Jupyter notebook to identify section markers.
 
@@ -1064,7 +1064,7 @@ class WidgetQuestionParser:
             return True
         return False
 
-    def start_new_section(self):
+    def start_new_section(self) -> None:
         """
         Initializes a new section for widget questions.
 
@@ -1078,7 +1078,7 @@ class WidgetQuestionParser:
         self.subquestion_number = 0
         self.current_section = {}
 
-    def end_current_section(self):
+    def end_current_section(self) -> None:
         """
         Finalizes the current section of widget questions.
 
@@ -1093,7 +1093,7 @@ class WidgetQuestionParser:
         if self.current_section:
             self.sections.append(self.current_section)
 
-    def increment_subquestion_number(self):
+    def increment_subquestion_number(self) -> None:
         self.subquestion_number += 1
 
 
