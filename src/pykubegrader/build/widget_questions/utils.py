@@ -1,7 +1,7 @@
 import json
 import re
 
-from pykubegrader.build.build_folder import WidgetQuestionParser
+from pykubegrader.build.widget_questions.parser import WidgetQuestionParser
 from pykubegrader.build.notebooks.io import read_notebook
 
 def extract_question(text, regex = r"^###\s+(.*?)\s+####"):

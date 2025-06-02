@@ -12,7 +12,6 @@ from pykubegrader.build.free_response_builder import (
 )
 from pykubegrader.build.build_folder import (
     NotebookProcessor,
-    WidgetQuestionParser,
     extract_SELECT_MANY,
     extract_TF,
     extract_config_from_notebook,
@@ -52,6 +51,7 @@ from pykubegrader.build.passwords import (
     student_ids,
     user,
 )
+from pykubegrader.build.widget_questions.parser import WidgetQuestionParser
 from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string_for_python_variable
 
 __all__ = [

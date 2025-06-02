@@ -34,7 +34,6 @@ from pykubegrader.build import (
     MarkdownToNotebook,
     NotebookProcessor,
     QuestionCollator,
-    WidgetQuestionParser,
     build_folder,
     clean_folder,
     collate,
@@ -66,6 +65,7 @@ from pykubegrader.build.notebooks.writers import (
     replace_cell_source,
     replace_cells_between_markers,
 )
+from pykubegrader.build.widget_questions.parser import WidgetQuestionParser
 from pykubegrader.build.widget_questions.utils import extract_question, sanitize_string_for_python_variable
 from pykubegrader.graders import (
     calculate_late_submission,
